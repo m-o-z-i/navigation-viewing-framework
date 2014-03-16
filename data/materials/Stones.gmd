@@ -1,6 +1,6 @@
 
 {
-	"shading_model" : "ComplexTexture.gsd",
+	"shading_model" : "ComplexTexture",
 	"uniforms" : 
 	{
 		"diffuse_map" : "data/textures/stones_diffuse.jpg",

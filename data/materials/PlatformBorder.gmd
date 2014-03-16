@@ -1,6 +1,6 @@
 
 {
-	"shading_model" : "Stencil.gsd",
+	"shading_model" : "Stencil",
 	"uniforms" : 
 	{
 		"color" : "data/textures/platform_border_diffuse.jpg",

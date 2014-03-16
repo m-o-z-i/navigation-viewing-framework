@@ -1,23 +1,7 @@
 /**
-\mainpage Oculus-Powerwall Framework Documentation
+\mainpage Oculus-Powerwall Framework Documentation - Configuration files
 
-The Oculus-Powerwall Framework was designed to enable users to create a variety of viewing setups using different input devices and user types in the VR lab at Bauhaus University Weimar. It is based on the rendering framework guacamole. In order to specify a concrete viewing setup within the framework, a XML configuration file is used. 
-
-<b>Remark on branches:</b><br>
- The framework comes with four git branches. The branch <em>master</em> contains the latest version including all features with distribution. The branch <em>TreasureHunter/distribution</em> contains a treasure hunting game based on the framework which can be run on multiple machines. The branches <em>stable/no-distribution</em> and <em>TreasureHunter/no-distribution</em> contain the non-distributed versions of these branches. As the distribution branches are based on these, some of the latest features may only be available in the distributed version.
-
-<hr>
-
-<br>
-In the following, the structure of configuration files for the framework will be illustrated and explained.
-
-<br>
-<b>File naming conventions</b><br>
-The framework comes with some example configuration files located in ./configs. The files are named in a manner that first the used devices are mentioned and then the number of the different user types is specified. The naming follows the rule:
-
-<code>device_types_used_(numberOfDesktopUsers)(numberOfPowerWallUsers)(numberOfOVRUsers).xml</code>
-
-The file controller_spacemouse_101.xml for example contains the specification for a setup with one desktop and one OVR user standing on platforms moved by a X-Box controller and a spacemouse. In the following, it is explained how exactly such configuration files can be written.
+The Oculus-Powerwall Framework was designed to enable users to create a variety of viewing setups using different input devices and user types in the VR lab at Bauhaus University Weimar. It is based on the rendering framework guacamole. In order to specify a concrete viewing setup within the framework, a XML configuration file is used. On this page, the structure of such a configuration file will be illustrated and explained.
 
 <br>
 <b>Overall structure</b><br>
@@ -31,7 +15,7 @@ This sets the global transmitter offset to be applied by the framework. The defa
 Usage example: <code> <transmitteroffset><x>0.0</x><y>0.0043</y><z>1.6</z><transmitteroffset></code>
 
 <em><notrackingposition></em><br>
-This is the default position to be applied if a device or user has no tracking station specified. The default is set to (0.0, 1.5, 1.0).<br>
+This is the default position to be applied if a device or user has no tracking station specified. The default is set to an identity matrix<br>
 Usage example: <code><notrackingposition><x>0.0</x><y>1.75</y><z>1.5</z></notrackingposition></code>
 
 <em><groundfollowing></em><br>
@@ -51,10 +35,6 @@ Usage example: <code><movementtraces>True</movementtraces></code>
 <b>Registration of devices and platforms</b><br>
 Every time a device is registered, a corresponding platform in the virtual world is created which is moved and controlled by this device. All the settings for devices and platforms are done within the <device>-tag, one for each device that should be registered. In general, the following information is necessary.
 
-<em><hostname></em><br>
-A string indicating the hostname on which the corresponding client application should pop up.<br>
-Usage example: <code><hostname>localhost</hostname></code>
-
 <em><type></em><br>
 A string indicating which type the new device is. To be chosen from "KeyboardMouse", "Spacemouse", "XBoxController", "OldSpheron" and "NewSpheron".<br>
 Usage example: <code><type>XBoxController</type></code>
@@ -68,13 +48,12 @@ A string indicating the name on which this device's tracking target was register
 Usage example: <code><trackingstation>tracking-oculus-stag</trackingstation></code>
 
 <em><platformpos></em><br>
-Three dimensional coordinates on where to place the newly created platform in the virtual world. By
-default, the position (0.0, 0.0, 0.0) is assumed.<br>
+Three dimensional coordinates on where to place the newly created platform in the virtual world.<br>
 Usage example: <code><platformpos><x>0.0</x><y>0.0</y><z>6.0</z></platformpos></code>
 
 <em><platformrot></em><br>
-The starting yaw angle of the newly created platform. By default, a rotation of 0 degrees is assumed.<br>
-Usage example: <code><platformrot><yaw>180.0</yaw></platformrot></code>
+The starting yaw angle of the newly created platform.<br>
+Usage example: <code><platformrot><yaw>0.0</yaw></platformrot></code>
 
 <em><platformsize></em><br>
 The physical size of the platform in meters (e.g. size of the tracking space). The default is set to 1.0 m x 1.0 m. <br>
@@ -108,11 +87,6 @@ Usage example: <code><windowsize><width>1280</width><height>800</height></window
 <em><screensize></em><br>
 The physical width and height of the window to be created in meters. Only applicable for DesktopUsers.<br>
 Usage example: <code><screensize><width>1.06</width><height>0.74</height></screensize></code>
-
-<em><display></em><br>
-A string indicating the display on the client host on which the corresponding window should pop up. By
-default, :0.0 is assumed.<br>
-Usage example: <code><display>:0.0</display></code>
 
 <br>
 <b>Summary</b><br>

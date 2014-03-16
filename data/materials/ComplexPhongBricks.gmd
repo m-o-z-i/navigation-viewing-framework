@@ -1,6 +1,6 @@
 
 {
-	"shading_model" : "ComplexPhong.gsd",
+	"shading_model" : "ComplexPhong",
 	"uniforms" : 
 	{
 		"diffuse_map" : "data/textures/bricks_diffuse.jpg",

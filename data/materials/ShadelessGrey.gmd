@@ -1,6 +1,6 @@
 
 {
-	"shading_model" : "Shadeless.gsd",
+	"shading_model" : "Shadeless",
 	"uniforms" : 
 	{
 		"diffuse_color" : "0.500  0.500  0.500)"

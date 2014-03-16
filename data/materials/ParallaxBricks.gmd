@@ -1,6 +1,6 @@
 
 {
-	"shading_model" : "Parallax.gsd",
+	"shading_model" : "Parallax",
 	"uniforms" : 
 	{
 		"diffuse_map" : "data/textures/bricks_diffuse.jpg",

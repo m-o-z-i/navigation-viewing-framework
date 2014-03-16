@@ -1,6 +1,6 @@
 
 {
-	"shading_model" : "Water",
+	"shading_model" : "Water.gsd",
 	"uniforms" : 
 	{
 		"fresnel" : "1",

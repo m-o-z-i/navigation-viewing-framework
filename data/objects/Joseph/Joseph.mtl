@@ -1,0 +1,16 @@
+# GRSSE VOM LIEBEN BLENDERHENDRIK!
+# Erstellt fr das Occulus Projekt
+# am 10.03.14
+# whrend Adrian KIZ zitiert
+
+newmtl Joseph
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd TextureMap.png
+map_Ks SpecularMap.png
+map_Bump NormalMap.png

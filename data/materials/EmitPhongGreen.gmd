@@ -1,6 +1,6 @@
 
 {
-	"shading_model" : "EmitPhong",
+	"shading_model" : "EmitPhong.gsd",
 	"uniforms" : 
 	{
 		"diffuse_color" : "(0.000  1.000  0.000)",

@@ -1,3 +1,11 @@
+  <!--
+  Oculus-Powerwall Framework
+  Document Type Definition for XML configuration files
+
+  Naming convention for files:
+  device_types_used_(desktopusers)(powerwallusers)(ovrusers).xml
+  -->
+
   <!ELEMENT setup (global, device+, user+)>
   
   <!ELEMENT global (transmitteroffset, notrackingposition, groundfollowing)>

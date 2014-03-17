@@ -57,7 +57,7 @@
   <!-- First Power Wall User -->
   <user>
 
-    <type>PowerWallUser</type>
+    <type>SmallPowerWallUser</type>
 
     <headtrackingstation>tracking-glasses-1</headtrackingstation>
 
@@ -73,7 +73,7 @@
   
   <user>
 
-    <type>PowerWallUser</type>
+    <type>SmallPowerWallUser</type>
 
     <headtrackingstation>tracking-glasses-2</headtrackingstation>
 

@@ -20,6 +20,7 @@ var searchData=
   ['tracking_5freader',['tracking_reader',['../classlib-server_1_1Device_1_1MultiDofDevice.html#abcc9f346b813550764c0d8769d23ad2e',1,'lib-server::Device::MultiDofDevice']]],
   ['tracking_5frotation_5fcombiner',['tracking_rotation_combiner',['../classlib-server_1_1OVRUser_1_1OVRUser.html#a498d48c6cfea250fc3b4e261b100434b',1,'lib-server::OVRUser::OVRUser']]],
   ['tracking_5fsensor',['tracking_sensor',['../classClientTrackingReader_1_1ClientTrackingTargetReader.html#ae46bcf190fe504c65519f1ecaa940c36',1,'ClientTrackingReader::ClientTrackingTargetReader.tracking_sensor()'],['../classlib-server_1_1TrackingReader_1_1TrackingTargetReader.html#adedc633da8427991cb7c2b7999c41820',1,'lib-server::TrackingReader::TrackingTargetReader.tracking_sensor()']]],
+  ['tracking_5ftarget_5fname',['TRACKING_TARGET_NAME',['../classClientUser_1_1ClientUser.html#a04f93647ad6a147f9d08104fec50c3ca',1,'ClientUser::ClientUser']]],
   ['trackingdefaultreader',['TrackingDefaultReader',['../classlib-server_1_1TrackingReader_1_1TrackingDefaultReader.html',1,'lib-server::TrackingReader']]],
   ['trackingreader',['TrackingReader',['../classlib-server_1_1TrackingReader_1_1TrackingReader.html',1,'lib-server::TrackingReader']]],
   ['trackingreader_2epy',['TrackingReader.py',['../TrackingReader_8py.html',1,'']]],

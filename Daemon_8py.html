@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>Guacamole Navigation Framework: lib-server/ViewingManager.py File Reference</title>
+<title>Guacamole Navigation Framework: lib-server/Daemon.py File Reference</title>
 
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
@@ -75,22 +75,43 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
-<div class="title">lib-server/ViewingManager.py File Reference</div>  </div>
+<div class="title">lib-server/Daemon.py File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Contains class ViewingManager.  
+<p>guacamole daemon to initialize tracking and device stations.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1ViewingManager_1_1ViewingManager.html">lib-server.ViewingManager.ViewingManager</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Class to manage all navigations and users in the viewing setup.  <a href="classlib-server_1_1ViewingManager_1_1ViewingManager.html#details">More...</a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.init_oculus</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initizialies Oculus Rift sensors.  <a href="#ab7f5284b91cde7a6c131ce917b4d81d3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.init_lcd_wall_tracking</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes AR Track on LCD wall.  <a href="#af394c5ab63badbb5861822e4ce397a6a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.init_dlp_wall_tracking</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes AR Track on DLP wall.  <a href="#a8b651271a41a96a6554f610660ac067a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.init_spacemouse</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a spacemouse for navigation.  <a href="#aa7c872a012697bee5a0161dd4bb1e661"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.init_old_spheron</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes an old spheron for navigation.  <a href="#a5c2b39fc22a60c342448d0a3fd22223f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.init_new_spheron</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a new spheron for navigation.  <a href="#ab520ca00313e8b42ad0a7ced86186180"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.init_mouse</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initalizes a mouse for navigation.  <a href="#ab00947b071cb923a8f53b3421053ac74"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.init_keyboard</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a keyboard for navigation.  <a href="#ab8d0eded43ae7deb55df2f72886d43d8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.xbox_controller</b></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a X-Box controller for navigation.  <a href="#a98802c5ee31aea6cbfad18c3074b07d0"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">list&#160;</td><td class="memItemRight" valign="bottom"><b>lib-server::Daemon.device_list</b> = []</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">List of devices to be handled by daemon.  <a href="#ad61f4f89a4731a030165cf5edef528bf"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>Contains class ViewingManager. </p>
+<div class="textblock"><p>guacamole daemon to initialize tracking and device stations. </p>
 </div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"

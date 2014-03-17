@@ -515,10 +515,6 @@ class Navigation(avango.script.Script):
       for _nav in self.coupled_navigations:
         self.platform.platform_transform_node.GroupNames.value.append("couple_group_" + str(_nav.platform.platform_id))
 
-    # reset when user falls into water
-    if self.platform.sf_abs_mat.value.get_translate().y < -2.0:
-      self.reset()
-
     # handle button inputs #
 
     # Button 0 resets platform

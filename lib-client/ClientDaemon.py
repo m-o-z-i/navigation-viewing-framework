@@ -33,7 +33,9 @@ def init_dlp_wall_tracking():
   _dtrack = avango.daemon.DTrack()
   _dtrack.port = "5002" # ART port at LED wall
   
-  _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron')     # new spheron device
+  _dtrack.stations[19] = avango.daemon.Station('tracking-dlp-new-spheron')     # new spheron device
+
+  _dtrack.stations[1] = avango.daemon.Station('tracking-dlp-glasses-1')
 
   device_list.append(_dtrack)
   print "ART Tracking started at DLP WALL"

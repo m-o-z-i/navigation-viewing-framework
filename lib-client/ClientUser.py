@@ -50,12 +50,13 @@ class ClientUser(avango.script.Script):
   # @param NO_TRACKING_MAT Matrix to be applied if no headtracking of the Oculus Rift is available.
   def add_tracking_reader(self, TRACKING_TARGET_NAME, TRANSMITTER_OFFSET, NO_TRACKING_MAT):
 
+    ## @var TRACKING_TARGET_NAME
+    # The target name of the tracked object as chosen in daemon.
+    self.TRACKING_TARGET_NAME = TRACKING_TARGET_NAME
+
   	## @var headtracking_reader
     # Instance of a child class of ClientTrackingReader to supply translation input.
-    if TRACKING_TARGET_NAME == None:
-      self.headtracking_reader = ClientTrackingDefaultReader()
-      self.headtracking_reader.set_no_tracking_matrix(NO_TRACKING_MAT)
-    else:
+    if self.TRACKING_TARGET_NAME != None:
       self.headtracking_reader = ClientTrackingTargetReader()
       self.headtracking_reader.my_constructor(TRACKING_TARGET_NAME)
       self.headtracking_reader.set_transmitter_offset(TRANSMITTER_OFFSET)
@@ -63,6 +64,9 @@ class ClientUser(avango.script.Script):
   
   ## Evaluated every frame.
   def evaluate(self):
+
+    if self.TRACKING_TARGET_NAME == None:
+      return
    
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/" + self.node_pretext + "_head_" + str(self.user_id)]
 

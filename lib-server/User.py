@@ -162,7 +162,7 @@ class User:
       self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -1.0)
       self.head_transform.Children.value.append(self.coupling_status_node)
     elif self.node_pretext == "wall":
-      self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.2)
+      self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
       self.screen.Children.value.append(self.coupling_status_node)
     else:
       self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.2)

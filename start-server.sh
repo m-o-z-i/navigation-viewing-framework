@@ -25,7 +25,7 @@ export PYTHONPATH="$LOCAL_AVANGO/lib/python2.7":"$LOCAL_AVANGO/examples":$AVANGO
 export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH
 
 # run daemon
-./lib-server/Daemon.py > /dev/null &
+python ./lib-server/Daemon.py > /dev/null &
 
 # get IP of server pc
 IP=$(hostname -I)

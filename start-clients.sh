@@ -34,9 +34,10 @@ HOSTARRAY=($HOSTS)
 
 # launch a client daemon if the client is not the server
 OWNIP=$(hostname -I)
+OWNIP=$(echo $OWNIP | tr -d ' ')
 
 if [ "$OWNIP" != "$1" ]; then
-	./lib-client/ClientDaemon.py > /dev/null &
+	python ./lib-client/ClientDaemon.py > /dev/null &
 fi
 
 # determine platform ids for which this host will be responsible for

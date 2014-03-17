@@ -574,4 +574,4 @@ class NewSpheronDevice(MultiDofDevice):
      
     # forward input once per frame (unless there is no input at all)
     if _flag == True:
-      self.mf_dof.value = [_x,_y,_z,_rx,_ry,_rz,_w]
+      self.mf_dof.value = [_x,_y,_z,_rx,_ry + _w/5,_rz,_w]

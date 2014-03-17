@@ -16,7 +16,7 @@ def set_pipeline_values(PIPELINE):
   PIPELINE.BloomIntensity.value           = 0.1
   PIPELINE.BloomThreshold.value           = 1.0
   PIPELINE.BloomRadius.value              = 10
-  PIPELINE.EnableFXAA.value               = False
+  PIPELINE.EnableFXAA.value               = True
   PIPELINE.EnableFog.value                = True
   PIPELINE.FogStart.value                 = 300.0
   PIPELINE.FogEnd.value                   = 400.0

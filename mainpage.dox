@@ -1,5 +1,5 @@
 /**
-\mainpage Oculus-Powerwall Framework Documentation
+\mainpage Guacamole Navigation Framework Documentation
 
 The Oculus-Powerwall Framework was designed to enable users to create a variety of viewing setups using different input devices and user types in the VR lab at Bauhaus University Weimar. It is based on the rendering framework guacamole. In order to specify a concrete viewing setup within the framework, a XML configuration file is used. 
 
@@ -86,7 +86,7 @@ Usage example: <code><platformrot><yaw>0.0</yaw></platformrot></code>
 This section shows which attributes are needed in order to create a user in the virtual world. The settings must be done in the <user>-tag for each user seperately.
 
 <em><type></em><br>
-A string indicating which type the new user is. To be chosen from "PowerWallUser", "OVRUser" and "DesktopUser".<br>
+A string indicating which type the new user is. To be chosen from "LargePowerWallUser", "SmallPowerWallUser", "OVRUser" and "DesktopUser".<br>
 Usage example: <code><type>DesktopUser</type></code>
 
 <em><headtrackingstation></em><br>

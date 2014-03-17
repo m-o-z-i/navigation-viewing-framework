@@ -399,13 +399,16 @@ class ConfigFileParser:
         # error handling
         if _user_attributes[2] >= _navs_created:
           raise IOError("Navigation number to append to is too large.")
-        elif (_user_attributes[0] != "PowerWallUser") and \
+        elif (_user_attributes[0] != "LargePowerWallUser") and \
+             (_user_attributes[0] != "SmallPowerWallUser") and \
              (_user_attributes[0] != "OVRUser") and \
              (_user_attributes[0] != "DesktopUser"):
           raise IOError("Unknown user type: " + _user_attributes[0])
 
-        if _user_attributes[0] == "PowerWallUser":
-          self.VIEWING_MANAGER.create_powerwall_user(_user_attributes[1], _user_attributes[2], self.transmitter_offset, _user_attributes[3], self.no_tracking_mat)
+        if _user_attributes[0] == "SmallPowerWallUser":
+          self.VIEWING_MANAGER.create_powerwall_user(_user_attributes[1], _user_attributes[2], self.transmitter_offset, _user_attributes[3], self.no_tracking_mat, "small")
+        elif _user_attributes[0] == "LargePowerWallUser":
+          self.VIEWING_MANAGER.create_powerwall_user(_user_attributes[1], _user_attributes[2], self.transmitter_offset, _user_attributes[3], self.no_tracking_mat, "large")
         elif _user_attributes[0] == "OVRUser":
           print "Oculus Rift Messages:"
           print "----------------------"

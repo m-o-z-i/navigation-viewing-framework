@@ -69,7 +69,7 @@ class DesktopUser(User):
     ## @var eye
     # Scenegraph node representing the user's eye.
     self.eye = avango.gua.nodes.TransformNode(Name = "eye")
-    self.eye.Transform.value = avango.gua.make_trans_mat(0, 0, 0)
+    self.eye.Transform.value = avango.gua.make_identity_mat()
 
     # viewing setup
     self.append_to_platform(self.VIEWING_MANAGER.SCENEGRAPH, self.head_transform)

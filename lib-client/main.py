@@ -83,10 +83,15 @@ def start():
       _user = ClientDesktopUser()
       _user.my_constructor(graph, viewer, user_attributes)
  
-    # powerwall user case
-    elif user_attributes[0] == "PowerWallUser":
+    # small powerwall user case
+    elif user_attributes[0] == "SmallPowerWallUser":
       _user = ClientPowerWallUser()
-      _user.my_constructor(graph, viewer, user_attributes)
+      _user.my_constructor(graph, viewer, user_attributes, "small")
+
+    # large powerwall user case
+    elif user_attributes[0] == "LargePowerWallUser":
+      _user = ClientPowerWallUser()
+      _user.my_constructor(graph, viewer, user_attributes, "large")
 
     # ovr user case
     elif user_attributes[0] == "OVRUser":

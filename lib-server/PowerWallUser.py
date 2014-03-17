@@ -30,7 +30,8 @@ class PowerWallUser(User):
   # @param NO_TRACKING_MAT Matrix to be applied if no headtracking of the glasses is available.
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
   # @param AVATAR_MATERIAL Material to be used for the powerwall user's avatar
-  def __init__(self, VIEWING_MANAGER, HEADTRACKING_TARGET_NAME, WALL_USER_ID, PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, AVATAR_MATERIAL):
+  # @param IDENTIFIER String that identifies which powerwall is used ('small' or 'large').
+  def __init__(self, VIEWING_MANAGER, HEADTRACKING_TARGET_NAME, WALL_USER_ID, PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, AVATAR_MATERIAL, IDENTIFIER):
     User.__init__(self, "wall", AVATAR_MATERIAL)
 
     # variables
@@ -60,15 +61,24 @@ class PowerWallUser(User):
 
     ## @var warp_matrices_path
     # Path of the warp matrices to be applied on the rendered image.
-    self.warp_matrices_path   = "/opt/lcd-warpmatrices/"
+    if IDENTIFIER == "large":
+        self.warp_matrices_path = "/opt/dlp-warpmatrices/"
+    else:
+        self.warp_matrices_path = "/opt/lcd-warpmatrices/"
 
     ## @var screen_size
     # Physical screen size of the Powerwall in meters.
-    self.screen_size          = avango.gua.Vec2(3.0, 1.98)   
+    if IDENTIFIER == "large":
+        self.screen_size    = avango.gua.Vec2(4.16, 2.6)
+    else:
+        self.screen_size    = avango.gua.Vec2(3.0, 1.98)
 
     ## @var screen_transform
     # Physical transformation of the screen in meters.
-    self.screen_transform     = avango.gua.make_trans_mat(0.0, 1.42, 0.0)
+    if IDENTIFIER == "large":
+        self.screen_transform = avango.gua.make_trans_mat(0.0, 1.57, 0.0)
+    else:
+        self.screen_transform = avango.gua.make_trans_mat(0.0, 1.42, 0.0)
 
     ## @var transmitter_offset
     # The transmitter offset to be applied.

@@ -171,8 +171,9 @@ class ViewingManager():
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
   # @param WARNINGS Boolean value to determine if the user should be appended to a BorderObserver (i.e. the user is shown warning planes when close to the platform borders)
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
-  def create_powerwall_user(self, TRACKING_TARGET_NAME, PLATFORM_ID, TRANSMITTER_OFFSET, WARNINGS, NO_TRACKING_MAT):
-    _user = PowerWallUser(self, TRACKING_TARGET_NAME, len(self.powerwall_user_list), PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, self.navigation_list[PLATFORM_ID].trace_material)
+  # @param IDENTIFIER String that identifies which powerwall is used ('large' or 'small').
+  def create_powerwall_user(self, TRACKING_TARGET_NAME, PLATFORM_ID, TRANSMITTER_OFFSET, WARNINGS, NO_TRACKING_MAT, IDENTIFIER):
+    _user = PowerWallUser(self, TRACKING_TARGET_NAME, len(self.powerwall_user_list), PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, self.navigation_list[PLATFORM_ID].trace_material, IDENTIFIER)
     self.powerwall_user_list.append(_user)
 
     # init border checker to warn user on platform

@@ -16,12 +16,6 @@ from ClientTrackingReader import *
 # Not to be instantiated.
 class ClientUser(avango.script.Script):
 
-	## @var sf_graph_head_mat
-  # Transform field of the user's head in the scenegraph.
-  # Used to check when it was changed in order to avoid latencies.
-  sf_graph_head_mat = avango.gua.SFMatrix4()
-  sf_graph_head_mat.value = avango.gua.make_identity_mat()
-
   ## Default constructor.
   def __init__(self):
   	self.super(ClientUser).__init__()
@@ -66,23 +60,18 @@ class ClientUser(avango.script.Script):
       self.headtracking_reader.my_constructor(TRACKING_TARGET_NAME)
       self.headtracking_reader.set_transmitter_offset(TRANSMITTER_OFFSET)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
-
-    self.sf_graph_head_mat.connect_from(self.headtracking_reader.sf_abs_mat)
   
   ## Evaluated every frame.
   def evaluate(self):
-<<<<<<< HEAD
-    pass
-    #_node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/" + self.node_pretext +"_head_" + str(self.user_id)]
 
-    #if _node_to_update != None:
-    #  _node_to_update.Transform.value = self.headtracking_reader.sf_abs_mat.value
-=======
-   
-    pass
- 
-    #_node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/" + self.node_pretext +"_head_" + str(self.user_id)]
+    _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/" + self.node_pretext + "_head_" + str(self.user_id)]
 
-    #if _node_to_update != None:
-      #_node_to_update.Transform.value = self.headtracking_reader.sf_abs_mat.value
->>>>>>> master
+    if _node_to_update != None:
+
+      if self.node_pretext == "ovr":
+        _vec = self.headtracking_reader.sf_abs_mat.value.get_translate()
+        _mat = _node_to_update.Transform.value
+        _mat.set_translate(_vec)
+        _node_to_update.Transform.value = _mat
+      else:
+        _node_to_update.Transform.value = self.headtracking_reader.sf_abs_mat.value

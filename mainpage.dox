@@ -1,5 +1,5 @@
 /**
-\mainpage Guacamole Navigation Framework Documentation
+\mainpage Guacamole Navigation and Viewing Framework Documentation
 
 The Oculus-Powerwall Framework was designed to enable users to create a variety of viewing setups using different input devices and user types in the VR lab at Bauhaus University Weimar. It is based on the rendering framework guacamole. In order to specify a concrete viewing setup within the framework, a XML configuration file is used. 
 

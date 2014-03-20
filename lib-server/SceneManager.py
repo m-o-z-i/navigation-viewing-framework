@@ -167,7 +167,7 @@ class SceneManager:
     self.water_updater.TimeIn.connect_from(self.timer.Time)
     
 
-    
+    '''
     # create ship
     self.ship_transform = avango.gua.nodes.TransformNode(Name = 'ship_transform')
     self.ship_transform.Transform.value = avango.gua.make_trans_mat(0, 2.2, 33) * avango.gua.make_scale_mat(7, 7, 7)
@@ -194,6 +194,7 @@ class SceneManager:
     self.plank_transform.Transform.connect_from(self.swaying_updater.SFRotMat)
     self.plank_transform.Children.value.append(self.plank)
     NET_TRANS_NODE.Children.value.append(self.plank_transform)
+    '''
     
     
 

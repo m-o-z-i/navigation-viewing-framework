@@ -2,12 +2,12 @@
 <!DOCTYPE setup SYSTEM "config.dtd">
 
 <setup>
-  
+
   <global>
     
     <transmitteroffset>
       <x>0.0</x>
-      <y>0.0043</y>
+      <y>0.043</y>
       <z>1.6</z>
     </transmitteroffset>
 
@@ -22,11 +22,85 @@
       <raystartheight>0.75</raystartheight>
     </groundfollowing>
 
-    <animatecoupling>True</animatecoupling>
     <movementtraces>True</movementtraces>
+    <animatecoupling>True</animatecoupling>
 
   </global>
-  
+
+  <device>
+
+    <hostname>nestor</hostname>
+
+    <type>XBoxController</type>
+
+    <inputsensor>device-xbox-1</inputsensor>
+
+    <trackingstation>tracking-oculus-front</trackingstation>
+
+    <platformpos>
+      <x>-2.0</x>
+      <y>0.0</y>
+      <z>12.0</z>
+    </platformpos>
+
+    <platformrot>
+      <yaw>0.0</yaw>
+    </platformrot>
+
+    <platformsize>
+      <width>3.8</width>
+      <depth>3.6</depth>
+    </platformsize>
+
+  </device>
+
+  <device>
+
+    <hostname>nestor</hostname>
+
+    <type>XBoxController</type>
+
+    <inputsensor>device-xbox-2</inputsensor>
+
+    <trackingstation>tracking-oculus-stripe</trackingstation>
+
+    <platformpos>
+      <x>2.0</x>
+      <y>0.0</y>
+      <z>12.0</z>
+    </platformpos>
+
+    <platformrot>
+      <yaw>0.0</yaw>
+    </platformrot>
+
+    <platformsize>
+      <width>3.8</width>
+      <depth>3.6</depth>
+    </platformsize>
+
+  </device>
+
+  <device>
+
+    <hostname>atalante</hostname>
+
+    <type>Spacemouse</type>
+
+    <inputsensor>device-spacemouse</inputsensor>
+
+    <platformpos>
+      <x>0.0</x>
+      <y>0.0</y>
+      <z>16.0</z>
+    </platformpos>
+
+    <platformrot>
+      <yaw>0.0</yaw>
+    </platformrot>
+
+  </device>
+
   <device>
 
     <hostname>kerberos</hostname>
@@ -54,86 +128,14 @@
 
   </device>
 
-  <device>
+        
+  <!-- First OVR User -->
 
-    <hostname>orestes</hostname>
-
-    <type>Spacemouse</type>
-
-    <inputsensor>device-spacemouse</inputsensor>
-
-    <platformpos>
-      <x>2.0</x>
-      <y>0.0</y>
-      <z>12.0</z>
-    </platformpos>
-
-    <platformrot>
-      <yaw>0.0</yaw>
-    </platformrot>
-
-  </device>
-
-  <device>
-
-    <hostname>nestor</hostname>
-
-    <type>XBoxController</type>
-
-    <inputsensor>device-xbox-1</inputsensor>
-
-    <trackingstation>tracking-oculus-front</trackingstation>
-
-    <platformpos>
-      <x>-2.0</x>
-      <y>0.0</y>
-      <z>15.0</z>
-    </platformpos>
-
-    <platformrot>
-      <yaw>0.0</yaw>
-    </platformrot>
-
-    <platformsize>
-      <width>3.8</width>
-      <depth>3.6</depth>
-    </platformsize>
-
-  </device>
-
-  <device>
-
-    <hostname>nestor</hostname>
-
-    <type>XBoxController</type>
-
-    <inputsensor>device-xbox-2</inputsensor>
-
-    <trackingstation>tracking-oculus-stag</trackingstation>
-
-    <platformpos>
-      <x>2.0</x>
-      <y>0.0</y>
-      <z>15.0</z>
-    </platformpos>
-
-    <platformrot>
-      <yaw>0.0</yaw>
-    </platformrot>
-
-    <platformsize>
-      <width>3.8</width>
-      <depth>3.6</depth>
-    </platformsize>
-
-  </device>
-
-  <!-- Power Wall User on kerberos -->
   <user>
 
-    <type>LargePowerWallUser</type>
+    <type>OVRUser</type>
 
-    <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
+    <headtrackingstation>tracking-oculus-front</headtrackingstation>
 
     <startplatform>0</startplatform>
 
@@ -143,13 +145,29 @@
 
   </user>
 
-  <!-- Desktop User on orestes -->
+  <!-- Second OVR User -->
 
+  <user>
+
+    <type>OVRUser</type>
+
+    <headtrackingstation>tracking-oculus-stripe</headtrackingstation>
+
+    <startplatform>1</startplatform>
+
+    <warnings>True</warnings>
+
+    <display>:0.1</display>
+
+  </user>
+
+  <!-- First Desktop User -->
+  
   <user>
 
     <type>DesktopUser</type>
 
-    <startplatform>1</startplatform>
+    <startplatform>2</startplatform>
 
     <windowsize>
       <width>1920</width>
@@ -165,38 +183,20 @@
 
   </user>
 
-  <!-- First OVR User on nestor -->
-  
+
+  <!-- First Power Wall User -->
   <user>
 
-    <type>OVRUser</type>
+    <type>LargePowerWallUser</type>
 
-    <headtrackingstation>tracking-oculus-front</headtrackingstation>
-
-    <startplatform>2</startplatform>
-
-    <warnings>True</warnings>
-    
-    <display>:0.0</display>
-
-  </user>
-
-  <!-- Second OVR User on nestor -->
-  
-  <user>
-
-    <type>OVRUser</type>
-
-    <headtrackingstation>tracking-oculus-stag</headtrackingstation>
+    <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
     <startplatform>3</startplatform>
 
     <warnings>True</warnings>
-    
+
     <display>:0.0</display>
 
   </user>
-  
-   
 
 </setup>

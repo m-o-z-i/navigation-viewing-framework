@@ -85,8 +85,7 @@ class BorderObserver(avango.script.Script):
    
       if self.checked_borders[2]:
         # toggle front border visibility
-        # old setting _pos.z < 0.0
-        if _pos.z < self.platform_depth/2 + self.warning_tolerance:
+        if _pos.z < 0.0 + self.warning_tolerance:
           _front_plane_visible = True
 
       if self.checked_borders[3]:

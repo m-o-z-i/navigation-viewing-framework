@@ -7,7 +7,7 @@
     
     <transmitteroffset>
       <x>0.0</x>
-      <y>0.0043</y>
+      <y>0.043</y>
       <z>1.6</z>
     </transmitteroffset>
 
@@ -38,6 +38,33 @@
     <trackingstation>tracking-oculus-front</trackingstation>
 
     <platformpos>
+      <x>-2.0</x>
+      <y>0.0</y>
+      <z>12.0</z>
+    </platformpos>
+
+    <platformrot>
+      <yaw>0.0</yaw>
+    </platformrot>
+
+    <platformsize>
+      <width>3.8</width>
+      <depth>3.6</depth>
+    </platformsize>
+
+  </device>
+
+  <device>
+
+    <hostname>nestor</hostname>
+
+    <type>XBoxController</type>
+
+    <inputsensor>device-xbox-2</inputsensor>
+
+    <trackingstation>tracking-oculus-stag</trackingstation>
+
+    <platformpos>
       <x>2.0</x>
       <y>0.0</y>
       <z>12.0</z>
@@ -54,6 +81,7 @@
 
   </device>
 
+
         
   <!-- First OVR User -->
 
@@ -65,11 +93,24 @@
 
     <startplatform>0</startplatform>
 
-    <warnings>False</warnings>
+    <warnings>True</warnings>
 
     <display>:0.0</display>
 
   </user>
 
+  <user>
+
+    <type>OVRUser</type>
+
+    <headtrackingstation>tracking-oculus-stag</headtrackingstation>
+
+    <startplatform>1</startplatform>
+
+    <warnings>True</warnings>
+
+    <display>:0.1</display>
+
+  </user>
 
 </setup>

@@ -66,7 +66,7 @@ class Platform(avango.script.Script):
                                                          'data/materials/PlatformBorder.gmd',
                                                          avango.gua.LoaderFlags.DEFAULTS)
 
-    self.left_border.Transform.value = avango.gua.make_trans_mat(-self.width/2, 1.0, self.depth * 0.75) * \
+    self.left_border.Transform.value = avango.gua.make_trans_mat(-self.width/2, 1.0, self.depth/2) * \
                                        avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                        avango.gua.make_rot_mat(270, 0, 0, 1) * \
                                        avango.gua.make_scale_mat(self.depth, 1, 2)
@@ -79,7 +79,7 @@ class Platform(avango.script.Script):
                                                          'data/objects/plane.obj',
                                                          'data/materials/PlatformBorder.gmd',
                                                          avango.gua.LoaderFlags.DEFAULTS)
-    self.right_border.Transform.value = avango.gua.make_trans_mat(self.width/2, 1.0, self.depth * 0.75) * \
+    self.right_border.Transform.value = avango.gua.make_trans_mat(self.width/2, 1.0, self.depth/2) * \
                                         avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                         avango.gua.make_rot_mat(90, 0, 0, 1) * \
                                         avango.gua.make_scale_mat(self.depth, 1, 2)

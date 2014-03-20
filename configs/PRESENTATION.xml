@@ -38,9 +38,9 @@
     <trackingstation>tracking-oculus-front</trackingstation>
 
     <platformpos>
-      <x>-2.0</x>
+      <x>0.6</x>
       <y>0.0</y>
-      <z>12.0</z>
+      <z>18.0</z>
     </platformpos>
 
     <platformrot>
@@ -65,13 +65,13 @@
     <trackingstation>tracking-oculus-stripe</trackingstation>
 
     <platformpos>
-      <x>2.0</x>
+      <x>-8.0</x>
       <y>0.0</y>
-      <z>12.0</z>
+      <z>19.4</z>
     </platformpos>
 
     <platformrot>
-      <yaw>0.0</yaw>
+      <yaw>-90.0</yaw>
     </platformrot>
 
     <platformsize>
@@ -90,13 +90,13 @@
     <inputsensor>device-spacemouse</inputsensor>
 
     <platformpos>
-      <x>0.0</x>
-      <y>0.0</y>
-      <z>16.0</z>
+      <x>1.9</x>
+      <y>1.2</y>
+      <z>30.1</z>
     </platformpos>
 
     <platformrot>
-      <yaw>0.0</yaw>
+      <yaw>90.0</yaw>
     </platformrot>
 
   </device>
@@ -112,13 +112,13 @@
     <trackingstation>tracking-new-spheron</trackingstation>
 
     <platformpos>
-      <x>-2.0</x>
-      <y>0.0</y>
-      <z>12.0</z>
+      <x>-10.0</x>
+      <y>2.6</y>
+      <z>7.5</z>
     </platformpos>
 
     <platformrot>
-      <yaw>0.0</yaw>
+      <yaw>90.0</yaw>
     </platformrot>
 
     <platformsize>

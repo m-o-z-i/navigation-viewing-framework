@@ -82,6 +82,8 @@ class Trace:
     for _line in self.lines:
       _line.Transform.value = _clear_transform_mat
 
+    self.crrnt_point = CURRENT_MAT.get_translate()
+
   ## Update function that updates the point list whenever the time_offset was reached.
   def update(self, ABS_MAT):
 

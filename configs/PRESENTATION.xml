@@ -170,13 +170,13 @@
     <startplatform>2</startplatform>
 
     <windowsize>
-      <width>1920</width>
-      <height>1080</height>
+      <width>1280</width>
+      <height>800</height>
     </windowsize>
 
     <screensize>
-      <width>1.6</width>
-      <height>1.0</height>
+      <width>1.06</width>
+      <height>0.74</height>
     </screensize>
 
     <display>:0.0</display>

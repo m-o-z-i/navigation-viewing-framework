@@ -150,6 +150,24 @@ class SceneManager:
                                                   avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.MAKE_PICKABLE)
     self.town.Transform.value = avango.gua.make_scale_mat(7.5, 7.5, 7.5)
     NET_TRANS_NODE.Children.value.append(self.town)
+
+    # create marketbooth
+    self.marketbooth_trans = avango.gua.nodes.TransformNode(Name = 'marketbooth_trans')
+    self.marketbooth = LOADER.create_geometry_from_file( 'marketbooth',
+                                                         'data/objects/marketbooth/market_booth.obj',
+                                                         'data/materials/Stones.gmd',
+                                                         avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.marketbooth_trans.Children.value.append(self.marketbooth)
+
+    self.apple = LOADER.create_geometry_from_file( 'apple',
+                                                   'data/objects/apfel/apfel.obj',
+                                                   'data/materials/Stones.gmd',
+                                                   avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.apple.Transform.value = avango.gua.make_trans_mat(0, 1.4, 0.4)
+    self.marketbooth_trans.Children.value.append(self.apple)
+
+    self.marketbooth_trans.Transform.value = avango.gua.make_trans_mat(2.6, 0.0, -5.0) * avango.gua.make_rot_mat(-30, 0, 1, 0) * avango.gua.make_scale_mat(0.5, 0.6, 0.6)
+    NET_TRANS_NODE.Children.value.append(self.marketbooth_trans)
     
 
     # create water
@@ -201,10 +219,10 @@ class SceneManager:
     self.sun = avango.gua.nodes.SpotLightNode( Name = "sun",
                                               Color = avango.gua.Color(1.0, 0.7, 0.5),
                                               EnableShadows = True,
-                                              EnableGodrays = True,
+                                              EnableGodrays = False,
                                               EnableDiffuseShading = True,
                                               EnableSpecularShading = True,
-                                              ShadowMapSize = 4096,
+                                              ShadowMapSize = 2048,
                                               ShadowOffset = 0.008
                                         )
     self.sun.Transform.value =  avango.gua.make_trans_mat(-2, 70, 20) *\

@@ -163,12 +163,27 @@ class SceneManager:
                                                    'data/objects/apfel/apfel.obj',
                                                    'data/materials/Stones.gmd',
                                                    avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.apple.Transform.value = avango.gua.make_trans_mat(0, 1.4, 0.4)
+    self.apple.Transform.value = avango.gua.make_trans_mat(-0.9, 1.4, 0.4)
     self.marketbooth_trans.Children.value.append(self.apple)
 
     self.marketbooth_trans.Transform.value = avango.gua.make_trans_mat(2.6, 0.0, -5.0) * avango.gua.make_rot_mat(-30, 0, 1, 0) * avango.gua.make_scale_mat(0.5, 0.6, 0.6)
+   
+    self.banana =  LOADER.create_geometry_from_file( 'banana',
+                                                     'data/objects/bananas/Bananas.obj',
+                                                     'data/materials/Stones.gmd',
+                                                     avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.banana.Transform.value = avango.gua.make_trans_mat(0, 1.65, 0.5) * avango.gua.make_rot_mat(-75, 0, 1, 0) * avango.gua.make_scale_mat(0.15, 0.15, 0.15)
+
+    self.banana2 =  LOADER.create_geometry_from_file( 'banana2',
+                                                     'data/objects/bananas/Bananas.obj',
+                                                     'data/materials/Stones.gmd',
+                                                     avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.banana2.Transform.value = avango.gua.make_trans_mat(0, 1.65, 0.1) * avango.gua.make_rot_mat(-75, 0, 1, 0) * avango.gua.make_scale_mat(0.15, 0.15, 0.15)
+
+    self.marketbooth_trans.Children.value.append(self.banana)
+    self.marketbooth_trans.Children.value.append(self.banana2) 
+
     NET_TRANS_NODE.Children.value.append(self.marketbooth_trans)
-    
 
     # create water
     

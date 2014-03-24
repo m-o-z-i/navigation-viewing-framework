@@ -95,6 +95,7 @@ def parse(CONFIG_FILE, PLATFORM_ID):
         _current_line = _current_line.rstrip()
         _transmitter_z = float(_current_line)
         _user_attributes[9] = avango.gua.make_trans_mat(_transmitter_x, _transmitter_y, _transmitter_z)
+        _transmitter_offset = _user_attributes[9]
 
       # get end of transmitter offset values
       if _current_line.startswith("</transmitteroffset>"):
@@ -119,6 +120,7 @@ def parse(CONFIG_FILE, PLATFORM_ID):
         _current_line = _current_line.rstrip()
         _no_tracking_z = float(_current_line)
         _user_attributes[10] = avango.gua.make_trans_mat(_no_tracking_x, _no_tracking_y, _no_tracking_z)
+        _no_tracking_mat = _user_attributes[10]
 
       # get end of no tracking position values
       if _current_line.startswith("</notrackingposition>"):
@@ -200,7 +202,7 @@ def parse(CONFIG_FILE, PLATFORM_ID):
       _in_user = False
 
       # find out user id and increment counters
-      if _user_attributes[0] == "PowerWallUser":
+      if _user_attributes[0] == "LargePowerWallUser" or _user_attributes[0] == "SmallPowerWallUser":
         _user_attributes[7] = _powerwall_count
         _powerwall_count += 1
       elif _user_attributes[0] == "OVRUser":
@@ -216,7 +218,7 @@ def parse(CONFIG_FILE, PLATFORM_ID):
       if int(_user_attributes[2]) == int(PLATFORM_ID):
         _user_list.append(list(_user_attributes))
 
-      _user_attributes = [None, None, None, 0, 0, 0, 0, 0, ":0.0", avango.gua.make_identity_mat(), avango.gua.make_trans_mat(0.0, 1.5, 1.0)]
+      _user_attributes = [None, None, None, 0, 0, 0, 0, 0, ":0.0", _transmitter_offset, _no_tracking_mat]
       _current_line = get_next_line_in_file(_config_file)
       continue
 

@@ -18,10 +18,10 @@ def set_pipeline_values(PIPELINE):
   PIPELINE.BloomRadius.value              = 10
   PIPELINE.EnableFXAA.value               = True
   PIPELINE.EnableFog.value                = True
-  PIPELINE.FogStart.value                 = 300.0
-  PIPELINE.FogEnd.value                   = 400.0
+  PIPELINE.FogStart.value                 = 150.0
+  PIPELINE.FogEnd.value                   = 200.0
   PIPELINE.EnableFrustumCulling.value     = False
-  PIPELINE.AmbientColor.value             = avango.gua.Color(0.2, 0.2, 0.2)
+  PIPELINE.AmbientColor.value             = avango.gua.Color(0.3, 0.3, 0.3)
   PIPELINE.FarClip.value                  = 800.0
   PIPELINE.EnableBackfaceCulling.value    = False
   PIPELINE.EnableSsao.value               = True

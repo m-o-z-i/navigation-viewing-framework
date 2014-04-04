@@ -228,27 +228,10 @@ class SceneManager:
     self.plank_transform.Children.value.append(self.plank)
     NET_TRANS_NODE.Children.value.append(self.plank_transform)
     
-    
-
-    # create sun
-    self.sun = avango.gua.nodes.SpotLightNode( Name = "sun",
-                                              Color = avango.gua.Color(1.0, 0.7, 0.5),
-                                              EnableShadows = True,
-                                              EnableGodrays = False,
-                                              EnableDiffuseShading = True,
-                                              EnableSpecularShading = True,
-                                              ShadowMapSize = 2048,
-                                              ShadowOffset = 0.008
-                                        )
-    self.sun.Transform.value =  avango.gua.make_trans_mat(-2, 70, 20) *\
-                                avango.gua.make_rot_mat(-80, 1, 0, 0) *\
-                                avango.gua.make_scale_mat(500, 700, 500)
-
-    '''
     # commented out because SunLightNode is not distributable yet, so we use the SpotLightNode above instead
     self.sun = avango.gua.nodes.SunLightNode( Name = "sun",
                                               Color = avango.gua.Color(1.0, 0.7, 0.5),
-                                              EnableShadows = False,
+                                              EnableShadows = True,
                                               EnableGodrays = True,
                                               EnableDiffuseShading = True,
                                               EnableSpecularShading = True,
@@ -260,5 +243,5 @@ class SceneManager:
     self.day_updater.TimeIn.connect_from(self.timer.Time)
     self.sun.Transform.connect_from(self.day_updater.sf_sun_mat)
     self.sun.Color.connect_from(self.day_updater.sf_sun_color)
-    '''
+    
     NET_TRANS_NODE.Children.value.append(self.sun)

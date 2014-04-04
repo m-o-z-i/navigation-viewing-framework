@@ -27,6 +27,6 @@ def set_pipeline_values(PIPELINE):
   PIPELINE.EnableSsao.value               = True
   PIPELINE.SsaoRadius.value               = 2.0
   PIPELINE.SsaoIntensity.value            = 2.0
-  PIPELINE.EnableFPSDisplay.value         = False
+  PIPELINE.EnableFPSDisplay.value         = True
   PIPELINE.BackgroundMode.value           = avango.gua.BackgroundMode.SKYMAP_TEXTURE
   PIPELINE.FogTexture.value               = PIPELINE.BackgroundTexture.value

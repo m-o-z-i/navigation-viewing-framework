@@ -24,12 +24,12 @@ class DesktopUser(User):
 
   ## Custom constructor.
   # @param VIEWING_MANAGER Reference to the ViewingManager instance from which the user is created.
-  # @param DESKTOP_USER_ID Identification number of the OVRUser to be created, starting from 0.
+  # @param USER_ID Identification number of the user to be created, starting from 0.
   # @param PLATFORM_ID Platform to append the constructed OVRUser to.
   # @param WINDOW_SIZE Resolution of the window to be created on the display. [width, height]
   # @param SCREEN_SIZE Physical width of the screen space to be rendered on in meters. [width, height]
   # @param AVATAR_MATERIAL Material to be used for the desktop user's avatar
-  def __init__(self, VIEWING_MANAGER, DESKTOP_USER_ID, PLATFORM_ID, WINDOW_SIZE, SCREEN_SIZE, AVATAR_MATERIAL):
+  def __init__(self, VIEWING_MANAGER, USER_ID, PLATFORM_ID, WINDOW_SIZE, SCREEN_SIZE, AVATAR_MATERIAL):
     User.__init__(self, "desktop", AVATAR_MATERIAL)
 
     ## @var VIEWING_MANAGER
@@ -42,7 +42,7 @@ class DesktopUser(User):
 
     ## @var id
     # Identification number of the DesktopUser, starting from 0.
-    self.id = DESKTOP_USER_ID
+    self.id = USER_ID
 
     ## @var platform_id
     # ID number of the platform the user is belonging to.

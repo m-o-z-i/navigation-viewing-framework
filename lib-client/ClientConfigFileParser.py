@@ -20,9 +20,7 @@ def parse(CONFIG_FILE, PLATFORM_ID):
   _in_global = False
 
   _user_list = []
-  _powerwall_count = 0
-  _desktop_count = 0
-  _ovr_count = 0
+  _user_count = 0
 
   _user_attributes = [None, None, None, 0, 0, 0, 0, 0, ":0.0", avango.gua.make_identity_mat(), avango.gua.make_trans_mat(0.0, 1.5, 1.0)]
 
@@ -202,17 +200,8 @@ def parse(CONFIG_FILE, PLATFORM_ID):
       _in_user = False
 
       # find out user id and increment counters
-      if _user_attributes[0] == "LargePowerWallUser" or _user_attributes[0] == "SmallPowerWallUser":
-        _user_attributes[7] = _powerwall_count
-        _powerwall_count += 1
-      elif _user_attributes[0] == "OVRUser":
-        _user_attributes[7] = _ovr_count
-        _ovr_count += 1
-      elif _user_attributes[0] == "DesktopUser":
-        _user_attributes[7] = _desktop_count
-        _desktop_count += 1
-      else:
-        print "Error: Unknown user type"
+      _user_attributes[7] = _user_count
+      _user_count += 1
 
       # append user to list if he belongs to platform responsible for
       if int(_user_attributes[2]) == int(PLATFORM_ID):

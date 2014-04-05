@@ -29,26 +29,16 @@ class StatusManager(avango.script.Script):
 
   ## Custom constructor.
   # @param NET_TRANS_NODE Reference to the net transformation node for distribution.
-  # @param OVR_USER_LIST Reference to the list containing all OVR users in the setup.
-  # @param DESKTOP_USER_LIST Reference to the list containing all desktop users in the setup.
-  # @param POWERWALL_USER_LIST Reference to the list containing all powerwall users in the setup.
-  def my_constructor(self, NET_TRANS_NODE, OVR_USER_LIST, DESKTOP_USER_LIST, POWERWALL_USER_LIST):
+  # @param USER_LIST Reference to the list containing all users in the setup.
+  def my_constructor(self, NET_TRANS_NODE, USER_LIST):
 
     ## @var NET_TRANS_NODE
     # Reference to the net transformation node for distribution.
     self.NET_TRANS_NODE = NET_TRANS_NODE
 
-    ## @var OVR_USER_LIST
-    # Reference to the list containing all OVR users in the setup.
-    self.OVR_USER_LIST = OVR_USER_LIST
-
-    ## @var DESKTOP_USER_LIST
-    # Reference to the list containing all desktop users in the setup.
-    self.DESKTOP_USER_LIST = DESKTOP_USER_LIST
-
-    ## @var POWERWALL_USER_LIST
-    # Reference to the list containing all powerwall users in the setup.
-    self.POWERWALL_USER_LIST = POWERWALL_USER_LIST
+    ## @var USER_LIST
+    # Reference to the list containing all users in the setup.
+    self.USER_LIST = USER_LIST
 
     # set evaluation policy
     self.always_evaluate(True)
@@ -56,11 +46,8 @@ class StatusManager(avango.script.Script):
   ## Checks which users are on a specific platform and switches their coupling plane to visible
   # @param PLATFORM_ID The platform's id on which the users should be notified.
   def show_coupling_plane(self, PLATFORM_ID):
-
-    # combine user lists
-    _user_list = self.OVR_USER_LIST + self.DESKTOP_USER_LIST + self.POWERWALL_USER_LIST
     
-    for _user in _user_list:
+    for _user in self.USER_LIST:
       if _user.platform_id == PLATFORM_ID:
         
         # if user is in watchlist, remove it as a new plane is displayed
@@ -78,10 +65,7 @@ class StatusManager(avango.script.Script):
   # @param PLATFORM_ID The platform's id on which the user's coupling plane should be disabled.
   def hide_coupling_plane(self, PLATFORM_ID):
 
-    # combine user lists
-    _user_list = self.OVR_USER_LIST + self.DESKTOP_USER_LIST + self.POWERWALL_USER_LIST
-
-    for _user in _user_list:
+    for _user in self.USER_LIST:
       if _user.platform_id == PLATFORM_ID:
         _user.coupling_plane_node.GroupNames.value[0] = "do_not_display_group"
 
@@ -92,11 +76,8 @@ class StatusManager(avango.script.Script):
 
     _loader = avango.gua.nodes.GeometryLoader()
 
-    # combine user lists
-    _user_list = self.OVR_USER_LIST + self.DESKTOP_USER_LIST + self.POWERWALL_USER_LIST
-
     # check for every user that could be updated
-    for _user in _user_list:
+    for _user in self.USER_LIST:
 
       # if the user is on a platform
       for _nav_1 in COUPLED_NAVIGATION_LIST:
@@ -133,10 +114,9 @@ class StatusManager(avango.script.Script):
   def remove_from_coupling_display(self, NAVIGATION):
 
     _loader = avango.gua.nodes.GeometryLoader()
-    _user_list = self.OVR_USER_LIST + self.DESKTOP_USER_LIST + self.POWERWALL_USER_LIST
 
     # check for every user that could be updated
-    for _user in _user_list:
+    for _user in self.USER_LIST:
 
       # if the user is on NAVIGATION's platform, simply remove all notifiers but the own color notifier
       if _user.platform_id == NAVIGATION.platform.platform_id:

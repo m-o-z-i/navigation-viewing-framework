@@ -58,17 +58,9 @@ class ViewingManager():
     self.NET_TRANS_NODE = NET_TRANS_NODE
 
     # variables
-    ## @var powerwall_user_list
-    # List of all created PowerWallUser instances.
-    self.powerwall_user_list  = []
-
-    ## @var ovr_user_list
-    # List of all created OVRUser instances.
-    self.ovr_user_list        = []
-
-    ## @var desktop_user_list
-    # List of all created DesktopUser instances.
-    self.desktop_user_list        = []
+    ## @var user_list
+    # List of all created user instances.
+    self.user_list  = []
 
     ## @var navigation_list
     # List of all created Navigation instances.
@@ -81,7 +73,7 @@ class ViewingManager():
     ## @var status_manager
     # A StatusManager instance in order to arrange the user display for the different stati.
     self.status_manager = StatusManager()
-    self.status_manager.my_constructor(self.NET_TRANS_NODE, self.ovr_user_list, self.desktop_user_list, self.powerwall_user_list)
+    self.status_manager.my_constructor(self.NET_TRANS_NODE, self.user_list)
 
     # create file parser and load file
     ## @var config_file_parser
@@ -173,8 +165,8 @@ class ViewingManager():
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param IDENTIFIER String that identifies which powerwall is used ('large' or 'small').
   def create_powerwall_user(self, TRACKING_TARGET_NAME, PLATFORM_ID, TRANSMITTER_OFFSET, WARNINGS, NO_TRACKING_MAT, IDENTIFIER):
-    _user = PowerWallUser(self, TRACKING_TARGET_NAME, len(self.powerwall_user_list), PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, self.navigation_list[PLATFORM_ID].trace_material, IDENTIFIER)
-    self.powerwall_user_list.append(_user)
+    _user = PowerWallUser(self, TRACKING_TARGET_NAME, len(self.user_list), PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, self.navigation_list[PLATFORM_ID].trace_material, IDENTIFIER)
+    self.user_list.append(_user)
 
     # init border checker to warn user on platform
     if WARNINGS:
@@ -190,8 +182,8 @@ class ViewingManager():
   # @param WARNINGS Boolean value to determine if the user should be appended to a BorderObserver (i.e. the user is shown warning planes when close to the platform borders)
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   def create_ovr_user(self, TRACKING_TARGET_NAME, PLATFORM_ID, WARNINGS, NO_TRACKING_MAT):
-    _user = OVRUser(self, TRACKING_TARGET_NAME, len(self.ovr_user_list), PLATFORM_ID, NO_TRACKING_MAT, self.navigation_list[PLATFORM_ID].trace_material)
-    self.ovr_user_list.append(_user)
+    _user = OVRUser(self, TRACKING_TARGET_NAME, len(self.user_list), PLATFORM_ID, NO_TRACKING_MAT, self.navigation_list[PLATFORM_ID].trace_material)
+    self.user_list.append(_user)
    
     # init border checker to warn user on platform
     if WARNINGS:
@@ -206,8 +198,8 @@ class ViewingManager():
   # @param WINDOW_SIZE Resolution of the window to be created on the display. [width, height]
   # @param SCREEN_SIZE Physical width of the screen space to be rendered on in meters. [width, height]
   def create_desktop_user(self, PLATFORM_ID, WINDOW_SIZE, SCREEN_SIZE):
-    _user = DesktopUser(self, len(self.desktop_user_list), PLATFORM_ID, WINDOW_SIZE, SCREEN_SIZE, self.navigation_list[PLATFORM_ID].trace_material)
-    self.desktop_user_list.append(_user)
+    _user = DesktopUser(self, len(self.user_list), PLATFORM_ID, WINDOW_SIZE, SCREEN_SIZE, self.navigation_list[PLATFORM_ID].trace_material)
+    self.user_list.append(_user)
    
 
   ## Creates a BorderObserver instance for a Platform and adds a User to it.

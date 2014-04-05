@@ -33,11 +33,11 @@ class OVRUser(User):
   ## Custom constructor.
   # @param VIEWING_MANAGER Reference to the ViewingManager instance from which the user is created.
   # @param HEADTRACKING_TARGET_NAME Name of the Oculus Rift's tracking target as chosen in daemon.
-  # @param OVR_USER_ID Identification number of the OVRUser to be created, starting from 0.
+  # @param USER_ID Identification number of the user to be created, starting from 0.
   # @param PLATFORM_ID Platform to append the constructed OVRUser to.
   # @param NO_TRACKING_MAT Matrix to be applied if no headtracking of the Oculus Rift is available.
   # @param AVATAR_MATERIAL Material to be used for the OVR user's avatar
-  def __init__(self, VIEWING_MANAGER, HEADTRACKING_TARGET_NAME, OVR_USER_ID, PLATFORM_ID, NO_TRACKING_MAT, AVATAR_MATERIAL):
+  def __init__(self, VIEWING_MANAGER, HEADTRACKING_TARGET_NAME, USER_ID, PLATFORM_ID, NO_TRACKING_MAT, AVATAR_MATERIAL):
     User.__init__(self, "ovr", AVATAR_MATERIAL)
 
     ## @var VIEWING_MANAGER
@@ -46,7 +46,7 @@ class OVRUser(User):
 
     ## @var id
     # Identification number of the OVRUser, starting from 0.
-    self.id = OVR_USER_ID
+    self.id = USER_ID
 
     ## @var platform_id
     # ID number of the platform the user is belonging to.
@@ -92,7 +92,7 @@ class OVRUser(User):
     ## @var tracking_rotation_combiner
     # Instance of TrackingRotationCombiner to determine the user's position on the platform.
     self.tracking_rotation_combiner = TrackingRotationCombiner()
-    self.tracking_rotation_combiner.my_constructor(self.id, HEADTRACKING_TARGET_NAME, NO_TRACKING_MAT)
+    self.tracking_rotation_combiner.my_constructor(HEADTRACKING_TARGET_NAME, NO_TRACKING_MAT)
     self.head_transform.Transform.connect_from(self.tracking_rotation_combiner.sf_combined_mat)
 
     # create avatar representation
@@ -114,21 +114,25 @@ class TrackingRotationCombiner(avango.script.Script):
   # Combination of rotation and translation input.
   sf_combined_mat = avango.gua.SFMatrix4()
   sf_combined_mat.value = avango.gua.make_identity_mat()
+
+  ## @var ovr_users_registered
+  # Static count of OVR users in order to match them to the input sensors.
+  ovr_users_registered = 0
   
   ## Default constructor.
   def __init__(self):
     self.super(TrackingRotationCombiner).__init__()
 
   ## Custom constructor.
-  # @param OVR_USER_ID Identification number of the OVRUser.
   # @param HEADTRACKING_TARGET_NAME Name of the Oculus Rift's tracking target to be used as translation input.
   # @param NO_TRACKING_MAT Matrix to be used if no tracking target name was specified.
-  def my_constructor(self, OVR_USER_ID, HEADTRACKING_TARGET_NAME, NO_TRACKING_MAT):
+  def my_constructor(self, HEADTRACKING_TARGET_NAME, NO_TRACKING_MAT):
     
     ## @var oculus_sensor
     # DeviceSensor communicating with the Oculus Rifts via daemon.
     self.oculus_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
-    self.oculus_sensor.Station.value = 'oculus-' + str(OVR_USER_ID)
+    self.oculus_sensor.Station.value = 'oculus-' + str(TrackingRotationCombiner.ovr_users_registered)
+    TrackingRotationCombiner.ovr_users_registered += 1
     
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.

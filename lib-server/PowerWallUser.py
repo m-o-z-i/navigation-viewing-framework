@@ -25,13 +25,13 @@ class PowerWallUser(User):
   ## Custom constructor.
   # @param VIEWING_MANAGER Reference to the ViewingManager instance from which the user is created.
   # @param HEADTRACKING_TARGET_NAME Name of the glasses' tracking target as chosen in daemon.
-  # @param WALL_USER_ID Identification number of the PowerWallUser to be created, starting from 0.
+  # @param USER_ID Identification number of the user to be created, starting from 0.
   # @param PLATFORM_ID Platform to append the constructed PowerWallUser to.
   # @param NO_TRACKING_MAT Matrix to be applied if no headtracking of the glasses is available.
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
   # @param AVATAR_MATERIAL Material to be used for the powerwall user's avatar
   # @param IDENTIFIER String that identifies which powerwall is used ('small' or 'large').
-  def __init__(self, VIEWING_MANAGER, HEADTRACKING_TARGET_NAME, WALL_USER_ID, PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, AVATAR_MATERIAL, IDENTIFIER):
+  def __init__(self, VIEWING_MANAGER, HEADTRACKING_TARGET_NAME, USER_ID, PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, AVATAR_MATERIAL, IDENTIFIER):
     User.__init__(self, "wall", AVATAR_MATERIAL)
 
     # variables
@@ -41,7 +41,7 @@ class PowerWallUser(User):
 
     ## @var id
     # Identification number of the PowerWallUser, starting from 0.
-    self.id = WALL_USER_ID
+    self.id = USER_ID
 
     ## @var platform_id
     # ID number of the platform the user is belonging to.

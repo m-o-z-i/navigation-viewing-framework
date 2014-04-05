@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class OVRUser and TrackingRotationCombiner.
+# Contains class OVRUser and TrackingCombiner.
 
 # import guacamole libraries
 import avango
@@ -90,13 +90,13 @@ class OVRUser(User):
 
     # Combine tracking and Oculus Input
     ## @var tracking_rotation_combiner
-    # Instance of TrackingRotationCombiner to determine the user's position on the platform.
-    self.tracking_rotation_combiner = TrackingRotationCombiner()
-    self.tracking_rotation_combiner.my_constructor(HEADTRACKING_TARGET_NAME, NO_TRACKING_MAT)
-    self.head_transform.Transform.connect_from(self.tracking_rotation_combiner.sf_combined_mat)
+    # Instance of TrackingCombiner to determine the user's position on the platform.
+    self.tracking_combiner = TrackingCombiner()
+    self.tracking_combiner.my_constructor(HEADTRACKING_TARGET_NAME, NO_TRACKING_MAT)
+    self.head_transform.Transform.connect_from(self.tracking_combiner.sf_combined_mat)
 
     # create avatar representation
-    self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.tracking_rotation_combiner.get_sf_avatar_body_matrix())
+    self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.tracking_combiner.get_sf_avatar_body_matrix())
 
     # create coupling notification plane
     self.create_coupling_plane()
@@ -107,7 +107,7 @@ class OVRUser(User):
 
 ## Helper class to combine the rotation input from an Oculus Rift with the
 # translation input of a tracking system.
-class TrackingRotationCombiner(avango.script.Script):
+class TrackingCombiner(avango.script.Script):
 
   # output field
   ## @var sf_combined_mat
@@ -121,7 +121,7 @@ class TrackingRotationCombiner(avango.script.Script):
   
   ## Default constructor.
   def __init__(self):
-    self.super(TrackingRotationCombiner).__init__()
+    self.super(TrackingCombiner).__init__()
 
   ## Custom constructor.
   # @param HEADTRACKING_TARGET_NAME Name of the Oculus Rift's tracking target to be used as translation input.
@@ -131,8 +131,8 @@ class TrackingRotationCombiner(avango.script.Script):
     ## @var oculus_sensor
     # DeviceSensor communicating with the Oculus Rifts via daemon.
     self.oculus_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
-    self.oculus_sensor.Station.value = 'oculus-' + str(TrackingRotationCombiner.ovr_users_registered)
-    TrackingRotationCombiner.ovr_users_registered += 1
+    self.oculus_sensor.Station.value = 'oculus-' + str(TrackingCombiner.ovr_users_registered)
+    TrackingCombiner.ovr_users_registered += 1
     
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.

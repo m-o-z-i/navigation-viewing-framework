@@ -91,13 +91,13 @@ class StatusManager(avango.script.Script):
               _new_node_needed = True
 
               for _node in _user.coupling_status_node.Children.value:
-                if (_node.Name.value == (_user.node_pretext + str(_user.id) +'_coupl_notifier_' + str(_nav_2.platform.platform_id))):
+                if (_node.Name.value == ('user_' + str(_user.id) +'_coupl_notifier_' + str(_nav_2.platform.platform_id))):
                   _new_node_needed = False
                   break
 
               # if the desired plane is not yet present, create and draw it
               if _new_node_needed:
-                _plane = _loader.create_geometry_from_file(_user.node_pretext + str(_user.id) +'_coupl_notifier_' + str(_nav_2.platform.platform_id),
+                _plane = _loader.create_geometry_from_file('user_' + str(_user.id) +'_coupl_notifier_' + str(_nav_2.platform.platform_id),
                                                            'data/objects/plane.obj',
                                                            'data/materials/' +_nav_2.trace_material + 'Shadeless.gmd',
                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
@@ -125,7 +125,7 @@ class StatusManager(avango.script.Script):
 
       # if the user has a notifier for being coupled with NAVIGATION, remove this node from the scenegraph
       for _node in _user.coupling_status_node.Children.value:
-        if (_node.Name.value == (_user.node_pretext + str(_user.id) + "_coupl_notifier_" + str(NAVIGATION.platform.platform_id))):
+        if (_node.Name.value == ('user_' + str(_user.id) + "_coupl_notifier_" + str(NAVIGATION.platform.platform_id))):
           _user.coupling_status_node.Children.value.remove(_node)
           _user.update_coupling_status_overview()
           

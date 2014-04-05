@@ -69,7 +69,7 @@ class ClientPowerWallUser(ClientUser):
     # create window
     window_size          = avango.gua.Vec2ui(1920*2, 1200) 
     window = avango.gua.nodes.Window()
-    window.Title.value = "PowerWallUser_" + str(user_id)
+    window.Title.value = "User_" + str(user_id)
     window.Size.value = window_size
     window.LeftResolution.value = avango.gua.Vec2ui(window_size.x / 2, window_size.y)
     window.LeftPosition.value = avango.gua.Vec2ui(0, 0)

@@ -55,7 +55,7 @@ class ClientDesktopUser(ClientUser):
     # create window
     window_size = avango.gua.Vec2ui(USER_ATTRIBUTES[3], USER_ATTRIBUTES[4])
     window = avango.gua.nodes.Window()
-    window.Title.value = "DesktopUser_" + str(user_id)
+    window.Title.value = "User_" + str(user_id)
     window.Size.value = window_size
     window.LeftResolution.value = window_size
     window.Display.value = display

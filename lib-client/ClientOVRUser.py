@@ -55,7 +55,7 @@ class ClientOVRUser(ClientUser):
     # create window
     window_size = avango.gua.Vec2ui(1280, 800)
     window = avango.oculus.nodes.OculusWindow()
-    window.Title.value = "OVRUser_" + str(user_id)
+    window.Title.value = "User_" + str(user_id)
     window.Size.value = window_size
     window.LeftResolution.value = avango.gua.Vec2ui(window_size.x / 2, window_size.y)
     window.RightResolution.value = avango.gua.Vec2ui(window_size.x / 2, window_size.y)

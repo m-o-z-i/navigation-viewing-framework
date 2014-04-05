@@ -110,15 +110,7 @@ class User:
     self.message_plane_node = avango.gua.nodes.TransformNode(Name = "message_plane_node")
 
     # set transform values and extend scenegraph
-    if self.node_pretext == "ovr":
-      self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.98) * \
-                                                avango.gua.make_rot_mat(90, 1, 0, 0)
-      self.head_transform.Children.value.append(self.message_plane_node)
-    else:
-      self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.18) * \
-                                                avango.gua.make_rot_mat(90, 1, 0, 0)
-      self.screen.Children.value.append(self.message_plane_node)
-
+    self.handle_message_plane_node()
 
     ## @var coupling_plane_node
     # Geometry node representing a plane for displaying messages to users.

@@ -104,6 +104,12 @@ class OVRUser(User):
     # create coupling status notifications
     self.create_coupling_status_overview()
 
+  ## Correctly places and appends the message plane node in and to the scenegraph.
+  def handle_message_plane_node(self):
+    self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.98) * \
+                                              avango.gua.make_rot_mat(90, 1, 0, 0)
+    self.head_transform.Children.value.append(self.message_plane_node)
+
 
 ## Helper class to combine the rotation input from an Oculus Rift with the
 # translation input of a tracking system.

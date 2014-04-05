@@ -91,3 +91,9 @@ class DesktopUser(User):
 
     # create coupling status notifications
     self.create_coupling_status_overview()
+
+  ## Correctly places and appends the message plane node in and to the scenegraph.
+  def handle_message_plane_node(self):
+    self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.18) * \
+                                              avango.gua.make_rot_mat(90, 1, 0, 0)
+    self.screen.Children.value.append(self.message_plane_node)

@@ -129,7 +129,7 @@ class PowerWallUser(User):
     self.append_to_platform(self.VIEWING_MANAGER.SCENEGRAPH, self.screen)
 
     # create avatar representation
-    self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat)
+    self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
     
     # create coupling notification plane
     self.create_coupling_plane()

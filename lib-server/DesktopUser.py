@@ -84,7 +84,7 @@ class DesktopUser(User):
     self.head_transform.Transform.connect_from(self.headtracking_reader.sf_abs_mat)
 
     # create avatar representation
-    self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat)
+    self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
 
     # create coupling notification plane
     self.create_coupling_plane()

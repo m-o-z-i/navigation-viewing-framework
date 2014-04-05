@@ -96,7 +96,7 @@ class OVRUser(User):
     self.head_transform.Transform.connect_from(self.tracking_combiner.sf_combined_mat)
 
     # create avatar representation
-    self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.tracking_combiner.get_sf_avatar_body_matrix())
+    self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.tracking_combiner.get_sf_avatar_body_matrix(), False)
 
     # create coupling notification plane
     self.create_coupling_plane()

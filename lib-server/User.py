@@ -52,7 +52,8 @@ class User:
   ## Creates a basic avatar for this user.
   # @param SCENEGRAPH Reference to the scenegraph.
   # @param SF_AVATAR_BODY_MATRIX Field containing the transformation matrix for the avatar's body on the platform.
-  def create_avatar_representation(self, SCENEGRAPH, SF_AVATAR_BODY_MATRIX):
+  # @param TABLE_ENABLED Boolean indicating if a table should be added to the avatar.
+  def create_avatar_representation(self, SCENEGRAPH, SF_AVATAR_BODY_MATRIX, TABLE_ENABLED):
 
     _loader = avango.gua.nodes.GeometryLoader()
     
@@ -80,8 +81,8 @@ class User:
 
     self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX)
 
-    # create desktop user table
-    if self.node_pretext == "desktop":
+    # create table avatar if enabled
+    if TABLE_ENABLED:
 
       ## @var table_transform
       # Scenegraph transform node for the dekstop user's table.

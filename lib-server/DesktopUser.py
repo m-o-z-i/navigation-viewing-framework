@@ -52,12 +52,12 @@ class DesktopUser(User):
     ## @var head_transform
     # Scenegraph node representing the head position of the user with respect to platform. In desktop case,
     # the head is at the platform's position.
-    self.head_transform = avango.gua.nodes.TransformNode(Name = "desktop_head_" + str(self.id))
+    self.head_transform = avango.gua.nodes.TransformNode(Name = "head_" + str(self.id))
 
     # create screen
     ## @var screen
     # Scenegraph node representing the user's screen.
-    self.screen = avango.gua.nodes.ScreenNode(Name = "desktop_screen_" + str(self.id))
+    self.screen = avango.gua.nodes.ScreenNode(Name = "screen_" + str(self.id))
 
     # take the physical size from config file; alternatively one could use:
     # self.screen.Width.value = self.window_size.x * (1.6/1920)

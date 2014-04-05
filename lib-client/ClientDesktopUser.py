@@ -39,9 +39,9 @@ class ClientDesktopUser(ClientUser):
     # create camera
     camera = avango.gua.nodes.Camera()
     camera.SceneGraph.value = SCENEGRAPH.Name.value
-    camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/desktop_screen_" + str(user_id)
+    camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/screen_" + str(user_id)
     camera.RightScreen.value = camera.LeftScreen.value
-    camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/desktop_head_" + str(user_id) + "/eye"
+    camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eye"
     camera.RightEye.value = camera.LeftEye.value
 
     render_mask = "!do_not_display_group && !desktop_avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)

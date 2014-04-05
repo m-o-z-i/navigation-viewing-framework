@@ -55,7 +55,7 @@ class OVRUser(User):
     # create platform transform node
     ## @var head_transform
     # Scenegraph node representing the head position of the user with respect to platform.
-    self.head_transform = avango.gua.nodes.TransformNode(Name = "ovr_head_" + str(self.id))
+    self.head_transform = avango.gua.nodes.TransformNode(Name = "head_" + str(self.id))
 
     # create screens
     ## @var left_screen

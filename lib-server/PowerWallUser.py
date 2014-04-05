@@ -87,7 +87,7 @@ class PowerWallUser(User):
     # init viewing setup 
     ## @var head_transform
     # Scenegraph node representing the head position of the user with respect to platform.
-    self.head_transform = avango.gua.nodes.TransformNode(Name = "wall_head_" + str(self.id))
+    self.head_transform = avango.gua.nodes.TransformNode(Name = "head_" + str(self.id))
     self.append_to_platform(self.VIEWING_MANAGER.SCENEGRAPH, self.head_transform)
 
     ## @var headtracking_reader
@@ -122,7 +122,7 @@ class PowerWallUser(User):
     # create the screen
     ## @var screen
     # Scenegraph node representing the user's screen.
-    self.screen = avango.gua.nodes.ScreenNode(Name = "wall_screen_" + str(self.id))
+    self.screen = avango.gua.nodes.ScreenNode(Name = "screen_" + str(self.id))
     self.screen.Width.value = self.screen_size.x
     self.screen.Height.value = self.screen_size.y
     self.screen.Transform.value = self.screen_transform

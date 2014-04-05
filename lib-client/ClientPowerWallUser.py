@@ -53,10 +53,10 @@ class ClientPowerWallUser(ClientUser):
     # create camera
     camera = avango.gua.nodes.Camera()
     camera.SceneGraph.value = SCENEGRAPH.Name.value
-    camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/wall_screen_" + str(user_id)
+    camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/screen_" + str(user_id)
     camera.RightScreen.value = camera.LeftScreen.value
-    camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/wall_head_" + str(user_id) + "/eyeL"
-    camera.RightEye.value = "/net/platform_" + str(platform_id) + "/wall_head_" + str(user_id) + "/eyeR"
+    camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeL"
+    camera.RightEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeR"
 
     render_mask = "!do_not_display_group && !wall_avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
 

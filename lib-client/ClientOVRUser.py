@@ -39,10 +39,10 @@ class ClientOVRUser(ClientUser):
     # create camera
     camera = avango.gua.nodes.Camera()
     camera.SceneGraph.value = SCENEGRAPH.Name.value
-    camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/ovr_head_" + str(user_id) + "/screenL"
-    camera.RightScreen.value = "/net/platform_" + str(platform_id) + "/ovr_head_" + str(user_id) + "/screenR"
-    camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/ovr_head_" + str(user_id) + "/eyeL"
-    camera.RightEye.value = "/net/platform_" + str(platform_id) + "/ovr_head_" + str(user_id) + "/eyeR"
+    camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/screenL"
+    camera.RightScreen.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/screenR"
+    camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeL"
+    camera.RightEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeR"
 
     render_mask = "!do_not_display_group && !ovr_avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
 

@@ -155,7 +155,7 @@ class User:
     # create transformation node
     ## @var coupling_status_node
     # Scenegraph transformation node for coupling icons in the user's field of view.
-    self.coupling_status_node = avango.gua.nodes.TransformNode(Name = self.node_pretext + "_status_" + str(self.platform_id))
+    self.coupling_status_node = avango.gua.nodes.TransformNode(Name = "coupling_status_" + str(self.id))
     self.coupling_status_node.GroupNames.value = ["display_group", "platform_group_" + str(self.platform_id)]
 
     if self.node_pretext == "ovr":
@@ -172,7 +172,7 @@ class User:
     # create icon indicating the own color
     ## @var own_color_geometry
     # Plane visible to the user indictating his or her own avatar color.
-    self.own_color_geometry = _loader.create_geometry_from_file(self.node_pretext + str(self.id) +'_own_notifier',
+    self.own_color_geometry = _loader.create_geometry_from_file('user_' + str(self.id) +'_own_notifier',
                                                                 'data/objects/plane.obj',
                                                                 'data/materials/' + self.avatar_material + 'Shadeless.gmd',
                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)

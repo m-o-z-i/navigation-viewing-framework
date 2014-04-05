@@ -30,7 +30,7 @@ class DesktopUser(User):
   # @param SCREEN_SIZE Physical width of the screen space to be rendered on in meters. [width, height]
   # @param AVATAR_MATERIAL Material to be used for the desktop user's avatar
   def __init__(self, VIEWING_MANAGER, USER_ID, PLATFORM_ID, WINDOW_SIZE, SCREEN_SIZE, AVATAR_MATERIAL):
-    User.__init__(self, "desktop", AVATAR_MATERIAL)
+    User.__init__(self, AVATAR_MATERIAL)
 
     ## @var VIEWING_MANAGER
     # Reference to the ViewingManager instance from which the user is created.

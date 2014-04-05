@@ -32,7 +32,7 @@ class PowerWallUser(User):
   # @param AVATAR_MATERIAL Material to be used for the powerwall user's avatar
   # @param IDENTIFIER String that identifies which powerwall is used ('small' or 'large').
   def __init__(self, VIEWING_MANAGER, HEADTRACKING_TARGET_NAME, USER_ID, PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, AVATAR_MATERIAL, IDENTIFIER):
-    User.__init__(self, "wall", AVATAR_MATERIAL)
+    User.__init__(self, AVATAR_MATERIAL)
 
     # variables
     ## @var VIEWING_MANAGER
@@ -159,4 +159,3 @@ class PowerWallUser(User):
     ## @var y_increment
     # Y offset for all coupling status notifiers after the own color.
     self.y_increment = -0.14
-    

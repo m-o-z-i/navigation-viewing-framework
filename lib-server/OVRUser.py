@@ -38,7 +38,7 @@ class OVRUser(User):
   # @param NO_TRACKING_MAT Matrix to be applied if no headtracking of the Oculus Rift is available.
   # @param AVATAR_MATERIAL Material to be used for the OVR user's avatar
   def __init__(self, VIEWING_MANAGER, HEADTRACKING_TARGET_NAME, USER_ID, PLATFORM_ID, NO_TRACKING_MAT, AVATAR_MATERIAL):
-    User.__init__(self, "ovr", AVATAR_MATERIAL)
+    User.__init__(self, AVATAR_MATERIAL)
 
     ## @var VIEWING_MANAGER
     # Reference to the ViewingManager instance from which the user is created.

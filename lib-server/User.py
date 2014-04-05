@@ -20,13 +20,8 @@ class User:
   sf_abs_head_mat = avango.gua.make_identity_mat()
 
   ## Custom constructor.
-  # @param NODE_PRETEXT The prefix to be used when creating scenegraph nodes.
   # @param AVATAR_MATERIAL Material to be used for the user's avatar.
-  def __init__(self, NODE_PRETEXT, AVATAR_MATERIAL):
-
-    ## @var node_pretext
-    # Prefix of the scenegraph nodes this user creates.
-    self.node_pretext = NODE_PRETEXT
+  def __init__(self, AVATAR_MATERIAL):
 
     ## @var avatar_material
     # Material of the user's avatar.

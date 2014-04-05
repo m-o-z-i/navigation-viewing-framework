@@ -44,7 +44,7 @@ class ClientDesktopUser(ClientUser):
     camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eye"
     camera.RightEye.value = camera.LeftEye.value
 
-    render_mask = "!do_not_display_group && !desktop_avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
+    render_mask = "!do_not_display_group && !avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
 
     for i in range(0, 10):
         if i != platform_id:

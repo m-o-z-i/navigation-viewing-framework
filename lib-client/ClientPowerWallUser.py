@@ -58,7 +58,7 @@ class ClientPowerWallUser(ClientUser):
     camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeL"
     camera.RightEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeR"
 
-    render_mask = "!do_not_display_group && !wall_avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
+    render_mask = "!do_not_display_group && !avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
 
     for i in range(0, 10):
       if i != platform_id:

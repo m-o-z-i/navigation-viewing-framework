@@ -64,7 +64,7 @@ class User:
                                                           'data/materials/' + self.avatar_material + '.gmd',
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
-    self.head_avatar.GroupNames.value = [self.node_pretext + '_avatar_group_' + str(self.platform_id)]
+    self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
     self.head_transform.Children.value.append(self.head_avatar)
 
     # create avatar body
@@ -74,7 +74,7 @@ class User:
                                                           'data/objects/Joseph/JosephBody.obj',
                                                           'data/materials/' + self.avatar_material + '.gmd',
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.body_avatar.GroupNames.value = [self.node_pretext + '_avatar_group_' + str(self.platform_id)]
+    self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
     
     self.append_to_platform(SCENEGRAPH, self.body_avatar)
 
@@ -97,7 +97,7 @@ class User:
                                                              avango.gua.LoaderFlags.LOAD_MATERIALS)
       self.table_avatar.Transform.value = avango.gua.make_scale_mat(0.2, 0.5, 0.5)
       self.table_transform.Children.value.append(self.table_avatar)
-      self.table_avatar.GroupNames.value = [self.node_pretext + '_avatar_group_' + str(self.platform_id)]
+      self.table_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
 
   ## Creates a plane in front of the user used for displaying coupling messages.
   def create_coupling_plane(self):

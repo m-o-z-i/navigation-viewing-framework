@@ -59,7 +59,7 @@ class User:
     # create avatar head
     ## @var head_avatar
     # Scenegraph node representing the geometry and transformation of the basic avatar's head.
-    self.head_avatar = _loader.create_geometry_from_file( self.node_pretext + '_head_avatar_' + str(self.platform_id),
+    self.head_avatar = _loader.create_geometry_from_file( 'head_avatar_' + str(self.id),
                                                           'data/objects/Joseph/JosephHead.obj',
                                                           'data/materials/' + self.avatar_material + '.gmd',
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
@@ -70,7 +70,7 @@ class User:
     # create avatar body
     ## @var body_avatar
     # Scenegraph node representing the geometry and transformation of the basic avatar's body.
-    self.body_avatar = _loader.create_geometry_from_file( self.node_pretext + '_body_avatar_' + str(self.platform_id),
+    self.body_avatar = _loader.create_geometry_from_file( 'head_avatar_' + str(self.id),
                                                           'data/objects/Joseph/JosephBody.obj',
                                                           'data/materials/' + self.avatar_material + '.gmd',
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
@@ -91,7 +91,7 @@ class User:
 
       ## @var table_avatar
       # Scenegraph node representing the geometry and transformation of the desktop user's table.
-      self.table_avatar = _loader.create_geometry_from_file( self.node_pretext + '_desktop_avatar_' + str(self.platform_id),
+      self.table_avatar = _loader.create_geometry_from_file( 'table_avatar_' + str(self.id),
                                                              'data/objects/table/table.obj',
                                                              'data/materials/' + self.avatar_material + '.gmd',
                                                              avango.gua.LoaderFlags.LOAD_MATERIALS)

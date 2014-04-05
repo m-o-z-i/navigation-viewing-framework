@@ -25,8 +25,8 @@ class ClientUser(avango.script.Script):
   # @param SCENEGRAPH Reference to the scenegraph in the viewing setup.
   # @param PLATFORM_ID Platform on which the user is standing.
   # @param USER_ID Identification number of the user to be constructed, counts within each user category.
-  # @param NODE_PRETEXT The prefix to be used when creating scenegraph nodes.
-  def construct_user(self, SCENEGRAPH, PLATFORM_ID, USER_ID, NODE_PRETEXT):
+  # @param ONLY_TRANSLATION_UPDATE In case this boolean is true, only the translation values will be locally updated from the tracking system.
+  def construct_user(self, SCENEGRAPH, PLATFORM_ID, USER_ID, ONLY_TRANSLATION_UPDATE):
 
     ## @var SCENEGRAPH
     # Reference to the scenegraph to be displayed.
@@ -40,9 +40,9 @@ class ClientUser(avango.script.Script):
     # User ID of this user within his or her user group.
     self.user_id = USER_ID
 
-    ## @var node_pretext
-    # Prefix of the scenegraph nodes this user creates.
-    self.node_pretext = NODE_PRETEXT
+    ## @var ONLY_TRANSLATION_UPDATE
+    # In case this boolean is true, only the translation values will be locally updated from the tracking system.
+    self.ONLY_TRANSLATION_UPDATE = ONLY_TRANSLATION_UPDATE
 
   ## Adds a tracking reader to the user instance.
   # @param TRACKING_TARGET_NAME The target name of the tracked object as chosen in daemon.
@@ -68,11 +68,11 @@ class ClientUser(avango.script.Script):
     if self.TRACKING_TARGET_NAME == None:
       return
    
-    _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/" + self.node_pretext + "_head_" + str(self.user_id)]
+    _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/" "head_" + str(self.user_id)]
 
     if _node_to_update != None:
 
-      if self.node_pretext == "ovr":
+      if self.ONLY_TRANSLATION_UPDATE:
         _vec = self.headtracking_reader.sf_abs_mat.value.get_translate()
         _mat = _node_to_update.Transform.value
         _mat.set_translate(_vec)

@@ -34,7 +34,7 @@ class ClientOVRUser(ClientUser):
     platform_id = USER_ATTRIBUTES[2]
     display = USER_ATTRIBUTES[8]
 
-    self.construct_user(SCENEGRAPH, platform_id, user_id, "ovr")
+    self.construct_user(SCENEGRAPH, platform_id, user_id, True)
 
     # create camera
     camera = avango.gua.nodes.Camera()

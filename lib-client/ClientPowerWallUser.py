@@ -36,7 +36,7 @@ class ClientPowerWallUser(ClientUser):
     platform_id = USER_ATTRIBUTES[2]
     display = USER_ATTRIBUTES[8]
 
-    self.construct_user(SCENEGRAPH, platform_id, user_id, "wall")
+    self.construct_user(SCENEGRAPH, platform_id, user_id, False)
 
     # powerwall settings
     left_eye_resolution  = avango.gua.Vec2ui(1920, 1200)

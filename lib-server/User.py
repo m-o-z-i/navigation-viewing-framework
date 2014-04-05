@@ -151,16 +151,8 @@ class User:
     self.coupling_status_node = avango.gua.nodes.TransformNode(Name = "coupling_status_" + str(self.id))
     self.coupling_status_node.GroupNames.value = ["display_group", "platform_group_" + str(self.platform_id)]
 
-    if self.node_pretext == "ovr":
-      self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -1.0)
-      self.head_transform.Children.value.append(self.coupling_status_node)
-    elif self.node_pretext == "wall":
-      self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
-      self.screen.Children.value.append(self.coupling_status_node)
-    else:
-      self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.2)
-      self.screen.Children.value.append(self.coupling_status_node)
-
+    # sets the necessary attributes for correct positioning of coupling status notifiers
+    self.handle_coupling_status_attributes()
 
     # create icon indicating the own color
     ## @var own_color_geometry
@@ -171,31 +163,6 @@ class User:
                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
 
     self.coupling_status_node.Children.value.append(self.own_color_geometry)
-
-    # sets the necessary attributes for correct positioning of coupling status notifiers
-    if self.node_pretext == "ovr":
-
-      ## @var start_trans
-      # Translation of the first coupling status notifier (own color).
-      self.start_trans = avango.gua.Vec3(-0.3, 0.35, 0.0)
-      
-      ## @var start_scale
-      # Scaling of the first coupling status notifier (own color).
-      self.start_scale = 0.05
-      
-      ## @var y_increment
-      # Y offset for all coupling status notifiers after the own color.
-      self.y_increment = -0.06
-
-    elif self.node_pretext == "wall":
-      self.start_trans = avango.gua.Vec3(-0.433 * self.screen.Width.value, 0.454 * self.screen.Height.value, 0.0)
-      self.start_scale = 0.1
-      self.y_increment = -0.14
-    else:
-      # adapt values according to physical screen size
-      self.start_trans = avango.gua.Vec3(-0.5 * self.screen.Width.value, 0.47 * self.screen.Height.value, 0.0)
-      self.start_scale = 0.05
-      self.y_increment = -0.06
 
     self.update_coupling_status_overview()
 

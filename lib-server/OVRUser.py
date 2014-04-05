@@ -110,6 +110,23 @@ class OVRUser(User):
                                               avango.gua.make_rot_mat(90, 1, 0, 0)
     self.head_transform.Children.value.append(self.message_plane_node)
 
+  ## Handles all the specialized settings for the coupling status overview.
+  def handle_coupling_status_attributes(self):
+    self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -1.0)
+    self.head_transform.Children.value.append(self.coupling_status_node)
+
+    ## @var start_trans
+    # Translation of the first coupling status notifier (own color).
+    self.start_trans = avango.gua.Vec3(-0.3, 0.35, 0.0)
+      
+    ## @var start_scale
+    # Scaling of the first coupling status notifier (own color).
+    self.start_scale = 0.05
+      
+    ## @var y_increment
+    # Y offset for all coupling status notifiers after the own color.
+    self.y_increment = -0.06
+
 
 ## Helper class to combine the rotation input from an Oculus Rift with the
 # translation input of a tracking system.

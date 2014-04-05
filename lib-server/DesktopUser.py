@@ -97,3 +97,20 @@ class DesktopUser(User):
     self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.18) * \
                                               avango.gua.make_rot_mat(90, 1, 0, 0)
     self.screen.Children.value.append(self.message_plane_node)
+
+  ## Handles all the specialized settings for the coupling status overview.
+  def handle_coupling_status_attributes(self):
+    self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.2)
+    self.screen.Children.value.append(self.coupling_status_node)
+
+    ## @var start_trans
+    # Translation of the first coupling status notifier (own color).
+    self.start_trans = avango.gua.Vec3(-0.5 * self.screen.Width.value, 0.47 * self.screen.Height.value, 0.0)
+      
+    ## @var start_scale
+    # Scaling of the first coupling status notifier (own color).
+    self.start_scale = 0.05
+      
+    ## @var y_increment
+    # Y offset for all coupling status notifiers after the own color.
+    self.y_increment = -0.06

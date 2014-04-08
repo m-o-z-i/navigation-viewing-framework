@@ -26,8 +26,6 @@ class Display:
 		self.name = config.get("name")
 		self.hostname = config.get("hostname")
 		self.displaystrings = config.get("displaystrings", self.DEFAULT_DISPLAYSTRINGS)
-		self.warpmatricespath = config.get("warpmatricespath")
-		self.resolution = config.get("resolution", self.DEFAULT_RESOLUTION)
 		_width, _height = config.get("size", self.DEFAULT_SIZE)
 		_trans_x, _trans_y, _trans_z = config.get("transform", self.DEFAULT_TRANSFORM)
 

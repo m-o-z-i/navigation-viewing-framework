@@ -27,6 +27,8 @@
 
     <display>display-name-two</display>
 
+    <avatartype>kinect</avatartype>
+
     <transmitteroffset>
       <x>0.0</x>
       <y>0.043</y>

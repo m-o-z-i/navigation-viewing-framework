@@ -55,7 +55,8 @@ class ConfigFileParser:
     _in_device = False
     _device_attributes = [None, None, None, 0, 0, 0, 0, [],              # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw), displays,
                           avango.gua.make_identity_mat(),                # transmitteroffset,
-                          avango.gua.make_trans_mat(0.0, 1.5, 1.0)]      # notrackingmat]
+                          avango.gua.make_trans_mat(0.0, 1.5, 1.0),      # notrackingmat,
+                          "joseph"]                                      # avatartype]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
     _user_attributes = [None, None, None, False]                         # [type, headtrackingstation, startplatform, warnings]
@@ -198,6 +199,13 @@ class ConfigFileParser:
           _current_line = _current_line.rstrip()
           _device_attributes[7].append(_current_line)
 
+        # get avatar type
+        if _current_line.startswith("<avatartype>"):
+          _current_line = _current_line.replace("<avatartype>", "")
+          _current_line = _current_line.replace("</avatartype>", "")
+          _current_line = _current_line.rstrip()
+          _device_attributes[10] = _current_line
+
         # get transmitter offset values
         if _current_line.startswith("<transmitteroffset>"):
           _current_line = self.get_next_line_in_file(_config_file)
@@ -325,9 +333,10 @@ class ConfigFileParser:
                                                self.enable_movementtraces,
                                                _device_attributes[9],
                                                self.ground_following_settings,
-                                               _device_attributes[2],
                                                _device_attributes[8],
-                                               _device_attributes[7])
+                                               _device_attributes[7],
+                                               _device_attributes[10],
+                                               _device_attributes[2])
 
         print "Navigation loaded and created:"
         print "------------------------------"
@@ -337,7 +346,8 @@ class ConfigFileParser:
         # reset device attributes
         _device_attributes = [None, None, None, 0, 0, 0, 0, [],          # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw)), displays,
                           avango.gua.make_identity_mat(),                # transmitteroffset,
-                          avango.gua.make_trans_mat(0.0, 1.5, 1.0)]      # notrackingmat]
+                          avango.gua.make_trans_mat(0.0, 1.5, 1.0),      # notrackingmat,
+                          "joseph"]                                      # avatartype]
         _navs_created += 1
         _current_line = self.get_next_line_in_file(_config_file)
         continue

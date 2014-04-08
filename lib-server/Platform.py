@@ -66,6 +66,12 @@ class Platform(avango.script.Script):
     #
     self.avatar_type = AVATAR_TYPE
 
+    print "!!!!!!!!! Avatar type", AVATAR_TYPE
+    print "!!!!!!!!! Displays", DISPLAYS
+    print "!!!!!!!!! No tracking mat", NO_TRACKING_MAT
+    print "!!!!!!!!! Transmitter offset", TRANSMITTER_OFFSET
+
+
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
 

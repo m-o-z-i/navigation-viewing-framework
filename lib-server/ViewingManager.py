@@ -19,6 +19,7 @@ from   DesktopUser      import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
 from   StatusManager    import *
+from   Display          import *
 import Tools
 
 ## Class to manage all navigations and users in the viewing setup.
@@ -69,6 +70,10 @@ class ViewingManager():
     ## @var border_observer_list
     # List of all created BorderObserver instances.
     self.border_observer_list = []
+
+    ##
+    #
+    self.display_list = create_displays()
 
     ## @var status_manager
     # A StatusManager instance in order to arrange the user display for the different stati.
@@ -156,10 +161,17 @@ class ViewingManager():
   # @param DEVICE_TRACKING_NAME Name of the device's tracking sensor as chosen in daemon if available.
   def create_navigation(self, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, STARTING_MATRIX, PLATFORM_SIZE, ANIMATE_COUPLING, MOVEMENT_TRACES, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, TRANSMITTER_OFFSET, DISPLAYS, AVATAR_TYPE, CONFIG_FILE, DEVICE_TRACKING_NAME = None):
     
-    # TODO: Parse string list DISPLAYS and replace it by the Display instances
+    # convert list of parsed display strings to the corresponding instances
+    _display_instances = []
 
+    for _display_string in DISPLAYS:
+      for _display_instance in self.display_list:
+        if _display_instance.name == _display_string:
+          _display_instances.append(_display_instance)
+
+    # create the navigation instance
     _navigation = Navigation()
-    _navigation.my_constructor(self.NET_TRANS_NODE, self.SCENEGRAPH, PLATFORM_SIZE, STARTING_MATRIX, self.navigation_list, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, ANIMATE_COUPLING, MOVEMENT_TRACES, self.status_manager, TRANSMITTER_OFFSET, DISPLAYS, AVATAR_TYPE, CONFIG_FILE, DEVICE_TRACKING_NAME)
+    _navigation.my_constructor(self.NET_TRANS_NODE, self.SCENEGRAPH, PLATFORM_SIZE, STARTING_MATRIX, self.navigation_list, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, ANIMATE_COUPLING, MOVEMENT_TRACES, self.status_manager, TRANSMITTER_OFFSET, _display_instances, AVATAR_TYPE, CONFIG_FILE, DEVICE_TRACKING_NAME)
     self.navigation_list.append(_navigation)
     self.border_observer_list.append(None)
 

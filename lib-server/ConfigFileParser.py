@@ -343,7 +343,7 @@ class ConfigFileParser:
         print "------------------------------"
         print _device_attributes
         print "Platform size: ", _platform_size, "\n"
-        
+       
         # reset device attributes
         _device_attributes = [None, None, None, 0, 0, 0, 0, [],          # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw)), displays,
                           avango.gua.make_identity_mat(),                # transmitteroffset,

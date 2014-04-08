@@ -24,6 +24,7 @@ import sys
 # client.py SERVER_IP PLATFORM_ID CONFIG_FILE
 # @param SERVER_IP The IP address on which the server process is running.
 # @param PLATFORM_ID The platform id for which this client is responsible for.
+# @param DISPLAY_NAME The name associated to the display for which this client is responsible for.
 # @param CONFIG_FILE The filname of the configuration file to parse.
 
 ## Main method for the client application.
@@ -38,14 +39,17 @@ def start():
   # get the platform id
   platform_id = str(sys.argv[2])
 
+  # get the display name
+  display_name = str(sys.argv[3])
+
   # get the configuration filename
-  config_file = str(sys.argv[3])
+  config_file = str(sys.argv[4])
 
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()
 
   print "This client is running on", hostname, "and listens to server", server_ip
-  print "It is responsible for platform", platform_id
+  print "It is responsible for platform", platform_id, "and display", display_name
 
   # process config file to find out user attributes
   user_list = ClientConfigFileParser.parse(config_file, platform_id)

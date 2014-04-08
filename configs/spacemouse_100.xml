@@ -23,9 +23,9 @@
 
     <inputsensor>device-spacemouse</inputsensor>
 
-    <display>display-name-one</display>
+    <display>large_powerwall</display>
 
-    <display>display-name-two</display>
+    <display>atalante_display</display>
 
     <avatartype>kinect</avatartype>
 

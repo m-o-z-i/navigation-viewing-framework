@@ -51,6 +51,8 @@ def start():
   user_list = ClientConfigFileParser.parse(config_file, platform_id)
   print user_list
 
+  return
+
   # create distribution node
   nettrans = avango.gua.nodes.NetTransform(
                 Name = "net",

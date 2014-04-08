@@ -10,6 +10,11 @@ import avango.script
 import avango.daemon
 from   avango.script import field_has_changed
 
+# import python libraries
+import subprocess
+import os
+
+
 ## Internal representation of a platform which is controlled by an input device.
 #
 # Users can stick themselves to a platform and explore the scene on it.
@@ -21,6 +26,10 @@ class Platform(avango.script.Script):
   # Matrix representing the current translation and rotation of the platform in the scene.
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
+
+  ##
+  #
+  hosts_visited = []
   
   ## Default constructor.
   def __init__(self):
@@ -36,7 +45,11 @@ class Platform(avango.script.Script):
   #
   #
   #
-  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, PLATFORM_SIZE, INPUT_MAPPING_INSTANCE, PLATFORM_ID, TRANSMITTER_OFFSET, NO_TRACKING_MAT, DISPLAYS, AVATAR_TYPE):
+  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, PLATFORM_SIZE, INPUT_MAPPING_INSTANCE, PLATFORM_ID, TRANSMITTER_OFFSET, NO_TRACKING_MAT, DISPLAYS, AVATAR_TYPE, CONFIG_FILE):
+
+    ## @var platform_id
+    # The id number of this platform, starting from 0.
+    self.platform_id = PLATFORM_ID   
 
     ## @var INPUT_MAPPING_INSTANCE
     # Reference to an InputMapping which accumulates the device inputs for this platform.
@@ -65,6 +78,26 @@ class Platform(avango.script.Script):
     ##
     #
     self.avatar_type = AVATAR_TYPE
+
+    # get own ip adress
+    _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
+    _server_ip = _server_ip.strip(" \n")
+
+    # open ssh connection for all hosts associated to display
+    # TODO: Get display instances and replace "nestor" by them
+    for _display in self.displays:
+      _directory_name = os.path.dirname(os.path.dirname(__file__))
+
+      # run ClientDaemon on host if necessary
+      print Platform.hosts_visited
+
+      if "nestor" not in Platform.hosts_visited:
+        _ssh_run = subprocess.Popen(["ssh", "nestor", _directory_name + "/start-client-daemon.sh"])
+        Platform.hosts_visited.append("nestor")
+
+      # run client process on host
+      # command line parameters: server ip, platform id, config file
+      _ssh_run = subprocess.Popen(["ssh", "nestor", _directory_name + "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + CONFIG_FILE], stderr=subprocess.PIPE)
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
@@ -129,11 +162,7 @@ class Platform(avango.script.Script):
                                         avango.gua.make_rot_mat(180, 0, 0, 1) * \
                                         avango.gua.make_scale_mat(self.width, 1, 2)
     self.back_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_transform_node.Children.value.append(self.back_border)
-
-    ## @var platform_id
-    # The id number of this platform, starting from 0.
-    self.platform_id = PLATFORM_ID      
+    self.platform_transform_node.Children.value.append(self.back_border)   
 
   ## Toggles visibility of left platform border.
   # @param VISIBLE A boolean value if the border should be set visible or not.

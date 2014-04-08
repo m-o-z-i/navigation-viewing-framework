@@ -85,6 +85,8 @@ class Platform(avango.script.Script):
 
     # open ssh connection for all hosts associated to display
     for _display in self.displays:
+      # TODO: append screen nodes to platform
+
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 
       # run ClientDaemon on host if necessary

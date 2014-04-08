@@ -84,6 +84,9 @@ def start():
   # create a viewer
   viewer = avango.gua.nodes.Viewer()
 
+  # TODO: Build pipelines and render stuff
+
+  '''
   # create viewing setups for each user
   for user_attributes in user_list:
     
@@ -106,6 +109,7 @@ def start():
     elif user_attributes[0] == "OVRUser":
       _user = ClientOVRUser()
       _user.my_constructor(graph, viewer, user_attributes)
+  '''
 
   viewer.SceneGraphs.value = [graph]
 

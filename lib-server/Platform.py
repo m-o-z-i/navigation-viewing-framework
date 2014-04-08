@@ -84,20 +84,17 @@ class Platform(avango.script.Script):
     _server_ip = _server_ip.strip(" \n")
 
     # open ssh connection for all hosts associated to display
-    # TODO: Get display instances and replace "nestor" by them
     for _display in self.displays:
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 
       # run ClientDaemon on host if necessary
-      print Platform.hosts_visited
-
-      if "nestor" not in Platform.hosts_visited:
-        _ssh_run = subprocess.Popen(["ssh", "nestor", _directory_name + "/start-client-daemon.sh"])
-        Platform.hosts_visited.append("nestor")
+      if _display.name not in Platform.hosts_visited:
+        #_ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client-daemon.sh"])
+        Platform.hosts_visited.append(_display.name)
 
       # run client process on host
       # command line parameters: server ip, platform id, config file
-      _ssh_run = subprocess.Popen(["ssh", "nestor", _directory_name + "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + CONFIG_FILE], stderr=subprocess.PIPE)
+      _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + _display.name + " " + CONFIG_FILE], stderr=subprocess.PIPE)
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)

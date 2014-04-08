@@ -28,3 +28,12 @@ class Display:
 		self.displaystrings = config.get("displaystrings", self.DEFAULT_DISPLAYSTRINGS)
 		_width, _height = config.get("size", self.DEFAULT_SIZE)
 		_trans_x, _trans_y, _trans_z = config.get("transform", self.DEFAULT_TRANSFORM)
+
+		# init counter
+		self.num_users = 0
+
+	def register_user(self):
+
+		# TODO return values needed by client (displaystring, warpmatrices)
+
+		pass

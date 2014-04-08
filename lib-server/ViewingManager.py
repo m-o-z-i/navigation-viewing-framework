@@ -22,6 +22,9 @@ from   StatusManager    import *
 from   Display          import *
 import Tools
 
+# import python libraries
+import subprocess
+
 ## Class to manage all navigations and users in the viewing setup.
 #
 # Creates Navigation, OVRUser, PowerWallUser and BorderObserver instances according to the preferences read in from a XML configuration file.
@@ -74,6 +77,13 @@ class ViewingManager():
     ##
     #
     self.display_list = create_displays()
+
+    # kill all running python processes on display hosts
+    _own_hostname = open('/etc/hostname', 'r').readline().strip(" \n")
+
+    for _display in self.display_list:
+      if _display.hostname != _own_hostname:
+        _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
 
     ## @var status_manager
     # A StatusManager instance in order to arrange the user display for the different stati.

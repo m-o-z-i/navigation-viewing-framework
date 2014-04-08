@@ -35,16 +35,21 @@ def start():
   # get server ip 
   server_ip = str(sys.argv[2])
 
-  # create distribution node
+  # initialize pseudo nettrans node as client processes are started in Platform.py
+  pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
+  graph.Root.value.Children.value = [pseudo_nettrans]
+
+  # initialize viewing setup
+  viewing_manager = ViewingManager(pseudo_nettrans, graph, sys.argv[1])
+
+  # create distribution node and sync children from pseudo nettrans
   nettrans = avango.gua.nodes.NetTransform(
               Name = "net",
               Groupname = "AVSERVER|{0}|7432".format(server_ip)
               )
 
+  nettrans.Children.value = pseudo_nettrans.Children.value
   graph.Root.value.Children.value = [nettrans]
-
-  # initialize viewing setup
-  viewing_manager = ViewingManager(nettrans, graph, sys.argv[1])
 
   # initialize scene
   scene_manager = SceneManager(loader, nettrans, viewing_manager)

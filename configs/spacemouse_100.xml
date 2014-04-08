@@ -23,8 +23,6 @@
 
     <inputsensor>device-spacemouse</inputsensor>
 
-    <display>large_powerwall</display>
-
     <display>atalante_display</display>
 
     <avatartype>kinect</avatartype>

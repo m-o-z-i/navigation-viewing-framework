@@ -28,9 +28,3 @@ class Display:
 		self.displaystrings = config.get("displaystrings", self.DEFAULT_DISPLAYSTRINGS)
 		_width, _height = config.get("size", self.DEFAULT_SIZE)
 		_trans_x, _trans_y, _trans_z = config.get("transform", self.DEFAULT_TRANSFORM)
-
-		# create screen node
-		self.screen_node = avango.gua.nodes.ScreenNode(Name = self.name)
-		self.screen_node.Width.value = _width
-		self.screen_node.Height.value = _height
-		self.screen_node.Transform.value = avango.gua.make_trans_mat(_trans_x, _trans_y, _trans_y)

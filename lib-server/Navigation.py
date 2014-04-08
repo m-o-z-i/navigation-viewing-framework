@@ -85,8 +85,9 @@ class Navigation(avango.script.Script):
   #
   #
   #
+  #
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
-  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, PLATFORM_SIZE, STARTING_MATRIX, NAVIGATION_LIST, INPUT_SENSOR_TYPE, INPUT_SENSOR_NAME, NO_TRACKING_MAT, GF_SETTINGS, ANIMATE_COUPLING, MOVEMENT_TRACES, STATUS_MANAGER, TRANSMITTER_OFFSET, DISPLAYS, AVATAR_TYPE, TRACKING_TARGET_NAME = None):
+  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, PLATFORM_SIZE, STARTING_MATRIX, NAVIGATION_LIST, INPUT_SENSOR_TYPE, INPUT_SENSOR_NAME, NO_TRACKING_MAT, GF_SETTINGS, ANIMATE_COUPLING, MOVEMENT_TRACES, STATUS_MANAGER, TRANSMITTER_OFFSET, DISPLAYS, AVATAR_TYPE, CONFIG_FILE, TRACKING_TARGET_NAME = None):
     
     ## @var SCENEGRAPH
     # Reference to the scenegraph.
@@ -151,7 +152,7 @@ class Navigation(avango.script.Script):
     ## @var platform
     # Platform instance that is controlled by the Device.
     self.platform = Platform()
-    self.platform.my_constructor(self.NET_TRANS_NODE, self.SCENEGRAPH, PLATFORM_SIZE, self.inputmapping, len(NAVIGATION_LIST), TRANSMITTER_OFFSET, NO_TRACKING_MAT, DISPLAYS, AVATAR_TYPE)
+    self.platform.my_constructor(self.NET_TRANS_NODE, self.SCENEGRAPH, PLATFORM_SIZE, self.inputmapping, len(NAVIGATION_LIST), TRANSMITTER_OFFSET, NO_TRACKING_MAT, DISPLAYS, AVATAR_TYPE, CONFIG_FILE)
 
     ## @var NAVIGATION_LIST
     # Reference to a list containing all Navigation instances in the setup.

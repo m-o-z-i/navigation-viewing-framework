@@ -336,6 +336,7 @@ class ConfigFileParser:
                                                _device_attributes[8],
                                                _device_attributes[7],
                                                _device_attributes[10],
+                                               FILENAME,
                                                _device_attributes[2])
 
         print "Navigation loaded and created:"

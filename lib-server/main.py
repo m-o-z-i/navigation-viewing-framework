@@ -14,6 +14,11 @@ from ViewingManager import *
 # import python libraries
 import sys
 
+# Command line parameters:
+# main.py CONFIG_FILE SERVER_IP
+# @param CONFIG_FILE The filname of the configuration file to parse.
+# @param SERVER_IP The own IP address.
+
 ## Main method for the server application
 def start():
 

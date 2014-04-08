@@ -25,14 +25,14 @@ class Display:
 		# get data from config-dict
 		self.name = config.get("name")
 		self.hostname = config.get("hostname")
-		self.displaystrings = config.get("displaystrings", DEFAULT_DISPLAYSTRINGS)
+		self.displaystrings = config.get("displaystrings", self.DEFAULT_DISPLAYSTRINGS)
 		self.warpmatricespath = config.get("warpmatricespath")
-		self.resolution = config.get("resolution", DEFAULT_RESOLUTION)
-		_width, _height = config.get("size", DEFAULT_SIZE)
-		_trans_x, _trans_y, _trans_z = config.get("transform", DEFAULT_TRANSFORM)
+		self.resolution = config.get("resolution", self.DEFAULT_RESOLUTION)
+		_width, _height = config.get("size", self.DEFAULT_SIZE)
+		_trans_x, _trans_y, _trans_z = config.get("transform", self.DEFAULT_TRANSFORM)
 
 		# create screen node
 		self.screen_node = avango.gua.nodes.ScreenNode(Name = self.name)
 		self.screen_node.Width.value = _width
 		self.screen_node.Height.value = _height
-		self.screen_node.transform.value = avango.gua.make_trans_mat(_trans_x, _trans_y, _trans_y)
+		self.screen_node.Transform.value = avango.gua.make_trans_mat(_trans_x, _trans_y, _trans_y)

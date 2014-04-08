@@ -26,6 +26,10 @@ class Platform(avango.script.Script):
   # Matrix representing the current translation and rotation of the platform in the scene.
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
+
+  ##
+  #
+  hosts_visited = []
   
   ## Default constructor.
   def __init__(self):
@@ -80,10 +84,18 @@ class Platform(avango.script.Script):
     _server_ip = _server_ip.strip(" \n")
 
     # open ssh connection for all hosts associated to display
-    # TODO: Check if ClientDaemon must be launched.
-    # TODO: Get display instances
+    # TODO: Get display instances and replace "nestor" by them
     for _display in self.displays:
       _directory_name = os.path.dirname(os.path.dirname(__file__))
+
+      # run ClientDaemon on host if necessary
+      print Platform.hosts_visited
+
+      if "nestor" not in Platform.hosts_visited:
+        _ssh_run = subprocess.Popen(["ssh", "nestor", _directory_name + "/start-client-daemon.sh"])
+        Platform.hosts_visited.append("nestor")
+
+      # run client process on host
       # command line parameters: server ip, platform id, config file
       _ssh_run = subprocess.Popen(["ssh", "nestor", _directory_name + "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + CONFIG_FILE], stderr=subprocess.PIPE)
 

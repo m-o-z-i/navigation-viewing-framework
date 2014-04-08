@@ -32,7 +32,11 @@ class Platform(avango.script.Script):
   # @param PLATFORM_SIZE Physical size of the platform in meters. Passed in an two-element list: [width, depth]
   # @param INPUT_MAPPING_INSTANCE An instance of InputMapping which accumulates the device inputs for this platform.
   # @param PLATFORM_ID The id number assigned to this platform, starting from 0.
-  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, PLATFORM_SIZE, INPUT_MAPPING_INSTANCE, PLATFORM_ID):
+  #
+  #
+  #
+  #
+  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, PLATFORM_SIZE, INPUT_MAPPING_INSTANCE, PLATFORM_ID, TRANSMITTER_OFFSET, NO_TRACKING_MAT, DISPLAYS, AVATAR_TYPE):
 
     ## @var INPUT_MAPPING_INSTANCE
     # Reference to an InputMapping which accumulates the device inputs for this platform.
@@ -45,6 +49,22 @@ class Platform(avango.script.Script):
     ## @var depth
     # Physical depth of the platform in meters.
     self.depth = PLATFORM_SIZE[1]
+
+    ##
+    #
+    self.transmitter_offset = TRANSMITTER_OFFSET
+
+    ##
+    #
+    self.no_tracking_mat = NO_TRACKING_MAT
+
+    ##
+    #
+    self.displays = DISPLAYS
+
+    ##
+    #
+    self.avatar_type = AVATAR_TYPE
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)

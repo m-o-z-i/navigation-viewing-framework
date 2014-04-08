@@ -150,10 +150,13 @@ class ViewingManager():
   # @param MOVEMENT_TRACES Boolean indicating if the platform should leave traces behind.
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param GROUND_FOLLOWING_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
+  #
+  #
+  #
   # @param DEVICE_TRACKING_NAME Name of the device's tracking sensor as chosen in daemon if available.
-  def create_navigation(self, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, STARTING_MATRIX, PLATFORM_SIZE, ANIMATE_COUPLING, MOVEMENT_TRACES, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, DEVICE_TRACKING_NAME = None):
+  def create_navigation(self, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, STARTING_MATRIX, PLATFORM_SIZE, ANIMATE_COUPLING, MOVEMENT_TRACES, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, TRANSMITTER_OFFSET, DISPLAYS, AVATAR_TYPE, DEVICE_TRACKING_NAME = None):
     _navigation = Navigation()
-    _navigation.my_constructor(self.NET_TRANS_NODE, self.SCENEGRAPH, PLATFORM_SIZE, STARTING_MATRIX, self.navigation_list, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, ANIMATE_COUPLING, MOVEMENT_TRACES, self.status_manager, DEVICE_TRACKING_NAME)
+    _navigation.my_constructor(self.NET_TRANS_NODE, self.SCENEGRAPH, PLATFORM_SIZE, STARTING_MATRIX, self.navigation_list, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, ANIMATE_COUPLING, MOVEMENT_TRACES, self.status_manager, TRANSMITTER_OFFSET, DISPLAYS, AVATAR_TYPE, DEVICE_TRACKING_NAME)
     self.navigation_list.append(_navigation)
     self.border_observer_list.append(None)
 

@@ -4,18 +4,6 @@
 <setup>
 
   <global>
-    
-    <transmitteroffset>
-      <x>0.0</x>
-      <y>0.043</y>
-      <z>1.6</z>
-    </transmitteroffset>
-
-    <notrackingposition>
-      <x>0.0</x>
-      <y>1.75</y>
-      <z>1.5</z>
-    </notrackingposition>
 
     <groundfollowing>
       <activated>True</activated>
@@ -34,6 +22,22 @@
     <type>Spacemouse</type>
 
     <inputsensor>device-spacemouse</inputsensor>
+
+    <display>display-name-one</display>
+
+    <display>display-name-two</display>
+
+    <transmitteroffset>
+      <x>0.0</x>
+      <y>0.043</y>
+      <z>1.6</z>
+    </transmitteroffset>
+
+    <notrackingposition>
+      <x>0.0</x>
+      <y>1.75</y>
+      <z>1.5</z>
+    </notrackingposition>
 
     <platformpos>
       <x>-2.0</x>

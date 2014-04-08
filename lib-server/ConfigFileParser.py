@@ -25,11 +25,11 @@ class ConfigFileParser:
     # global settings (can be overwritten by config file)
     ## @var transmitter_offset
     # Transmitter offset to be read in from configuration file
-    self.transmitter_offset = avango.gua.make_identity_mat()
+    #self.transmitter_offset = avango.gua.make_identity_mat()
 
     ## @var no_tracking_mat
     # Matrix to be used when no tracking is available to be read in from configuration file
-    self.no_tracking_mat = avango.gua.make_trans_mat(0.0, 1.5, 1.0)
+    #self.no_tracking_mat = avango.gua.make_trans_mat(0.0, 1.5, 1.0)
 
     ## @var ground_following_settings
     # Settings for the GroundFollowing instance to be read in from configuration file: [activated, ray_start_height]
@@ -53,7 +53,9 @@ class ConfigFileParser:
     _in_comment = False
     _in_global = False
     _in_device = False
-    _device_attributes = [None, None, None, 0, 0, 0, 0]                  # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw))]
+    _device_attributes = [None, None, None, 0, 0, 0, 0, [],              # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw), displays,
+                          avango.gua.make_identity_mat(),                # transmitteroffset,
+                          avango.gua.make_trans_mat(0.0, 1.5, 1.0)]      # notrackingmat]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
     _user_attributes = [None, None, None, False]                         # [type, headtrackingstation, startplatform, warnings]
@@ -112,53 +114,6 @@ class ConfigFileParser:
         continue
 
       if _in_global:
-        # get transmitter offset values
-        if _current_line.startswith("<transmitteroffset>"):
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<x>", "")
-          _current_line = _current_line.replace("</x>", "")
-          _current_line = _current_line.rstrip()
-          _transmitter_x = float(_current_line)
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<y>", "")
-          _current_line = _current_line.replace("</y>", "")
-          _current_line = _current_line.rstrip()
-          _transmitter_y = float(_current_line)
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<z>", "")
-          _current_line = _current_line.replace("</z>", "")
-          _current_line = _current_line.rstrip()
-          _transmitter_z = float(_current_line)
-          self.transmitter_offset = avango.gua.make_trans_mat(_transmitter_x, _transmitter_y, _transmitter_z)
-
-        # get end of transmitter offset values
-        if _current_line.startswith("</transmitteroffset>"):
-          _current_line = self.get_next_line_in_file(_config_file)
-          continue
-
-        # get no tracking position values
-        if _current_line.startswith("<notrackingposition>"):
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<x>", "")
-          _current_line = _current_line.replace("</x>", "")
-          _current_line = _current_line.rstrip()
-          _no_tracking_x = float(_current_line)
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<y>", "")
-          _current_line = _current_line.replace("</y>", "")
-          _current_line = _current_line.rstrip()
-          _no_tracking_y = float(_current_line)
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<z>", "")
-          _current_line = _current_line.replace("</z>", "")
-          _current_line = _current_line.rstrip()
-          _no_tracking_z = float(_current_line)
-          self.no_tracking_mat = avango.gua.make_trans_mat(_no_tracking_x, _no_tracking_y, _no_tracking_z)
-
-        # get end of no tracking position values
-        if _current_line.startswith("</notrackingposition>"):
-          _current_line = self.get_next_line_in_file(_config_file)
-          continue
 
         # get ground following attributes
         if _current_line.startswith("<groundfollowing>"):
@@ -235,6 +190,61 @@ class ConfigFileParser:
           _current_line = _current_line.rstrip()
           if _current_line != "None":
             _device_attributes[2] = _current_line
+
+        # get display names
+        if _current_line.startswith("<display>"):
+          _current_line = _current_line.replace("<display>", "")
+          _current_line = _current_line.replace("</display>", "")
+          _current_line = _current_line.rstrip()
+          _device_attributes[7].append(_current_line)
+
+        # get transmitter offset values
+        if _current_line.startswith("<transmitteroffset>"):
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<x>", "")
+          _current_line = _current_line.replace("</x>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_x = float(_current_line)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<y>", "")
+          _current_line = _current_line.replace("</y>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_y = float(_current_line)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<z>", "")
+          _current_line = _current_line.replace("</z>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_z = float(_current_line)
+          _device_attributes[8] = avango.gua.make_trans_mat(_transmitter_x, _transmitter_y, _transmitter_z)
+
+        # get end of transmitter offset values
+        if _current_line.startswith("</transmitteroffset>"):
+          _current_line = self.get_next_line_in_file(_config_file)
+          continue
+
+        # get no tracking position values
+        if _current_line.startswith("<notrackingposition>"):
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<x>", "")
+          _current_line = _current_line.replace("</x>", "")
+          _current_line = _current_line.rstrip()
+          _no_tracking_x = float(_current_line)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<y>", "")
+          _current_line = _current_line.replace("</y>", "")
+          _current_line = _current_line.rstrip()
+          _no_tracking_y = float(_current_line)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<z>", "")
+          _current_line = _current_line.replace("</z>", "")
+          _current_line = _current_line.rstrip()
+          _no_tracking_z = float(_current_line)
+          _device_attributes[9] = avango.gua.make_trans_mat(_no_tracking_x, _no_tracking_y, _no_tracking_z)
+
+        # get end of no tracking position values
+        if _current_line.startswith("</notrackingposition>"):
+          _current_line = self.get_next_line_in_file(_config_file)
+          continue
 
         # get platform position values
         if _current_line.startswith("<platformpos>"):
@@ -313,16 +323,21 @@ class ConfigFileParser:
                                                _platform_size,
                                                self.enable_coupling_animation,
                                                self.enable_movementtraces,
-                                               self.no_tracking_mat,
+                                               _device_attributes[9],
                                                self.ground_following_settings,
-                                               _device_attributes[2])
+                                               _device_attributes[2],
+                                               _device_attributes[8],
+                                               _device_attributes[7])
 
         print "Navigation loaded and created:"
         print "------------------------------"
         print _device_attributes
         print "Platform size: ", _platform_size, "\n"
-
-        _device_attributes = [None, None, None, 0, 0, 0, 0]
+        
+        # reset device attributes
+        _device_attributes = [None, None, None, 0, 0, 0, 0, [],          # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw)), displays,
+                          avango.gua.make_identity_mat(),                # transmitteroffset,
+                          avango.gua.make_trans_mat(0.0, 1.5, 1.0)]      # notrackingmat]
         _navs_created += 1
         _current_line = self.get_next_line_in_file(_config_file)
         continue
@@ -440,8 +455,6 @@ class ConfigFileParser:
 
     print "Global settings loaded:"
     print "------------------------"
-    print "Transmitter Offset:", self.transmitter_offset.get_translate()
-    print "No tracking position:", self.no_tracking_mat.get_translate()
     print "Ground Following settings:", self.ground_following_settings
     print "Coupling of Navigations animated:", self.enable_coupling_animation
     print "Movement traces animated:", self.enable_movementtraces, "\n"

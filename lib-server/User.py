@@ -13,12 +13,6 @@ import math
 ## Base class to represent attributes and functions that all users have in common. Not to be instantiated.
 class User:
   
-  # output fields
-  ## @var sf_abs_head_mat
-  # Position and rotation of the user's head with respect to the platform.
-  sf_abs_head_mat = avango.gua.SFMatrix4()
-  sf_abs_head_mat = avango.gua.make_identity_mat()
-
   ## Custom constructor.
   # @param AVATAR_MATERIAL Material to be used for the user's avatar.
   def __init__(self, AVATAR_MATERIAL):

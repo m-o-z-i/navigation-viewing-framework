@@ -105,7 +105,7 @@ class Platform(avango.script.Script):
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 
       # run ClientDaemon on host if necessary
-      if _display.name not in Platform.hosts_visited:
+      if _display.hostname not in Platform.hosts_visited:
         #_ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client-daemon.sh"])
         Platform.hosts_visited.append(_display.name)
 

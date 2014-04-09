@@ -12,10 +12,8 @@ import avango.oculus
 # import framework libraries
 import ClientConfigFileParser
 import ClientMaterialUpdaters
-
-from ClientDesktopUser import *
-from ClientOVRUser import *
-from ClientPowerWallUser import *
+from StandardView import *
+from display_config import displays
 
 # import python libraries
 import sys
@@ -55,8 +53,6 @@ def start():
   user_list = ClientConfigFileParser.parse(config_file, platform_id)
   print user_list
 
-  return
-
   # create distribution node
   nettrans = avango.gua.nodes.NetTransform(
                 Name = "net",
@@ -80,18 +76,25 @@ def start():
   water_updater.UniformName.value = "time"
   water_updater.TimeIn.connect_from(timer.Time)
 
+  # get the display instance
+  for _display in displays:
+    if _display.name == display_name:
+      handled_display_instance = _display
+
+  print handled_display_instance
 
   # create a viewer
   viewer = avango.gua.nodes.Viewer()
 
-  '''
   for _user_attributes in user_list:
 
     # standard user case
-    if _user_attributes[0] == "StandardUser":
+    if _user_attributes[0] == "MonoUser":
       _view = StandardView()
-      _view.my_constructor(graph, viewer, _user_attributes)
-  '''
+      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, False)
+    elif _user_attributes[0] == "StereoUser":
+      _view = StandardView()
+      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, True)
 
 
   viewer.SceneGraphs.value = [graph]

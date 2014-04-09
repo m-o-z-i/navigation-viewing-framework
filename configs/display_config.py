@@ -6,12 +6,14 @@ from Display import Display
 class LargePowerwall(Display):
 ##################################################
   def __init__(self):
-    self.name = "large_powerwall"
-    self.hostname = "kerberos"
-    self.resolution = (1920, 1200)
-    self.displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
-    self.size = (4.16, 2.6)
-    self.transform = (0.0, 1.57, 0.0)
+    Display.__init__( self
+                    , hostname = "kerberos"
+                    , name = "large_powerwall"
+                    , resolution = (1920, 1200)
+                    , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
+                    , size = (4.16, 2.6)
+                    , transform = (0.0, 1.57, 0.0)
+                    )
 
   def register_user(self, user_num):
     if user_num < 4:
@@ -31,12 +33,14 @@ class LargePowerwall(Display):
 class SmallPowerwall(Display):
 ##################################################
   def __init__(self):
-    self.name = "small_powerwall"
-    self.hostname = "tba"
-    self.resolution = (1920, 1200)
-    self.displaystrings = [":0.0", ":0.1"]
-    self.size = (3.0, 1.98)
-    self.transform = (0.0, 1.42, 0.0)
+    Display.__init__( self
+                    , hostname = "tba"
+                    , name = "small_powerwall"
+                    , resolution = (1920, 1200)
+                    , displaystrings = [":0.0", ":0.1"]
+                    , size = (3.0, 1.98)
+                    , transform = (0.0, 1.42, 0.0)
+                    )
 
   def register_user(self, user_num):
     if user_num < 2:
@@ -59,5 +63,5 @@ class SmallPowerwall(Display):
 displays = [
     LargePowerwall()
   , SmallPowerwall()
-  , Display("atalante")
+  , Display(hostname = "atalante")
 ]

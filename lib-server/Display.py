@@ -30,3 +30,12 @@ class Display:
 			return self.displaystrings[user_num]
 		else:
 			return None
+
+	def create_screen_node(self, name = "screen_node"):
+		_screen = avango.gua.nodes.ScreenNode(name)
+		_w, _h = self.resolution
+		_screen.Width.value = _w
+		_screen.Height.value = _h
+		_x, _y, _z = self.transform
+		_screen.Transform.value = avango.gua.make_trans_mat(_x, _y, _z)
+		return _screen

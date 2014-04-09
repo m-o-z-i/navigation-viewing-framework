@@ -13,9 +13,7 @@ from   examples_common.GuaVE import GuaVE
 from   Navigation       import *
 from   Platform         import *
 from   User             import *
-from   OVRUser          import *
-from   PowerWallUser    import *
-from   DesktopUser      import *
+from   StandardUser     import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
 from   StatusManager    import *
@@ -181,34 +179,17 @@ class ViewingManager():
     self.navigation_list.append(_navigation)
     self.border_observer_list.append(None)
 
-  ## Creates a PowerWallUser instance and adds it to the list of PowerWallUsers.
+  ## 
   # @param TRACKING_TARGET_NAME Name of the glasses' tracking target as chosen in daemon.py
   # @param PLATFORM_ID Platform to which the user should be appended to.
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
   # @param WARNINGS Boolean value to determine if the user should be appended to a BorderObserver (i.e. the user is shown warning planes when close to the platform borders)
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param IDENTIFIER String that identifies which powerwall is used ('large' or 'small').
-  def create_powerwall_user(self, TRACKING_TARGET_NAME, PLATFORM_ID, TRANSMITTER_OFFSET, WARNINGS, NO_TRACKING_MAT, IDENTIFIER):
-    _user = PowerWallUser(self, TRACKING_TARGET_NAME, len(self.user_list), PLATFORM_ID, NO_TRACKING_MAT, TRANSMITTER_OFFSET, self.navigation_list[PLATFORM_ID].trace_material, IDENTIFIER)
+  def create_standard_user(self, PLATFORM_ID, STEREO, HEADTRACKING_TARGET_NAME, WARNINGS):
+    _user = StandardUser(self, len(self.user_list), STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
     self.user_list.append(_user)
 
-    # init border checker to warn user on platform
-    if WARNINGS:
-      if self.border_observer_list[PLATFORM_ID] == None:
-        _checked_borders = [False, False, True, False]
-        self.create_border_observer(_checked_borders, _user, self.navigation_list[PLATFORM_ID].platform)
-      else:
-        self.border_observer_list[PLATFORM_ID].add_user(_user)
-
-  ## Creates a OVRUser instance and adds it to the list of OVRUsers.
-  # @param TRACKING_TARGET_NAME Name of the Oculus Rift's tracking target as chosen in daemon.py
-  # @param PLATFORM_ID Platform to which the user should be appended to.
-  # @param WARNINGS Boolean value to determine if the user should be appended to a BorderObserver (i.e. the user is shown warning planes when close to the platform borders)
-  # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
-  def create_ovr_user(self, TRACKING_TARGET_NAME, PLATFORM_ID, WARNINGS, NO_TRACKING_MAT):
-    _user = OVRUser(self, TRACKING_TARGET_NAME, len(self.user_list), PLATFORM_ID, NO_TRACKING_MAT, self.navigation_list[PLATFORM_ID].trace_material)
-    self.user_list.append(_user)
-   
     # init border checker to warn user on platform
     if WARNINGS:
       if self.border_observer_list[PLATFORM_ID] == None:
@@ -216,14 +197,6 @@ class ViewingManager():
         self.create_border_observer(_checked_borders, _user, self.navigation_list[PLATFORM_ID].platform)
       else:
         self.border_observer_list[PLATFORM_ID].add_user(_user)
-
-  ## Creates a DesktopUser instance and adds it to the list of DesktopUsers.
-  # @param PLATFORM_ID Platform to which the user should be appended to.
-  # @param WINDOW_SIZE Resolution of the window to be created on the display. [width, height]
-  # @param SCREEN_SIZE Physical width of the screen space to be rendered on in meters. [width, height]
-  def create_desktop_user(self, PLATFORM_ID, WINDOW_SIZE, SCREEN_SIZE):
-    _user = DesktopUser(self, len(self.user_list), PLATFORM_ID, WINDOW_SIZE, SCREEN_SIZE, self.navigation_list[PLATFORM_ID].trace_material)
-    self.user_list.append(_user)
    
 
   ## Creates a BorderObserver instance for a Platform and adds a User to it.

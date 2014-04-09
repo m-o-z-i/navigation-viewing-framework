@@ -9,8 +9,8 @@ import avango.gua
 
 ## Class associated to a ViewingManager instance in order to parse and load XML configuration files for the setup.
 #
-# Gets a reference to ViewingManager and calls the create_navigation, create_powerwall_user, create_ovr_user and
-# create_desktop_user according to the settings read from the configuration file.
+# Gets a reference to ViewingManager and calls the create_navigation, create_standard_user functions
+# according to the settings read from the configuration file.
 
 class ConfigFileParser:
 
@@ -23,14 +23,6 @@ class ConfigFileParser:
     self.VIEWING_MANAGER = VIEWING_MANAGER
 
     # global settings (can be overwritten by config file)
-    ## @var transmitter_offset
-    # Transmitter offset to be read in from configuration file
-    #self.transmitter_offset = avango.gua.make_identity_mat()
-
-    ## @var no_tracking_mat
-    # Matrix to be used when no tracking is available to be read in from configuration file
-    #self.no_tracking_mat = avango.gua.make_trans_mat(0.0, 1.5, 1.0)
-
     ## @var ground_following_settings
     # Settings for the GroundFollowing instance to be read in from configuration file: [activated, ray_start_height]
     self.ground_following_settings = [False, 0.75]
@@ -425,22 +417,14 @@ class ConfigFileParser:
         # error handling
         if _user_attributes[2] >= _navs_created:
           raise IOError("Navigation number to append to is too large.")
-        elif (_user_attributes[0] != "LargePowerWallUser") and \
-             (_user_attributes[0] != "SmallPowerWallUser") and \
-             (_user_attributes[0] != "OVRUser") and \
-             (_user_attributes[0] != "DesktopUser"):
+        elif (_user_attributes[0] != "MonoUser") and \
+             (_user_attributes[0] != "StereoUser"):
           raise IOError("Unknown user type: " + _user_attributes[0])
 
-        if _user_attributes[0] == "SmallPowerWallUser":
-          self.VIEWING_MANAGER.create_powerwall_user(_user_attributes[1], _user_attributes[2], self.transmitter_offset, _user_attributes[3], self.no_tracking_mat, "small")
-        elif _user_attributes[0] == "LargePowerWallUser":
-          self.VIEWING_MANAGER.create_powerwall_user(_user_attributes[1], _user_attributes[2], self.transmitter_offset, _user_attributes[3], self.no_tracking_mat, "large")
-        elif _user_attributes[0] == "OVRUser":
-          print "Oculus Rift Messages:"
-          print "----------------------"
-          self.VIEWING_MANAGER.create_ovr_user(_user_attributes[1], _user_attributes[2], _user_attributes[3], self.no_tracking_mat)
-        elif _user_attributes[0] == "DesktopUser":
-          self.VIEWING_MANAGER.create_desktop_user(_user_attributes[2], _window_size, _screen_size)
+        if _user_attributes[0] == "MonoUser":
+          self.VIEWING_MANAGER.create_standard_user(_user_attributes[2], False, _user_attributes[1], _user_attributes[3])
+        elif _user_attributes[0] == "StereoUser":
+          self.VIEWING_MANAGER.create_standard_user(_user_attributes[2], True, _user_attributes[1], _user_attributes[3])
         else:
           print "Unknown user type", _user_attributes[0]
           _current_line = self.get_next_line_in_file(_config_file)

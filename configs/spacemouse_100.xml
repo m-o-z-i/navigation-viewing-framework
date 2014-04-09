@@ -23,7 +23,7 @@
 
     <display>atalante_display</display>
 
-    <avatartype>kinect</avatartype>
+    <avatartype>joseph_table</avatartype>
 
     <transmitteroffset>
       <x>0.0</x>
@@ -54,9 +54,11 @@
   
   <user>
 
-    <type>DesktopUser</type>
+    <type>MonoUser</type>
 
     <startplatform>0</startplatform>
+
+    <warnings>True</warnings>
 
   </user>
    

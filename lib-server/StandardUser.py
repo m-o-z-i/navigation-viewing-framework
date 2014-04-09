@@ -8,7 +8,7 @@ import avango
 import avango.gua
 
 # import framework libraries
-from User import 
+from User import *
 from TrackingReader import *
 
 # import math libraries
@@ -21,13 +21,13 @@ import math
 
 class StandardUser(User):
 
-	##
-	#
-	def __init__(self, VIEWING_MANAGER, USER_ID, STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
+  ##
+  #
+  def __init__(self, VIEWING_MANAGER, USER_ID, STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
 
     User.__init__(self, AVATAR_MATERIAL)
 
-	  # variables
+    # variables
     ## @var VIEWING_MANAGER
     # Reference to the ViewingManager instance from which the user is created.
     self.VIEWING_MANAGER = VIEWING_MANAGER
@@ -36,9 +36,13 @@ class StandardUser(User):
     # Identification number of the PowerWallUser, starting from 0.
     self.id = USER_ID
 
+    ## @var platform_id
+    # ID of the platform the user is belonging to.
+    self.platform_id = PLATFORM_ID
+
     ## @var platform
     # Instance of the platform the user is belonging to.
-    self.platform = self.VIEWING_MANAGER.navigation_list[PLATFORM_ID].platform
+    self.platform = self.VIEWING_MANAGER.navigation_list[self.platform_id].platform
 
     ## @var transmitter_offset
     # The transmitter offset to be applied.
@@ -69,34 +73,34 @@ class StandardUser(User):
     self.head_transform.Transform.connect_from(self.headtracking_reader.sf_abs_mat)
 
     if STEREO:
-    	# create the eyes
-	    ## @var left_eye
-	    # Scenegraph node representing the user's left eye.
-	    self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
-	    self.left_eye.Transform.value = avango.gua.make_identity_mat()
-	    self.head_transform.Children.value.append(self.left_eye)
+      # create the eyes
+      ## @var left_eye
+      # Scenegraph node representing the user's left eye.
+      self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
+      self.left_eye.Transform.value = avango.gua.make_identity_mat()
+      self.head_transform.Children.value.append(self.left_eye)
 
-	    ## @var right_eye
-	    # Scenegraph node representing the user's right eye.
-	    self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
-	    self.right_eye.Transform.value = avango.gua.make_identity_mat()
-	    self.head_transform.Children.value.append(self.right_eye)
+      ## @var right_eye
+      # Scenegraph node representing the user's right eye.
+      self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
+      self.right_eye.Transform.value = avango.gua.make_identity_mat()
+      self.head_transform.Children.value.append(self.right_eye)
 
-	    self.set_eye_distance(0.06)
+      self.set_eye_distance(0.06)
       
     else:
-    	# create the eye
-	    ## @var eye
-	    # Scenegraph node representing the user's eye.
-	    self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
-	    self.left_eye.Transform.value = avango.gua.make_identity_mat()
-	    self.head_transform.Children.value.append(self.eye)
+      # create the eye
+      ## @var eye
+      # Scenegraph node representing the user's eye.
+      self.eye = avango.gua.nodes.TransformNode(Name = "eyeL")
+      self.eye.Transform.value = avango.gua.make_identity_mat()
+      self.head_transform.Children.value.append(self.eye)
 
     # create avatar representation
-    if platform.avatar_type == "joseph":
-    	self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
-    elif platform.avatar_type == "joseph_table":
-    	self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
+    if self.platform.avatar_type == "joseph":
+      self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
+    elif self.platform.avatar_type == "joseph_table":
+      self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
     
     # create coupling notification plane
     self.create_coupling_plane()
@@ -109,7 +113,9 @@ class StandardUser(User):
   def handle_message_plane_node(self):
     self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.18) * \
                                               avango.gua.make_rot_mat(90, 1, 0, 0)
-    self.screen.Children.value.append(self.message_plane_node)
+
+    for _screen in self.platform.screens:
+      _screen.Children.value.append(self.message_plane_node)
 
   ## Handles all the specialized settings for the coupling status overview.
   def handle_coupling_status_attributes(self):

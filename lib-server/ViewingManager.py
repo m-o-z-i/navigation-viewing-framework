@@ -19,7 +19,7 @@ from   DesktopUser      import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
 from   StatusManager    import *
-from   Display          import *
+from   display_config   import displays
 import Tools
 
 # import python libraries
@@ -74,14 +74,10 @@ class ViewingManager():
     # List of all created BorderObserver instances.
     self.border_observer_list = []
 
-    ##
-    #
-    self.display_list = create_displays()
-
     # kill all running python processes on display hosts
     _own_hostname = open('/etc/hostname', 'r').readline().strip(" \n")
 
-    for _display in self.display_list:
+    for _display in displays:
       if _display.hostname != _own_hostname:
         _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
 
@@ -175,7 +171,7 @@ class ViewingManager():
     _display_instances = []
 
     for _display_string in DISPLAYS:
-      for _display_instance in self.display_list:
+      for _display_instance in displays:
         if _display_instance.name == _display_string:
           _display_instances.append(_display_instance)
 

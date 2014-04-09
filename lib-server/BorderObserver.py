@@ -9,10 +9,8 @@ import avango.gua
 import avango.script
 
 # import framework libraries
-from User            import *
-from PowerWallUser   import *
-from OVRUser         import *
 from Platform        import *
+from StandardUser    import *
 
 ## Class to check whether users on a platform are close to platform borders.
 #

@@ -180,12 +180,7 @@ class ViewingManager():
     self.border_observer_list.append(None)
 
   ## 
-  # @param TRACKING_TARGET_NAME Name of the glasses' tracking target as chosen in daemon.py
-  # @param PLATFORM_ID Platform to which the user should be appended to.
-  # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
-  # @param WARNINGS Boolean value to determine if the user should be appended to a BorderObserver (i.e. the user is shown warning planes when close to the platform borders)
-  # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
-  # @param IDENTIFIER String that identifies which powerwall is used ('large' or 'small').
+  #
   def create_standard_user(self, PLATFORM_ID, STEREO, HEADTRACKING_TARGET_NAME, WARNINGS):
     _user = StandardUser(self, len(self.user_list), STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
     self.user_list.append(_user)

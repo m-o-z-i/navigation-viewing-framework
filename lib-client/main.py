@@ -84,32 +84,15 @@ def start():
   # create a viewer
   viewer = avango.gua.nodes.Viewer()
 
-  # TODO: Build pipelines and render stuff
-
   '''
-  # create viewing setups for each user
-  for user_attributes in user_list:
-    
-    # desktop user case
-    if user_attributes[0] == "DesktopUser":
-      _user = ClientDesktopUser()
-      _user.my_constructor(graph, viewer, user_attributes)
- 
-    # small powerwall user case
-    elif user_attributes[0] == "SmallPowerWallUser":
-      _user = ClientPowerWallUser()
-      _user.my_constructor(graph, viewer, user_attributes, "small")
+  for _user_attributes in user_list:
 
-    # large powerwall user case
-    elif user_attributes[0] == "LargePowerWallUser":
-      _user = ClientPowerWallUser()
-      _user.my_constructor(graph, viewer, user_attributes, "large")
-
-    # ovr user case
-    elif user_attributes[0] == "OVRUser":
-      _user = ClientOVRUser()
-      _user.my_constructor(graph, viewer, user_attributes)
+    # standard user case
+    if _user_attributes[0] == "StandardUser":
+      _view = StandardView()
+      _view.my_constructor(graph, viewer, _user_attributes)
   '''
+
 
   viewer.SceneGraphs.value = [graph]
 

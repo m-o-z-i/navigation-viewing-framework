@@ -79,13 +79,25 @@ class Platform(avango.script.Script):
     #
     self.avatar_type = AVATAR_TYPE
 
+    # extend scenegraph with platform node
+    ## @var platform_transform_node
+    # Scenegraph node representing this platform's transformation.
+    self.platform_transform_node = avango.gua.nodes.TransformNode(Name = "platform_" + str(PLATFORM_ID))
+    self.platform_transform_node.Transform.connect_from(self.sf_abs_mat)
+    NET_TRANS_NODE.Children.value.append(self.platform_transform_node)
+
     # get own ip adress
     _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
     _server_ip = _server_ip.strip(" \n")
 
     # open ssh connection for all hosts associated to display
     for _display in self.displays:
-      # TODO: append screen nodes to platform
+      # append a screen node to platform
+      _screen = avango.gua.nodes.ScreenNode(Name = "screen_" + str(self.displays.index(_display)))
+      _screen.Width.value = _display.resolution[0]
+      _screen.Height.value = _display.resolution[1]
+      _screen.Transform.value = avango.gua.make_trans_mat(_display.transform[0], _display.transform[1], _display.transform[2])
+      self.platform_transform_node.Children.value.append(_screen)
 
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 
@@ -101,12 +113,6 @@ class Platform(avango.script.Script):
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
 
-    # extend scenegraph with platform node
-    ## @var platform_transform_node
-    # Scenegraph node representing this platform's transformation.
-    self.platform_transform_node = avango.gua.nodes.TransformNode(Name = "platform_" + str(PLATFORM_ID))
-    self.platform_transform_node.Transform.connect_from(self.sf_abs_mat)
-    NET_TRANS_NODE.Children.value.append(self.platform_transform_node)
 
     # create four boundary planes
     _loader = avango.gua.nodes.GeometryLoader()

@@ -31,7 +31,7 @@ class LargePowerwall(Display):
 class SmallPowerwall(Display):
 ##################################################
   def __init__(self):
-    self.name = "large_powerwall"
+    self.name = "small_powerwall"
     self.hostname = "tba"
     self.resolution = (1920, 1200)
     self.displaystrings = [":0.0", ":0.1"]

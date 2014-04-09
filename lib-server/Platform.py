@@ -93,11 +93,8 @@ class Platform(avango.script.Script):
     # open ssh connection for all hosts associated to display
     for _display in self.displays:
       # append a screen node to platform
-      _screen = avango.gua.nodes.ScreenNode(Name = "screen_" + str(self.displays.index(_display)))
-      _screen.Width.value = _display.resolution[0]
-      _screen.Height.value = _display.resolution[1]
-      _screen.Transform.value = avango.gua.make_trans_mat(_display.transform[0], _display.transform[1], _display.transform[2])
-      self.platform_transform_node.Children.value.append(_screen)
+      _screen = _display.create_screen_node("screen_" + str(self.displays.index(_display)))
+      self.platform_transform_node.Children.value.append(_screen))
 
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 

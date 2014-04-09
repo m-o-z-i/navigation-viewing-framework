@@ -25,6 +25,7 @@ class LargePowerwall(Display):
         , "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
         , "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
       ]
+      self.num_users += 1
       return (self.displaystrings[user_num], warpmatrices)
     else:
       return None
@@ -53,6 +54,7 @@ class SmallPowerwall(Display):
         , "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, 2 * user_num + 1)
         , "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, 2 * user_num + 1)
       ]
+      self.num_users += 1
       return (self.displaystrings[user_num], warpmatrices)
     else:
       return None

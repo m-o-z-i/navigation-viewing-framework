@@ -35,6 +35,11 @@ class Platform(avango.script.Script):
   def __init__(self):
     self.super(Platform).__init__()
 
+    ##
+    #
+    self.screens = []
+    
+
   ## Custom constructor.
   # @param NET_TRANS_NODE Reference to the net matrix node in the scenegraph for distribution.
   # @param SCENEGRAPH Reference to the scenegraph.
@@ -94,7 +99,8 @@ class Platform(avango.script.Script):
     for _display in self.displays:
       # append a screen node to platform
       _screen = _display.create_screen_node("screen_" + str(self.displays.index(_display)))
-      self.platform_transform_node.Children.value.append(_screen))
+      self.platform_transform_node.Children.value.append(_screen)
+      self.screens.append(_screen)
 
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 

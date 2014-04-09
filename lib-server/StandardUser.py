@@ -120,11 +120,16 @@ class StandardUser(User):
   ## Handles all the specialized settings for the coupling status overview.
   def handle_coupling_status_attributes(self):
     self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
-    self.screen.Children.value.append(self.coupling_status_node)
+    
+    for _screen in self.platform.screens:
+      _screen.Children.value.append(self.coupling_status_node)
+
+    # TODO: Make generic size
 
     ## @var start_trans
     # Translation of the first coupling status notifier (own color).
-    self.start_trans = avango.gua.Vec3(-0.433 * self.screen.Width.value, 0.454 * self.screen.Height.value, 0.0)
+    #self.start_trans = avango.gua.Vec3(-0.433 * self.screen.Width.value, 0.454 * self.screen.Height.value, 0.0)
+    self.start_trans = avango.gua.Vec3(-0.433 * 1.6, 0.454 * 1.0, 0.0)
       
     ## @var start_scale
     # Scaling of the first coupling status notifier (own color).

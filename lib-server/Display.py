@@ -32,7 +32,7 @@ class Display:
 			return None
 
 	def create_screen_node(self, name = "screen_node"):
-		_screen = avango.gua.nodes.ScreenNode(name)
+		_screen = avango.gua.nodes.ScreenNode(Name = name)
 		_w, _h = self.resolution
 		_screen.Width.value = _w
 		_screen.Height.value = _h

@@ -46,11 +46,23 @@ class Platform(avango.script.Script):
   # @param PLATFORM_SIZE Physical size of the platform in meters. Passed in an two-element list: [width, depth]
   # @param INPUT_MAPPING_INSTANCE An instance of InputMapping which accumulates the device inputs for this platform.
   # @param PLATFORM_ID The id number assigned to this platform, starting from 0.
-  #
-  #
-  #
-  #
-  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, PLATFORM_SIZE, INPUT_MAPPING_INSTANCE, PLATFORM_ID, TRANSMITTER_OFFSET, NO_TRACKING_MAT, DISPLAYS, AVATAR_TYPE, CONFIG_FILE):
+  # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
+  # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
+  # @param DISPLAYS The names of the displays that belong to this navigation.
+  # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
+  # @param CONFIG_FILE The path to the config file that is used.
+  def my_constructor(
+      self
+    , NET_TRANS_NODE
+    , SCENEGRAPH
+    , PLATFORM_SIZE
+    , INPUT_MAPPING_INSTANCE
+    , PLATFORM_ID
+    , TRANSMITTER_OFFSET
+    , NO_TRACKING_MAT
+    , DISPLAYS
+    , AVATAR_TYPE
+    , CONFIG_FILE):
 
     ## @var platform_id
     # The id number of this platform, starting from 0.
@@ -111,7 +123,10 @@ class Platform(avango.script.Script):
 
       # run client process on host
       # command line parameters: server ip, platform id, config file, screen number
-      _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + _display.name + " " + CONFIG_FILE + " " + str(self.displays.index(_display))], stderr=subprocess.PIPE)
+      _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
+          "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
+          _display.name + " " + CONFIG_FILE + " " + str(self.displays.index(_display))]
+        , stderr=subprocess.PIPE)
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)

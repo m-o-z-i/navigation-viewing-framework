@@ -46,6 +46,7 @@ class StandardView(View):
     # no more users allowed at this screen
     if not display_values:
       print 'Error: no more users allowed at display "' + DISPLAY_INSTANCE.name + '"!'
+      # TODO better handling of this case?
       return
 
     if STEREO:

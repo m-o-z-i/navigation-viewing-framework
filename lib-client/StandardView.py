@@ -28,28 +28,37 @@ class StandardView(View):
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
   # @param VIEWER Reference to the viewer to which the created pipeline will be appended to.
   # @param USER_ATTRIBUTES List created by file parser containing all the important user attributes.
-  #
-  #
-  #
+  # @param PLATFORM_ID The platform id on which this user is standing on.
+  # @param DISPLAY_INSTANCE An instance of Display to represent the values.
+  # @param SCREEN_NUM The number of the screen node on the platform.
+  # @param STEREO Boolean indicating if the view to be constructed is stereo or mono.
   def my_constructor(self, SCENEGRAPH, VIEWER, USER_ATTRIBUTES, PLATFORM_ID, DISPLAY_INSTANCE, SCREEN_NUM, STEREO):
 
+    # structure of USER_ATTRIBUTES:
     # [type, headtrackingstation, startplatform, user_id, transmitteroffset, notrackingmat]
 
-    # get user, platform id and display string
+    # get user and platform id
     user_id = USER_ATTRIBUTES[3]
     platform_id = USER_ATTRIBUTES[2]
 
+    # call base class constructor
     self.construct_view(SCENEGRAPH, platform_id, user_id, False)
 
+    # retrieve the needed values from display
     display_values = DISPLAY_INSTANCE.register_user()
 
-    # no more users allowed at this screen
+    # check if no more users allowed at this screen
     if not display_values:
-      print 'Error: no more users allowed at display "' + DISPLAY_INSTANCE.name + '"!'
       # TODO better handling of this case?
+      print 'Error: no more users allowed at display "' + DISPLAY_INSTANCE.name + '"!'
       return
 
     if STEREO:
+
+      '''
+        Stereo user case
+      '''
+
       left_eye_resolution  = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1])
       right_eye_resolution = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1])
 
@@ -61,6 +70,7 @@ class StandardView(View):
       camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeL"
       camera.RightEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeR"
 
+      # set render mask for camera
       render_mask = "!do_not_display_group && !avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
 
       for i in range(0, 10):
@@ -89,14 +99,12 @@ class StandardView(View):
       pipeline.EnableStereo.value = True
       pipeline.Enabled.value = True
 
-      ClientPipelineValues.set_pipeline_values(pipeline)
-
-      # add tracking reader to avoid latency
-      self.add_tracking_reader(USER_ATTRIBUTES[1], USER_ATTRIBUTES[4], USER_ATTRIBUTES[5])
-
-      VIEWER.Pipelines.value.append(pipeline)
-    
     else:
+
+      '''
+        Mono user case
+      '''
+
       eye_resolution  = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1])
 
       camera = avango.gua.nodes.Camera()
@@ -106,6 +114,7 @@ class StandardView(View):
       camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eye"
       camera.RightEye.value = camera.LeftEye.value
 
+      # set render mask for camera
       render_mask = "!do_not_display_group && !avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
 
       for i in range(0, 10):
@@ -121,26 +130,37 @@ class StandardView(View):
       window.LeftResolution.value = window_size
 
       # create pipeline
-      pipeline = avango.gua.nodes.Pipeline()
-      pipeline.Window.value = window
-      pipeline.LeftResolution.value = window.LeftResolution.value
-      pipeline.EnableStereo.value = False
+      pipeline = avango.gua.nodes.Pipeline(Window = window,
+                                           LeftResolution = window.LeftResolution.value)
       pipeline.Camera.value = camera
+      pipeline.EnableStereo.value = False
       pipeline.Enabled.value = True
 
-      ClientPipelineValues.set_pipeline_values(pipeline)
 
-      # add tracking reader to avoid latency
-      self.add_tracking_reader(USER_ATTRIBUTES[1], USER_ATTRIBUTES[4], USER_ATTRIBUTES[5])
+    '''
+      General user settings
+    '''
 
-      VIEWER.Pipelines.value.append(pipeline)
+    # set nice pipeline values
+    ClientPipelineValues.set_pipeline_values(pipeline)
+
+    # add tracking reader to avoid latency
+    self.add_tracking_reader(USER_ATTRIBUTES[1], USER_ATTRIBUTES[4], USER_ATTRIBUTES[5])
 
     # set display string and warpmatrices as given by the display
     if len(display_values) > 1:
       self.set_warpmatrices(window, display_values[1])
       window.Display.value = display_values[0]
 
+    # append pipeline to the viewer
+    VIEWER.Pipelines.value.append(pipeline)
+
+
+  ## Sets the warp matrices if there is a correct amount of them.
+  # @param WINDOW The window instance to apply the warp matrices to.
+  # @param WARPMATRICES A list of warp matrices to be applied if there are enough of them.
   def set_warpmatrices(self, WINDOW, WARPMATRICES):
+    
     if len(WARPMATRICES) == 6:
       WINDOW.WarpMatrixRedRight.value    = WARPMATRICES[0]
       WINDOW.WarpMatrixGreenRight.value  = WARPMATRICES[1]

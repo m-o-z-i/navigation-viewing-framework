@@ -41,6 +41,13 @@ class StandardView(View):
 
     self.construct_view(SCENEGRAPH, platform_id, user_id, False)
 
+    display_values = DISPLAY_INSTANCE.register_user()
+
+    # no more users allowed at this screen
+    if not display_values:
+      print 'Error: no more users allowed at display "' + DISPLAY_INSTANCE.name + '"!'
+      return
+
     if STEREO:
       left_eye_resolution  = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1])
       right_eye_resolution = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1])
@@ -70,20 +77,7 @@ class StandardView(View):
       window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
       window.RightResolution.value = avango.gua.Vec2ui(window_size.x / 2, window_size.y)
       window.RightPosition.value = avango.gua.Vec2ui(int(window_size.x * 0.5), 0)
-
       window.StereoMode.value            = avango.gua.StereoMode.SIDE_BY_SIDE
-    
-      # TODO: Set warpmatrices
-      #window.WarpMatrixRedRight.value    = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 2)
-      #window.WarpMatrixGreenRight.value  = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 2)
-      #window.WarpMatrixBlueRight.value   = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 2)
-      
-      #window.WarpMatrixRedLeft.value     = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 1)
-      #window.WarpMatrixGreenLeft.value   = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 1)
-      #window.WarpMatrixBlueLeft.value    = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 1)
-
-      # TODO: Set display  string
-      #window.Display.value = display
 
       # create pipeline
       pipeline = avango.gua.nodes.Pipeline(Window = window, 
@@ -125,18 +119,6 @@ class StandardView(View):
       window.Size.value = window_size
       window.LeftResolution.value = window_size
 
-      # TODO: Set warpmatrices
-      #window.WarpMatrixRedRight.value    = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 2)
-      #window.WarpMatrixGreenRight.value  = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 2)
-      #window.WarpMatrixBlueRight.value   = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 2)
-      
-      #window.WarpMatrixRedLeft.value     = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 1)
-      #window.WarpMatrixGreenLeft.value   = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 1)
-      #window.WarpMatrixBlueLeft.value    = "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, (user_id)*2 + 1)
-
-      #TODO: Set display string
-      #window.Display.value = display
-
       # create pipeline
       pipeline = avango.gua.nodes.Pipeline()
       pipeline.Window.value = window
@@ -151,3 +133,18 @@ class StandardView(View):
       self.add_tracking_reader(USER_ATTRIBUTES[1], USER_ATTRIBUTES[4], USER_ATTRIBUTES[5])
 
       VIEWER.Pipelines.value.append(pipeline)
+
+    # set display string and warpmatrices as given by the display
+    if len(display_values) > 1:
+      self.set_warpmatrices(window, display_values[1])
+      window.Display.value = display_values[0]
+
+  def set_warpmatrices(self, WINDOW, WARPMATRICES):
+    if len(WARPMATRICES) == 6:
+      WINDOW.WarpMatrixRedRight.value    = WARPMATRICES[0]
+      WINDOW.WarpMatrixGreenRight.value  = WARPMATRICES[1]
+      WINDOW.WarpMatrixBlueRight.value   = WARPMATRICES[2]
+      
+      WINDOW.WarpMatrixRedLeft.value     = WARPMATRICES[3]
+      WINDOW.WarpMatrixGreenLeft.value   = WARPMATRICES[4]
+      WINDOW.WarpMatrixBlueLeft.value    = WARPMATRICES[5]

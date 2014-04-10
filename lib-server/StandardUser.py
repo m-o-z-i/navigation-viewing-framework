@@ -51,6 +51,7 @@ class StandardUser(User):
     ## @var no_tracking_mat
     # The matrix to be applied when no tracking is available.
     self.no_tracking_mat      = self.platform.no_tracking_mat
+    #self.no_tracking_mat = avango.gua.make_trans_mat(0.0 , self.platform.screens[0].Transform.value.get_translate().y, 0.2)
 
     # init viewing setup 
     ## @var head_transform

@@ -68,4 +68,5 @@ displays = [
     LargePowerwall()
   , SmallPowerwall()
   , Display(hostname = "atalante")
+  , Display(hostname = "nestor", transform = (-1.0, 1.75, 0.0))
 ]

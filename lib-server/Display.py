@@ -11,8 +11,8 @@ class Display:
 							, name = None
 							, resolution = (1920, 1080)
 							, displaystrings = [":0.0"]
-							, size = (1.6, 0.9)
-							, transform = (0.0, 1.75 / 2.0, 0.0)
+							, size = (1.6, 1.0)
+							, transform = (0.0, 1.75, 0.0)
 							):
 		# save values in members
 		self.hostname = hostname

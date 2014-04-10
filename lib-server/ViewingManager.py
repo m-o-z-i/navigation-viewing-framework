@@ -42,7 +42,12 @@ class ViewingManager():
   # @param NET_TRANS_NODE Reference to the net transformation node.
   # @param SCENEGRAPH Reference to the scenegraph.
   # @param CONFIG_FILE Path to the XML configuration file.
-  def __init__(self, NET_TRANS_NODE, SCENEGRAPH, CONFIG_FILE):
+  def __init__(
+      self
+    , NET_TRANS_NODE
+    , SCENEGRAPH
+    , CONFIG_FILE
+    ):
     
     # parameters
     ## @var background_texture
@@ -159,11 +164,27 @@ class ViewingManager():
   # @param MOVEMENT_TRACES Boolean indicating if the platform should leave traces behind.
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param GROUND_FOLLOWING_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
-  #
-  #
-  #
+  # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
+  # @param DISPLAYS The names of the displays that belong to this navigation.
+  # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
+  # @param CONFIG_FILE The path to the config file that is used.
   # @param DEVICE_TRACKING_NAME Name of the device's tracking sensor as chosen in daemon if available.
-  def create_navigation(self, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, STARTING_MATRIX, PLATFORM_SIZE, ANIMATE_COUPLING, MOVEMENT_TRACES, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, TRANSMITTER_OFFSET, DISPLAYS, AVATAR_TYPE, CONFIG_FILE, DEVICE_TRACKING_NAME = None):
+  def create_navigation(
+      self
+    , INPUT_DEVICE_TYPE
+    , INPUT_DEVICE_NAME
+    , STARTING_MATRIX
+    , PLATFORM_SIZE
+    , ANIMATE_COUPLING
+    , MOVEMENT_TRACES
+    , NO_TRACKING_MAT
+    , GROUND_FOLLOWING_SETTINGS
+    , TRANSMITTER_OFFSET
+    , DISPLAYS
+    , AVATAR_TYPE
+    , CONFIG_FILE
+    , DEVICE_TRACKING_NAME = None
+    ):
     
     # convert list of parsed display strings to the corresponding instances
     _display_instances = []
@@ -175,13 +196,40 @@ class ViewingManager():
 
     # create the navigation instance
     _navigation = Navigation()
-    _navigation.my_constructor(self.NET_TRANS_NODE, self.SCENEGRAPH, PLATFORM_SIZE, STARTING_MATRIX, self.navigation_list, INPUT_DEVICE_TYPE, INPUT_DEVICE_NAME, NO_TRACKING_MAT, GROUND_FOLLOWING_SETTINGS, ANIMATE_COUPLING, MOVEMENT_TRACES, self.status_manager, TRANSMITTER_OFFSET, _display_instances, AVATAR_TYPE, CONFIG_FILE, DEVICE_TRACKING_NAME)
+    _navigation.my_constructor(
+        NET_TRANS_NODE = self.NET_TRANS_NODE
+      , SCENEGRAPH = self.SCENEGRAPH
+      , PLATFORM_SIZE = PLATFORM_SIZE
+      , STARTING_MATRIX = STARTING_MATRIX
+      , NAVIGATION_LIST = self.navigation_list
+      , INPUT_SENSOR_TYPE = INPUT_DEVICE_TYPE
+      , INPUT_SENSOR_NAME = INPUT_DEVICE_NAME
+      , NO_TRACKING_MAT = NO_TRACKING_MAT
+      , GF_SETTINGS = GROUND_FOLLOWING_SETTINGS
+      , ANIMATE_COUPLING = ANIMATE_COUPLING
+      , MOVEMENT_TRACES = MOVEMENT_TRACES
+      , STATUS_MANAGER = self.status_manager
+      , TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
+      , DISPLAYS = _display_instances
+      , AVATAR_TYPE = AVATAR_TYPE
+      , CONFIG_FILE = CONFIG_FILE
+      , TRACKING_TARGET_NAME = DEVICE_TRACKING_NAME
+    )
     self.navigation_list.append(_navigation)
     self.border_observer_list.append(None)
 
-  ## 
-  #
-  def create_standard_user(self, PLATFORM_ID, STEREO, HEADTRACKING_TARGET_NAME, WARNINGS):
+  ## Create a standard (non-HMD) user.
+  # @param PLATFORM_ID The ID of the platform this user belongs to.
+  # @param STEREO Boolean indicating whether the user has a stereo view.
+  # @param HEADTRACKING_TARGET_NAME The headtracking target identifier attached to this user
+  # @param WARNINGS Boolean indicating whether to display warning planes when the user gets close to the platform borders.
+  def create_standard_user(
+      self
+    , PLATFORM_ID
+    , STEREO
+    , HEADTRACKING_TARGET_NAME
+    , WARNINGS
+    ):
     _user = StandardUser(self, len(self.user_list), STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
     self.user_list.append(_user)
 

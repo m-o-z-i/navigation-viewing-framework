@@ -40,13 +40,16 @@ def start():
   graph.Root.value.Children.value = [pseudo_nettrans]
 
   # initialize viewing setup
-  viewing_manager = ViewingManager(pseudo_nettrans, graph, sys.argv[1])
+  viewing_manager = ViewingManager(
+      NET_TRANS_NODE = pseudo_nettrans
+    , SCENEGRAPH = graph
+    , CONFIG_FILE = sys.argv[1])
 
   # create distribution node and sync children from pseudo nettrans
   nettrans = avango.gua.nodes.NetTransform(
-              Name = "net",
-              Groupname = "AVSERVER|{0}|7432".format(server_ip)
-              )
+      Name = "net"
+    , Groupname = "AVSERVER|{0}|7432".format(server_ip)
+  )
 
   nettrans.Children.value = pseudo_nettrans.Children.value
   graph.Root.value.Children.value = [nettrans]

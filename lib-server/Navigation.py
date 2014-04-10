@@ -82,12 +82,31 @@ class Navigation(avango.script.Script):
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
   # @param STATUS_MANAGER Reference to the only instance of StatusManager in the setup used to update user displays.
-  #
-  #
-  #
-  #
+  # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
+  # @param DISPLAYS The names of the displays that belong to this navigation.
+  # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
+  # @param CONFIG_FILE The path to the config file that is used.
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
-  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, PLATFORM_SIZE, STARTING_MATRIX, NAVIGATION_LIST, INPUT_SENSOR_TYPE, INPUT_SENSOR_NAME, NO_TRACKING_MAT, GF_SETTINGS, ANIMATE_COUPLING, MOVEMENT_TRACES, STATUS_MANAGER, TRANSMITTER_OFFSET, DISPLAYS, AVATAR_TYPE, CONFIG_FILE, TRACKING_TARGET_NAME = None):
+  def my_constructor(
+      self
+    , NET_TRANS_NODE
+    , SCENEGRAPH
+    , PLATFORM_SIZE
+    , STARTING_MATRIX
+    , NAVIGATION_LIST
+    , INPUT_SENSOR_TYPE
+    , INPUT_SENSOR_NAME
+    , NO_TRACKING_MAT
+    , GF_SETTINGS
+    , ANIMATE_COUPLING
+    , MOVEMENT_TRACES
+    , STATUS_MANAGER
+    , TRANSMITTER_OFFSET
+    , DISPLAYS
+    , AVATAR_TYPE
+    , CONFIG_FILE
+    , TRACKING_TARGET_NAME = None
+    ):
     
     ## @var SCENEGRAPH
     # Reference to the scenegraph.
@@ -152,7 +171,18 @@ class Navigation(avango.script.Script):
     ## @var platform
     # Platform instance that is controlled by the Device.
     self.platform = Platform()
-    self.platform.my_constructor(self.NET_TRANS_NODE, self.SCENEGRAPH, PLATFORM_SIZE, self.inputmapping, len(NAVIGATION_LIST), TRANSMITTER_OFFSET, NO_TRACKING_MAT, DISPLAYS, AVATAR_TYPE, CONFIG_FILE)
+    self.platform.my_constructor(
+        NET_TRANS_NODE = self.NET_TRANS_NODE
+      , SCENEGRAPH = self.SCENEGRAPH
+      , PLATFORM_SIZE = PLATFORM_SIZE
+      , INPUT_MAPPING_INSTANCE = self.inputmapping
+      , PLATFORM_ID = len(NAVIGATION_LIST)
+      , TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
+      , NO_TRACKING_MAT = NO_TRACKING_MAT
+      , DISPLAYS = DISPLAYS
+      , AVATAR_TYPE = AVATAR_TYPE
+      , CONFIG_FILE = CONFIG_FILE
+      )
 
     ## @var NAVIGATION_LIST
     # Reference to a list containing all Navigation instances in the setup.
@@ -231,7 +261,10 @@ class Navigation(avango.script.Script):
 
     ## @var animation_time
     # Time of the rotation animation in relation to the rotation distance.
-    self.animation_time = 2 * math.sqrt(math.pow(self.start_rot.x - self.target_rot.x, 2) + math.pow(self.start_rot.y - self.target_rot.y, 2) + math.pow(self.start_rot.z - self.target_rot.z, 2) + math.pow(self.start_rot.w - self.target_rot.w, 2))
+    self.animation_time = 2 * math.sqrt(math.pow(self.start_rot.x - self.target_rot.x, 2) \
+      + math.pow(self.start_rot.y - self.target_rot.y, 2) \
+      + math.pow(self.start_rot.z - self.target_rot.z, 2) \
+      + math.pow(self.start_rot.w - self.target_rot.w, 2))
    
     # if no animation is needed, set animation time to a minimum value to avoid division by zero
     if self.animation_time == 0.0:
@@ -332,7 +365,9 @@ class Navigation(avango.script.Script):
         _close_navs.append(_nav)
 
     # sort list of close navs, highest distance first
-    _close_navs.sort(key = lambda _nav: Tools.euclidean_distance(_position_self, (_nav.platform.sf_abs_mat.value * _nav.device.sf_station_mat.value).get_translate()), reverse = True)
+    _close_navs.sort(key = lambda _nav: Tools.euclidean_distance(_position_self,
+      (_nav.platform.sf_abs_mat.value * _nav.device.sf_station_mat.value).get_translate()),
+      reverse = True)
 
     if len(_close_navs) > 0:
       if self.movement_traces_activated:
@@ -404,8 +439,10 @@ class Navigation(avango.script.Script):
     # Matrix representing the transformation of the start navigation's rotation center (used for coupling animation purposes).
     self.start_rot_center_mat = _start_rot_center_mat
 
-    self.animation_time = 0.5 * math.sqrt(math.pow(self.start_trans.x - self.target_trans.x, 2) + math.pow(self.start_trans.y - self.target_trans.y, 2) + math.pow(self.start_trans.z - self.target_trans.z, 2)) + \
-                          math.sqrt(math.pow(self.start_rot.x - self.target_rot.x, 2) + math.pow(self.start_rot.y - self.target_rot.y, 2) + math.pow(self.start_rot.z - self.target_rot.z, 2) + math.pow(self.start_rot.w - self.target_rot.w, 2))
+    self.animation_time = 0.5 * math.sqrt(math.pow(self.start_trans.x - self.target_trans.x, 2) \
+      + math.pow(self.start_trans.y - self.target_trans.y, 2) + math.pow(self.start_trans.z - self.target_trans.z, 2)) \
+      + math.sqrt(math.pow(self.start_rot.x - self.target_rot.x, 2) + math.pow(self.start_rot.y - self.target_rot.y, 2) \
+      + math.pow(self.start_rot.z - self.target_rot.z, 2) + math.pow(self.start_rot.w - self.target_rot.w, 2))
 
     # if no animation is needed, set animation time to a minimum value to avoid division by zero
     if self.animation_time == 0.0:

@@ -15,7 +15,8 @@ class LargePowerwall(Display):
                     , transform = (0.0, 1.57, 0.0)
                     )
 
-  def register_user(self, user_num):
+  def register_user(self):
+    user_num = self.num_users
     if user_num < 4:
       warpmatrices = [
           "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
@@ -43,7 +44,8 @@ class SmallPowerwall(Display):
                     , transform = (0.0, 1.42, 0.0)
                     )
 
-  def register_user(self, user_num):
+  def register_user(self):
+    user_num = self.num_users
     if user_num < 2:
       warpmatrices = [
           "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, 2 * user_num + 2)

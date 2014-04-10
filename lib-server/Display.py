@@ -28,10 +28,11 @@ class Display:
 		# init counter
 		self.num_users = 0
 
-	def register_user(self, user_num):
+	def register_user(self):
+		user_num = self.num_users
 		if user_num < len(self.displaystrings):
 			self.num_users += 1
-			return self.displaystrings[user_num]
+			return [self.displaystrings[user_num]]
 		else:
 			return None
 

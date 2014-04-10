@@ -43,6 +43,12 @@ class StatusManager(avango.script.Script):
     # set evaluation policy
     self.always_evaluate(True)
 
+  ## Updates the stored nettrans node.
+  # @param NET_TRANS_NODE The new nettrans node to be stored.
+  def update_nettrans_node(self, NET_TRANS_NODE):
+
+    self.NET_TRANS_NODE = NET_TRANS_NODE
+
   ## Checks which users are on a specific platform and switches their coupling plane to visible
   # @param PLATFORM_ID The platform's id on which the users should be notified.
   def show_coupling_plane(self, PLATFORM_ID):

@@ -129,8 +129,8 @@ class StandardUser(User):
 
     ## @var start_trans
     # Translation of the first coupling status notifier (own color).
-    #self.start_trans = avango.gua.Vec3(-0.433 * self.screen.Width.value, 0.454 * self.screen.Height.value, 0.0)
-    self.start_trans = avango.gua.Vec3(-0.433 * 1.6, 0.454 * 1.0, 0.0)
+    self.start_trans = avango.gua.Vec3(-0.433 * self.platform.screens[0].Width.value, 0.454 * self.platform.screens[0].Height.value, 0.0)
+    #self.start_trans = avango.gua.Vec3(-0.433 * 1.6, 0.454 * 1.0, 0.0)
       
     ## @var start_scale
     # Scaling of the first coupling status notifier (own color).

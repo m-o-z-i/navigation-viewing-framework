@@ -24,6 +24,7 @@ import sys
 # @param PLATFORM_ID The platform id for which this client is responsible for.
 # @param DISPLAY_NAME The name associated to the display for which this client is responsible for.
 # @param CONFIG_FILE The filname of the configuration file to parse.
+# @param SCREEN_NUM The number of the screen on the platform.
 
 ## Main method for the client application.
 def start():
@@ -42,6 +43,9 @@ def start():
 
   # get the configuration filename
   config_file = str(sys.argv[4])
+
+  # get the screen number on platform
+  screen_num = str(sys.argv[5])
 
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()
@@ -81,8 +85,6 @@ def start():
     if _display.name == display_name:
       handled_display_instance = _display
 
-  print handled_display_instance
-
   # create a viewer
   viewer = avango.gua.nodes.Viewer()
 
@@ -91,10 +93,10 @@ def start():
     # standard user case
     if _user_attributes[0] == "MonoUser":
       _view = StandardView()
-      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, False)
+      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, False)
     elif _user_attributes[0] == "StereoUser":
       _view = StandardView()
-      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, True)
+      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, True)
 
 
   viewer.SceneGraphs.value = [graph]

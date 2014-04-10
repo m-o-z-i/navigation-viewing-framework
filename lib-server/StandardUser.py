@@ -92,7 +92,7 @@ class StandardUser(User):
       # create the eye
       ## @var eye
       # Scenegraph node representing the user's eye.
-      self.eye = avango.gua.nodes.TransformNode(Name = "eyeL")
+      self.eye = avango.gua.nodes.TransformNode(Name = "eye")
       self.eye.Transform.value = avango.gua.make_identity_mat()
       self.head_transform.Children.value.append(self.eye)
 

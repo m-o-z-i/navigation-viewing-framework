@@ -35,7 +35,7 @@ class SmallPowerwall(Display):
 ##################################################
   def __init__(self):
     Display.__init__( self
-                    , hostname = "tba"
+                    , hostname = "medusa"
                     , name = "small_powerwall"
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.0", ":0.1"]

@@ -9,9 +9,9 @@ class Display:
 	def __init__(	self
 							, hostname
 							, name = None
-							, resolution = (1920, 1080)
+							, resolution = (2560, 1440)
 							, displaystrings = [":0.0"]
-							, size = (1.6, 1.0)
+							, size = (0.595, 0.335)
 							, transform = (0.0, 1.75, 0.0)
 							):
 		# save values in members

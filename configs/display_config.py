@@ -67,6 +67,6 @@ class SmallPowerwall(Display):
 displays = [
     LargePowerwall()
   , SmallPowerwall()
-  , Display(hostname = "atalante")
-  , Display(hostname = "nestor")
+  , Display(hostname = "atalante", transform = (0.0, 1.0, 0.0))
+  , Display(hostname = "nestor", transform = (-0.645, 1.0, 0.0))
 ]

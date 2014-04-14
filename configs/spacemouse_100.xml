@@ -23,6 +23,8 @@
 
     <display>atalante_display</display>
 
+    <display>nestor_display</display>
+
     <avatartype>joseph_table</avatartype>
 
     <transmitteroffset>
@@ -33,8 +35,8 @@
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.75</y>
-      <z>1.5</z>
+      <y>1.0</y>
+      <z>0.6</z>
     </notrackingposition>
 
     <platformpos>
@@ -49,6 +51,7 @@
 
   </device>
 
+  <!--
   <device>
 
     <type>XBoxController</type>
@@ -82,6 +85,7 @@
     </platformrot>
 
   </device>
+  -->
         
 
   <!-- First Desktop User -->
@@ -96,6 +100,7 @@
 
   </user>
 
+  <!--
   <user>
 
     <type>MonoUser</type>
@@ -105,6 +110,7 @@
     <warnings>False</warnings>
 
   </user>
+   -->
    
 
 </setup>

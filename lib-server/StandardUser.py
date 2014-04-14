@@ -122,19 +122,18 @@ class StandardUser(User):
   def handle_coupling_status_attributes(self):
     self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
     
-    for _screen in self.platform.screens:
-      _screen.Children.value.append(self.coupling_status_node)
+    self.platform.screens[0].Children.value.append(self.coupling_status_node)
 
     # TODO: Make generic size
 
     ## @var start_trans
     # Translation of the first coupling status notifier (own color).
-    self.start_trans = avango.gua.Vec3(-0.433 * self.platform.screens[0].Width.value, 0.454 * self.platform.screens[0].Height.value, 0.0)
+    self.start_trans = avango.gua.Vec3(-0.5 * self.platform.screens[0].Width.value + 0.05, 0.5 * self.platform.screens[0].Height.value - 0.05, 0.0)
     #self.start_trans = avango.gua.Vec3(-0.433 * 1.6, 0.454 * 1.0, 0.0)
       
     ## @var start_scale
     # Scaling of the first coupling status notifier (own color).
-    self.start_scale = 0.1
+    self.start_scale = 0.05 * self.platform.screens[0].Width.value
       
     ## @var y_increment
     # Y offset for all coupling status notifiers after the own color.

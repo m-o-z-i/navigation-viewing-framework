@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# kill running python on this machine
+killall python
+
 # get directory of script
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 

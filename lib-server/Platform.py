@@ -27,16 +27,16 @@ class Platform(avango.script.Script):
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
 
-  ##
-  #
+  ## @var hosts_visited
+  # List of hostnames on which a client daemon was already launched. Used to avoid double launching.
   hosts_visited = []
   
   ## Default constructor.
   def __init__(self):
     self.super(Platform).__init__()
 
-    ##
-    #
+    ## @var screens
+    # List of ScreenNode instances which are appended to this platform.
     self.screens = []
     
 

@@ -21,8 +21,13 @@ import math
 
 class StandardUser(User):
 
-  ##
-  #
+  ## Custom constructor.
+  # @param VIEWING_MANAGER Reference to the ViewingManager instance from which this user is created.
+  # @param USER_ID Global user ID to be applied.
+  # @param STEREO Boolean indicating if this user is a stereo or mono one.
+  # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
+  # @param PLATFORM_ID Platform ID to which this user should be appended to.
+  # @param AVATAR_MATERIAL The material string for the user avatar to be created.
   def __init__(self, VIEWING_MANAGER, USER_ID, STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
 
     User.__init__(self, AVATAR_MATERIAL)

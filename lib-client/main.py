@@ -49,6 +49,7 @@ def start():
 
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()
+  hostname = hostname.strip(" \n")
 
   print "This client is running on", hostname, "and listens to server", server_ip
   print "It is responsible for platform", platform_id, "and display", display_name

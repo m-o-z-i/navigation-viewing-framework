@@ -80,20 +80,20 @@ class Platform(avango.script.Script):
     # Physical depth of the platform in meters.
     self.depth = PLATFORM_SIZE[1]
 
-    ##
-    #
+    ## @var transmitter_offset
+    # The transmitter offset to be applied.
     self.transmitter_offset = TRANSMITTER_OFFSET
 
-    ##
-    #
+    ## @var no_tracking_mat
+    # The matrix to be applied when no tracking information is available for users.
     self.no_tracking_mat = NO_TRACKING_MAT
 
-    ##
-    #
+    ## @var displays 
+    # List of names of the displays that belong to this navigation.
     self.displays = DISPLAYS
 
-    ##
-    #
+    ## @var avatar_type
+    # A string that determines what kind of avatar representation is to be used.
     self.avatar_type = AVATAR_TYPE
 
     # extend scenegraph with platform node
@@ -107,6 +107,10 @@ class Platform(avango.script.Script):
     _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
     _server_ip = _server_ip.strip(" \n")
 
+    # get own hostname
+    _hostname = open('/etc/hostname', 'r').readline()
+    _hostname = _hostname.strip(" \n")
+
     # open ssh connection for all hosts associated to display
     for _display in self.displays:
       # append a screen node to platform
@@ -117,8 +121,9 @@ class Platform(avango.script.Script):
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 
       # run ClientDaemon on host if necessary
-      if _display.hostname not in Platform.hosts_visited:
-        #_ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client-daemon.sh"])
+      if _display.hostname not in Platform.hosts_visited and \
+         _display.hostname != _hostname:
+        _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client-daemon.sh"])
         Platform.hosts_visited.append(_display.name)
 
       # run client process on host

@@ -91,13 +91,13 @@ def start():
 
   for _user_attributes in user_list:
 
-    # standard user case
-    if _user_attributes[0] == "MonoUser":
-      _view = StandardView()
-      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, False)
-    elif _user_attributes[0] == "StereoUser":
-      _view = StandardView()
+    _view = StandardView()
+
+    # differ between stereo and mono user case
+    if _user_attributes[0] == "True":
       _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, True)
+    else:
+      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, False)
 
 
   viewer.SceneGraphs.value = [graph]

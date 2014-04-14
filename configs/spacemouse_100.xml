@@ -88,11 +88,11 @@
   -->
         
 
-  <!-- First Desktop User -->
+  <!-- First User -->
   
   <user>
 
-    <type>MonoUser</type>
+    <stereo>False</stereo>
 
     <startplatform>0</startplatform>
 

@@ -9,7 +9,7 @@ import avango.gua
 
 ## Parses the configuration file in order to find out the attributes of this client's users
 # Outputs a list of lists of user attributes in the format:
-# [type, headtrackingstation, startplatform, user_id, transmitteroffset, notrackingmat]
+# [stereo, headtrackingstation, startplatform, user_id, transmitteroffset, notrackingmat]
 # In case resolution and screensize are not needed, the value 0 is saved.
 # @param CONFIG_FILE The configuration file to parse.
 # @param PLATFORM_ID The platform id to look for users on.
@@ -137,10 +137,10 @@ def parse(CONFIG_FILE, PLATFORM_ID):
     # read user values
     if _in_user:
 
-      # get user type
-      if _current_line.startswith("<type>"):
-        _current_line = _current_line.replace("<type>", "")
-        _current_line = _current_line.replace("</type>", "")
+      # get stereo value
+      if _current_line.startswith("<stereo>"):
+        _current_line = _current_line.replace("<stereo>", "")
+        _current_line = _current_line.replace("</stereo>", "")
         _current_line = _current_line.rstrip()
         _user_attributes[0] = _current_line
       

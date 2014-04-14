@@ -35,7 +35,7 @@ class StandardView(View):
   def my_constructor(self, SCENEGRAPH, VIEWER, USER_ATTRIBUTES, PLATFORM_ID, DISPLAY_INSTANCE, SCREEN_NUM, STEREO):
 
     # structure of USER_ATTRIBUTES:
-    # [type, headtrackingstation, startplatform, user_id, transmitteroffset, notrackingmat]
+    # [stereo, headtrackingstation, startplatform, user_id, transmitteroffset, notrackingmat]
 
     # get user and platform id
     user_id = USER_ATTRIBUTES[3]

@@ -51,7 +51,7 @@ class ConfigFileParser:
                           "joseph"]                                      # avatartype]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
-    _user_attributes = [None, None, None, False]                         # [type, headtrackingstation, startplatform, warnings]
+    _user_attributes = [None, None, None, False]                         # [stereo, headtrackingstation, startplatform, warnings]
     _window_size = [1920, 1080]                                          # [width, height]
     _screen_size = [1.6, 1.0]                                            # [width, height]
     _navs_created = 0
@@ -353,10 +353,10 @@ class ConfigFileParser:
 
       # read user values
       if _in_user:
-        # get user type
-        if _current_line.startswith("<type>"):
-          _current_line = _current_line.replace("<type>", "")
-          _current_line = _current_line.replace("</type>", "")
+        # get stereo value
+        if _current_line.startswith("<stereo>"):
+          _current_line = _current_line.replace("<stereo>", "")
+          _current_line = _current_line.replace("</stereo>", "")
           _current_line = _current_line.rstrip()
           _user_attributes[0] = _current_line
         
@@ -417,29 +417,16 @@ class ConfigFileParser:
         # error handling
         if _user_attributes[2] >= _navs_created:
           raise IOError("Navigation number to append to is too large.")
-        elif (_user_attributes[0] != "MonoUser") and \
-             (_user_attributes[0] != "StereoUser"):
-          raise IOError("Unknown user type: " + _user_attributes[0])
 
-        if _user_attributes[0] == "MonoUser":
-          self.VIEWING_MANAGER.create_standard_user(_user_attributes[2], False, _user_attributes[1], _user_attributes[3])
-        elif _user_attributes[0] == "StereoUser":
+        # distinguish between stereo and mono user
+        if _user_attributes[0] == "True":
           self.VIEWING_MANAGER.create_standard_user(_user_attributes[2], True, _user_attributes[1], _user_attributes[3])
         else:
-          print "Unknown user type", _user_attributes[0]
-          _current_line = self.get_next_line_in_file(_config_file)
-          continue
+          self.VIEWING_MANAGER.create_standard_user(_user_attributes[2], False, _user_attributes[1], _user_attributes[3])
 
         print "\nUser loaded and created:"
         print "-------------------------"
         print _user_attributes, "\n"
-
-        if _user_attributes[0] == "DesktopUser":
-          print "Window resolution:", _window_size[0], "x", _window_size[1]
-          print "Screen size:", _screen_size[0], "x", _screen_size[1], "\n"
-          # restore default values
-          _window_size = [1920, 1080]
-          _screen_size = [1.6, 1.0]
 
         _user_attributes = [None, None, None, False]
         _current_line = self.get_next_line_in_file(_config_file)

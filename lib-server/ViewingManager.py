@@ -13,7 +13,6 @@ from   examples_common.GuaVE import GuaVE
 from   Navigation       import *
 from   Platform         import *
 from   User             import *
-from   StandardUser     import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
 from   StatusManager    import *
@@ -230,7 +229,7 @@ class ViewingManager():
     , HEADTRACKING_TARGET_NAME
     , WARNINGS
     ):
-    _user = StandardUser(self, len(self.user_list), STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
+    _user = User(self, len(self.user_list), STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
     self.user_list.append(_user)
 
     # init border checker to warn user on platform

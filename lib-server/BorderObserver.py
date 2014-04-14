@@ -10,7 +10,7 @@ import avango.script
 
 # import framework libraries
 from Platform        import *
-from StandardUser    import *
+from User            import *
 
 ## Class to check whether users on a platform are close to platform borders.
 #

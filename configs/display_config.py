@@ -84,5 +84,6 @@ displays = [
   , SmallPowerwall()
   , TouchTable()
   , Display(hostname = "atalante", translation = (0.0, 1.0, 0.0))
-  , Display(hostname = "nestor", translation = (-0.645, 1.0, 0.0))
+  , Display(hostname = "nestor", translation = (0.0, 1.0, 0.0))
+  #, Display(hostname = "nestor", translation = (-0.645, 1.0, 0.0))
 ]

@@ -68,6 +68,7 @@ class View(avango.script.Script):
    
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/" "head_" + str(self.user_id)]
     
+    
     if _node_to_update != None:
 
       if self.ONLY_TRANSLATION_UPDATE:
@@ -77,4 +78,5 @@ class View(avango.script.Script):
         _node_to_update.Transform.value = _mat
       else:
         _node_to_update.Transform.value = self.headtracking_reader.sf_abs_mat.value
+    
 

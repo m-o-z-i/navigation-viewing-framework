@@ -6,7 +6,7 @@
   <global>
 
     <groundfollowing>
-      <activated>True</activated>
+      <activated>False</activated>
       <raystartheight>0.75</raystartheight>
     </groundfollowing>
 
@@ -17,15 +17,13 @@
 
   <device>
 
-    <type>NewSpheron</type>
+    <type>Spacemouse</type>
 
-    <inputsensor>device-new-spheron</inputsensor>
+    <inputsensor>device-spacemouse</inputsensor>
 
-    <trackingstation>tracking-new-spheron</trackingstation>
+    <display>touch_table</display>
 
-    <display>large_powerwall</display>
-
-    <avatartype>joseph</avatartype>
+    <avatartype>joseph_table</avatartype>
 
     <transmitteroffset>
       <x>0.0</x>
@@ -36,12 +34,12 @@
     <notrackingposition>
       <x>0.0</x>
       <y>1.75</y>
-      <z>1.5</z>
+      <z>0.0</z>
     </notrackingposition>
 
     <platformpos>
       <x>0.0</x>
-      <y>0.0</y>
+      <y>20.0</y>
       <z>12.0</z>
     </platformpos>
 
@@ -49,18 +47,11 @@
       <yaw>0.0</yaw>
     </platformrot>
 
-    <platformsize>
-      <width>3.8</width>
-      <depth>3.6</depth>
-    </platformsize>
-
   </device>
 
   <device>
 
-    <type>Spacemouse</type>
-
-    <inputsensor>device-spacemouse</inputsensor>
+    <type>KeyboardMouse</type>
 
     <display>nestor_display</display>
 
@@ -79,9 +70,9 @@
     </notrackingposition>
 
     <platformpos>
-      <x>0.0</x>
+      <x>-2.0</x>
       <y>0.0</y>
-      <z>12.0</z>
+      <z>6.0</z>
     </platformpos>
 
     <platformrot>
@@ -94,16 +85,17 @@
   
   <user>
 
-    <stereo>True</stereo>
-
-    <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
+    <stereo>False</stereo>
 
     <startplatform>0</startplatform>
 
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
+  
 
+  <!-- Second User -->
+  
   <user>
 
     <stereo>False</stereo>
@@ -113,6 +105,5 @@
     <warnings>False</warnings>
 
   </user>
-
-
+   
 </setup>

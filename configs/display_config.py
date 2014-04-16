@@ -62,11 +62,26 @@ class SmallPowerwall(Display):
       return None
 
 ##################################################
+class TouchTable(Display):
+##################################################
+  def __init__(self):
+    Display.__init__( self
+                    , hostname = "perseus"
+                    , name = "touch_table"
+                    , resolution = (3840, 2160)
+                    , displaystrings = [":0.0"]
+                    , size = (1.25, 0.70)
+                    , transform = (0.0, 0.65, 0.0)
+                    )
+
+
+##################################################
 # STORE ALL DISPLAYS TO BE USED IN THIS LIST
 ##################################################
 displays = [
     LargePowerwall()
   , SmallPowerwall()
+  , TouchTable()
   , Display(hostname = "atalante", transform = (0.0, 1.0, 0.0))
   , Display(hostname = "nestor", transform = (-0.645, 1.0, 0.0))
 ]

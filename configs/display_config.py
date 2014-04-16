@@ -14,7 +14,7 @@ class LargePowerwall(Display):
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
                     , size = (4.16, 2.6)
-                    , transformation = (0.0, 1.57, 0.0)
+                    , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     )
 
   def register_user(self):
@@ -43,7 +43,7 @@ class SmallPowerwall(Display):
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.0", ":0.1"]
                     , size = (3.0, 1.98)
-                    , transformation = (0.0, 1.42, 0.0)
+                    , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
                     )
 
   def register_user(self):

@@ -13,7 +13,6 @@ class Display:
               , displaystrings = [":0.0"]
               , size = (0.595, 0.335)
               , transformation = avango.gua.make_trans_mat(0.0, 1.75, 0.0)
-              , rotation = (0.0, 0.0, 0.0)
               ):
     # save values in members
     self.hostname = hostname
@@ -25,7 +24,6 @@ class Display:
     self.displaystrings = displaystrings
     self.size = size
     self.transformation = transformation
-    self.rotation = rotation
 
     # init counter
     self.num_users = 0

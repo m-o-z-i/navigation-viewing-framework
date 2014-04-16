@@ -50,42 +50,6 @@
     </platformrot>
 
   </device>
-
-  <!--
-  <device>
-
-    <type>XBoxController</type>
-
-    <inputsensor>device-xbox-1</inputsensor>
-
-    <display>nestor_display</display>
-
-    <avatartype>joseph_table</avatartype>
-
-    <transmitteroffset>
-      <x>0.0</x>
-      <y>0.043</y>
-      <z>1.6</z>
-    </transmitteroffset>
-
-    <notrackingposition>
-      <x>0.0</x>
-      <y>1.75</y>
-      <z>1.5</z>
-    </notrackingposition>
-
-    <platformpos>
-      <x>-4.0</x>
-      <y>0.0</y>
-      <z>12.0</z>
-    </platformpos>
-
-    <platformrot>
-      <yaw>0.0</yaw>
-    </platformrot>
-
-  </device>
-  -->
         
 
   <!-- First User -->
@@ -99,18 +63,5 @@
     <warnings>False</warnings>
 
   </user>
-
-  <!--
-  <user>
-
-    <type>MonoUser</type>
-
-    <startplatform>1</startplatform>
-
-    <warnings>False</warnings>
-
-  </user>
-   -->
-   
 
 </setup>

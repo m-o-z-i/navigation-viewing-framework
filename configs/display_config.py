@@ -12,7 +12,7 @@ class LargePowerwall(Display):
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
                     , size = (4.16, 2.6)
-                    , transform = (0.0, 1.57, 0.0)
+                    , translation = (0.0, 1.57, 0.0)
                     )
 
   def register_user(self):
@@ -41,7 +41,7 @@ class SmallPowerwall(Display):
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.0", ":0.1"]
                     , size = (3.0, 1.98)
-                    , transform = (0.0, 1.42, 0.0)
+                    , translation = (0.0, 1.42, 0.0)
                     )
 
   def register_user(self):
@@ -71,7 +71,8 @@ class TouchTable(Display):
                     , resolution = (3840, 2160)
                     , displaystrings = [":0.0"]
                     , size = (1.25, 0.70)
-                    , transform = (0.0, 0.65, 0.0)
+                    , translation = (0.0, 0.65, 0.0)
+                    , rotation = (-90.0, 0.0, 0.0)
                     )
 
 
@@ -82,6 +83,6 @@ displays = [
     LargePowerwall()
   , SmallPowerwall()
   , TouchTable()
-  , Display(hostname = "atalante", transform = (0.0, 1.0, 0.0))
-  , Display(hostname = "nestor", transform = (-0.645, 1.0, 0.0))
+  , Display(hostname = "atalante", translation = (0.0, 1.0, 0.0))
+  , Display(hostname = "nestor", translation = (-0.645, 1.0, 0.0))
 ]

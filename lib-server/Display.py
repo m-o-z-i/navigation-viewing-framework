@@ -12,7 +12,8 @@ class Display:
               , resolution = (2560, 1440)
               , displaystrings = [":0.0"]
               , size = (0.595, 0.335)
-              , transform = (0.0, 1.75, 0.0)
+              , translation = (0.0, 1.75, 0.0)
+              , rotation = (0.0, 0.0, 0.0)
               ):
     # save values in members
     self.hostname = hostname
@@ -23,7 +24,8 @@ class Display:
     self.resolution = resolution
     self.displaystrings = displaystrings
     self.size = size
-    self.transform = transform
+    self.translation = translation
+    self.rotation = rotation
 
     # init counter
     self.num_users = 0
@@ -41,6 +43,10 @@ class Display:
     _w, _h = self.size
     _screen.Width.value = _w
     _screen.Height.value = _h
-    _x, _y, _z = self.transform
-    _screen.Transform.value = avango.gua.make_trans_mat(_x, _y, _z)
+    _x, _y, _z = self.translation
+    _rx, _ry, _rz = self.rotation
+    _screen.Transform.value = avango.gua.make_trans_mat(_x, _y, _z) * \
+                              avango.gua.make_rot_mat(_ry, 0, 1, 0) * \
+                              avango.gua.make_rot_mat(_rx, 1, 0, 0) * \
+                              avango.gua.make_rot_mat(_rz, 0, 0, 1)
     return _screen

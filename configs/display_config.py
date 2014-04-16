@@ -74,7 +74,7 @@ displays = [
       , name = "touch_table"
       , resolution = (3840, 2160)
       , size = (1.25, 0.7)
-      , transformation = avango.gua.make_rot_mat(-90, 1, 0, 0) * avango.gua.make_trans_mat(0, 0.65, 0)
+      , transformation = avango.gua.make_trans_mat(0, 0.65, 0) * avango.gua.make_rot_mat(-90, 1, 0, 0)
   )
   , Display(hostname = "atalante"
       , transformation = avango.gua.make_trans_mat(0.0, 1.0, 0.0)

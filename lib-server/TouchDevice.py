@@ -1,4 +1,6 @@
 
+import avango
+import avango.script
 
 class TouchCursor(avango.script.Script):
 
@@ -36,9 +38,6 @@ class TouchCursor(avango.script.Script):
 
     self.PosX.value = self.__device_sensor.Value0.value
     self.PosY.value = self.__device_sensor.Value1.value
-
-    if (self.PosX.value != -1) or (self.PosY.value != -1):
-        print self.PosX.value, self.PosY.value
 
     self.SpeedX.value = self.__device_sensor.Value2.value
     self.SpeedY.value = self.__device_sensor.Value3.value

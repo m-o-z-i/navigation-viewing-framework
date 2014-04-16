@@ -158,7 +158,7 @@ class Navigation(avango.script.Script):
     ## @var groundfollowing
     # GroundFollowing instance to correct the absolute matrices with respect to gravity.
     self.groundfollowing = GroundFollowing()
-    self.groundfollowing.my_constructor(self.SCENEGRAPH, self.device.sf_station_mat, GF_SETTINGS)
+    self.groundfollowing.my_constructor(self.SCENEGRAPH, self.device.sf_station_mat, float(GF_SETTINGS[1]))
 
     # create input mapping
     ## @var inputmapping
@@ -166,6 +166,10 @@ class Navigation(avango.script.Script):
     self.inputmapping = InputMapping()
     self.inputmapping.my_constructor(self, self.device, self.groundfollowing, STARTING_MATRIX)
     self.inputmapping.set_input_factors(self.device.translation_factor, self.device.rotation_factor)
+
+    # activate 6 dof movement when ground following is deactivated
+    if GF_SETTINGS[0] == False:
+      self.inputmapping.deactivate_realistic_mode()
     
     # create platform
     ## @var platform

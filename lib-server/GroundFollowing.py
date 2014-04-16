@@ -58,8 +58,8 @@ class GroundFollowing(avango.script.Script):
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph of the currently displayed scene.
   # @param SF_STATION_MAT The field containing the current position of the device belonging to the platform.
-  # @param SETTINGS A list of a boolean and a floating number representing self.activated and self.ray_start_height 
-  def my_constructor(self, SCENEGRAPH, SF_STATION_MAT, SETTINGS):
+  # @param RAY_START_HEIGHT A height from which the ground following ray will originate.
+  def my_constructor(self, SCENEGRAPH, SF_STATION_MAT, RAY_START_HEIGHT):
     
     # attributes
     ## @var activated
@@ -99,7 +99,7 @@ class GroundFollowing(avango.script.Script):
 
     ## @var ray_start_height
     # Starting height of the ground following ray.
-    self.ray_start_height = SETTINGS[1]
+    self.ray_start_height = RAY_START_HEIGHT
 
     # initialize shoot and output matrices
     self.sf_abs_output_mat.value = self.sf_abs_input_mat.value
@@ -114,11 +114,6 @@ class GroundFollowing(avango.script.Script):
     self.ground_intersection.my_constructor(SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length, self.ground_pick_direction)
     self.mf_ground_pick_result.connect_from(self.ground_intersection.mf_pick_result)
 
-    # activate or deactive ground following
-    if SETTINGS[0] == True:
-      self.activate()
-    else:
-      self.deactivate()
 
   ## Evaluated every frame.
   def evaluate(self):

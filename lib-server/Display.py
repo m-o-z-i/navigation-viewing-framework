@@ -12,7 +12,7 @@ class Display:
               , resolution = (2560, 1440)
               , displaystrings = [":0.0"]
               , size = (0.595, 0.335)
-              , translation = (0.0, 1.75, 0.0)
+              , transformation = avango.gua.make_trans_mat(0.0, 1.75, 0.0)
               , rotation = (0.0, 0.0, 0.0)
               ):
     # save values in members
@@ -24,7 +24,7 @@ class Display:
     self.resolution = resolution
     self.displaystrings = displaystrings
     self.size = size
-    self.translation = translation
+    self.transformation = transformation
     self.rotation = rotation
 
     # init counter
@@ -43,10 +43,6 @@ class Display:
     _w, _h = self.size
     _screen.Width.value = _w
     _screen.Height.value = _h
-    _x, _y, _z = self.translation
-    _rx, _ry, _rz = self.rotation
-    _screen.Transform.value = avango.gua.make_trans_mat(_x, _y, _z) * \
-                              avango.gua.make_rot_mat(_ry, 0, 1, 0) * \
-                              avango.gua.make_rot_mat(_rx, 1, 0, 0) * \
-                              avango.gua.make_rot_mat(_rz, 0, 0, 1)
+    _screen.Transform.value = self.transformation
     return _screen
+

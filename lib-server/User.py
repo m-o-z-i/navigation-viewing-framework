@@ -204,7 +204,8 @@ class User:
                                                                  'data/objects/plane.obj',
                                                                  'data/materials/CouplingPlane.gmd',
                                                                  avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.coupling_plane_node.Transform.value = avango.gua.make_scale_mat(1.0, 0.2, 0.2)
+
+    self.coupling_plane_node.Transform.value = avango.gua.make_scale_mat(0.6 * self.platform.screens[0].Width.value, 0.1, 0.2 * self.platform.screens[0].Height.value)
 
     self.coupling_plane_node.GroupNames.value = ["do_not_display_group", "platform_group_" + str(self.platform_id)]
 
@@ -217,8 +218,8 @@ class User:
                                                                  'data/objects/plane.obj',
                                                                  'data/materials/AvatarWhiteShadeless.gmd',
                                                                  avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.decoupling_notifier.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.25) * \
-                                               avango.gua.make_scale_mat(0.2, 0.2, 0.2)
+    self.decoupling_notifier.Transform.value =  avango.gua.make_trans_mat(0.0, 0.0, -0.2 * self.platform.screens[0].Height.value) * \
+                                                avango.gua.make_scale_mat(0.2, 0.2, 0.2)
 
     self.decoupling_notifier.GroupNames.value = ["do_not_display_group", "platform_group_" + str(self.platform_id)]
 
@@ -268,7 +269,7 @@ class User:
 
       # make coupling notifiers smaller
       if i != 0:
-        _scale = self.start_scale - 0.02
+        _scale = self.start_scale * 0.6
       else:
         _scale = self.start_scale
 
@@ -278,7 +279,7 @@ class User:
 
   ## Correctly places and appends the message plane node in and to the scenegraph.
   def handle_message_plane_node(self):
-    self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.18) * \
+    self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0) * \
                                               avango.gua.make_rot_mat(90, 1, 0, 0)
 
     for _screen in self.platform.screens:
@@ -294,13 +295,12 @@ class User:
 
     ## @var start_trans
     # Translation of the first coupling status notifier (own color).
-    self.start_trans = avango.gua.Vec3(-0.5 * self.platform.screens[0].Width.value + 0.05, 0.5 * self.platform.screens[0].Height.value - 0.05, 0.0)
-    #self.start_trans = avango.gua.Vec3(-0.433 * 1.6, 0.454 * 1.0, 0.0)
-      
+    self.start_trans = avango.gua.Vec3(-0.45 * self.platform.screens[0].Width.value, 0.4 * self.platform.screens[0].Height.value, 0.0)
+
     ## @var start_scale
     # Scaling of the first coupling status notifier (own color).
-    self.start_scale = 0.05 * self.platform.screens[0].Width.value
+    self.start_scale = 0.05 * self.platform.screens[0].Height.value
       
     ## @var y_increment
     # Y offset for all coupling status notifiers after the own color.
-    self.y_increment = -0.14
+    self.y_increment = -self.start_scale

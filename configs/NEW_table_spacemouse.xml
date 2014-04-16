@@ -33,7 +33,7 @@
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.0</y>
+      <y>1.75</y>
       <z>0.0</z>
     </notrackingposition>
 
@@ -47,7 +47,7 @@
       <yaw>0.0</yaw>
     </platformrot>
 
-  </device>     
+  </device>
 
   <!-- First User -->
   

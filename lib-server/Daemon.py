@@ -51,6 +51,36 @@ def init_dlp_wall_tracking():
   print "ART Tracking started at DLP WALL"
 
 
+## Initializes touch input at the table.
+def init_tuio_input():
+
+  _tuio = avango.daemon.TUIOInput()
+  _tuio.port = "3333" # tuio port
+
+  _tuio.stations[0] = avango.daemon.Station('gua-finger0')
+  _tuio.stations[1] = avango.daemon.Station('gua-finger1')
+  _tuio.stations[2] = avango.daemon.Station('gua-finger2')
+  _tuio.stations[3] = avango.daemon.Station('gua-finger3')
+  _tuio.stations[4] = avango.daemon.Station('gua-finger4')
+  _tuio.stations[5] = avango.daemon.Station('gua-finger5')
+  _tuio.stations[6] = avango.daemon.Station('gua-finger6')
+  _tuio.stations[7] = avango.daemon.Station('gua-finger7')
+  _tuio.stations[8] = avango.daemon.Station('gua-finger8')
+  _tuio.stations[9] = avango.daemon.Station('gua-finger9')
+  _tuio.stations[10] = avango.daemon.Station('gua-finger10')
+  _tuio.stations[11] = avango.daemon.Station('gua-finger11')
+  _tuio.stations[12] = avango.daemon.Station('gua-finger12')
+  _tuio.stations[13] = avango.daemon.Station('gua-finger13')
+  _tuio.stations[14] = avango.daemon.Station('gua-finger14')
+  _tuio.stations[15] = avango.daemon.Station('gua-finger15')
+  _tuio.stations[16] = avango.daemon.Station('gua-finger16')
+  _tuio.stations[17] = avango.daemon.Station('gua-finger17')
+  _tuio.stations[18] = avango.daemon.Station('gua-finger18')
+  _tuio.stations[19] = avango.daemon.Station('gua-finger19')
+
+  device_list.append(_tuio)
+
+
 ## Initializes a spacemouse for navigation.
 def init_spacemouse():
 
@@ -331,5 +361,8 @@ init_spacemouse()
 
 # init oculus rift sensors
 init_oculus()
+
+# init touch input
+init_tuio_input()
 
 avango.daemon.run(device_list)

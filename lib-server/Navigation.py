@@ -167,9 +167,12 @@ class Navigation(avango.script.Script):
     self.inputmapping.my_constructor(self, self.device, self.groundfollowing, STARTING_MATRIX)
     self.inputmapping.set_input_factors(self.device.translation_factor, self.device.rotation_factor)
 
-    # activate 6 dof movement when ground following is deactivated
-    if GF_SETTINGS[0] == False:
+    # activate correct input mapping mode according to configuration file
+    if GF_SETTINGS[0]:
+      self.inputmapping.activate_realistic_mode()
+    else:
       self.inputmapping.deactivate_realistic_mode()
+
     
     # create platform
     ## @var platform

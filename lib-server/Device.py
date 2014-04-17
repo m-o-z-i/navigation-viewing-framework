@@ -113,7 +113,8 @@ class SpacemouseDevice(MultiDofDevice):
 
   ## Custom constructor.
   # @param DEVICE_STATION The name of the input device as chosen in daemon.
-  def my_constructor(self, DEVICE_STATION):
+  # @param NO_TRACKING_MAT The matrix to be applied as a spacemouse is not tracked.
+  def my_constructor(self, DEVICE_STATION, NO_TRACKING_MAT):
   
     # init sensor
     ## @var device_sensor
@@ -126,7 +127,7 @@ class SpacemouseDevice(MultiDofDevice):
     # Triggers framewise evaluation of frame_callback method
     self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
 
-    self.init_station_tracking(None, avango.gua.make_trans_mat(0, 1.2, 1.5))
+    self.init_station_tracking(None, NO_TRACKING_MAT)
 
   ## Callback: evaluated every frame
   def frame_callback(self):
@@ -190,7 +191,8 @@ class KeyboardMouseDevice(MultiDofDevice):
   rotation_factor     = 0.1
 
   ## Custom constructor.
-  def my_constructor(self):
+  # @param NO_TRACKING_MAT The matrix to be applied as a keyboardmouse device is not tracked.
+  def my_constructor(self, NO_TRACKING_MAT):
 
     ## @var mouse_device_sensor
     # Input sensor referencing the mouse connected to the computer.
@@ -206,7 +208,7 @@ class KeyboardMouseDevice(MultiDofDevice):
     # Triggers framewise evaluation of frame_callback method
     self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
 
-    self.init_station_tracking(None, avango.gua.make_trans_mat(0, 1.2, 1.5))
+    self.init_station_tracking(None, NO_TRACKING_MAT)
 
 
   ## Callback: evaluated every frame

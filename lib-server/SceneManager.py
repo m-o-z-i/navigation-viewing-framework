@@ -3,7 +3,7 @@
 ## @file
 # Contains classes SceneManager, TimedMaterialUniformUpdate and TimedRotationUpdate.
 
-# import guacamole libraries
+# import avango-guacamole libraries
 import avango
 import avango.gua
 import avango.script

@@ -3,7 +3,7 @@
 ## @file
 # Contains class BorderObserver.
 
-# import avango-guacamole
+# import avango-guacamole libraries
 import avango
 import avango.gua
 import avango.script

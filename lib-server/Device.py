@@ -3,7 +3,7 @@
 ## @file
 # Contains classes MultiDofDevice, SpacemouseDevice, KeyboardMouseDevice, XBoxDevice, OldSpheronDevice and NewSpheronDevice.
 
-# import guacamole libraries
+# import avango-guacamole libraries
 import avango
 import avango.gua
 import avango.script

@@ -3,7 +3,7 @@
 ## @file
 # Contains classes TrackingReader, TrackingTargetReader and TrackingDefaultReader.
 
-# import guacamole libraries
+# import avango-guacamole libraries
 import avango
 import avango.gua
 import avango.script

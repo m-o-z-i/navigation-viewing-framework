@@ -3,7 +3,7 @@
 ## @file
 # Contains a function for parsing configuration files for client purposes.
 
-# import guacamole libraries
+# import avango-guacamole libraries
 import avango
 import avango.gua
 

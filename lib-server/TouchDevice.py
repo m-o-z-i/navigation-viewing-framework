@@ -3,7 +3,7 @@
 ## @file
 # Contains classes TouchCursor and TouchDevice.
 
-# import guacamole libraries
+# import avango-guacamole libraries
 import avango
 import avango.script
 

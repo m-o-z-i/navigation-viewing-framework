@@ -3,7 +3,7 @@
 ## @file
 # Contains function for setting common pipeline values for users.
 
-# import guacamole libraries
+# import avango-guacamole libraries
 import avango
 import avango.gua
 

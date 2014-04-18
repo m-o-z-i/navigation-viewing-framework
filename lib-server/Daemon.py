@@ -3,7 +3,10 @@
 ## @file
 # avango daemon to initialize tracking and device stations.
 
+# import avango-guacamole libraries
 import avango.daemon
+
+# import python libraries
 import os
 import sys
 

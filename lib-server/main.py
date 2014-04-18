@@ -3,7 +3,7 @@
 ## @file
 # Server application for the distributed Navigation and Viewing Framework.
 
-# import guacamole libraries
+# import avango-guacamole libraries
 import avango
 import avango.gua
 

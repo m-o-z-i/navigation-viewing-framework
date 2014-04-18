@@ -3,7 +3,7 @@
 ## @file
 # Contains class User.
 
-# import guacamole libraries
+# import avango-guacamole libraries
 import avango
 import avango.gua
 

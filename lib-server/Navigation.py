@@ -81,7 +81,7 @@ class Navigation(avango.script.Script):
   # @param GF_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
-  # @param STATUS_MANAGER Reference to the only instance of StatusManager in the setup used to update user displays.
+  # @param HUD_MANAGER Reference to the only instance of HUDManager in the setup used to update user displays.
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
   # @param DISPLAYS The names of the displays that belong to this navigation.
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
@@ -100,7 +100,7 @@ class Navigation(avango.script.Script):
     , GF_SETTINGS
     , ANIMATE_COUPLING
     , MOVEMENT_TRACES
-    , STATUS_MANAGER
+    , HUD_MANAGER
     , TRANSMITTER_OFFSET
     , DISPLAYS
     , AVATAR_TYPE
@@ -227,9 +227,9 @@ class Navigation(avango.script.Script):
     # Boolean indicating if the movement traces are generally activated.
     self.movement_traces_activated = self.movement_traces
 
-    ## @var STATUS_MANAGER
-    # Reference to the StatusManager instance of the setup for updating user displays.
-    self.STATUS_MANAGER = STATUS_MANAGER
+    ## @var HUD_MANAGER
+    # Reference to the HUDManager instance of the setup for updating user displays.
+    self.HUD_MANAGER = HUD_MANAGER
 
     ## @var trace
     # The trace class that handles the line segment updating.
@@ -396,17 +396,17 @@ class Navigation(avango.script.Script):
         
         self.set_coupling_animation_settings(_nav_animation_target)
         self.inputmapping.blocked = True
-        self.STATUS_MANAGER.show_coupling_plane(self.platform.platform_id)
+        self.HUD_MANAGER.show_coupling_plane(self.platform.platform_id)
    
         for i in range(len(_close_navs)):
           _close_navs[i].set_coupling_animation_settings(_nav_animation_target)
           _close_navs[i].inputmapping.blocked = True
-          self.STATUS_MANAGER.show_coupling_plane(_close_navs[i].platform.platform_id)
+          self.HUD_MANAGER.show_coupling_plane(_close_navs[i].platform.platform_id)
 
       # notify users
       _all_coupled_navs = list(self.coupled_navigations)
       _all_coupled_navs.append(self)
-      self.STATUS_MANAGER.display_coupling(_all_coupled_navs)
+      self.HUD_MANAGER.display_coupling(_all_coupled_navs)
 
     else:
       print "No platform in range for coupling."
@@ -482,10 +482,10 @@ class Navigation(avango.script.Script):
 
       if _clear_blockings:
         self.inputmapping.blocked = False
-        self.STATUS_MANAGER.hide_coupling_plane(self.platform.platform_id)
+        self.HUD_MANAGER.hide_coupling_plane(self.platform.platform_id)
         for _nav in self.coupled_navigations:
           _nav.inputmapping.blocked = False
-          self.STATUS_MANAGER.hide_coupling_plane(_nav.platform.platform_id)
+          self.HUD_MANAGER.hide_coupling_plane(_nav.platform.platform_id)
 
     # compute slerp and lerp position and set it on the player's inputmapping
     _transformed_quat = self.start_rot.slerp_to(self.target_rot, _animation_ratio)
@@ -521,7 +521,7 @@ class Navigation(avango.script.Script):
       self.frames_since_last_coupling = 0
 
       # notify users
-      self.STATUS_MANAGER.remove_from_coupling_display(self)
+      self.HUD_MANAGER.remove_from_coupling_display(self)
 
   ## Switches from realistic to unrealistic or from unrealistic to realistic mode on this
   # and all other coupled instances.

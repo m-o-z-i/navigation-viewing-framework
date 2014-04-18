@@ -15,7 +15,7 @@ from   Platform         import *
 from   User             import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
-from   StatusManager    import *
+from   HUDManager       import *
 from   display_config   import displays
 import Tools
 
@@ -83,10 +83,10 @@ class ApplicationManager():
       if _display.hostname != _own_hostname:
         _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
 
-    ## @var status_manager
-    # A StatusManager instance in order to arrange the user display for the different stati.
-    self.status_manager = StatusManager()
-    self.status_manager.my_constructor(self.NET_TRANS_NODE, self.user_list)
+    ## @var hud_manager
+    # A HUDManager instance in order to arrange the user display for the different stati.
+    self.hud_manager = HUDManager()
+    self.hud_manager.my_constructor(self.NET_TRANS_NODE, self.user_list)
 
     # create file parser and load file
     ## @var config_file_parser
@@ -207,7 +207,7 @@ class ApplicationManager():
       , GF_SETTINGS = GROUND_FOLLOWING_SETTINGS
       , ANIMATE_COUPLING = ANIMATE_COUPLING
       , MOVEMENT_TRACES = MOVEMENT_TRACES
-      , STATUS_MANAGER = self.status_manager
+      , HUD_MANAGER = self.hud_manager
       , TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
       , DISPLAYS = _display_instances
       , AVATAR_TYPE = AVATAR_TYPE

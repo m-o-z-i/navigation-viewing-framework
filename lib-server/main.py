@@ -55,8 +55,8 @@ def start():
   nettrans.Children.value = pseudo_nettrans.Children.value
   graph.Root.value.Children.value = [nettrans]
 
-  # as pseudo nettrans is obsolete, we need to update the nettrans node in StatusManager
-  application_manager.status_manager.update_nettrans_node(nettrans)
+  # as pseudo nettrans is obsolete, we need to update the nettrans node in HUDManager
+  application_manager.hud_manager.update_nettrans_node(nettrans)
 
   # initialize scene
   scene_manager = SceneManager(loader, nettrans)

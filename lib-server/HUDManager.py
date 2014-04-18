@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class StatusManager.
+# Contains class HUDManager.
 
 # import avango-guacamole libraries
 import avango
@@ -12,7 +12,7 @@ import avango.script
 from   Navigation import *
 
 ## Class to toggle the correct UI notifications for all users.
-class StatusManager(avango.script.Script):
+class HUDManager(avango.script.Script):
 
   ## @var timer
   # A timer instance to get the current time in seconds.
@@ -20,7 +20,7 @@ class StatusManager(avango.script.Script):
 
   ## Default constructor.
   def __init__(self):
-    self.super(StatusManager).__init__()
+    self.super(HUDManager).__init__()
 
     ## @var users_waiting_for_time_update
     # Dict of User subclass instances (key) that require an update after a certain amount of time.
@@ -75,7 +75,7 @@ class StatusManager(avango.script.Script):
       if _user.platform_id == PLATFORM_ID:
         _user.coupling_plane_node.GroupNames.value[0] = "do_not_display_group"
 
-  ## Tells the StatusManager that a list of navigations is now coupled. The StatusManager will 
+  ## Tells the HUDManager that a list of navigations is now coupled. The HUDManager will 
   # then check for all users on the platforms and update their coupling status notifiers.
   # @param COUPLED_NAVIGATION_LIST List of Navigation instances that are now coupled.
   def display_coupling(self, COUPLED_NAVIGATION_LIST):
@@ -113,7 +113,7 @@ class StatusManager(avango.script.Script):
       # update the offsets of the notifiers to have a proper display
       _user.update_coupling_status_overview()
 
-  ## Tells the StatusManager that a Navigation instance is now out of every coupling. The StatusManager will
+  ## Tells the HUDManager that a Navigation instance is now out of every coupling. The HUDManager will
   # then check for all users on the platforms and update their coupling status notifiers. Apart from that,
   # a message is shown to all users in the group that NAVIGATION has decoupled from the group.
   # @param NAVIGATION The Navigation instance to be removed from all couplings.

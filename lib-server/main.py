@@ -40,8 +40,8 @@ def start():
   pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
   graph.Root.value.Children.value = [pseudo_nettrans]
 
-  # initialize viewing manager
-  viewing_manager = ViewingManager(
+  # initialize application manager
+  application_manager = ApplicationManager(
       NET_TRANS_NODE = pseudo_nettrans
     , SCENEGRAPH = graph
     , CONFIG_FILE = sys.argv[1])
@@ -56,16 +56,16 @@ def start():
   graph.Root.value.Children.value = [nettrans]
 
   # as pseudo nettrans is obsolete, we need to update the nettrans node in StatusManager
-  viewing_manager.status_manager.update_nettrans_node(nettrans)
+  application_manager.status_manager.update_nettrans_node(nettrans)
 
   # initialize scene
-  scene_manager = SceneManager(loader, nettrans, viewing_manager)
+  scene_manager = SceneManager(loader, nettrans)
 
   # distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)
 
   # run application loop
-  viewing_manager.run(locals(), globals())
+  application_manager.run(locals(), globals())
 
 ## Registers a scenegraph node and all of its children at a NetMatrixTransform node for distribution.
 # @param NET_TRANS_NODE The NetMatrixTransform node on which all nodes should be marked distributable.

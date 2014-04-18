@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class ViewingManager.
+# Contains class ApplicationManager.
 
 # import avango-guacamole libraries
 import avango
@@ -27,7 +27,7 @@ import subprocess
 # Creates Navigation, OVRUser, PowerWallUser and BorderObserver instances according to the preferences read in from a XML configuration file.
 # Therefore, an instance of ConfigFileParser is created and used.
 
-class ViewingManager():
+class ApplicationManager():
   
   ## @var viewer
   # The guacamole viewer to be used for rendering.

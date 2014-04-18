@@ -7,20 +7,20 @@
 import avango
 import avango.gua
 
-## Class associated to a ViewingManager instance in order to parse and load XML configuration files for the setup.
+## Class associated to a ApplicationManager instance in order to parse and load XML configuration files for the setup.
 #
-# Gets a reference to ViewingManager and calls the create_navigation and create_standard_user functions
+# Gets a reference to ApplicationManager and calls the create_navigation and create_standard_user functions
 # according to the settings read from the configuration file.
 
 class ConfigFileParser:
 
   ## Custom constructor.
-  # @param VIEWING_MANAGER Reference to the one and only ViewingManager instance in the setup.
-  def __init__(self, VIEWING_MANAGER):
+  # @param APPLICATION_MANAGER Reference to the one and only ApplicationManager instance in the setup.
+  def __init__(self, APPLICATION_MANAGER):
     
-    ## @param VIEWING_MANAGER
-    # Reference to the one and only ViewingManager instance in the setup.
-    self.VIEWING_MANAGER = VIEWING_MANAGER
+    ## @param APPLICATION_MANAGER
+    # Reference to the one and only ApplicationManager instance in the setup.
+    self.APPLICATION_MANAGER = APPLICATION_MANAGER
 
     # global settings (can be overwritten by config file)
     ## @var ground_following_settings
@@ -317,19 +317,19 @@ class ConfigFileParser:
         _starting_matrix = avango.gua.make_trans_mat(_device_attributes[3], _device_attributes[4], _device_attributes[5]) * \
                            avango.gua.make_rot_mat(_device_attributes[6], 0, 1, 0)
       
-        self.VIEWING_MANAGER.create_navigation(_device_attributes[0], 
-                                               _device_attributes[1],
-                                               _starting_matrix,
-                                               _platform_size,
-                                               self.enable_coupling_animation,
-                                               self.enable_movementtraces,
-                                               _device_attributes[9],
-                                               self.ground_following_settings,
-                                               _device_attributes[8],
-                                               _device_attributes[7],
-                                               _device_attributes[10],
-                                               FILENAME,
-                                               _device_attributes[2])
+        self.APPLICATION_MANAGER.create_navigation(_device_attributes[0], 
+                                                   _device_attributes[1],
+                                                   _starting_matrix,
+                                                   _platform_size,
+                                                   self.enable_coupling_animation,
+                                                   self.enable_movementtraces,
+                                                   _device_attributes[9],
+                                                   self.ground_following_settings,
+                                                   _device_attributes[8],
+                                                   _device_attributes[7],
+                                                   _device_attributes[10],
+                                                   FILENAME,
+                                                   _device_attributes[2])
 
         print "Navigation loaded and created:"
         print "------------------------------"
@@ -420,9 +420,9 @@ class ConfigFileParser:
 
         # distinguish between stereo and mono user
         if _user_attributes[0] == "True":
-          self.VIEWING_MANAGER.create_standard_user(_user_attributes[2], True, _user_attributes[1], _user_attributes[3])
+          self.APPLICATION_MANAGER.create_standard_user(_user_attributes[2], True, _user_attributes[1], _user_attributes[3])
         else:
-          self.VIEWING_MANAGER.create_standard_user(_user_attributes[2], False, _user_attributes[1], _user_attributes[3])
+          self.APPLICATION_MANAGER.create_standard_user(_user_attributes[2], False, _user_attributes[1], _user_attributes[3])
 
         print "\nUser loaded and created:"
         print "-------------------------"

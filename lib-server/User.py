@@ -21,18 +21,18 @@ import math
 class User:
 
   ## Custom constructor.
-  # @param VIEWING_MANAGER Reference to the ViewingManager instance from which this user is created.
+  # @param APPLICATION_MANAGER Reference to the ApplicationManager instance from which this user is created.
   # @param USER_ID Global user ID to be applied.
   # @param STEREO Boolean indicating if this user is a stereo or mono one.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
-  def __init__(self, VIEWING_MANAGER, USER_ID, STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
+  def __init__(self, APPLICATION_MANAGER, USER_ID, STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
 
     # variables
-    ## @var VIEWING_MANAGER
-    # Reference to the ViewingManager instance from which the user is created.
-    self.VIEWING_MANAGER = VIEWING_MANAGER
+    ## @var APPLICATION_MANAGER
+    # Reference to the ApplicationManager instance from which the user is created.
+    self.APPLICATION_MANAGER = APPLICATION_MANAGER
 
     ## @var id
     # Identification number of the PowerWallUser, starting from 0.
@@ -44,7 +44,7 @@ class User:
 
     ## @var platform
     # Instance of the platform the user is belonging to.
-    self.platform = self.VIEWING_MANAGER.navigation_list[self.platform_id].platform
+    self.platform = self.APPLICATION_MANAGER.navigation_list[self.platform_id].platform
 
     ## @var transmitter_offset
     # The transmitter offset to be applied.
@@ -104,9 +104,9 @@ class User:
 
     # create avatar representation
     if self.platform.avatar_type == "joseph":
-      self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
+      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
     elif self.platform.avatar_type == "joseph_table":
-      self.create_avatar_representation(self.VIEWING_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
+      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
     
     # create coupling notification plane
     self.create_coupling_plane()
@@ -127,7 +127,7 @@ class User:
   def append_to_platform(self, SCENEGRAPH, NODE):
     
     # find corresponding platform node
-    for _node in self.VIEWING_MANAGER.NET_TRANS_NODE.Children.value:
+    for _node in self.APPLICATION_MANAGER.NET_TRANS_NODE.Children.value:
       if _node.Name.value == "platform_" + str(self.platform_id):
         _node.Children.value.append(NODE)
         break

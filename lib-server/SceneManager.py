@@ -138,8 +138,7 @@ class SceneManager:
   ## Custom constructor
   # @param LOADER The geometry loader to be used.
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
-  # @param VIEWING_MANAGER Reference to the viewing manager for user list.
-  def __init__(self, LOADER, NET_TRANS_NODE, VIEWING_MANAGER):
+  def __init__(self, LOADER, NET_TRANS_NODE):
 
     self.timer = avango.nodes.TimeSensor()
 

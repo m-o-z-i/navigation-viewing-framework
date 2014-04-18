@@ -1,23 +1,23 @@
 #!/usr/bin/python
 
 ## @file
-# Server application for the distributed viewing setup.
+# Server application for the distributed Navigation and Viewing Framework.
 
 # import guacamole libraries
 import avango
 import avango.gua
 
-# import framwork libraries
+# import framework libraries
 from SceneManager import *
 from ViewingManager import *
 
 # import python libraries
 import sys
+import subprocess
 
 # Command line parameters:
 # main.py CONFIG_FILE SERVER_IP
 # @param CONFIG_FILE The filname of the configuration file to parse.
-# @param SERVER_IP The own IP address.
 
 ## Main method for the server application
 def start():
@@ -33,13 +33,14 @@ def start():
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
 
   # get server ip 
-  server_ip = str(sys.argv[2])
+  server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
+  server_ip = _server_ip.strip(" \n")
 
-  # initialize pseudo nettrans node as client processes are started in Platform.py
+  # initialize pseudo nettrans node as client processes are started in Platform class
   pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
   graph.Root.value.Children.value = [pseudo_nettrans]
 
-  # initialize viewing setup
+  # initialize viewing manager
   viewing_manager = ViewingManager(
       NET_TRANS_NODE = pseudo_nettrans
     , SCENEGRAPH = graph

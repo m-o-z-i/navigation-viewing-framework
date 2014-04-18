@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class StandardUser.
+# Contains class User.
 
 # import guacamole libraries
 import avango
 import avango.gua
 
 # import framework libraries
-from User import *
 from TrackingReader import *
 
 # import math libraries
@@ -133,7 +132,7 @@ class User:
         _node.Children.value.append(NODE)
         break
 
-    ## Creates a basic avatar for this user.
+  ## Creates a basic "joseph" avatar for this user.
   # @param SCENEGRAPH Reference to the scenegraph.
   # @param SF_AVATAR_BODY_MATRIX Field containing the transformation matrix for the avatar's body on the platform.
   # @param TABLE_ENABLED Boolean indicating if a table should be added to the avatar.

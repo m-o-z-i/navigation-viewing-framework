@@ -1,12 +1,25 @@
 #!/usr/bin/python
 
+## @file
+# Contains display configuration classes and a list of Display instances to be used by the framework.
+
+# import guacamole libraries
 import avango
 import avango.gua
+
+# import framework libraries
 from Display import Display
 
-##################################################
+## Display configuration for the large powerwall in the VR lab.
 class LargePowerwall(Display):
-##################################################
+
+  ## Custom constructor.
+  # @param hostname The hostname to which this display is connected to.
+  # @param name A name to be associated to that display. Will be used in XML configuration file.
+  # @param resolution The display's resolution to be used.
+  # @param displaystrings A list of strings on which the windows for each user will pop up.
+  # @param size Physical size of the display medium in meters.
+  # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
   def __init__(self):
     Display.__init__( self
                     , hostname = "kerberos"
@@ -17,6 +30,8 @@ class LargePowerwall(Display):
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     )
 
+  ## Registers a new user at this display and return the display string and the 
+  # warp matrices assigned to the new user.
   def register_user(self):
     user_num = self.num_users
     if user_num < 4:
@@ -33,9 +48,16 @@ class LargePowerwall(Display):
     else:
       return None
 
-##################################################
+## Display configuration for the small powerwall in the VR lab.
 class SmallPowerwall(Display):
-##################################################
+
+  ## Custom constructor.
+  # @param hostname The hostname to which this display is connected to.
+  # @param name A name to be associated to that display. Will be used in XML configuration file.
+  # @param resolution The display's resolution to be used.
+  # @param displaystrings A list of strings on which the windows for each user will pop up.
+  # @param size Physical size of the display medium in meters.
+  # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
   def __init__(self):
     Display.__init__( self
                     , hostname = "medusa"
@@ -46,6 +68,8 @@ class SmallPowerwall(Display):
                     , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
                     )
 
+  ## Registers a new user at this display and return the display string and the 
+  # warp matrices assigned to the new user.
   def register_user(self):
     user_num = self.num_users
     if user_num < 2:
@@ -67,6 +91,8 @@ class SmallPowerwall(Display):
 ##################################################
 # STORE ALL DISPLAYS TO BE USED IN THIS LIST
 ##################################################
+## @var displays A list of Display instances to be used in the framework.
+
 displays = [
     LargePowerwall()
   , SmallPowerwall()

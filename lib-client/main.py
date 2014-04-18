@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Client application for the distributed viewing setup.
+# Client application for the distributed Navigation and Viewing Framework.
 
 # import guacamole libraries
 import avango
@@ -19,7 +19,7 @@ from display_config import displays
 import sys
 
 # Command line parameters:
-# client.py SERVER_IP PLATFORM_ID CONFIG_FILE
+# client.py SERVER_IP PLATFORM_ID DISPLAY_NAME CONFIG_FILE SCREEN_NUM
 # @param SERVER_IP The IP address on which the server process is running.
 # @param PLATFORM_ID The platform id for which this client is responsible for.
 # @param DISPLAY_NAME The name associated to the display for which this client is responsible for.

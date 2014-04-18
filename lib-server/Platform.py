@@ -136,7 +136,6 @@ class Platform(avango.script.Script):
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
 
-
     # create four boundary planes
     _loader = avango.gua.nodes.GeometryLoader()
 

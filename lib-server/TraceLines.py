@@ -7,8 +7,10 @@
 import avango
 import avango.gua
 
+# import framework libraries
 import Tools
 
+# import python libraries
 import time
 
 ## Class which handles the creation and updating of the trace lines.

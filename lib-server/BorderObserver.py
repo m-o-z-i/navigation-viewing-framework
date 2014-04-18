@@ -29,7 +29,7 @@ class BorderObserver(avango.script.Script):
 
   ## Custom constructor
   # @param CHECKED_BORDERS A list of four booleans about which borders of the platform should be observed. 
-  # [display_left_border, display_right_border, display_front_border, display_back_border]
+  #                        [display_left_border, display_right_border, display_front_border, display_back_border]
   # @param USER_INSTANCE The first user to be observed.
   # @param PLATFORM_INSTANCE The platform on which the observed users are.
   def my_constructor(self, CHECKED_BORDERS, USER_INSTANCE, PLATFORM_INSTANCE):

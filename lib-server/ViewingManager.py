@@ -243,7 +243,7 @@ class ViewingManager():
 
   ## Creates a BorderObserver instance for a Platform and adds a User to it.
   # @param CHECKED_BORDERS A list of four booleans to indicate which borders of the platform should be checked: 
-  # [display_left_border, display_right_border, display_front_border, display_back_border]
+  #                        [display_left_border, display_right_border, display_front_border, display_back_border]
   # @param USER_INSTANCE A first User to be appended to the new BorderObserver.
   # @param PLATFORM_INSTANCE The platform to which the BorderObserver should belong to.
   def create_border_observer(self, CHECKED_BORDERS, USER_INSTANCE, PLATFORM_INSTANCE):
@@ -261,5 +261,3 @@ class ViewingManager():
   ## Lists the variables of the shell.
   def list_variables(self):
     self.shell.list_variables()
-
-

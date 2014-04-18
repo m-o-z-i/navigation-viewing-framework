@@ -9,7 +9,7 @@ import avango.gua
 
 ## Class associated to a ViewingManager instance in order to parse and load XML configuration files for the setup.
 #
-# Gets a reference to ViewingManager and calls the create_navigation, create_standard_user functions
+# Gets a reference to ViewingManager and calls the create_navigation and create_standard_user functions
 # according to the settings read from the configuration file.
 
 class ConfigFileParser:
@@ -32,7 +32,7 @@ class ConfigFileParser:
     self.enable_coupling_animation = False
 
     ## @var enable_movementtraces
-    #  Boolean indicating if the movement of every platform should be visualized by line segments.
+    # Boolean indicating if the movement of every platform should be visualized by line segments.
     self.enable_movementtraces = False
 
   ## Parses a XML configuration file, saves settings and creates navigations and users.

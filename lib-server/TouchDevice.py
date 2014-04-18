@@ -1,4 +1,9 @@
+#!/usr/bin/python
 
+## @file
+# Contains classes TouchCursor and TouchDevice.
+
+# import guacamole libraries
 import avango
 import avango.script
 
@@ -20,6 +25,7 @@ class TouchCursor(avango.script.Script):
 
   SessionID = avango.SFInt()
 
+  ## Default constructor.
   def __init__(self):
     self.super(TouchCursor).__init__()
 
@@ -54,7 +60,8 @@ class TouchCursor(avango.script.Script):
 class TouchDevice(avango.script.Script):
 
   TouchCursors = []
-
+  
+  ## Default constructor.
   def __init__(self):
     self.super(TouchDevice).__init__()
 

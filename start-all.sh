@@ -30,11 +30,8 @@ export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH
 # run daemon
 python ./lib-server/Daemon.py > /dev/null &
 
-# get IP of server pc
-IP=$(hostname -I)
-
 # run program
-cd "$DIR" && python ./lib-server/main.py $1 $IP
+cd "$DIR" && python ./lib-server/main.py $1
 
 # kill daemon
 kill %1

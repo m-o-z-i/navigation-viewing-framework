@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# guacamole daemon to initialize tracking and device stations.
+# avango daemon to initialize tracking and device stations.
 
 import avango.daemon
 import os

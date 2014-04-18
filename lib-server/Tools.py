@@ -89,4 +89,3 @@ def euclidean_distance(POINT1, POINT2):
   _diff_z = POINT2.z - POINT1.z
 
   return math.sqrt(math.pow(_diff_x, 2) + math.pow(_diff_y, 2) + math.pow(_diff_z, 2))
-

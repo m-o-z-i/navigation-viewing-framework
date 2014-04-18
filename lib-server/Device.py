@@ -1,17 +1,18 @@
 #!/usr/bin/python
 
 ## @file
-# Contains classes MultiDofDevice, XBoxDevice and OldSpheronDevice.
+# Contains classes MultiDofDevice, SpacemouseDevice, KeyboardMouseDevice, XBoxDevice, OldSpheronDevice and NewSpheronDevice.
 
-# import avango-guacamole
+# import guacamole libraries
 import avango
 import avango.gua
 import avango.script
 import avango.daemon
 
+# import framework libraries
 from TrackingReader import *
 
-## Base class for the representation of an input device.
+## Base class for the representation of an input device supplying multiple degrees of freedom.
 #
 # This class should not be instantiated, but concrete device reading
 # classed will inherit from this one.
@@ -50,7 +51,6 @@ class MultiDofDevice(avango.script.Script):
   ## Initializes a tracking reader for the device's position and rotation
   # @param TRACKING_TARGET_NAME The tracking name as chosen in daemon, None if no tracking is available.
   # @param NO_TRACKING_MAT Tracking matrix to be used if no tracking is available.
-
   def init_station_tracking(self, TRACKING_TARGET_NAME, NO_TRACKING_MAT):
     
     ## @var tracking_reader
@@ -261,7 +261,7 @@ class KeyboardMouseDevice(MultiDofDevice):
     
     self.mf_buttons.value = [_r, _h, _g, False, False, False, False]
 
-## Internal representation and reader for a X-Box controller
+## Internal representation and reader for a XBox controller
 class XBoxDevice(MultiDofDevice):
  
   # amplification factors

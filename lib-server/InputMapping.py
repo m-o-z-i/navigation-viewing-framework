@@ -19,7 +19,6 @@ import math
 
 ## This class accumulates the relative device inputs to an absolute matrix forwarded to the platform
 # and uses an instance of GroundFollowing to correct this matrix with respect to gravity.
-
 class InputMapping(avango.script.Script):
 
   ## @var mf_rel_input_values

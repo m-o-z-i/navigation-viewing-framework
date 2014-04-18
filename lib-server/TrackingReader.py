@@ -8,7 +8,6 @@ import avango
 import avango.gua
 import avango.script
 import avango.daemon
-
 from avango.script import field_has_changed
 
 # import framework libraries

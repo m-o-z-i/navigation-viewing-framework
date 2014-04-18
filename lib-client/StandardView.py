@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class ClientPowerWallUser.
+# Contains class StandardView.
 
 # import guacamole libraries
 import avango

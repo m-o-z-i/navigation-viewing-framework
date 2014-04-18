@@ -22,8 +22,11 @@ class View(avango.script.Script):
   	self.always_evaluate(True)
 
   ## Custom constructor.
-  # 
-  #
+  # @param SCENEGRAPH Reference to the scenegraph to be displayed.
+  # @param PLATFORM_ID Identification number of the platform the view user is standing on.
+  # @param USER_ID Identification number of the user whose view is to be displayed.
+  # @param ONLY_TRANSLATION_UPDATE Boolean indicating if only the tracking translation is to be
+  #                                locally updated on client side. Otherwise, the full matrix is refreshed.
   def construct_view(self, SCENEGRAPH, PLATFORM_ID, USER_ID, ONLY_TRANSLATION_UPDATE):
 
     ## @var SCENEGRAPH

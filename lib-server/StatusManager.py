@@ -11,7 +11,7 @@ import avango.script
 # import framework libraries
 from   Navigation import *
 
-## Class to toggle the correct display of notifications for all users.
+## Class to toggle the correct UI notifications for all users.
 class StatusManager(avango.script.Script):
 
   ## @var timer

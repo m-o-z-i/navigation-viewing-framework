@@ -3,16 +3,16 @@
 ## @file
 # Contains class Navigation.
 
-# import avango-guacamole
+# import guacamole libraries
 import avango
 import avango.gua
 import avango.script
 
+# import framework libraries
 from Device           import *
 from GroundFollowing  import GroundFollowing
 from InputMapping     import InputMapping
 from Platform         import Platform
-
 import Tools
 import TraceLines
 
@@ -173,7 +173,6 @@ class Navigation(avango.script.Script):
     else:
       self.inputmapping.deactivate_realistic_mode()
 
-    
     # create platform
     ## @var platform
     # Platform instance that is controlled by the Device.
@@ -392,7 +391,7 @@ class Navigation(avango.script.Script):
           _nav.movement_traces = False
 
       if self.ANIMATE_COUPLING:
-       # do an animation to closest navigation if this functionality is switched on
+        # do an animation to closest navigation if this functionality is switched on
         _nav_animation_target = _close_navs[-1]
         
         self.set_coupling_animation_settings(_nav_animation_target)
@@ -408,8 +407,6 @@ class Navigation(avango.script.Script):
       _all_coupled_navs = list(self.coupled_navigations)
       _all_coupled_navs.append(self)
       self.STATUS_MANAGER.display_coupling(_all_coupled_navs)
-
-      #print "Coupling of platform " + str(self.platform.platform_id) + " successfully initiated."
 
     else:
       print "No platform in range for coupling."
@@ -525,8 +522,6 @@ class Navigation(avango.script.Script):
 
       # notify users
       self.STATUS_MANAGER.remove_from_coupling_display(self)
-
-      #print "Cleared couplings of platform " + str(self.platform.platform_id)
 
   ## Switches from realistic to unrealistic or from unrealistic to realistic mode on this
   # and all other coupled instances.

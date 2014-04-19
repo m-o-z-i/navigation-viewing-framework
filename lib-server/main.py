@@ -9,7 +9,7 @@ import avango.gua
 
 # import framework libraries
 from SceneManager import *
-from ViewingManager import *
+from ApplicationManager import *
 
 # import python libraries
 import sys
@@ -34,7 +34,7 @@ def start():
 
   # get server ip 
   server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
-  server_ip = _server_ip.strip(" \n")
+  server_ip = server_ip.strip(" \n")
 
   # initialize pseudo nettrans node as client processes are started in Platform class
   pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")

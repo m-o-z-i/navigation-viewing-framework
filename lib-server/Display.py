@@ -30,20 +30,36 @@ class Display:
               ):
 
     # save values in members
+    ## @var hostname
+    # The hostname to which this display is connected to.
     self.hostname = hostname
     
     # default naming for desktop setups
+    ## @var name
+    # A name to be associated to that display. Will be used in XML configuration file.
     if not name:
       self.name = hostname + "_display"
     else:
       self.name = name
 
+    ## @var resolution
+    # The display's resolution to be used.
     self.resolution = resolution
+    
+    ## @var displaystrings
+    # A list of strings on which the windows for each user will pop up.
     self.displaystrings = displaystrings
+    
+    ## @var size
+    # A list of strings on which the windows for each user will pop up.
     self.size = size
+    
+    ## @var transformation
+    # A matrix specifying the display's transformation with respect to the platform coordinate system.
     self.transformation = transformation
 
-    # init counter
+    ## @var num_users
+    # Number of users who are already registered with this display.
     self.num_users = 0
 
   ## Registers a new user at this display and return the display string assigned to the new user.

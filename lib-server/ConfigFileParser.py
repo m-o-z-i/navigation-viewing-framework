@@ -18,7 +18,7 @@ class ConfigFileParser:
   # @param APPLICATION_MANAGER Reference to the one and only ApplicationManager instance in the setup.
   def __init__(self, APPLICATION_MANAGER):
     
-    ## @param APPLICATION_MANAGER
+    ## @var APPLICATION_MANAGER
     # Reference to the one and only ApplicationManager instance in the setup.
     self.APPLICATION_MANAGER = APPLICATION_MANAGER
 

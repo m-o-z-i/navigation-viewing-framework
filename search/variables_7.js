@@ -1,6 +1,0 @@
-var searchData=
-[
-  ['head_5favatar',['head_avatar',['../classlib-server_1_1User_1_1User.html#a80bfa46ef37399bc6be3be2b74f815d4',1,'lib-server::User::User']]],
-  ['head_5ftransform',['head_transform',['../classlib-server_1_1DesktopUser_1_1DesktopUser.html#ab5d3f96a73cfc139da09eb6d4c8efc88',1,'lib-server.DesktopUser.DesktopUser.head_transform()'],['../classlib-server_1_1OVRUser_1_1OVRUser.html#a32ba929ffbcde3ab335c2d5e426350df',1,'lib-server.OVRUser.OVRUser.head_transform()'],['../classlib-server_1_1PowerWallUser_1_1PowerWallUser.html#a9c30248ab69a15d3fbb22dd1dc888066',1,'lib-server.PowerWallUser.PowerWallUser.head_transform()']]],
-  ['headtracking_5freader',['headtracking_reader',['../classClientUser_1_1ClientUser.html#a89735faccd3229f6365d9eb3c0c65a03',1,'ClientUser.ClientUser.headtracking_reader()'],['../classlib-server_1_1DesktopUser_1_1DesktopUser.html#a05236e3cf4c4f50ee6afe41cc2cbd2c7',1,'lib-server.DesktopUser.DesktopUser.headtracking_reader()'],['../classlib-server_1_1OVRUser_1_1TrackingRotationCombiner.html#ae2f10377eed848ee1f7d36242a213870',1,'lib-server.OVRUser.TrackingRotationCombiner.headtracking_reader()'],['../classlib-server_1_1PowerWallUser_1_1PowerWallUser.html#af01ad9d5dfed53fee263a9b0777568e9',1,'lib-server.PowerWallUser.PowerWallUser.headtracking_reader()']]]
-];

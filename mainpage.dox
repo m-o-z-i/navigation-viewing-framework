@@ -1,23 +1,18 @@
 /**
 \mainpage Navigation and Viewing Framework Documentation
 
-The Oculus-Powerwall Framework was designed to enable users to create a variety of viewing setups using different input devices and user types in the VR lab at Bauhaus University Weimar. It is based on the rendering framework guacamole. In order to specify a concrete viewing setup within the framework, a XML configuration file is used. 
+The Oculus-Powerwall Framework was designed to enable users to create a variety of viewing setups using different input devices and user types in the VR lab at Bauhaus University Weimar. It is based on the Virtual Reality framework avango and the rendering engine guacamole. In order to specify a concrete viewing setup within the framework, two types of configurations (located in configs) are used.
 
-<b>Remark on branches:</b><br>
- The framework comes with four git branches. The branch <em>master</em> contains the latest version including all features with distribution. The branch <em>TreasureHunter/distribution</em> contains a treasure hunting game based on the framework which can be run on multiple machines. The branches <em>stable/no-distribution</em> and <em>TreasureHunter/no-distribution</em> contain the non-distributed versions of these branches. As the distribution branches are based on these, some of the latest features may only be available in the distributed version.
+<b>Display configuration (Python)</b><br>
+A display is a physical medium which can show images for zero, one or multiple mono and stereo users. Displays that are available within the framework can be specified within the python file <em>display_config.py</em>. There, the <em>displays</em> contains all parametrized displays. For each display, a hostname, a name, the resolution, the possible displaystrings, the physical size and the transformation can be specified. In case of larger displays, also warpmatrices can be set. Once a display is added to this list, it can be used using the XML viewing configuration files described in the following.
 
 <hr>
 
-<br>
-In the following, the structure of configuration files for the framework will be illustrated and explained.
+<b>Viewing configuration (XML)</b>
 
 <br>
-<b>File naming conventions</b><br>
-The framework comes with some example configuration files located in ./configs. The files are named in a manner that first the used devices are mentioned and then the number of the different user types is specified. The naming follows the rule:
-
-<code>device_types_used_(numberOfDesktopUsers)(numberOfPowerWallUsers)(numberOfOVRUsers).xml</code>
-
-The file controller_spacemouse_101.xml for example contains the specification for a setup with one desktop and one OVR user standing on platforms moved by a X-Box controller and a spacemouse. In the following, it is explained how exactly such configuration files can be written.
+<b>General remarks</b><br>
+The framework comes with some example configuration files located in ./configs. In order to start the application, one viewing configuration needs to be specified: <em>./start-all.sh CONFIG_FILE</em>. In the following, it is explained how exactly such configuration files can be written.
 
 <br>
 <b>Overall structure</b><br>
@@ -25,14 +20,6 @@ The configuration file consists of three main parts included in the <setup>-tag:
 
 <b>Global settings</b><br>
 The specification of global settings is done within the <global>-tag and should be done at the beginning of the file. In the following, all available settings will be illustrated.
-
-<em><transmitteroffset></em><br>
-This sets the global transmitter offset to be applied by the framework. The default is set to (0.0, 0.0, 0.0).<br>
-Usage example: <code> <transmitteroffset><x>0.0</x><y>0.0043</y><z>1.6</z><transmitteroffset></code>
-
-<em><notrackingposition></em><br>
-This is the default position to be applied if a device or user has no tracking station specified. The default is set to (0.0, 1.5, 1.0).<br>
-Usage example: <code><notrackingposition><x>0.0</x><y>1.75</y><z>1.5</z></notrackingposition></code>
 
 <em><groundfollowing></em><br>
 This tag specifies two attributes of the ground following (gravity) algorithm to be used. The first attribute "activated" is a boolean saying if gravity should be activated by default. The second attribute "raystartheight" indicates from which height the ray is shot down to determine the intersection. The default values are False and 0.75.<br>
@@ -51,10 +38,6 @@ Usage example: <code><movementtraces>True</movementtraces></code>
 <b>Registration of devices and platforms</b><br>
 Every time a device is registered, a corresponding platform in the virtual world is created which is moved and controlled by this device. All the settings for devices and platforms are done within the <device>-tag, one for each device that should be registered. In general, the following information is necessary.
 
-<em><hostname></em><br>
-A string indicating the hostname on which the corresponding client application should pop up.<br>
-Usage example: <code><hostname>localhost</hostname></code>
-
 <em><type></em><br>
 A string indicating which type the new device is. To be chosen from "KeyboardMouse", "Spacemouse", "XBoxController", "OldSpheron" and "NewSpheron".<br>
 Usage example: <code><type>XBoxController</type></code>
@@ -66,6 +49,23 @@ Usage example: <code><inputsensor>device-xbox-1</inputsensor></code>
 <em><trackingstation></em><br>
 A string indicating the name on which this device's tracking target was registered in daemon.py. If this attribute is not supplied, the default tracking values from the global settings section are applied.<br>
 Usage example: <code><trackingstation>tracking-oculus-stag</trackingstation></code>
+
+<em><display></em><br>
+Name of the display on which this platform is to be shown. When this attribute is supported multiple times, the platform is shown on both displays, each illustrating the correct view into the scene according to the transformation specified in the display configuration. The name must fit to an instance of the Display class in the <em>displays</em> list (see above).<br>
+Usage example: <code><display>small_powerwall</display></code>
+
+<em><avatartype></em><br>
+String indicating the type of avatars to be used for illustrating the users standing on this platform. To be chosen
+from "joseph" (robot avatar) and "joseph_table" (robot avatar with table in front of it).<br>
+Usage example: <code><avatartype>joseph</avatartype></code>
+
+<em><transmitteroffset></em><br>
+This sets the transmitter offset to be applied by the framework for this platform. The default is set to (0.0, 0.0, 0.0).<br>
+Usage example: <code><transmitteroffset><x>0.0</x><y>0.0043</y><z>1.6</z><transmitteroffset></code>
+
+<em><notrackingposition></em><br>
+This is the default position to be applied if the device or a user on the platform has no tracking station specified. The default is set to (0.0, 1.5, 1.0).
+Usage example: <notrackingposition><x>0.0</x><y>1.75</y><z>1.5</z></notrackingposition>
 
 <em><platformpos></em><br>
 Three dimensional coordinates on where to place the newly created platform in the virtual world. By
@@ -85,9 +85,9 @@ Usage example: <code><platformrot><yaw>0.0</yaw></platformrot></code>
 <b>Registration of users</b><br>
 This section shows which attributes are needed in order to create a user in the virtual world. The settings must be done in the <user>-tag for each user seperately.
 
-<em><type></em><br>
-A string indicating which type the new user is. To be chosen from "LargePowerWallUser", "SmallPowerWallUser", "OVRUser" and "DesktopUser".<br>
-Usage example: <code><type>DesktopUser</type></code>
+<em><stereo></em><br>
+Boolean value if this user is of stereo or mono type.<br>
+Usage example: <code><stereo>True</stereo></code>
 
 <em><headtrackingstation></em><br>
 A string indicating the name on which this user's tracking target was registered in daemon.py. If this attribute is not supplied, the default tracking values from the global settings section are applied. Not applicable for DesktopUsers.<br>
@@ -98,25 +98,12 @@ An integer number to indicate to which platform the new user should be appended 
 Usage example: <code><startplatform>2</startplatform></code>
 
 <em><warnings></em><br>
-A boolean indicating if the user should be warned by fences when he or she is close to the physical border of the platform. Not applicable for DesktopUsers. <br>
+A boolean indicating if the user should be warned by fences when he or she is close to the physical borders of the platform.<br>
 Usage example: <code><warnings>True</warnings></code>
-
-<em><windowsize></em><br>
-The width and height of the window to be created in pixels. Only applicable for DesktopUsers.<br>
-Usage example: <code><windowsize><width>1280</width><height>800</height></windowsize></code>
-
-<em><screensize></em><br>
-The physical width and height of the window to be created in meters. Only applicable for DesktopUsers.<br>
-Usage example: <code><screensize><width>1.06</width><height>0.74</height></screensize></code>
-
-<em><display></em><br>
-A string indicating the display on the client host on which the corresponding window should pop up. By
-default, :0.0 is assumed.<br>
-Usage example: <code><display>:0.0</display></code>
 
 <br>
 <b>Summary</b><br>
-Now you basically already know how to use the Oculus-Powerwall framework. However, if you are interested in understanding and modifying the concrete functionalites, the following pages provide an overview of all files, classes, attributes and functions used in and programmed for this framework.
+Now you basically already know how to use the Navigation and Viewing framework. However, if you are interested in understanding and modifying the concrete functionalites, the following pages provide an overview of all files, classes, attributes and functions used in and programmed for this framework.
 
 <br>
 <b>Contact</b><br>

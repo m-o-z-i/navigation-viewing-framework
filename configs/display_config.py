@@ -25,7 +25,21 @@ class LargePowerwall(Display):
                     , hostname = "kerberos"
                     , name = "large_powerwall"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
+                    , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3", ":0.4", "0.5"]
+                    , shutter_timings = [ [(0,100), (2400,2500)], 
+                                          [(3000,3100),(4600,4700)],
+                                          [(5700,5800), (8175,8275)],
+                                          [(8200,8300), (10700,10800)],
+                                          [(11400,11500), (12900,13000)],
+                                          [(14000,14100), (15800,15900)]
+                                        ]
+                    , shutter_values = [  [(22,88), (44,11)],
+                                          [(22,88), (44,11)],
+                                          [(22,88), (44,11)],
+                                          [(22,88), (44,11)],
+                                          [(22,88), (44,11)],
+                                          [(22,88), (44,11)]
+                                       ]
                     , size = (4.16, 2.6)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     )
@@ -95,17 +109,4 @@ class SmallPowerwall(Display):
 
 displays = [
     LargePowerwall()
-  , SmallPowerwall()
-  , Display(hostname = "perseus"
-      , name = "touch_table"
-      , resolution = (3840, 2160)
-      , size = (1.25, 0.7)
-      , transformation = avango.gua.make_trans_mat(0, 0.65, 0) * avango.gua.make_rot_mat(-90, 1, 0, 0)
-  )
-  , Display(hostname = "atalante"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.0, 0.0)
-  )
-  , Display(hostname = "nestor"
-      , transformation = avango.gua.make_trans_mat(-0.645, 1.0, 0.0)
-  )
 ]

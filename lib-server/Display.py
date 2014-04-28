@@ -18,6 +18,8 @@ class Display:
   # @param name A name to be associated to that display. Will be used in XML configuration file.
   # @param resolution The display's resolution to be used.
   # @param displaystrings A list of strings on which the windows for each user will pop up.
+  #
+  #
   # @param size Physical size of the display medium in meters.
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
   def __init__( self
@@ -25,6 +27,8 @@ class Display:
               , name = None
               , resolution = (2560, 1440)
               , displaystrings = [":0.0"]
+              , shutter_timings = []
+              , shutter_values = []
               , size = (0.595, 0.335)
               , transformation = avango.gua.make_trans_mat(0.0, 1.75, 0.0)
               ):
@@ -49,6 +53,14 @@ class Display:
     ## @var displaystrings
     # A list of strings on which the windows for each user will pop up.
     self.displaystrings = displaystrings
+
+    ##
+    #
+    self.shutter_timings = shutter_timings
+
+    ##
+    #
+    self.shutter_values = shutter_values
     
     ## @var size
     # A list of strings on which the windows for each user will pop up.

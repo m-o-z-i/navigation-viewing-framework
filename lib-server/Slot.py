@@ -34,7 +34,7 @@ class Slot:
 
     ##
     #
-    self.headtracking_station = None
+    self.assigned_user = None
 
     ##
     #
@@ -91,5 +91,6 @@ class Slot:
 
   ##
   #
-  def connect_headtracking_matrix(self, SF_HEADTRACKING_MAT):
-    self.slot_node.Transform.connect_from(SF_HEADTRACKING_MAT)
+  def assign_user(self, USER_INSTANCE):
+    self.slot_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
+    self.assign_user = USER_INSTANCE

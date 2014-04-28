@@ -6,6 +6,8 @@
 # import avango-guacamole libraries
 import avango
 import avango.gua
+import avango.script
+from avango.script import field_has_changed
 
 # import framework libraries
 from TrackingReader import *
@@ -18,7 +20,10 @@ import math
 # Upon construction, this class appends the necessary nodes to the scenegraph, creates eyes
 # and initializes the headtracking.
 
-class User:
+class User(avango.script.Script):
+
+  def __init__(self):
+    self.super(InputMapping).__init__()
 
   ## Custom constructor.
   # @param APPLICATION_MANAGER Reference to the ApplicationManager instance from which this user is created.
@@ -27,7 +32,22 @@ class User:
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
-  def __init__(self, APPLICATION_MANAGER, USER_ID, STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
+  def my_constructor(self, APPLICATION_MANAGER, USER_ID, STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
+
+    # flags
+    
+    ##
+    #
+    self.is_vip = False
+
+    ##
+    #
+    self.is_active = True
+
+    ##
+    #
+    self.current_display = None
+
 
     # variables
     ## @var APPLICATION_MANAGER
@@ -35,7 +55,7 @@ class User:
     self.APPLICATION_MANAGER = APPLICATION_MANAGER
 
     ## @var id
-    # Identification number of the PowerWallUser, starting from 0.
+    # Identification number of the user, starting from 0.
     self.id = USER_ID
 
     ## @var platform_id
@@ -58,12 +78,6 @@ class User:
     # Material of the user's avatar.
     self.avatar_material = AVATAR_MATERIAL
 
-    # init viewing setup 
-    ## @var head_transform
-    # Scenegraph node representing the head position of the user with respect to platform.
-    self.head_transform = avango.gua.nodes.TransformNode(Name = "head_" + str(self.id))
-    self.platform.platform_transform_node.Children.value.append(self.head_transform)
-
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.
     if HEADTRACKING_TARGET_NAME == None:
@@ -74,52 +88,26 @@ class User:
       self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
       self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
-    
-    # connect the tracking input to the scenegraph node
-    self.head_transform.Transform.connect_from(self.headtracking_reader.sf_abs_mat)
-
-    if STEREO:
-      # create the eyes
-      ## @var left_eye
-      # Scenegraph node representing the user's left eye.
-      self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
-      self.left_eye.Transform.value = avango.gua.make_identity_mat()
-      self.head_transform.Children.value.append(self.left_eye)
-
-      ## @var right_eye
-      # Scenegraph node representing the user's right eye.
-      self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
-      self.right_eye.Transform.value = avango.gua.make_identity_mat()
-      self.head_transform.Children.value.append(self.right_eye)
-
-      self.set_eye_distance(0.06)
-      
-    else:
-      # create the eye
-      ## @var eye
-      # Scenegraph node representing the user's eye.
-      self.eye = avango.gua.nodes.TransformNode(Name = "eye")
-      self.eye.Transform.value = avango.gua.make_identity_mat()
-      self.head_transform.Children.value.append(self.eye)
 
     # create avatar representation
-    if self.platform.avatar_type == "joseph":
-      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
-    elif self.platform.avatar_type == "joseph_table":
-      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
+    #if self.platform.avatar_type == "joseph":
+    #  self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
+    #elif self.platform.avatar_type == "joseph_table":
+    #  self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
     
     # create coupling notification plane
-    self.create_coupling_plane()
+    #self.create_coupling_plane()
 
     # create coupling status notifications
-    self.create_coupling_status_overview()
+    #self.create_coupling_status_overview()
 
   
-  ## Sets the transformation values of left and right eye.
-  # @param VALUE The eye distance to be applied.
-  def set_eye_distance(self, VALUE):
-    self.left_eye.Transform.value  = avango.gua.make_trans_mat(VALUE * -0.5, 0.0, 0.0)
-    self.right_eye.Transform.value = avango.gua.make_trans_mat(VALUE * 0.5, 0.0, 0.0)
+  ##
+  #
+  def evaluate(self):
+    # Set active flag, current platform and current display
+    # call slot manager.update
+    pass
 
   ## Appends a node to the children of a platform in the scenegraph.
   # @param SCENEGRAPH Reference to the scenegraph.
@@ -149,7 +137,6 @@ class User:
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
     self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-    self.head_transform.Children.value.append(self.head_avatar)
 
     # create avatar body
     ## @var body_avatar
@@ -289,8 +276,6 @@ class User:
     self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
     
     self.platform.screens[0].Children.value.append(self.coupling_status_node)
-
-    # TODO: Make generic size
 
     ## @var start_trans
     # Translation of the first coupling status notifier (own color).

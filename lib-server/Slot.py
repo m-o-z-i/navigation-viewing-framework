@@ -14,11 +14,15 @@ class Slot:
   ## Custom constructor.
   #
   #
-  def __init__(self, DISPLAY, SLOT_ID, STEREO, PLATFORM_NODE, HEADTRACKING_STATION):
+  def __init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE):
 
     ##
     #
-    self.slot_id = slot_id
+    self.slot_id = SLOT_ID
+
+    ##
+    #
+    self.screen_num = SCREEN_NUM
 
     ##
     #
@@ -30,7 +34,7 @@ class Slot:
 
     ##
     #
-    self.headtracking_station = HEADTRACKING_STATION
+    self.headtracking_station = None
 
     ##
     #
@@ -46,4 +50,46 @@ class Slot:
     else:
       self.shutter_value = None
 
+
+    self.display_name = 
+
     # append nodes to platform transform node
+
+    ## 
+    #
+    self.slot_node = avango.gua.nodes.TransformNode(Name = "s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID))
+    self.PLATFORM_NODE.Children.value.append(self.slot_node)
+
+    if self.stereo:
+      # create the eyes
+      ## @var left_eye
+      #
+      self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
+      self.left_eye.Transform.value = avango.gua.make_identity_mat()
+      self.slot_node.Children.value.append(self.left_eye)
+
+      ## @var right_eye
+      #
+      self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
+      self.right_eye.Transform.value = avango.gua.make_identity_mat()
+      self.slot_node.Children.value.append(self.right_eye)
+
+      self.set_eye_distance(0.06)
+    else:
+      ##
+      #
+      self.eye = avango.gua.nodes.TransformNode(Name = "eye")
+      self.eye.Transform.value = avango.gua.make_identity_mat()
+      self.slot_node.Children.value.append(self.eye)
+
+
+  ## Sets the transformation values of left and right eye.
+  # @param VALUE The eye distance to be applied.
+  def set_eye_distance(self, VALUE):
+    self.left_eye.Transform.value  = avango.gua.make_trans_mat(VALUE * -0.5, 0.0, 0.0)
+    self.right_eye.Transform.value = avango.gua.make_trans_mat(VALUE * 0.5, 0.0, 0.0)
+
+  ##
+  #
+  def connect_headtracking_matrix(self, SF_HEADTRACKING_MAT):
+    self.slot_node.Transform.connect_from(SF_HEADTRACKING_MAT)

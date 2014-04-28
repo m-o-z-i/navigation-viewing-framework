@@ -54,10 +54,6 @@ def start():
   print "This client is running on", hostname, "and listens to server", server_ip
   print "It is responsible for platform", platform_id, "and display", display_name
 
-  # process config file to find out user attributes
-  user_list = ClientConfigFileParser.parse(config_file, platform_id)
-  print user_list
-
   # create distribution node
   nettrans = avango.gua.nodes.NetTransform(
                 Name = "net",
@@ -89,16 +85,20 @@ def start():
   # create a viewer
   viewer = avango.gua.nodes.Viewer()
 
-  for _user_attributes in user_list:
+  if handled_display_instance.shutter_timings == []:
+    stereo = False
+  else:
+    stereo = True
 
+  for _displaystring in handled_display_instance.displaystrings:
     _view = StandardView()
-
-    # differ between stereo and mono user case
-    if _user_attributes[0] == "True":
-      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, True)
-    else:
-      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, False)
-
+    _view.my_constructor(graph, 
+                         viewer,
+                         platform_id, 
+                         handled_display_instance.displaystrings.index(_displaystring),
+                         handled_display_instance, 
+                         screen_num, 
+                         stereo)
 
   viewer.SceneGraphs.value = [graph]
 

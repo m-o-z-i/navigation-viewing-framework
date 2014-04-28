@@ -24,10 +24,10 @@ class View(avango.script.Script):
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
   # @param PLATFORM_ID Identification number of the platform the view user is standing on.
-  # @param USER_ID Identification number of the user whose view is to be displayed.
+  #
   # @param ONLY_TRANSLATION_UPDATE Boolean indicating if only the tracking translation is to be
   #                                locally updated on client side. Otherwise, the full matrix is refreshed.
-  def construct_view(self, SCENEGRAPH, PLATFORM_ID, USER_ID, ONLY_TRANSLATION_UPDATE):
+  def construct_view(self, SCENEGRAPH, PLATFORM_ID, SLOT_ID, ONLY_TRANSLATION_UPDATE):
 
     ## @var SCENEGRAPH
     # Reference to the scenegraph to be displayed.
@@ -37,9 +37,9 @@ class View(avango.script.Script):
     # The platform id for which this client process is responsible for.
     self.platform_id = PLATFORM_ID
 
-    ## @var user_id
-    # User ID of this user within his or her user group.
-    self.user_id = USER_ID
+    ## 
+    # 
+    self.slot_id = SLOT_ID
 
     ## @var ONLY_TRANSLATION_UPDATE
     # In case this boolean is true, only the translation values will be locally updated from the tracking system.
@@ -65,7 +65,8 @@ class View(avango.script.Script):
   
   ## Evaluated every frame.
   def evaluate(self):
-
+    pass
+    '''
     if self.TRACKING_TARGET_NAME == None:
       return
    
@@ -81,5 +82,6 @@ class View(avango.script.Script):
         _node_to_update.Transform.value = _mat
       else:
         _node_to_update.Transform.value = self.headtracking_reader.sf_abs_mat.value
+    '''
     
 

@@ -16,7 +16,7 @@ from View import *
 ## Internal representation of a standard view on client side.
 #
 # Creates viewing setup and initializes a tracking sensor in order to avoid latency 
-# due to distribution in the network. Refers to a StandardUser on server side.
+# due to distribution in the network. Refers to a Slot on server side.
 
 class StandardView(View):
 
@@ -27,22 +27,15 @@ class StandardView(View):
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
   # @param VIEWER Reference to the viewer to which the created pipeline will be appended to.
-  # @param USER_ATTRIBUTES List created by file parser containing all the important user attributes.
-  # @param PLATFORM_ID The platform id on which this user is standing on.
+  # @param PLATFORM_ID The platform id on which the corresponding user is standing on.
+  # @param SLOT_ID 
   # @param DISPLAY_INSTANCE An instance of Display to represent the values.
   # @param SCREEN_NUM The number of the screen node on the platform.
   # @param STEREO Boolean indicating if the view to be constructed is stereo or mono.
-  def my_constructor(self, SCENEGRAPH, VIEWER, USER_ATTRIBUTES, PLATFORM_ID, DISPLAY_INSTANCE, SCREEN_NUM, STEREO):
-
-    # structure of USER_ATTRIBUTES:
-    # [stereo, headtrackingstation, startplatform, user_id, transmitteroffset, notrackingmat]
-
-    # get user and platform id
-    user_id = USER_ATTRIBUTES[3]
-    platform_id = USER_ATTRIBUTES[2]
+  def my_constructor(self, SCENEGRAPH, VIEWER, PLATFORM_ID, SLOT_ID, DISPLAY_INSTANCE, SCREEN_NUM, STEREO):
 
     # call base class constructor
-    self.construct_view(SCENEGRAPH, platform_id, user_id, False)
+    self.construct_view(SCENEGRAPH, PLATFORM_ID, SLOT_ID, False)
 
     # retrieve the needed values from display
     display_values = DISPLAY_INSTANCE.register_user()
@@ -67,8 +60,8 @@ class StandardView(View):
       camera.SceneGraph.value = SCENEGRAPH.Name.value
       camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/screen_" + str(SCREEN_NUM)
       camera.RightScreen.value = camera.LeftScreen.value
-      camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeL"
-      camera.RightEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eyeR"
+      camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eyeL"
+      camera.RightEye.value = "/net/platform_" + str(platform_id) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eyeR"
 
       # set render mask for camera
       render_mask = "!do_not_display_group && !avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
@@ -82,7 +75,7 @@ class StandardView(View):
       # create window
       window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0] * 2, DISPLAY_INSTANCE.resolution[1]) 
       window = avango.gua.nodes.Window()
-      window.Title.value = "User_" + str(user_id)
+      window.Title.value = "Slot_" + str(SLOT_ID)
       window.Size.value = window_size
       window.LeftResolution.value = avango.gua.Vec2ui(window_size.x / 2, window_size.y)
       window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
@@ -111,7 +104,7 @@ class StandardView(View):
       camera.SceneGraph.value = SCENEGRAPH.Name.value
       camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/screen_" + str(SCREEN_NUM)
       camera.RightScreen.value = camera.LeftScreen.value
-      camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/head_" + str(user_id) + "/eye"
+      camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eye"
       camera.RightEye.value = camera.LeftEye.value
 
       # set render mask for camera
@@ -125,7 +118,7 @@ class StandardView(View):
 
       window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1]) 
       window = avango.gua.nodes.Window()
-      window.Title.value = "User_" + str(user_id)
+      window.Title.value = "Slot_" + str(SLOT_ID)
       window.Size.value = window_size
       window.LeftResolution.value = window_size
 
@@ -138,14 +131,14 @@ class StandardView(View):
 
 
     '''
-      General user settings
+      General slot settings
     '''
 
     # set nice pipeline values
     ClientPipelineValues.set_pipeline_values(pipeline)
 
     # add tracking reader to avoid latency
-    self.add_tracking_reader(USER_ATTRIBUTES[1], USER_ATTRIBUTES[4], USER_ATTRIBUTES[5])
+    #self.add_tracking_reader(USER_ATTRIBUTES[1], USER_ATTRIBUTES[4], USER_ATTRIBUTES[5])
 
     # set display string and warpmatrices as given by the display
     if len(display_values) > 1:

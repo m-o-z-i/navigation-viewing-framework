@@ -150,7 +150,8 @@ class StandardView(View):
     # set display string and warpmatrices as given by the display
     if len(display_values) > 1:
       self.set_warpmatrices(window, display_values[1])
-      window.Display.value = display_values[0]
+    
+    window.Display.value = display_values[0]
 
     # append pipeline to the viewer
     VIEWER.Pipelines.value.append(pipeline)

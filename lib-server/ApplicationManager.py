@@ -99,6 +99,9 @@ class ApplicationManager():
     self.config_file_parser = ConfigFileParser(self)
     self.config_file_parser.parse(CONFIG_FILE)
 
+    # care for correct slot assignment
+    self.slot_manager.update_slot_configuration()
+
     # server control monitor setup #
 
     ## @var server_transform
@@ -225,17 +228,15 @@ class ApplicationManager():
 
   ## Create a standard (non-HMD) user.
   # @param PLATFORM_ID The ID of the platform this user belongs to.
-  # @param STEREO Boolean indicating whether the user has a stereo view.
   # @param HEADTRACKING_TARGET_NAME The headtracking target identifier attached to this user
   # @param WARNINGS Boolean indicating whether to display warning planes when the user gets close to the platform borders.
   def create_standard_user(
       self
     , PLATFORM_ID
-    , STEREO
     , HEADTRACKING_TARGET_NAME
     , WARNINGS
     ):
-    _user = User(self, len(self.user_list), STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
+    _user = User(self, len(self.user_list), HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
     self.user_list.append(_user)
 
     # init border checker to warn user on platform

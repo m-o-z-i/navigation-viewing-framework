@@ -28,11 +28,10 @@ class User(avango.script.Script):
   ## Custom constructor.
   # @param APPLICATION_MANAGER Reference to the ApplicationManager instance from which this user is created.
   # @param USER_ID Global user ID to be applied.
-  # @param STEREO Boolean indicating if this user is a stereo or mono one.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
-  def my_constructor(self, APPLICATION_MANAGER, USER_ID, STEREO, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
+  def my_constructor(self, APPLICATION_MANAGER, USER_ID, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
 
     # flags
     

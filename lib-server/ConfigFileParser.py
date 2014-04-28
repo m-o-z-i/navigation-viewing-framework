@@ -51,7 +51,7 @@ class ConfigFileParser:
                           "joseph"]                                      # avatartype]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
-    _user_attributes = [None, None, None, False]                         # [stereo, headtrackingstation, startplatform, warnings]
+    _user_attributes = [None, None, False]                               # [headtrackingstation, startplatform, warnings]
     _window_size = [1920, 1080]                                          # [width, height]
     _screen_size = [1.6, 1.0]                                            # [width, height]
     _navs_created = 0
@@ -353,12 +353,6 @@ class ConfigFileParser:
 
       # read user values
       if _in_user:
-        # get stereo value
-        if _current_line.startswith("<stereo>"):
-          _current_line = _current_line.replace("<stereo>", "")
-          _current_line = _current_line.replace("</stereo>", "")
-          _current_line = _current_line.rstrip()
-          _user_attributes[0] = _current_line
         
         # get headtracking station name
         if _current_line.startswith("<headtrackingstation>"):
@@ -366,14 +360,14 @@ class ConfigFileParser:
           _current_line = _current_line.replace("</headtrackingstation>", "")
           _current_line = _current_line.rstrip()
           if _current_line != "None":
-            _user_attributes[1] = _current_line
+            _user_attributes[0] = _current_line
 
         # get starting platform name
         if _current_line.startswith("<startplatform>"):
           _current_line = _current_line.replace("<startplatform>", "")
           _current_line = _current_line.replace("</startplatform>", "")
           _current_line = _current_line.rstrip()
-          _user_attributes[2] = int(_current_line)
+          _user_attributes[1] = int(_current_line)
 
         # get window size values
         if _current_line.startswith("<windowsize>"):
@@ -408,27 +402,25 @@ class ConfigFileParser:
           _current_line = _current_line.rstrip()
           
           if _current_line == "True":
-            _user_attributes[3] = True
+            _user_attributes[2] = True
 
       # detect end of user declaration
       if _current_line.startswith("</user>"):
         _in_user = False
 
         # error handling
-        if _user_attributes[2] >= _navs_created:
+        if _user_attributes[1] >= _navs_created:
           raise IOError("Navigation number to append to is too large.")
 
-        # distinguish between stereo and mono user
-        if _user_attributes[0] == "True":
-          self.APPLICATION_MANAGER.create_standard_user(_user_attributes[2], True, _user_attributes[1], _user_attributes[3])
-        else:
-          self.APPLICATION_MANAGER.create_standard_user(_user_attributes[2], False, _user_attributes[1], _user_attributes[3])
+
+        self.APPLICATION_MANAGER.create_standard_user(_user_attributes[2], _user_attributes[1], _user_attributes[3])
+        
 
         print "\nUser loaded and created:"
         print "-------------------------"
         print _user_attributes, "\n"
 
-        _user_attributes = [None, None, None, False]
+        _user_attributes = [None, None, False]
         _current_line = self.get_next_line_in_file(_config_file)
         continue
 

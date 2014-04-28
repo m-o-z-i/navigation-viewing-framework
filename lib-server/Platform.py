@@ -10,6 +10,10 @@ import avango.script
 import avango.daemon
 from   avango.script import field_has_changed
 
+# import framework libraries
+from SlotManager import *
+from Slot        import *
+
 # import python libraries
 import subprocess
 import os
@@ -50,6 +54,7 @@ class Platform(avango.script.Script):
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param DISPLAYS The names of the displays that belong to this navigation.
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
+  #
   # @param CONFIG_FILE The path to the config file that is used.
   def my_constructor(
       self
@@ -61,7 +66,8 @@ class Platform(avango.script.Script):
     , TRANSMITTER_OFFSET
     , NO_TRACKING_MAT
     , DISPLAYS
-    , AVATAR_TYPE
+    , AVATAR_TYPE,
+    , SLOT_MANAGER
     , CONFIG_FILE):
 
     ## @var platform_id
@@ -96,6 +102,10 @@ class Platform(avango.script.Script):
     # A string that determines what kind of avatar representation is to be used.
     self.avatar_type = AVATAR_TYPE
 
+    ##
+    #
+    self.slot_list = []
+
     # extend scenegraph with platform node
     ## @var platform_transform_node
     # Scenegraph node representing this platform's transformation.
@@ -117,6 +127,29 @@ class Platform(avango.script.Script):
       _screen = _display.create_screen_node("screen_" + str(self.displays.index(_display)))
       self.platform_transform_node.Children.value.append(_screen)
       self.screens.append(_screen)
+
+      # create a slot for each displaystring
+      for _displaystring in _display.displaystrings:
+        
+        if _display.shutter_timings == []:
+          # create mono slot
+          _slot = Slot(_display,
+                       _display.displaystrings.index(_displaystring),
+                       self.displays.index(_display),
+                       False,
+                       self.platform_transform_node)
+          self.slot_list.append(_slot)
+          SLOT_MANAGER.register_slot(_slot, _display)
+        else:
+          # create stereo slot
+          _slot = Slot(_display,
+                       _display.displaystrings.index(_displaystring),
+                       self.displays.index(_display),
+                       True,
+                       self.platform_transform_node)
+          self.slot_list.append(_slot)
+          SLOT_MANAGER.register_slot(_slot, _display)
+
 
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 

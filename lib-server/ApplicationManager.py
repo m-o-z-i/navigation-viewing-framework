@@ -16,6 +16,7 @@ from   User             import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
 from   HUDManager       import *
+from   SlotManager      import *
 from   display_config   import displays
 import Tools
 
@@ -87,6 +88,10 @@ class ApplicationManager():
     # A HUDManager instance in order to arrange the user display for the different stati.
     self.hud_manager = HUDManager()
     self.hud_manager.my_constructor(self.NET_TRANS_NODE, self.user_list)
+
+    ##
+    #
+    self.slot_manager = SlotManager(self.user_list)
 
     # create file parser and load file
     ## @var config_file_parser
@@ -208,6 +213,7 @@ class ApplicationManager():
       , ANIMATE_COUPLING = ANIMATE_COUPLING
       , MOVEMENT_TRACES = MOVEMENT_TRACES
       , HUD_MANAGER = self.hud_manager
+      , SLOT_MANAGER = self.slot_manager
       , TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
       , DISPLAYS = _display_instances
       , AVATAR_TYPE = AVATAR_TYPE

@@ -82,6 +82,7 @@ class Navigation(avango.script.Script):
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
   # @param HUD_MANAGER Reference to the only instance of HUDManager in the setup used to update user displays.
+  #
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
   # @param DISPLAYS The names of the displays that belong to this navigation.
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
@@ -101,6 +102,7 @@ class Navigation(avango.script.Script):
     , ANIMATE_COUPLING
     , MOVEMENT_TRACES
     , HUD_MANAGER
+    , SLOT_MANAGER
     , TRANSMITTER_OFFSET
     , DISPLAYS
     , AVATAR_TYPE
@@ -187,6 +189,7 @@ class Navigation(avango.script.Script):
       , NO_TRACKING_MAT = NO_TRACKING_MAT
       , DISPLAYS = DISPLAYS
       , AVATAR_TYPE = AVATAR_TYPE
+      , SLOT_MANAGER = SLOT_MANAGER
       , CONFIG_FILE = CONFIG_FILE
       )
 

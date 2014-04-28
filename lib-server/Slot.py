@@ -50,9 +50,6 @@ class Slot:
     else:
       self.shutter_value = None
 
-
-    self.display_name = 
-
     # append nodes to platform transform node
 
     ## 

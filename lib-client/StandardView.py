@@ -28,7 +28,7 @@ class StandardView(View):
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
   # @param VIEWER Reference to the viewer to which the created pipeline will be appended to.
   # @param PLATFORM_ID The platform id on which the corresponding user is standing on.
-  # @param SLOT_ID 
+  # @param SLOT_ID The identification number of the slot to display.
   # @param DISPLAY_INSTANCE An instance of Display to represent the values.
   # @param SCREEN_NUM The number of the screen node on the platform.
   # @param STEREO Boolean indicating if the view to be constructed is stereo or mono.
@@ -38,7 +38,7 @@ class StandardView(View):
     self.construct_view(SCENEGRAPH, PLATFORM_ID, SLOT_ID, False)
 
     # retrieve the needed values from display
-    display_values = DISPLAY_INSTANCE.register_user()
+    display_values = DISPLAY_INSTANCE.register_view()
 
     # check if no more users allowed at this screen
     if not display_values:

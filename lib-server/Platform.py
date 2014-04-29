@@ -54,7 +54,7 @@ class Platform(avango.script.Script):
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param DISPLAYS The names of the displays that belong to this navigation.
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
-  #
+  # @param SLOT_MANAGER Reference to the one and only SlotManager instance in the setup.
   # @param CONFIG_FILE The path to the config file that is used.
   def my_constructor(
       self

@@ -90,6 +90,7 @@ def start():
   else:
     stereo = True
 
+  # Create a view for each displaystring (= slot)
   for _displaystring in handled_display_instance.displaystrings:
     _view = StandardView()
     _view.my_constructor(graph, 

@@ -16,8 +16,8 @@ from copy import copy
 #
 class SlotManager:
 
-  ##
-  #
+  ## Custom constructor.
+  # @param USER_LIST Reference to a list of all users in the setup.
   def __init__(self, USER_LIST):
 
     ##

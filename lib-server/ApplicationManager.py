@@ -89,8 +89,8 @@ class ApplicationManager():
     self.hud_manager = HUDManager()
     self.hud_manager.my_constructor(self.NET_TRANS_NODE, self.user_list)
 
-    ##
-    #
+    ## @var slot_manager
+    # A SlotManager instance in order to handle the shutter timings of users.
     self.slot_manager = SlotManager(self.user_list)
 
     # create file parser and load file

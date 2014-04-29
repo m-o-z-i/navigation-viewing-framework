@@ -44,11 +44,11 @@ class LargePowerwall(Display):
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     )
 
-  ## Registers a new user at this display and return the display string and the 
-  # warp matrices assigned to the new user.
-  def register_user(self):
-    user_num = self.num_users
-    if user_num < 4:
+  ## Registers a new view at this display and returns the display string 
+  # and the warp matrices assigned to the new view.
+  def register_view(self):
+    view_num = self.num_views
+    if view_num < 4:
       warpmatrices = [
           "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
         , "/opt/dlp-warpmatrices/dlp_6_warp_P5.warp"
@@ -57,8 +57,8 @@ class LargePowerwall(Display):
         , "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
         , "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
       ]
-      self.num_users += 1
-      return (self.displaystrings[user_num], warpmatrices)
+      self.num_views += 1
+      return (self.displaystrings[view_num], warpmatrices)
     else:
       return None
 
@@ -82,11 +82,11 @@ class SmallPowerwall(Display):
                     , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
                     )
 
-  ## Registers a new user at this display and return the display string and the 
-  # warp matrices assigned to the new user.
-  def register_user(self):
-    user_num = self.num_users
-    if user_num < 2:
+  ## Registers a new view at this display and returns the display string 
+  # and the warp matrices assigned to the new view.
+  def register_view(self):
+    view_num = self.num_views
+    if view_num < 2:
       warpmatrices = [
           "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, 2 * user_num + 2)
         , "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, 2 * user_num + 2)
@@ -96,8 +96,8 @@ class SmallPowerwall(Display):
         , "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, 2 * user_num + 1)
         , "{0}lcd_4_warp_P{1}.warp".format(warp_matrices_path, 2 * user_num + 1)
       ]
-      self.num_users += 1
-      return (self.displaystrings[user_num], warpmatrices)
+      self.num_views += 1
+      return (self.displaystrings[view_num], warpmatrices)
     else:
       return None
 

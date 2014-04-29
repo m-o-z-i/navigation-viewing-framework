@@ -70,16 +70,16 @@ class Display:
     # A matrix specifying the display's transformation with respect to the platform coordinate system.
     self.transformation = transformation
 
-    ## @var num_users
-    # Number of users who are already registered with this display.
-    self.num_users = 0
+    ## @var num_views
+    # Number of views which are already registered with this display.
+    self.num_views = 0
 
-  ## Registers a new user at this display and return the display string assigned to the new user.
-  def register_user(self):
-    user_num = self.num_users
-    if user_num < len(self.displaystrings):
-      self.num_users += 1
-      return [self.displaystrings[user_num]]
+  ## Registers a new view at this display and returns the display string assigned to the new view.
+  def register_view(self):
+    view_num = self.num_views
+    if view_num < len(self.displaystrings):
+      self.num_views += 1
+      return [self.displaystrings[view_num]]
     else:
       return None
 

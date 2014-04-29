@@ -40,11 +40,11 @@ class SlotManager:
   #
   def register_slot(self, SLOT, DISPLAY):
     if DISPLAY in self.slots:
-      _slot_list = self.SLOTS[DISPLAY]
+      _slot_list = self.slots[DISPLAY]
       _slot_list.append(SLOT)
-      self.SLOTS[DISPLAY] = _slot_list
+      self.slots[DISPLAY] = _slot_list
     else:
-      self.SLOTS[DISPLAY] = [SLOT]
+      self.slots[DISPLAY] = [SLOT]
 
 
   ##
@@ -53,6 +53,11 @@ class SlotManager:
     
     # loop over all displays to be handled
     for _display in self.slots:
+
+      # check if current display is a stereo one
+      _stereo = True
+      if _display.shutter_timings == []:
+        _stereo = False
 
       _default_user_list = []
       _vip_user_list = []
@@ -98,7 +103,7 @@ class SlotManager:
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
       
       # all users are default users, distribute remaining slots among them
-      elif:
+      else:
         _i = 0
 
         while _number_free_slots > 0:
@@ -124,37 +129,49 @@ class SlotManager:
 
         # check if the user has slots assigned to him
         if _number_of_slots > 0:
-          _open_timings = _slot_instances[_i].shutter_timing[0]
-          _open_values = _slot_instances[_i].shutter_values[0]
-          _start_i = copy(_i)
-          
-          _i += (_number_of_slots - 1)
+          if _stereo:
+            # stereo display - set proper shutter timings
+            _open_timings = _slot_instances[_i].shutter_timing[0]
+            _open_values = _slot_instances[_i].shutter_values[0]
+            _start_i = copy(_i)
+            
+            _i += (_number_of_slots - 1)
 
-          _close_timings = _slot_instances[_i].shutter_timing[1]
-          _close_values = _slot_instances[_i].shutter_values[1]
-          _end_i = copy(_i)
+            _close_timings = _slot_instances[_i].shutter_timing[1]
+            _close_values = _slot_instances[_i].shutter_values[1]
+            _end_i = copy(_i)
 
-          _j = 0
+            _j = 0
 
-          # set ids with shutter timings and values properly
-          while _j < len(_open_timings)
-            self.RadioMasterHID.set_timer_value(_user.id, _j, _open_timings[_j])
-            self.RadioMasterHID.set_shutter_value(_user_id, _j, int(_open_values[_j], 16))
-            _j += 1
+            # set ids with shutter timings and values properly
+            while _j < len(_open_timings):
+              self.RadioMasterHID.set_timer_value(_user.id, _j, _open_timings[_j])
+              self.RadioMasterHID.set_shutter_value(_user_id, _j, int(_open_values[_j], 16))
+              _j += 1
 
-          while _j < 2 * len(_open_timings)
-             self.RadioMasterHID.set_timer_value(_user.id, _j, _close_timings[_j - len(_open_timings)])
-             self.RadioMasterHID.set_shutter_value(_user.id, _j, _close_values[_j - len(_open_timings)])
-             _j += 1
+            while _j < 2 * len(_open_timings):
+               self.RadioMasterHID.set_timer_value(_user.id, _j, _close_timings[_j - len(_open_timings)])
+               self.RadioMasterHID.set_shutter_value(_user.id, _j, _close_values[_j - len(_open_timings)])
+               _j += 1
 
-          # assign user to slot instances
-          for _k in range(_start_i, _end_i + 1):
-            _slot_instances[_k].assign_user(_user)
+            # assign user to slot instances
+            for _k in range(_start_i, _end_i + 1):
+              _slot_instances[_k].assign_user(_user)
 
-          _i += 1
+            _i += 1
+          else:
+            # mono display - open shutters
+            _start_i = copy(_i)
+            _i += (_number_of_slots - 1)
+            _end_i = copy(_i)
 
+            # assign user to slot instances
+            for _k in range(_start_i, _end_i + 1):
+              _slot_instances[_k].assign_user(_user)
+
+            _i += 1
         else:
-          # no slots assigned to user
+          # no slots assigned to user - open shutters
           break
 
       self.RadioMasterHID.send_shutter_config()

@@ -90,4 +90,4 @@ class Slot:
   #
   def assign_user(self, USER_INSTANCE):
     self.slot_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
-    self.assign_user = USER_INSTANCE
+    self.assigned_user = USER_INSTANCE

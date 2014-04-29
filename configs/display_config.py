@@ -109,4 +109,6 @@ class SmallPowerwall(Display):
 
 displays = [
     LargePowerwall()
+  , Display(hostname = "atalante"
+          , transformation = avango.gua.make_trans_mat(0.0, 1.0, 0.0)
 ]

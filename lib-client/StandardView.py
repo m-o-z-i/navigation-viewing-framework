@@ -58,16 +58,16 @@ class StandardView(View):
       # create camera
       camera = avango.gua.nodes.Camera()
       camera.SceneGraph.value = SCENEGRAPH.Name.value
-      camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/screen_" + str(SCREEN_NUM)
+      camera.LeftScreen.value = "/net/platform_" + str(PLATFORM_ID) + "/screen_" + str(SCREEN_NUM)
       camera.RightScreen.value = camera.LeftScreen.value
-      camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eyeL"
-      camera.RightEye.value = "/net/platform_" + str(platform_id) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eyeR"
+      camera.LeftEye.value = "/net/platform_" + str(PLATFORM_ID) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eyeL"
+      camera.RightEye.value = "/net/platform_" + str(PLATFORM_ID) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eyeR"
 
       # set render mask for camera
-      render_mask = "!do_not_display_group && !avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
+      render_mask = "!do_not_display_group && !avatar_group_" + str(PLATFORM_ID) + " && !couple_group_" + str(PLATFORM_ID)
 
       for i in range(0, 10):
-        if i != platform_id:
+        if i != PLATFORM_ID:
           render_mask = render_mask + " && !platform_group_" + str(i)
 
       camera.RenderMask.value = render_mask
@@ -102,16 +102,16 @@ class StandardView(View):
 
       camera = avango.gua.nodes.Camera()
       camera.SceneGraph.value = SCENEGRAPH.Name.value
-      camera.LeftScreen.value = "/net/platform_" + str(platform_id) + "/screen_" + str(SCREEN_NUM)
+      camera.LeftScreen.value = "/net/platform_" + str(PLATFORM_ID) + "/screen_" + str(SCREEN_NUM)
       camera.RightScreen.value = camera.LeftScreen.value
-      camera.LeftEye.value = "/net/platform_" + str(platform_id) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eye"
+      camera.LeftEye.value = "/net/platform_" + str(PLATFORM_ID) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eye"
       camera.RightEye.value = camera.LeftEye.value
 
       # set render mask for camera
-      render_mask = "!do_not_display_group && !avatar_group_" + str(platform_id) + " && !couple_group_" + str(platform_id)
+      render_mask = "!do_not_display_group && !avatar_group_" + str(PLATFORM_ID) + " && !couple_group_" + str(PLATFORM_ID)
 
       for i in range(0, 10):
-        if i != platform_id:
+        if i != PLATFORM_ID:
           render_mask = render_mask + " && !platform_group_" + str(i)
 
       camera.RenderMask.value = render_mask

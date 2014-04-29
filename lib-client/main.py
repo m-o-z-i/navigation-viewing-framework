@@ -30,7 +30,7 @@ import sys
 def start():
 
   # disable logger warnings
-  logger = avango.gua.nodes.Logger(EnableWarning = False)
+  logger = avango.gua.nodes.Logger(EnableWarning = True)
 
   # get the server ip
   server_ip = str(sys.argv[1])

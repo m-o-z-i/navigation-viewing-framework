@@ -154,17 +154,17 @@ class Platform(avango.script.Script):
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 
       # run ClientDaemon on host if necessary
-      #if _display.hostname not in Platform.hosts_visited and \
-      #   _display.hostname != _hostname:
-      #  _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client-daemon.sh"])
-      #  Platform.hosts_visited.append(_display.name)
+      if _display.hostname not in Platform.hosts_visited and \
+         _display.hostname != _hostname:
+        _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client-daemon.sh"])
+        Platform.hosts_visited.append(_display.name)
 
       # run client process on host
       # command line parameters: server ip, platform id, config file, screen number
-      #_ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
-      #    "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
-      #    _display.name + " " + CONFIG_FILE + " " + str(self.displays.index(_display))]
-      #  , stderr=subprocess.PIPE)
+      _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
+          "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
+          _display.name + " " + CONFIG_FILE + " " + str(self.displays.index(_display))]
+        , stderr=subprocess.PIPE)
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)

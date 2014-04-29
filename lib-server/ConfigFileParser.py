@@ -413,8 +413,7 @@ class ConfigFileParser:
           raise IOError("Navigation number to append to is too large.")
 
 
-        self.APPLICATION_MANAGER.create_standard_user(_user_attributes[2], _user_attributes[1], _user_attributes[3])
-        
+        self.APPLICATION_MANAGER.create_standard_user(_user_attributes[1], _user_attributes[0], _user_attributes[2])
 
         print "\nUser loaded and created:"
         print "-------------------------"

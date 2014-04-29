@@ -23,7 +23,7 @@ import math
 class User(avango.script.Script):
 
   def __init__(self):
-    self.super(InputMapping).__init__()
+    self.super(User).__init__()
 
   ## Custom constructor.
   # @param APPLICATION_MANAGER Reference to the ApplicationManager instance from which this user is created.
@@ -43,10 +43,6 @@ class User(avango.script.Script):
     #
     self.is_active = True
 
-    ##
-    #
-    self.current_display = None
-
 
     # variables
     ## @var APPLICATION_MANAGER
@@ -64,6 +60,10 @@ class User(avango.script.Script):
     ## @var platform
     # Instance of the platform the user is belonging to.
     self.platform = self.APPLICATION_MANAGER.navigation_list[self.platform_id].platform
+
+    ##
+    #
+    self.current_display = self.platform.displays[0]
 
     ## @var transmitter_offset
     # The transmitter offset to be applied.
@@ -100,13 +100,15 @@ class User(avango.script.Script):
     # create coupling status notifications
     #self.create_coupling_status_overview()
 
+    self.always_evaluate(True)
+
   
   ##
   #
   def evaluate(self):
     # Set active flag, current platform and current display
     # call slot manager.update
-    self.current_display = "atalante_display"
+    pass
 
   ## Appends a node to the children of a platform in the scenegraph.
   # @param SCENEGRAPH Reference to the scenegraph.

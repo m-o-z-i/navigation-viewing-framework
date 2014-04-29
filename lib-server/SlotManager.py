@@ -63,12 +63,15 @@ class SlotManager:
       _vip_user_list = []
       _disabled_user_list = []
       _concatenated_user_list = []
+      _num_users_on_display = 0
 
       # fill user lists for this display
-      for _user in self.user:
+      for _user in self.users:
 
         if _user.current_display != _display:
           continue
+
+        _num_users_on_display += 1
 
         # inactive user
         if _user.is_active == False:
@@ -102,6 +105,10 @@ class SlotManager:
 
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
       
+      # all users are disabled
+      elif _num_users_on_display == len(_disabled_user_list):
+        _concatenated_user_list = _disabled_user_list
+
       # all users are default users, distribute remaining slots among them
       else:
         _i = 0
@@ -145,13 +152,13 @@ class SlotManager:
 
             # set ids with shutter timings and values properly
             while _j < len(_open_timings):
-              self.RadioMasterHID.set_timer_value(_user.id, _j, _open_timings[_j])
-              self.RadioMasterHID.set_shutter_value(_user_id, _j, int(_open_values[_j], 16))
+              self.radio_master_hid.set_timer_value(_user.id, _j, _open_timings[_j])
+              self.radio_master_hid.set_shutter_value(_user_id, _j, int(_open_values[_j], 16))
               _j += 1
 
             while _j < 2 * len(_open_timings):
-               self.RadioMasterHID.set_timer_value(_user.id, _j, _close_timings[_j - len(_open_timings)])
-               self.RadioMasterHID.set_shutter_value(_user.id, _j, _close_values[_j - len(_open_timings)])
+               self.radio_master_hid.set_timer_value(_user.id, _j, _close_timings[_j - len(_open_timings)])
+               self.radio_master_hid.set_shutter_value(_user.id, _j, _close_values[_j - len(_open_timings)])
                _j += 1
 
             # assign user to slot instances
@@ -174,6 +181,6 @@ class SlotManager:
           # no slots assigned to user - open shutters
           break
 
-      self.RadioMasterHID.send_shutter_config()
+      self.radio_master_hid.send_shutter_config()
 
       # TODO: Handle avatar head

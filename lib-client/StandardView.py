@@ -35,7 +35,7 @@ class StandardView(View):
   def my_constructor(self, SCENEGRAPH, VIEWER, PLATFORM_ID, SLOT_ID, DISPLAY_INSTANCE, SCREEN_NUM, STEREO):
 
     # call base class constructor
-    self.construct_view(SCENEGRAPH, PLATFORM_ID, SLOT_ID, False)
+    self.construct_view(SCENEGRAPH, PLATFORM_ID, SLOT_ID, SCREEN_NUM, False)
 
     # retrieve the needed values from display
     display_values = DISPLAY_INSTANCE.register_view()
@@ -58,16 +58,16 @@ class StandardView(View):
       # create camera
       camera = avango.gua.nodes.Camera()
       camera.SceneGraph.value = SCENEGRAPH.Name.value
-      camera.LeftScreen.value = "/net/platform_" + str(PLATFORM_ID) + "/screen_" + str(SCREEN_NUM)
+      camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/screen_" + str(self.screen_num)
       camera.RightScreen.value = camera.LeftScreen.value
-      camera.LeftEye.value = "/net/platform_" + str(PLATFORM_ID) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eyeL"
-      camera.RightEye.value = "/net/platform_" + str(PLATFORM_ID) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eyeR"
+      camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeL"
+      camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeR"
 
       # set render mask for camera
-      render_mask = "!do_not_display_group && !avatar_group_" + str(PLATFORM_ID) + " && !couple_group_" + str(PLATFORM_ID)
+      render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
 
       for i in range(0, 10):
-        if i != PLATFORM_ID:
+        if i != self.platform_id:
           render_mask = render_mask + " && !platform_group_" + str(i)
 
       camera.RenderMask.value = render_mask
@@ -75,7 +75,7 @@ class StandardView(View):
       # create window
       window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0] * 2, DISPLAY_INSTANCE.resolution[1]) 
       window = avango.gua.nodes.Window()
-      window.Title.value = "Slot_" + str(SLOT_ID)
+      window.Title.value = "Slot_" + str(self.slot_id)
       window.Size.value = window_size
       window.LeftResolution.value = avango.gua.Vec2ui(window_size.x / 2, window_size.y)
       window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
@@ -102,23 +102,23 @@ class StandardView(View):
 
       camera = avango.gua.nodes.Camera()
       camera.SceneGraph.value = SCENEGRAPH.Name.value
-      camera.LeftScreen.value = "/net/platform_" + str(PLATFORM_ID) + "/screen_" + str(SCREEN_NUM)
+      camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/screen_" + str(self.screen_num)
       camera.RightScreen.value = camera.LeftScreen.value
-      camera.LeftEye.value = "/net/platform_" + str(PLATFORM_ID) + "/s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID) + "/eye"
+      camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eye"
       camera.RightEye.value = camera.LeftEye.value
 
       # set render mask for camera
-      render_mask = "!do_not_display_group && !avatar_group_" + str(PLATFORM_ID) + " && !couple_group_" + str(PLATFORM_ID)
+      render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
 
       for i in range(0, 10):
-        if i != PLATFORM_ID:
+        if i != self.platform_id:
           render_mask = render_mask + " && !platform_group_" + str(i)
 
       camera.RenderMask.value = render_mask
 
       window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1]) 
       window = avango.gua.nodes.Window()
-      window.Title.value = "Slot_" + str(SLOT_ID)
+      window.Title.value = "Slot_" + str(self.slot_id)
       window.Size.value = window_size
       window.LeftResolution.value = window_size
 

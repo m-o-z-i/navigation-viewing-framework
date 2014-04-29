@@ -111,7 +111,7 @@ class User(avango.script.Script):
   #
   def evaluate(self):
     # Set active flag, current platform and current display
-    # call slot manager.update
+    # call slot manager.
     pass
 
   ## Appends a node to the children of a platform in the scenegraph.

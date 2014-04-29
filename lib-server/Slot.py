@@ -60,6 +60,12 @@ class Slot:
     self.slot_node = avango.gua.nodes.TransformNode(Name = "s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID))
     self.PLATFORM_NODE.Children.value.append(self.slot_node)
 
+    ## @var information_node
+    # Node which name is set to the headtracking target name of the current user. Used for the local
+    # headtracking update on client side.
+    self.information_node = avango.gua.nodes.TransformNode(Name = "None")
+    self.slot_node.Children.value.append(self.information_node)
+
     if self.stereo:
       # create the eyes
       ## @var left_eye
@@ -92,5 +98,12 @@ class Slot:
   ## Assigns a user to this slot. Therefore, the slot_node is connected with the user's headtracking matrix.
   # @param USER_INSTANCE An instance of User which is to be assigned.
   def assign_user(self, USER_INSTANCE):
+    # connect tracking matrix
     self.slot_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
     self.assigned_user = USER_INSTANCE
+ 
+    # set information node
+    if USER_INSTANCE.headtracking_target_name == None:
+      self.information_node.Name.value = "None"
+    else:
+      self.information_node.Name.value = USER_INSTANCE.headtracking_target_name

@@ -160,10 +160,10 @@ class Platform(avango.script.Script):
         Platform.hosts_visited.append(_display.name)
 
       # run client process on host
-      # command line parameters: server ip, platform id, config file, screen number
+      # command line parameters: server ip, platform id, screen number
       _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
           "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
-          _display.name + " " + CONFIG_FILE + " " + str(self.displays.index(_display))]
+          _display.name + " " + str(self.displays.index(_display))]
         , stderr=subprocess.PIPE)
 
     # connect to input mapping instance

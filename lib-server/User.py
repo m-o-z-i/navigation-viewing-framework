@@ -77,14 +77,18 @@ class User(avango.script.Script):
     # Material of the user's avatar.
     self.avatar_material = AVATAR_MATERIAL
 
+    ## @var headtracking_target_name
+    # Name of the headtracking station as registered in daemon.
+    self.headtracking_target_name = HEADTRACKING_TARGET_NAME
+
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.
-    if HEADTRACKING_TARGET_NAME == None:
+    if self.headtracking_target_name == None:
       self.headtracking_reader = TrackingDefaultReader()
       self.headtracking_reader.set_no_tracking_matrix(self.no_tracking_mat)
     else:
       self.headtracking_reader = TrackingTargetReader()
-      self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
+      self.headtracking_reader.my_constructor(self.headtracking_target_name)
       self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 

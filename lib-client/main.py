@@ -19,11 +19,10 @@ from display_config import displays
 import sys
 
 # Command line parameters:
-# client.py SERVER_IP PLATFORM_ID DISPLAY_NAME CONFIG_FILE SCREEN_NUM
+# client.py SERVER_IP PLATFORM_ID DISPLAY_NAME SCREEN_NUM
 # @param SERVER_IP The IP address on which the server process is running.
 # @param PLATFORM_ID The platform id for which this client is responsible for.
 # @param DISPLAY_NAME The name associated to the display for which this client is responsible for.
-# @param CONFIG_FILE The filname of the configuration file to parse.
 # @param SCREEN_NUM The number of the screen on the platform.
 
 ## Main method for the client application.
@@ -41,11 +40,8 @@ def start():
   # get the display name
   display_name = str(sys.argv[3])
 
-  # get the configuration filename
-  config_file = str(sys.argv[4])
-
   # get the screen number on platform
-  screen_num = str(sys.argv[5])
+  screen_num = str(sys.argv[4])
 
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()

@@ -35,13 +35,13 @@ def start():
   server_ip = str(sys.argv[1])
 
   # get the platform id
-  platform_id = str(sys.argv[2])
+  platform_id = int(sys.argv[2])
 
   # get the display name
   display_name = str(sys.argv[3])
 
   # get the screen number on platform
-  screen_num = str(sys.argv[4])
+  screen_num = int(sys.argv[4])
 
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()

@@ -99,10 +99,10 @@ class User(avango.script.Script):
       self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat, True)
     
     # create coupling notification plane
-    #self.create_coupling_plane()
+    self.create_coupling_plane()
 
     # create coupling status notifications
-    #self.create_coupling_status_overview()
+    self.create_coupling_status_overview()
 
     # set evaluation policy
     self.always_evaluate(True)

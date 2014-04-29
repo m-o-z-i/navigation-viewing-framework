@@ -102,8 +102,8 @@ class Platform(avango.script.Script):
     # A string that determines what kind of avatar representation is to be used.
     self.avatar_type = AVATAR_TYPE
 
-    ##
-    #
+    ## @var slot_list
+    # A list of Slot instances that are associated to this platform.
     self.slot_list = []
 
     # extend scenegraph with platform node

@@ -18,8 +18,8 @@ class Display:
   # @param name A name to be associated to that display. Will be used in XML configuration file.
   # @param resolution The display's resolution to be used.
   # @param displaystrings A list of strings on which the windows for each user will pop up.
-  #
-  #
+  # @param shutter_timings A list of lists of opening and closing times of shutter glasses for each displaystring.
+  # @param shutter_values A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring.
   # @param size Physical size of the display medium in meters.
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
   def __init__( self
@@ -54,12 +54,12 @@ class Display:
     # A list of strings on which the windows for each user will pop up.
     self.displaystrings = displaystrings
 
-    ##
-    #
+    ## @var shutter_timings
+    # A list of lists of opening and closing times of shutter glasses for each displaystring.
     self.shutter_timings = shutter_timings
 
-    ##
-    #
+    ## @var shutter_values
+    # A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring.
     self.shutter_values = shutter_values
     
     ## @var size

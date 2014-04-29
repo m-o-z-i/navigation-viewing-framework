@@ -90,7 +90,6 @@ class SlotManager:
 
       # if vip users are present, distribute the free slots among them
       if len(_vip_user_list) > 0:
-        print "Case vip present"
         _i = 0
         
         while _number_free_slots > 0:
@@ -112,7 +111,6 @@ class SlotManager:
 
       # all users are default users, distribute remaining slots among them
       else:
-        print "Case all default"
         _i = 0
 
         while _number_free_slots > 0:
@@ -129,15 +127,12 @@ class SlotManager:
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 
       # update shutter values according to slots assigned
-      print "$$$$$$$$$$$$$$$$", _concatenated_user_list
       _i = 0
       for _state in _concatenated_user_list:
 
         _user = _state[0]
         _number_of_slots = _state[1]
         _slot_instances = self.slots[_display]
-
-        print "$$$$$$$$$$$$$$$$", _number_of_slots
 
         # check if the user has slots assigned to him
         if _number_of_slots > 0:
@@ -177,12 +172,8 @@ class SlotManager:
             _i += (_number_of_slots - 1)
             _end_i = copy(_i)
 
-            print "!!!!!!! start", _start_i
-            print "!!!!!!! end", _end_i
-
             # assign user to slot instances
             for _k in range(_start_i, _end_i + 1):
-              print "!!!!!!! loop"
               _slot_instances[_k].assign_user(_user)
 
             _i += 1

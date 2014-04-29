@@ -37,7 +37,7 @@ class User(avango.script.Script):
     
     ##
     #
-    self.is_vip = False
+    self.is_vip = True
 
     ##
     #

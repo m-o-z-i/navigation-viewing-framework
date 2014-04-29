@@ -30,8 +30,13 @@ class TrackingReader(avango.script.Script):
   sf_abs_vec = avango.gua.SFVec3()
   sf_abs_vec.value = avango.gua.Vec3(0.0, 0.0, 0.0)
  
+  ## @var sf_avatar_head_mat
+  # Matrix used to place an avatar head at the transformation read from the tracking system.
+  sf_avatar_head_mat = avango.gua.SFMatrix4()
+  sf_avatar_head_mat.value = avango.gua.make_identity_mat()
+
   ## @var sf_avatar_body_mat 
-  # Matrix used to place an avatar at the transformation read from the tracking system.
+  # Matrix used to place an avatar body at the transformation read from the tracking system.
   sf_avatar_body_mat = avango.gua.SFMatrix4()
   sf_avatar_body_mat.value = avango.gua.make_identity_mat()
 
@@ -69,6 +74,9 @@ class TrackingTargetReader(TrackingReader):
     self.sf_abs_mat.value = self.tracking_sensor.Matrix.value
     self.sf_abs_vec.value = self.sf_abs_mat.value.get_translate()
     _yaw = Tools.get_yaw(self.sf_abs_mat.value)
+    self.sf_avatar_head_mat.value = self.sf_abs_mat.value * \
+                                    avango.gua.make_rot_mat(-90, 0, 1, 0) * \
+                                    avango.gua.make_scale_mat(0.4, 0.4, 0.4)
     self.sf_avatar_body_mat.value = avango.gua.make_trans_mat(self.sf_abs_vec.value.x, self.sf_abs_vec.value.y / 2, self.sf_abs_vec.value.z) * \
                                     avango.gua.make_rot_mat(math.degrees(_yaw) - 90, 0, 1, 0) * \
                                     avango.gua.make_scale_mat(0.45, self.sf_abs_vec.value.y / 2, 0.45)
@@ -95,6 +103,9 @@ class TrackingDefaultReader(TrackingReader):
   def set_no_tracking_matrix(self, CONSTANT_MATRIX):
     self.sf_abs_mat.value = CONSTANT_MATRIX
     self.sf_abs_vec.value = self.sf_abs_mat.value.get_translate()
+    self.sf_avatar_head_mat.value = self.sf_abs_mat.value * \
+                                    avango.gua.make_rot_mat(-90, 0, 1, 0) * \
+                                    avango.gua.make_scale_mat(0.4, 0.4, 0.4)
     self.sf_avatar_body_mat.value = avango.gua.make_trans_mat(self.sf_abs_vec.value.x, self.sf_abs_vec.value.y / 2, self.sf_abs_vec.value.z) * \
                                     avango.gua.make_rot_mat(-90, 0, 1, 0) * \
                                     avango.gua.make_scale_mat(0.45, self.sf_abs_vec.value.y / 2, 0.45)

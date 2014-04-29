@@ -93,10 +93,10 @@ class User(avango.script.Script):
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     # create avatar representation
-    #if self.platform.avatar_type == "joseph":
-    #  self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
-    #elif self.platform.avatar_type == "joseph_table":
-    #  self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
+    if self.platform.avatar_type == "joseph":
+      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat, False)
+    elif self.platform.avatar_type == "joseph_table":
+      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat, True)
     
     # create coupling notification plane
     #self.create_coupling_plane()
@@ -127,9 +127,10 @@ class User(avango.script.Script):
 
   ## Creates a basic "joseph" avatar for this user.
   # @param SCENEGRAPH Reference to the scenegraph.
+  # @param SF_AVATAR_HEAD_MATRIX Field containing the transformation matrix for the avatar's head on the platform.
   # @param SF_AVATAR_BODY_MATRIX Field containing the transformation matrix for the avatar's body on the platform.
   # @param TABLE_ENABLED Boolean indicating if a table should be added to the avatar.
-  def create_avatar_representation(self, SCENEGRAPH, SF_AVATAR_BODY_MATRIX, TABLE_ENABLED):
+  def create_avatar_representation(self, SCENEGRAPH, SF_AVATAR_HEAD_MATRIX, SF_AVATAR_BODY_MATRIX, TABLE_ENABLED):
 
     _loader = avango.gua.nodes.GeometryLoader()
     
@@ -146,14 +147,16 @@ class User(avango.script.Script):
     # create avatar body
     ## @var body_avatar
     # Scenegraph node representing the geometry and transformation of the basic avatar's body.
-    self.body_avatar = _loader.create_geometry_from_file( 'head_avatar_' + str(self.id),
+    self.body_avatar = _loader.create_geometry_from_file( 'body_avatar_' + str(self.id),
                                                           'data/objects/Joseph/JosephBody.obj',
                                                           'data/materials/' + self.avatar_material + '.gmd',
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
     
+    self.append_to_platform(SCENEGRAPH, self.head_avatar)
     self.append_to_platform(SCENEGRAPH, self.body_avatar)
 
+    self.head_avatar.Transform.connect_from(SF_AVATAR_HEAD_MATRIX)
     self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX)
 
     # create table avatar if enabled
@@ -273,8 +276,7 @@ class User(avango.script.Script):
     self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0) * \
                                               avango.gua.make_rot_mat(90, 1, 0, 0)
 
-    for _screen in self.platform.screens:
-      _screen.Children.value.append(self.message_plane_node)
+    self.platform.screens[0].Children.value.append(self.message_plane_node)
 
   ## Handles all the specialized settings for the coupling status overview.
   def handle_coupling_status_attributes(self):

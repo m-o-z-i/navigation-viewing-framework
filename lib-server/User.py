@@ -35,12 +35,12 @@ class User(avango.script.Script):
 
     # flags
     
-    ##
-    #
+    ## @var is_vip
+    # Boolean indicating if this user has vip status.
     self.is_vip = True
 
-    ##
-    #
+    ## @var is_active
+    # Boolean indicating if this user is currently active.
     self.is_active = True
 
 
@@ -61,8 +61,8 @@ class User(avango.script.Script):
     # Instance of the platform the user is belonging to.
     self.platform = self.APPLICATION_MANAGER.navigation_list[self.platform_id].platform
 
-    ##
-    #
+    ## @var current_display
+    # Display instance on which the user physically is currently looking at.
     self.current_display = self.platform.displays[0]
 
     ## @var transmitter_offset

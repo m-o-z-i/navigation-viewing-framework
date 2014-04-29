@@ -75,7 +75,7 @@ class StandardView(View):
       # create window
       window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0] * 2, DISPLAY_INSTANCE.resolution[1]) 
       window = avango.gua.nodes.Window()
-      window.Title.value = "Slot_" + str(self.slot_id)
+      window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       window.Size.value = window_size
       window.LeftResolution.value = avango.gua.Vec2ui(window_size.x / 2, window_size.y)
       window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
@@ -118,7 +118,7 @@ class StandardView(View):
 
       window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1]) 
       window = avango.gua.nodes.Window()
-      window.Title.value = "Slot_" + str(self.slot_id)
+      window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       window.Size.value = window_size
       window.LeftResolution.value = window_size
 

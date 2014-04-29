@@ -104,11 +104,11 @@ class User(avango.script.Script):
     # create coupling status notifications
     #self.create_coupling_status_overview()
 
+    # set evaluation policy
     self.always_evaluate(True)
 
   
-  ##
-  #
+  ## Evaluated every frame.
   def evaluate(self):
     # Set active flag, current platform and current display
     # call slot manager.

@@ -18,8 +18,7 @@ class View(avango.script.Script):
 
   ## Default constructor.
   def __init__(self):
-  	self.super(ClientUser).__init__()
-  	self.always_evaluate(True)
+    self.super(View).__init__()
 
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
@@ -34,7 +33,7 @@ class View(avango.script.Script):
     # Reference to the scenegraph to be displayed.
     self.SCENEGRAPH = SCENEGRAPH
 
-  	## @var platform_id
+    ## @var platform_id
     # The platform id for which this client process is responsible for.
     self.platform_id = PLATFORM_ID
 
@@ -68,7 +67,7 @@ class View(avango.script.Script):
     # Matrix to be applied if no headtracking of the Oculus Rift is available.
     self.NO_TRACKING_MAT = NO_TRACKING_MAT
 
-  	## @var headtracking_reader
+    ## @var headtracking_reader
     # Instance of a child class of ClientTrackingReader to supply translation input.
     if self.TRACKING_TARGET_NAME != None:
       self.headtracking_reader = ClientTrackingTargetReader()
@@ -78,8 +77,11 @@ class View(avango.script.Script):
   
   ## Evaluated every frame.
   def evaluate(self):
-    
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+
+    # return when scenegraph is not yet present
+    if _node_to_update == None:
+      return
     
     _information_node = _node_to_update.Children.value[0]
     _tracking_target_name = _information_node.Name.value

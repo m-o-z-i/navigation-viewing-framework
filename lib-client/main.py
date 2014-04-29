@@ -28,7 +28,7 @@ import sys
 ## Main method for the client application.
 def start():
 
-  # disable logger warnings
+  # disable logger warningss
   logger = avango.gua.nodes.Logger(EnableWarning = False)
 
   # get the server ip

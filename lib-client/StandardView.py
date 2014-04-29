@@ -23,6 +23,7 @@ class StandardView(View):
   ## Default constructor.
   def __init__(self):
     self.super(View).__init__()
+    self.always_evaluate(True)
 
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
@@ -138,7 +139,7 @@ class StandardView(View):
     ClientPipelineValues.set_pipeline_values(pipeline)
 
     # add tracking reader to avoid latency
-    #self.add_tracking_reader(USER_ATTRIBUTES[1], USER_ATTRIBUTES[4], USER_ATTRIBUTES[5])
+    self.add_tracking_reader(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())
 
     # set display string and warpmatrices as given by the display
     if len(display_values) > 1:

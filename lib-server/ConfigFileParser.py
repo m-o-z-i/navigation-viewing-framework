@@ -52,8 +52,6 @@ class ConfigFileParser:
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
     _user_attributes = [None, None, False, False]                        # [headtrackingstation, startplatform, warnings, vip]
-    _window_size = [1920, 1080]                                          # [width, height]
-    _screen_size = [1.6, 1.0]                                            # [width, height]
     _navs_created = 0
 
     _config_file = open(FILENAME, 'r')
@@ -368,32 +366,6 @@ class ConfigFileParser:
           _current_line = _current_line.replace("</startplatform>", "")
           _current_line = _current_line.rstrip()
           _user_attributes[1] = int(_current_line)
-
-        # get window size values
-        if _current_line.startswith("<windowsize>"):
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<width>", "")
-          _current_line = _current_line.replace("</width>", "")
-          _current_line = _current_line.rstrip()
-          _window_size[0] = int(_current_line)
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<height>", "")
-          _current_line = _current_line.replace("</height>", "")
-          _current_line = _current_line.rstrip()
-          _window_size[1] = int(_current_line)
-
-        # get screen size values
-        if _current_line.startswith("<screensize>"):
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<width>", "")
-          _current_line = _current_line.replace("</width>", "")
-          _current_line = _current_line.rstrip()
-          _screen_size[0] = float(_current_line)
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<height>", "")
-          _current_line = _current_line.replace("</height>", "")
-          _current_line = _current_line.rstrip()
-          _screen_size[1] = float(_current_line)
 
         # get boolean for warning borders
         if _current_line.startswith("<warnings>"):

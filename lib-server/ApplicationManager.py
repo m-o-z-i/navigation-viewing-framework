@@ -232,12 +232,13 @@ class ApplicationManager():
   # @param WARNINGS Boolean indicating whether to display warning planes when the user gets close to the platform borders.
   def create_standard_user(
       self
+    , VIP
     , PLATFORM_ID
     , HEADTRACKING_TARGET_NAME
     , WARNINGS
     ):
     _user = User()
-    _user.my_constructor(self, len(self.user_list), HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
+    _user.my_constructor(self, len(self.user_list), VIP, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
     self.user_list.append(_user)
 
     # init border checker to warn user on platform

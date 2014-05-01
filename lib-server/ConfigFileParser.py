@@ -51,7 +51,7 @@ class ConfigFileParser:
                           "joseph"]                                      # avatartype]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
-    _user_attributes = [None, None, False]                               # [headtrackingstation, startplatform, warnings]
+    _user_attributes = [None, None, False, False]                        # [headtrackingstation, startplatform, warnings, vip]
     _window_size = [1920, 1080]                                          # [width, height]
     _screen_size = [1.6, 1.0]                                            # [width, height]
     _navs_created = 0
@@ -353,7 +353,7 @@ class ConfigFileParser:
 
       # read user values
       if _in_user:
-        
+
         # get headtracking station name
         if _current_line.startswith("<headtrackingstation>"):
           _current_line = _current_line.replace("<headtrackingstation>", "")
@@ -404,6 +404,15 @@ class ConfigFileParser:
           if _current_line == "True":
             _user_attributes[2] = True
 
+        # get vip flag
+        if _current_line.startswith("<vip>"):
+          _current_line = _current_line.replace("<vip>", "")
+          _current_line = _current_line.replace("</vip>", "")
+          _current_line = _current_line.rstrip()
+          
+          if _current_line == "True":
+            _user_attributes[3] = True
+
       # detect end of user declaration
       if _current_line.startswith("</user>"):
         _in_user = False
@@ -413,13 +422,13 @@ class ConfigFileParser:
           raise IOError("Navigation number to append to is too large.")
 
 
-        self.APPLICATION_MANAGER.create_standard_user(_user_attributes[1], _user_attributes[0], _user_attributes[2])
+        self.APPLICATION_MANAGER.create_standard_user(_user_attributes[3], _user_attributes[1], _user_attributes[0], _user_attributes[2])
 
         print "\nUser loaded and created:"
         print "-------------------------"
         print _user_attributes, "\n"
 
-        _user_attributes = [None, None, False]
+        _user_attributes = [None, None, False, False]
         _current_line = self.get_next_line_in_file(_config_file)
         continue
 

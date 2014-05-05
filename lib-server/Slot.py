@@ -107,3 +107,11 @@ class Slot:
       self.information_node.Name.value = "None"
     else:
       self.information_node.Name.value = USER_INSTANCE.headtracking_target_name
+
+  ## Clears the user assignment.
+  def clear_user(self):
+    if self.assigned_user != None:
+      self.slot_node.Transform.disconnect_auditors()
+      self.slot_node.Transform.value = avango.gua.make_identity_mat()
+      self.assigned_user = None
+      self.information_node.Name.value = "None"

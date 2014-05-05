@@ -135,6 +135,10 @@ class SlotManager:
         _number_of_slots = _state[1]
         _slot_instances = self.slots[_display]
 
+        # clear all slot connections
+        for _slot in _slot_instances:
+          _slot.clear_user()
+
         # check if the user has slots assigned to him
         if _number_of_slots > 0:
           if _stereo:

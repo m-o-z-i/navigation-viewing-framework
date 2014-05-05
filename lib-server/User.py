@@ -41,7 +41,7 @@ class User(avango.script.Script):
 
     ## @var is_active
     # Boolean indicating if this user is currently active.
-    self.is_active = True
+    self.is_active = False
 
     # variables
     ## @var APPLICATION_MANAGER
@@ -103,6 +103,9 @@ class User(avango.script.Script):
     # create coupling status notifications
     self.create_coupling_status_overview()
 
+    # toggles avatar display and activity
+    self.toggle_user_activity(self.is_active)
+
     # set evaluation policy
     self.always_evaluate(True)
 
@@ -113,9 +116,20 @@ class User(avango.script.Script):
     # call slot manager.
     pass
 
-  ## Switches the user's active flag.
-  def toggle_user_activity(self):
-    self.is_active = not self.is_active
+  ## Sets the user's active flag.
+  # @param ACTIVE Boolean to which the active flag should be set.
+  def toggle_user_activity(self, ACTIVE):
+
+    if ACTIVE:
+      self.is_active = True
+      self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+      self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+    else:
+      self.is_active = False
+      self.head_avatar.GroupNames.value.append("do_not_display_group")
+      self.body_avatar.GroupNames.value.append("do_not_display_group")
+
+
     self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
 
   ## Changes the user's current platform.

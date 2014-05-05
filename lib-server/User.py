@@ -116,6 +116,7 @@ class User(avango.script.Script):
   ## Switches the user's active flag.
   def toggle_user_activity(self):
     self.is_active = not self.is_active
+    self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
 
   ## Changes the user's current platform.
   # @param PLATFORM_ID The new platform id to be set.
@@ -131,6 +132,8 @@ class User(avango.script.Script):
 
     self.append_to_platform(self.head_avatar)
     self.append_to_platform(self.body_avatar)
+
+    self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
 
   ## Appends a node to the children of a platform in the scenegraph.
   # @param NODE The node to be appended to the platform node.

@@ -19,7 +19,7 @@ class Slot:
   # @param PLATFORM_NODE Scenegraph transformation node of the platform where the slot is to be appended to.
   def __init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE):
 
-    ## @var slot_it
+    ## @var slot_id
     # Identification number of the slot within the display.
     self.slot_id = SLOT_ID
 

@@ -113,6 +113,17 @@ class User(avango.script.Script):
     # call slot manager.
     pass
 
+  ## Switches the user's active flag.
+  def toggle_user_activity(self):
+    self.is_active = not self.is_active
+
+  ## Changes the user's current platform and display.
+  # @param PLATFORM_ID The new platform id to be set.
+  # @param DISPLAY_NAME The new display name to be set.
+  def set_user_location(self, PLATFORM_ID, DISPLAY_NAME):
+    pass
+
+
   ## Appends a node to the children of a platform in the scenegraph.
   # @param SCENEGRAPH Reference to the scenegraph.
   # @param NODE The node to be appended to the platform node.

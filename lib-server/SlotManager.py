@@ -182,5 +182,3 @@ class SlotManager:
           break
 
       self.radio_master_hid.send_shutter_config()
-
-      # TODO: Handle avatar head

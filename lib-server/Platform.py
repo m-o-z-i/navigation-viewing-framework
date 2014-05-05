@@ -128,13 +128,14 @@ class Platform(avango.script.Script):
       self.platform_transform_node.Children.value.append(_screen)
       self.screens.append(_screen)
 
+      _string_num = 0
       # create a slot for each displaystring
       for _displaystring in _display.displaystrings:
         
         if _display.shutter_timings == []:
           # create mono slot
           _slot = Slot(_display,
-                       _display.displaystrings.index(_displaystring),
+                       _string_num,
                        self.displays.index(_display),
                        False,
                        self.platform_transform_node)
@@ -143,28 +144,30 @@ class Platform(avango.script.Script):
         else:
           # create stereo slot
           _slot = Slot(_display,
-                       _display.displaystrings.index(_displaystring),
+                       _string_num,
                        self.displays.index(_display),
                        True,
                        self.platform_transform_node)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
 
+        _string_num += 1
+
 
       _directory_name = os.path.dirname(os.path.dirname(__file__))
 
       # run ClientDaemon on host if necessary
-      if _display.hostname not in Platform.hosts_visited and \
-         _display.hostname != _hostname:
-        _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client-daemon.sh"])
-        Platform.hosts_visited.append(_display.name)
+      #if _display.hostname not in Platform.hosts_visited and \
+      #   _display.hostname != _hostname:
+      #  _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + "/start-client-daemon.sh"])
+      #  Platform.hosts_visited.append(_display.name)
 
       # run client process on host
       # command line parameters: server ip, platform id, display name, screen number
-      _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
-          "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
-          _display.name + " " + str(self.displays.index(_display))]
-        , stderr=subprocess.PIPE)
+      #_ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
+      #    "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
+      #    _display.name + " " + str(self.displays.index(_display))]
+      #  , stderr=subprocess.PIPE)
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)

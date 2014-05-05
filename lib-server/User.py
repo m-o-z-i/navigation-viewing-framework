@@ -93,9 +93,9 @@ class User(avango.script.Script):
 
     # create avatar representation
     if self.platform.avatar_type == "joseph":
-      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat, False)
+      self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat, False)
     elif self.platform.avatar_type == "joseph_table":
-      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat, True)
+      self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat, True)
     
     # create coupling notification plane
     self.create_coupling_plane()
@@ -117,30 +117,39 @@ class User(avango.script.Script):
   def toggle_user_activity(self):
     self.is_active = not self.is_active
 
-  ## Changes the user's current platform and display.
+  ## Changes the user's current platform.
   # @param PLATFORM_ID The new platform id to be set.
-  # @param DISPLAY_NAME The new display name to be set.
-  def set_user_location(self, PLATFORM_ID, DISPLAY_NAME):
-    pass
+  def set_user_location(self, PLATFORM_ID):
+    self.remove_from_platform(self.head_avatar)
+    self.remove_from_platform(self.body_avatar)
 
+    self.platform_id = PLATFORM_ID
+    self.platform = self.APPLICATION_MANAGER.navigation_list[self.platform_id].platform
+    self.current_display = self.platform.displays[0]
+    self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+    self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+
+    self.append_to_platform(self.head_avatar)
+    self.append_to_platform(self.body_avatar)
 
   ## Appends a node to the children of a platform in the scenegraph.
-  # @param SCENEGRAPH Reference to the scenegraph.
   # @param NODE The node to be appended to the platform node.
-  def append_to_platform(self, SCENEGRAPH, NODE):
-    
-    # find corresponding platform node
-    for _node in self.APPLICATION_MANAGER.NET_TRANS_NODE.Children.value:
-      if _node.Name.value == "platform_" + str(self.platform_id):
-        _node.Children.value.append(NODE)
-        break
+  def append_to_platform(self, NODE):
+
+    self.platform.platform_transform_node.Children.value.append(NODE)
+
+  ## Removes a node from the children of a platform in the scenegraph.
+  # @param NODE The node to be removed from the platform node.
+  def remove_from_platform(self, NODE):
+
+    self.platform.platform_transform_node.Children.value.remove(NODE)
+
 
   ## Creates a basic "joseph" avatar for this user.
-  # @param SCENEGRAPH Reference to the scenegraph.
   # @param SF_AVATAR_HEAD_MATRIX Field containing the transformation matrix for the avatar's head on the platform.
   # @param SF_AVATAR_BODY_MATRIX Field containing the transformation matrix for the avatar's body on the platform.
   # @param TABLE_ENABLED Boolean indicating if a table should be added to the avatar.
-  def create_avatar_representation(self, SCENEGRAPH, SF_AVATAR_HEAD_MATRIX, SF_AVATAR_BODY_MATRIX, TABLE_ENABLED):
+  def create_avatar_representation(self, SF_AVATAR_HEAD_MATRIX, SF_AVATAR_BODY_MATRIX, TABLE_ENABLED):
 
     _loader = avango.gua.nodes.GeometryLoader()
     
@@ -163,8 +172,8 @@ class User(avango.script.Script):
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
     
-    self.append_to_platform(SCENEGRAPH, self.head_avatar)
-    self.append_to_platform(SCENEGRAPH, self.body_avatar)
+    self.append_to_platform(self.head_avatar)
+    self.append_to_platform(self.body_avatar)
 
     self.head_avatar.Transform.connect_from(SF_AVATAR_HEAD_MATRIX)
     self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX)

@@ -186,4 +186,6 @@ class SlotManager:
           # no slots assigned to user - open shutters
           break
 
+      print "Send shutter configuration"
       self.radio_master_hid.send_shutter_config()
+      print "Shutter configuration successfully sent"

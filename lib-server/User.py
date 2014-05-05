@@ -41,7 +41,7 @@ class User(avango.script.Script):
 
     ## @var is_active
     # Boolean indicating if this user is currently active.
-    self.is_active = False
+    self.is_active = True
 
     # variables
     ## @var APPLICATION_MANAGER

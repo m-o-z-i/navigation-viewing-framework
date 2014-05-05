@@ -41,7 +41,7 @@ class Platform(avango.script.Script):
 
     ## @var start_clients
     # Debug flag saying if client processes should be started.
-    self.start_clients = False
+    self.start_clients = True
 
     ## @var screens
     # List of ScreenNode instances which are appended to this platform.

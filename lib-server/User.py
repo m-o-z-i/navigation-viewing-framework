@@ -128,7 +128,9 @@ class User(avango.script.Script):
     self.platform = self.APPLICATION_MANAGER.navigation_list[self.platform_id].platform
     self.current_display = self.platform.displays[0]
     self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+    self.head_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
     self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+    self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
 
     self.append_to_platform(self.head_avatar)
     self.append_to_platform(self.body_avatar)

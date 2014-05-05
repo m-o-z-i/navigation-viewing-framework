@@ -7,8 +7,8 @@
 import avango
 import avango.gua
 
-## 
-#
+## Internal representation of a display slot. A Slot is one rendering output that can be handled
+# by a display. User can have multiple slots to obtain a brighter image.
 class Slot:
 
   ## Custom constructor.

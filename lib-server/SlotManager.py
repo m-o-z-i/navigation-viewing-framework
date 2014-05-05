@@ -12,32 +12,33 @@ import RadioMasterHID
 from copy import copy
 
 
-## 
-#
+## Class to handle shutter configurations and timings. Associates the users per display to
+# the available slots and sets the glasses correctly.
 class SlotManager:
 
   ## Custom constructor.
   # @param USER_LIST Reference to a list of all users in the setup.
   def __init__(self, USER_LIST):
 
-    ##
-    #
+    ## @var users
+    # Reference to a list of all users to be handled in the setup.
     self.users = USER_LIST
 
-    ##
-    #
+    ## @var slots
+    # Dictionary to map Display instances to a list of associated Slot instances.
     self.slots = dict()
 
-    ##
-    #
+    ## @var radio_master_hid
+    # Instance of RadioMasterHID to handle shutter glass configurations.
     self.radio_master_hid = RadioMasterHID.RadioMaster()
     self.radio_master_hid.set_master_transmit(1)
     self.radio_master_hid.set_master_timing(16600,16500)
     self.radio_master_hid.send_master_config() 
 
 
-  ##
-  #
+  ## Tells the SlotManager that a new Slot instance is to be handled for a certain Display instance.
+  # @param SLOT The Slot instance to register.
+  # @param DISPLAY The Display instance to which the new slot belongs to.
   def register_slot(self, SLOT, DISPLAY):
     if DISPLAY in self.slots:
       _slot_list = self.slots[DISPLAY]
@@ -47,8 +48,8 @@ class SlotManager:
       self.slots[DISPLAY] = [SLOT]
 
 
-  ##
-  #
+  ## Updates the shutter timings and scenegraph slot connections according to the
+  # vip / active status, display and platform of users.
   def update_slot_configuration(self):
     
     # loop over all displays to be handled

@@ -195,37 +195,6 @@ class View(avango.script.Script):
       self.headtracking_reader.set_transmitter_offset(TRANSMITTER_OFFSET)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
-  '''
-  ## Evaluated every frame.
-  def evaluate(self):
-    _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
-
-    # return when scenegraph is not yet present
-    if _node_to_update == None:
-      return
-    
-    _information_node = _node_to_update.Children.value[0]
-    _tracking_target_name = _information_node.Name.value
-
-    if _tracking_target_name == "None":
-      _tracking_target_name = None
-
-    # create new tracking reader when tracking target changes
-    # TODO: when transmitter offset and no tracking mat change, propagate them in the scenegraph
-    if _tracking_target_name != self.TRACKING_TARGET_NAME:
-      self.add_tracking_reader(_tracking_target_name, self.TRANSMITTER_OFFSET, self.NO_TRACKING_MAT)
-
-    # when no value is to be updated, stop evaluation
-    if self.TRACKING_TARGET_NAME == None:
-      return
-    
-    # update slot node
-    if _node_to_update != None:
-
-      self.sf_head_mat.connect_from(self.headtracking_reader.sf_tracking_mat)
-  '''
-
-
   ## Sets the warp matrices if there is a correct amount of them.
   # @param WINDOW The window instance to apply the warp matrices to.
   # @param WARPMATRICES A list of warp matrices to be applied if there are enough of them.

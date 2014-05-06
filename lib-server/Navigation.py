@@ -362,7 +362,10 @@ class Navigation(avango.script.Script):
       _position_nav = (_nav.platform.sf_abs_mat.value * _nav.device.sf_station_mat.value).get_translate()
 
       # append navigation to the list of close ones if distance is smaller than a threshold
-      if _nav != self and Tools.euclidean_distance(_position_self, _position_nav) < _threshold:
+      print _nav.platform.sf_scale.value, self.platform.sf_scale.value
+      if _nav != self and \
+         Tools.euclidean_distance(_position_self, _position_nav) < _threshold and \
+         _nav.platform.sf_scale.value == self.platform.sf_scale.value:
         _close_navs.append(_nav)
 
     # sort list of close navs, highest distance first
@@ -556,7 +559,7 @@ class Navigation(avango.script.Script):
 
     # handle button inputs #
 
-    '''
+    
     # Button 0 resets platform
     if self.device.mf_buttons.value[0] == True:
       self.reset()
@@ -577,7 +580,7 @@ class Navigation(avango.script.Script):
           self.trigger_coupling()
         else:
           self.clear_couplings()
-    '''       
+           
     
 
     # handle dofchange animation

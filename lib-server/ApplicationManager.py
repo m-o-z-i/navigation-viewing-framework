@@ -15,7 +15,6 @@ from   Platform         import *
 from   User             import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
-from   HUDManager       import *
 from   SlotManager      import *
 from   display_config   import displays
 import Tools
@@ -85,11 +84,6 @@ class ApplicationManager():
       if _display.hostname != _own_hostname:
         _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
 
-    ## @var hud_manager
-    # A HUDManager instance in order to arrange the user display for the different stati.
-    self.hud_manager = HUDManager()
-    self.hud_manager.my_constructor(self.NET_TRANS_NODE, self.user_list)
-
     ## @var slot_manager
     # A SlotManager instance in order to handle the shutter timings of users.
     self.slot_manager = SlotManager(self.user_list)
@@ -98,8 +92,7 @@ class ApplicationManager():
     ## @var config_file_parser
     # Instance of ConfigFileParser in order to load and parse an XML configuration file.
     self.config_file_parser = ConfigFileParser(self)
-    self.config_file_parser.parse(CONFIG_FILE)
-      
+    self.config_file_parser.parse(CONFIG_FILE)    
 
     # care for correct slot assignment
     self.slot_manager.update_slot_configuration()
@@ -217,7 +210,6 @@ class ApplicationManager():
       , GF_SETTINGS = GROUND_FOLLOWING_SETTINGS
       , ANIMATE_COUPLING = ANIMATE_COUPLING
       , MOVEMENT_TRACES = MOVEMENT_TRACES
-      , HUD_MANAGER = self.hud_manager
       , SLOT_MANAGER = self.slot_manager
       , TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
       , DISPLAYS = _display_instances

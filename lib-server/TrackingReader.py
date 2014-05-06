@@ -66,6 +66,7 @@ class TrackingTargetReader(TrackingReader):
   ## Called whenever sf_tracking_mat changes.
   @field_has_changed(sf_tracking_mat)
   def sf_tracking_mat_changed(self):
+  
     self.sf_abs_mat.value = self.tracking_sensor.Matrix.value
     self.sf_abs_vec.value = self.sf_abs_mat.value.get_translate()
     _yaw = Tools.get_yaw(self.sf_abs_mat.value)

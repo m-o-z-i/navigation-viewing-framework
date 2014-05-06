@@ -12,7 +12,7 @@ import avango.oculus
 # import framework libraries
 import ClientConfigFileParser
 import ClientMaterialUpdaters
-from StandardView import *
+from View import *
 from display_config import displays
 
 # import python libraries
@@ -62,7 +62,6 @@ def start():
   nettrans = avango.gua.nodes.NetTransform(
                 Name = "net",
                 # specify role, ip, and port
-                #Groupname = "AVCLIENT|127.0.0.1|7432"
                 Groupname = "AVCLIENT|{0}|7432".format(server_ip)
                 )
 
@@ -89,16 +88,22 @@ def start():
   # create a viewer
   viewer = avango.gua.nodes.Viewer()
 
-  for _user_attributes in user_list:
 
-    _view = StandardView()
+  views = []
+
+  for _user_attributes in user_list:
 
     # differ between stereo and mono user case
     if _user_attributes[0] == "True":
-      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, True)
-    else:
-      _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, False)
+      _stereo_flag = True
+    
+    elif _user_attributes[0] == "False":
+      _stereo_flag = False
 
+    _view = View()    
+    _view.my_constructor(graph, viewer, _user_attributes, platform_id, handled_display_instance, screen_num, _stereo_flag)
+
+    views.append(_view)
 
   viewer.SceneGraphs.value = [graph]
 

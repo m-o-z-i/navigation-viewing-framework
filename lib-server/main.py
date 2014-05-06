@@ -34,7 +34,9 @@ def start():
 
   # get server ip 
   server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
-  server_ip = server_ip.strip(" \n")
+  server_ip = server_ip.strip(" \n")  
+  server_ip = server_ip.rsplit(" ")
+  server_ip = str(server_ip[-1])
 
   # initialize pseudo nettrans node as client processes are started in Platform class
   pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")

@@ -26,7 +26,8 @@ class Display:
               , resolution = (2560, 1440)
               , displaystrings = [":0.0"]
               , size = (0.595, 0.335)
-              , transformation = avango.gua.make_trans_mat(0.0, 1.75, 0.0)
+              , transformation = avango.gua.make_trans_mat(0.0, 1.5, 0.0)
+              , stereomode = "ANAGLYPH_RED_CYAN"
               ):
 
     # save values in members
@@ -61,6 +62,8 @@ class Display:
     ## @var num_users
     # Number of users who are already registered with this display.
     self.num_users = 0
+   
+    self.stereomode = stereomode
 
   ## Registers a new user at this display and return the display string assigned to the new user.
   def register_user(self):

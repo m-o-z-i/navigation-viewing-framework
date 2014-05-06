@@ -24,7 +24,7 @@ class InputMapping(avango.script.Script):
   ## @var mf_rel_input_values
   # The relative input values of the device.
   mf_rel_input_values = avango.MFFloat()
-  mf_rel_input_values.value = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  #mf_rel_input_values.value = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
   ## @var sf_station_mat
   # The absolute matrix indicating where the device is placed in space.
@@ -42,6 +42,10 @@ class InputMapping(avango.script.Script):
   # The absolute matrix after GroundFollowing correction.
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
+
+  sf_scale = avango.SFFloat()
+  sf_scale.value = 1.0
+  
 
   ## Default constructor.
   def __init__(self):
@@ -68,6 +72,9 @@ class InputMapping(avango.script.Script):
     ## @var input_rot_factor
     # Factor to modify the rotation input.
     self.input_rot_factor    = 1.0
+
+    self.min_scale = 0.1
+    self.max_scale = 10.0
 
   ## Custom constructor.
   # @param NAVIGATION The navigation instance from which this input mapping is created.
@@ -110,14 +117,14 @@ class InputMapping(avango.script.Script):
       _trans_vec.x = self.mf_rel_input_values.value[0]
       _trans_vec.y = self.mf_rel_input_values.value[1]
       _trans_vec.z = self.mf_rel_input_values.value[2]
-      _trans_vec *= math.pow(_trans_vec.length()/math.sqrt(3), 3) * self.input_trans_factor
+      _trans_vec *= math.pow(_trans_vec.length()/math.sqrt(3), 3) * self.input_trans_factor * self.sf_scale.value
 
       # get rotation values from input device
       _rot_vec = avango.gua.Vec3(0, 0, 0)
       _rot_vec.x = self.mf_rel_input_values.value[3] * self.input_rot_factor
       _rot_vec.y = self.mf_rel_input_values.value[4] * self.input_rot_factor
       _rot_vec.z = self.mf_rel_input_values.value[5] * self.input_rot_factor
-
+ 
       # delete certain values that create an unrealistic movement
       if self.realistic:
         _trans_vec.y = 0.0
@@ -147,7 +154,7 @@ class InputMapping(avango.script.Script):
         _combined_rot_mat = _platform_rot_mat * _device_rot_mat
    
         # rotation center of the device
-        _rot_center = self.sf_station_mat.value.get_translate()
+        _rot_center = self.sf_station_mat.value.get_translate() * self.sf_scale.value
 
         # transformed translation, rotation and rotation center
         _transformed_trans_vec = self.transform_vector_with_matrix(_trans_vec, _combined_rot_mat)
@@ -177,6 +184,10 @@ class InputMapping(avango.script.Script):
 
       # save the computed new matrix
       self.sf_abs_uncorrected_mat.value = _new_mat
+
+      # map scale
+      self.sf_scale.value = max(min(self.sf_scale.value * (1.0 + self.mf_rel_input_values.value[6] * 0.015), self.max_scale), self.min_scale)
+      
 
 
   ## Modify the uncorrected matrix of this input mapping with specific values. Used for coupling purposes.

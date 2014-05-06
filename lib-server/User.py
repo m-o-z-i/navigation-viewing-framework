@@ -58,11 +58,14 @@ class User:
     # Material of the user's avatar.
     self.avatar_material = AVATAR_MATERIAL
 
+    self.eye_distance = 0.0
+
     # init viewing setup 
     ## @var head_transform
     # Scenegraph node representing the head position of the user with respect to platform.
     self.head_transform = avango.gua.nodes.TransformNode(Name = "head_" + str(self.id))
-    self.platform.platform_transform_node.Children.value.append(self.head_transform)
+    #self.platform.platform_transform_node.Children.value.append(self.head_transform)
+    self.platform.platform_scale_transform_node.Children.value.append(self.head_transform)
 
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.
@@ -74,7 +77,7 @@ class User:
       self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
       self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
-    
+   
     # connect the tracking input to the scenegraph node
     self.head_transform.Transform.connect_from(self.headtracking_reader.sf_abs_mat)
 
@@ -92,7 +95,7 @@ class User:
       self.right_eye.Transform.value = avango.gua.make_identity_mat()
       self.head_transform.Children.value.append(self.right_eye)
 
-      self.set_eye_distance(0.06)
+      self.set_eye_distance(0.065)
       
     else:
       # create the eye
@@ -118,8 +121,10 @@ class User:
   ## Sets the transformation values of left and right eye.
   # @param VALUE The eye distance to be applied.
   def set_eye_distance(self, VALUE):
-    self.left_eye.Transform.value  = avango.gua.make_trans_mat(VALUE * -0.5, 0.0, 0.0)
-    self.right_eye.Transform.value = avango.gua.make_trans_mat(VALUE * 0.5, 0.0, 0.0)
+    self.eye_distance = VALUE
+  
+    self.left_eye.Transform.value  = avango.gua.make_trans_mat(self.eye_distance * -0.5, 0.0, 0.0)
+    self.right_eye.Transform.value = avango.gua.make_trans_mat(self.eye_distance * 0.5, 0.0, 0.0)
 
   ## Appends a node to the children of a platform in the scenegraph.
   # @param SCENEGRAPH Reference to the scenegraph.
@@ -127,10 +132,17 @@ class User:
   def append_to_platform(self, SCENEGRAPH, NODE):
     
     # find corresponding platform node
+    _platform_path = "/net/platform_" + str(self.platform_id) + "/scale"
+    _node = SCENEGRAPH.get_node(_platform_path)
+    _node.Children.value.append(NODE)
+
+    '''
+    # find corresponding platform node
     for _node in self.APPLICATION_MANAGER.NET_TRANS_NODE.Children.value:
       if _node.Name.value == "platform_" + str(self.platform_id):
         _node.Children.value.append(NODE)
         break
+    '''
 
   ## Creates a basic "joseph" avatar for this user.
   # @param SCENEGRAPH Reference to the scenegraph.
@@ -281,8 +293,9 @@ class User:
     self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0) * \
                                               avango.gua.make_rot_mat(90, 1, 0, 0)
 
-    for _screen in self.platform.screens:
-      _screen.Children.value.append(self.message_plane_node)
+    _screen = self.platform.screens[0] # primary screen
+    _screen.Children.value.append(self.message_plane_node)
+    
 
   ## Handles all the specialized settings for the coupling status overview.
   def handle_coupling_status_attributes(self):

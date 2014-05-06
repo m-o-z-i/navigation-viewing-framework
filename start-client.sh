@@ -8,8 +8,10 @@ LOCAL_GUACAMOLE="$DIR/../../../guacamole"
 LOCAL_AVANGO="$DIR/../../../avango"
 
 # if not, this path will be used
-GUACAMOLE=/opt/guacamole/master
-AVANGO=/opt/avango/master
+#GUACAMOLE=/opt/guacamole/master
+GUACAMOLE=/opt/guacamole/testing/guacamole
+#AVANGO=/opt/avango/master
+AVANGO=/opt/guacamole/testing/avango
 
 # third party libs
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/boost/current/lib:/opt/openscenegraph/3.0.1/lib64/:/opt/zmq/current/lib

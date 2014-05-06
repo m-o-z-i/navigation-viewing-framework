@@ -27,6 +27,9 @@ class Platform(avango.script.Script):
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
 
+  sf_scale = avango.SFFloat()
+  sf_scale.value = 1.0
+
   ## @var hosts_visited
   # List of hostnames on which a client daemon was already launched. Used to avoid double launching.
   hosts_visited = []
@@ -103,9 +106,17 @@ class Platform(avango.script.Script):
     self.platform_transform_node.Transform.connect_from(self.sf_abs_mat)
     NET_TRANS_NODE.Children.value.append(self.platform_transform_node)
 
+
+    self.platform_scale_transform_node = avango.gua.nodes.TransformNode(Name = "scale")
+    self.platform_transform_node.Children.value = [self.platform_scale_transform_node]
+    #self.platform_scale_transform_node.Transform.value = avango.gua.make_scale_mat(0.5,1.0,0.5)
+
+
     # get own ip adress
     _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
     _server_ip = _server_ip.strip(" \n")
+    _server_ip = _server_ip.rsplit(" ")
+    _server_ip = str(_server_ip[-1])
 
     # get own hostname
     _hostname = open('/etc/hostname', 'r').readline()
@@ -135,6 +146,7 @@ class Platform(avango.script.Script):
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
+    self.sf_scale.connect_from(INPUT_MAPPING_INSTANCE.sf_scale)
 
     # create four boundary planes
     _loader = avango.gua.nodes.GeometryLoader()
@@ -222,3 +234,24 @@ class Platform(avango.script.Script):
       self.back_border.GroupNames.value[0] = "display_group"
     else:
       self.back_border.GroupNames.value[0] = "do_not_display_group"
+      
+
+  @field_has_changed(sf_scale)
+  def sf_scale_values_changed(self):
+
+    _scale = self.sf_scale.value
+    
+    self.platform_scale_transform_node.Transform.value = avango.gua.make_scale_mat(_scale)
+
+    for _i, _display in enumerate(self.displays):
+      
+      _screen = self.screens[_i]
+
+      _w, _h = _display.size
+      _screen.Width.value = _w * _scale
+      _screen.Height.value = _h * _scale
+      
+      _mat = _display.transformation
+      #_mat.set_translate(_mat.get_translate() * _scale)
+
+      _screen.Transform.value = avango.gua.make_trans_mat(_mat.get_translate() * _scale) * avango.gua.make_rot_mat(_mat.get_rotate_scale_corrected()) * avango.gua.make_scale_mat(_mat.get_scale())

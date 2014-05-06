@@ -11,9 +11,7 @@ LOCAL_GUACAMOLE="$DIR/../../../guacamole"
 LOCAL_AVANGO="$DIR/../../../avango"
 
 # if not, this path will be used
-#GUACAMOLE=/opt/guacamole/master
 GUACAMOLE=/opt/guacamole/testing/guacamole
-#AVANGO=/opt/avango/master
 AVANGO=/opt/guacamole/testing/avango
 
 # third party libs

@@ -545,7 +545,7 @@ class Navigation(avango.script.Script):
   ## Computes the current world position of the rotation center on the platform ground (y = 0).
   def get_current_world_pos(self):
     _station_trans = self.device.sf_station_mat.value.get_translate()
-    _mat = self.platform.sf_abs_mat.value * avango.gua.make_trans_mat(_station_trans.x, 0, _station_trans.z)
+    _mat = self.platform.sf_abs_mat.value * avango.gua.make_trans_mat(avango.gua.Vec3(_station_trans.x, 0, _station_trans.z) * self.platform.sf_scale.value)
     return _mat
   
   ## Evaluated every frame.
@@ -563,6 +563,7 @@ class Navigation(avango.script.Script):
 
     # handle button inputs #
 
+    '''
     # Button 0 resets platform
     if self.device.mf_buttons.value[0] == True:
       self.reset()
@@ -583,6 +584,7 @@ class Navigation(avango.script.Script):
           self.trigger_coupling()
         else:
           self.clear_couplings()           
+    '''
 
     # handle dofchange animation
     if self.in_dofchange_animation:

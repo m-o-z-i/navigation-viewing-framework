@@ -82,12 +82,12 @@ class User(avango.script.Script):
 
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.
-    if self.headtracking_target_name == None:
+    if HEADTRACKING_TARGET_NAME == None:
       self.headtracking_reader = TrackingDefaultReader()
       self.headtracking_reader.set_no_tracking_matrix(self.no_tracking_mat)
     else:
       self.headtracking_reader = TrackingTargetReader()
-      self.headtracking_reader.my_constructor(self.headtracking_target_name)
+      self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
       self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
@@ -109,7 +109,7 @@ class User(avango.script.Script):
     # set evaluation policy
     self.always_evaluate(True)
 
-  
+
   ## Evaluated every frame.
   def evaluate(self):
     # Set active flag, current platform and current display
@@ -151,18 +151,24 @@ class User(avango.script.Script):
 
     self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
 
+  ## Sets the transformation values of left and right eye.
+  # @param VALUE The eye distance to be applied.
+  def set_eye_distance(self, VALUE):
+    self.eye_distance = VALUE
+    self.left_eye.Transform.value  = avango.gua.make_trans_mat(self.eye_distance * -0.5, 0.0, 0.0)
+    self.right_eye.Transform.value = avango.gua.make_trans_mat(self.eye_distance * 0.5, 0.0, 0.0)
+
   ## Appends a node to the children of a platform in the scenegraph.
   # @param NODE The node to be appended to the platform node.
   def append_to_platform(self, NODE):
-
-    self.platform.platform_transform_node.Children.value.append(NODE)
+    
+    self.platform.platform_scale_transform_node.Children.value.append(NODE)
 
   ## Removes a node from the children of a platform in the scenegraph.
   # @param NODE The node to be removed from the platform node.
   def remove_from_platform(self, NODE):
 
-    self.platform.platform_transform_node.Children.value.remove(NODE)
-
+    self.platform.platform_scale_transform_node.Children.value.remove(NODE)
 
   ## Creates a basic "joseph" avatar for this user.
   # @param SF_AVATAR_HEAD_MATRIX Field containing the transformation matrix for the avatar's head on the platform.
@@ -279,6 +285,7 @@ class User(avango.script.Script):
                                                                 'data/objects/plane.obj',
                                                                 'data/materials/' + self.avatar_material + 'Shadeless.gmd',
                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     self.coupling_status_node.Children.value.append(self.own_color_geometry)
 
@@ -313,8 +320,8 @@ class User(avango.script.Script):
   def handle_message_plane_node(self):
     self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0) * \
                                               avango.gua.make_rot_mat(90, 1, 0, 0)
-
-    self.platform.screens[0].Children.value.append(self.message_plane_node)
+    _screen = self.platform.screens[0] # primary screen
+    _screen.Children.value.append(self.message_plane_node)
 
   ## Handles all the specialized settings for the coupling status overview.
   def handle_coupling_status_attributes(self):

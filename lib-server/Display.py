@@ -30,7 +30,8 @@ class Display:
               , shutter_timings = []
               , shutter_values = []
               , size = (0.595, 0.335)
-              , transformation = avango.gua.make_trans_mat(0.0, 1.75, 0.0)
+              , transformation = avango.gua.make_trans_mat(0.0, 1.5, 0.0)
+              , stereomode = "ANAGLYPH_RED_CYAN"
               ):
 
     # save values in members
@@ -73,6 +74,8 @@ class Display:
     ## @var num_views
     # Number of views which are already registered with this display.
     self.num_views = 0
+   
+    self.stereomode = stereomode
 
   ## Registers a new view at this display and returns the display string assigned to the new view.
   def register_view(self):
@@ -92,3 +95,17 @@ class Display:
     _screen.Height.value = _h
     _screen.Transform.value = self.transformation
     return _screen
+
+
+  def create_screen_visualization(self):
+  
+    _loader = avango.gua.nodes.GeometryLoader()
+  
+    _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
+
+    _w, _h = self.size
+    _node.Transform.value = self.transformation * avango.gua.make_scale_mat(_w,_h,1.0)
+    
+    return _node
+        

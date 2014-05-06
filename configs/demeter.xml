@@ -15,26 +15,27 @@
 
   </global>
 
+
   <device>
 
     <type>Spacemouse</type>
 
     <inputsensor>device-spacemouse</inputsensor>
 
-    <display>atalante_display</display>
+    <display>mitsubishi_tv</display>
 
     <avatartype>joseph_table</avatartype>
 
     <transmitteroffset>
       <x>0.0</x>
-      <y>0.043</y>
-      <z>1.6</z>
+      <y>1.065</y>
+      <z>0.66</z>
     </transmitteroffset>
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.2</y>
-      <z>0.6</z>
+      <y>1.3</y>
+      <z>0.8</z>
     </notrackingposition>
 
     <platformpos>
@@ -48,18 +49,17 @@
     </platformrot>
 
   </device>
-        
 
   <!-- First User -->
   
   <user>
 
-    <vip>False</vip>
+    <stereo>False</stereo>
 
     <startplatform>0</startplatform>
 
     <warnings>False</warnings>
 
   </user>
-
+    
 </setup>

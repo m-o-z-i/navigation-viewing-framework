@@ -175,8 +175,18 @@ class SpacemouseDevice(MultiDofDevice):
     
     if _rz != 0.0:
       _rz = self.filter_channel(_rz, 0.0, -0.86, 0.77, 12, 12)
+
+    _button0 = self.device_sensor.Button0.value
+    _button1 = self.device_sensor.Button1.value
+    
+    _scale = 0.0
+    if _button0 == True:
+      _scale = 1.0
      
-    self.mf_dof.value = [_x,_y,_z,_rx,_ry,_rz,0.0]
+    if _button1 == True:
+      _scale = -1.0
+     
+    self.mf_dof.value = [_x,_y,_z,_rx,_ry,_rz,_scale]
 
 
 ## Internal representation and reader for a keyboard and mouse setup.

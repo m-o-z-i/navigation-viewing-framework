@@ -31,6 +31,9 @@ class Platform(avango.script.Script):
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
 
+  sf_scale = avango.SFFloat()
+  sf_scale.value = 1.0
+
   ## @var hosts_visited
   # List of hostnames on which a client daemon was already launched. Used to avoid double launching.
   hosts_visited = []
@@ -117,9 +120,14 @@ class Platform(avango.script.Script):
     self.platform_transform_node.Transform.connect_from(self.sf_abs_mat)
     NET_TRANS_NODE.Children.value.append(self.platform_transform_node)
 
+    self.platform_scale_transform_node = avango.gua.nodes.TransformNode(Name = "scale")
+    self.platform_transform_node.Children.value = [self.platform_scale_transform_node]
+
     # get own ip adress
     _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
     _server_ip = _server_ip.strip(" \n")
+    _server_ip = _server_ip.rsplit(" ")
+    _server_ip = str(_server_ip[-1])
 
     # get own hostname
     _hostname = open('/etc/hostname', 'r').readline()
@@ -129,8 +137,11 @@ class Platform(avango.script.Script):
     for _display in self.displays:
       # append a screen node to platform
       _screen = _display.create_screen_node("screen_" + str(self.displays.index(_display)))
-      self.platform_transform_node.Children.value.append(_screen)
+      self.platform_scale_transform_node.Children.value.append(_screen)
       self.screens.append(_screen)
+      
+      _screen_visualization = _display.create_screen_visualization()
+      self.platform_scale_transform_node.Children.value.append(_screen_visualization)
 
       _string_num = 0
       # create a slot for each displaystring
@@ -142,7 +153,7 @@ class Platform(avango.script.Script):
                        _string_num,
                        self.displays.index(_display),
                        False,
-                       self.platform_transform_node)
+                       self.platform_scale_transform_node)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
         else:
@@ -151,7 +162,7 @@ class Platform(avango.script.Script):
                        _string_num,
                        self.displays.index(_display),
                        True,
-                       self.platform_transform_node)
+                       self.platform_scale_transform_node)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
 
@@ -176,6 +187,7 @@ class Platform(avango.script.Script):
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
+    self.sf_scale.connect_from(INPUT_MAPPING_INSTANCE.sf_scale)
 
     # create four boundary planes
     _loader = avango.gua.nodes.GeometryLoader()
@@ -186,13 +198,14 @@ class Platform(avango.script.Script):
                                                          'data/objects/plane.obj',
                                                          'data/materials/PlatformBorder.gmd',
                                                          avango.gua.LoaderFlags.DEFAULTS)
-
+    self.left_border.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.left_border.Transform.value = avango.gua.make_trans_mat(-self.width/2, 1.0, self.depth/2) * \
                                        avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                        avango.gua.make_rot_mat(270, 0, 0, 1) * \
                                        avango.gua.make_scale_mat(self.depth, 1, 2)
     self.left_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_transform_node.Children.value.append(self.left_border)
+    #self.platform_transform_node.Children.value.append(self.left_border)
+    self.platform_scale_transform_node.Children.value.append(self.left_border)    
     
     ## @var right_border
     # Geometry scenegraph node of the platform's left border
@@ -200,12 +213,14 @@ class Platform(avango.script.Script):
                                                          'data/objects/plane.obj',
                                                          'data/materials/PlatformBorder.gmd',
                                                          avango.gua.LoaderFlags.DEFAULTS)
+    self.right_border.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.right_border.Transform.value = avango.gua.make_trans_mat(self.width/2, 1.0, self.depth/2) * \
                                         avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                         avango.gua.make_rot_mat(90, 0, 0, 1) * \
                                         avango.gua.make_scale_mat(self.depth, 1, 2)
     self.right_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_transform_node.Children.value.append(self.right_border)
+    #self.platform_transform_node.Children.value.append(self.right_border)
+    self.platform_scale_transform_node.Children.value.append(self.right_border)    
 
     ## @var front_border
     # Geometry scenegraph node of the platform's front border
@@ -213,11 +228,13 @@ class Platform(avango.script.Script):
                                                          'data/objects/plane.obj',
                                                          'data/materials/PlatformBorder.gmd',
                                                          avango.gua.LoaderFlags.DEFAULTS)
+    self.front_border.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.front_border.Transform.value = avango.gua.make_trans_mat(0, 1, 0) * \
                                         avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                         avango.gua.make_scale_mat(self.width, 1, 2)
     self.front_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_transform_node.Children.value.append(self.front_border)
+    #self.platform_transform_node.Children.value.append(self.front_border)
+    self.platform_scale_transform_node.Children.value.append(self.front_border)
 
     ## @var back_border
     # Geometry scenegraph node of the platform's back border
@@ -225,12 +242,14 @@ class Platform(avango.script.Script):
                                                          'data/objects/plane.obj',
                                                          'data/materials/PlatformBorder.gmd',
                                                          avango.gua.LoaderFlags.DEFAULTS)
+    self.back_border.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.back_border.Transform.value = avango.gua.make_trans_mat(0.0, 1.0, self.depth) * \
                                         avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                         avango.gua.make_rot_mat(180, 0, 0, 1) * \
                                         avango.gua.make_scale_mat(self.width, 1, 2)
     self.back_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_transform_node.Children.value.append(self.back_border)   
+    #self.platform_transform_node.Children.value.append(self.back_border)
+    self.platform_scale_transform_node.Children.value.append(self.back_border)
 
   ## Toggles visibility of left platform border.
   # @param VISIBLE A boolean value if the border should be set visible or not.
@@ -263,3 +282,28 @@ class Platform(avango.script.Script):
       self.back_border.GroupNames.value[0] = "display_group"
     else:
       self.back_border.GroupNames.value[0] = "do_not_display_group"
+         
+
+  @field_has_changed(sf_scale)
+  def sf_scale_values_changed(self):
+
+    _scale = self.sf_scale.value
+    
+    self.platform_scale_transform_node.Transform.value = avango.gua.make_scale_mat(_scale)
+
+    '''
+    for _i, _display in enumerate(self.displays):
+      
+      _screen = self.screens[_i]
+
+      _w, _h = _display.size
+      _screen.Width.value = _w * _scale
+      _screen.Height.value = _h * _scale
+      
+      _mat = _display.transformation
+      #_mat.set_translate(_mat.get_translate() * _scale)
+
+      _screen.Transform.value = avango.gua.make_trans_mat(_mat.get_translate() * _scale) * avango.gua.make_rot_mat(_mat.get_rotate_scale_corrected()) * avango.gua.make_scale_mat(_mat.get_scale())
+    '''
+
+      

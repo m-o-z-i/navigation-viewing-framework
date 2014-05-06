@@ -206,7 +206,10 @@ class SceneManager:
                                         )
 
     self.day_updater = DayAnimationUpdate()
-    self.day_updater.TimeIn.connect_from(self.timer.Time)
+    #self.day_updater.TimeIn.connect_from(self.timer.Time)
+    test = avango.SFFloat()
+    test.value = 30.0
+    self.day_updater.TimeIn.connect_from(test)
     self.sun.Transform.connect_from(self.day_updater.sf_sun_mat)
     self.sun.Color.connect_from(self.day_updater.sf_sun_color)
     

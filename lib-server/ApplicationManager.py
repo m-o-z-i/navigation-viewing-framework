@@ -20,6 +20,7 @@ from   SlotManager      import *
 from   display_config   import displays
 import Tools
 
+
 # import python libraries
 import subprocess
 
@@ -98,6 +99,7 @@ class ApplicationManager():
     # Instance of ConfigFileParser in order to load and parse an XML configuration file.
     self.config_file_parser = ConfigFileParser(self)
     self.config_file_parser.parse(CONFIG_FILE)
+      
 
     # care for correct slot assignment
     self.slot_manager.update_slot_configuration()
@@ -107,7 +109,7 @@ class ApplicationManager():
     ## @var server_transform
     # Transform node representing the position and orientation of the server control monitor.
     self.server_transform = avango.gua.nodes.TransformNode(Name = "server_transform")
-    self.server_transform.Transform.value = avango.gua.make_trans_mat(0, 25, 8) * \
+    self.server_transform.Transform.value = avango.gua.make_trans_mat(0, 15, 6) * \
                                             avango.gua.make_rot_mat(-90, 1, 0, 0)
     self.NET_TRANS_NODE.Children.value.append(self.server_transform)
 
@@ -121,8 +123,8 @@ class ApplicationManager():
     # Screen node representing the server's screen.
     self.screen = avango.gua.nodes.ScreenNode(Name = "server_screen")
     self.screen.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.5)
-    self.screen.Width.value = 160/1.5 * 1.1
-    self.screen.Height.value = 100/1.5 * 1.1
+    self.screen.Width.value = 160/1.5 * 0.5
+    self.screen.Height.value = 100/1.5 * 0.5
     self.server_transform.Children.value.append(self.screen)
 
     ## @var camera

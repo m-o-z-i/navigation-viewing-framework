@@ -21,7 +21,7 @@
 
     <inputsensor>device-spacemouse</inputsensor>
 
-    <display>atalante_display</display>
+    <display>nestor_display</display>
 
     <avatartype>joseph_table</avatartype>
 
@@ -33,7 +33,7 @@
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.2</y>
+      <y>1.0</y>
       <z>0.6</z>
     </notrackingposition>
 
@@ -54,7 +54,7 @@
   
   <user>
 
-    <vip>False</vip>
+    <stereo>True</stereo>
 
     <startplatform>0</startplatform>
 

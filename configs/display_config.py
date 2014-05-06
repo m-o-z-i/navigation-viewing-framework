@@ -42,6 +42,7 @@ class LargePowerwall(Display):
                                        ]
                     , size = (4.16, 2.6)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
+                    , stereomode = "SIDE_BY_SIDE"                    
                     )
 
   ## Registers a new view at this display and returns the display string 
@@ -80,6 +81,7 @@ class SmallPowerwall(Display):
                     , displaystrings = [":0.0", ":0.1"]
                     , size = (3.0, 1.98)
                     , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
+                    , stereomode = "SIDE_BY_SIDE"
                     )
 
   ## Registers a new view at this display and returns the display string 
@@ -102,6 +104,49 @@ class SmallPowerwall(Display):
       return None
 
 
+
+class SamsungStereoTV(Display):
+
+  ## Custom constructor.
+  # @param hostname The hostname to which this display is connected to.
+  # @param name A name to be associated to that display. Will be used in XML configuration file.
+  # @param resolution The display's resolution to be used.
+  # @param displaystrings A list of strings on which the windows for each user will pop up.
+  # @param size Physical size of the display medium in meters.
+  # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
+  def __init__(self):
+    Display.__init__( self
+                    , hostname = "apollo"
+                    , name = "samsung_tv"
+                    , resolution = (1920, 1080)
+                    , displaystrings = [":0.0"]
+                    , size = (1.235, 0.695)
+                    , transformation = avango.gua.make_trans_mat(0.0,1.6,0.0) * avango.gua.make_rot_mat(-40.0,1,0,0)
+                    , stereomode = "CHECKERBOARD"
+                    )
+
+
+class MitsubishiStereoTV(Display):
+
+  ## Custom constructor.
+  # @param hostname The hostname to which this display is connected to.
+  # @param name A name to be associated to that display. Will be used in XML configuration file.
+  # @param resolution The display's resolution to be used.
+  # @param displaystrings A list of strings on which the windows for each user will pop up.
+  # @param size Physical size of the display medium in meters.
+  # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
+  def __init__(self):
+    Display.__init__( self
+                    , hostname = "demeter"
+                    , name = "mitsubishi_tv"
+                    , resolution = (1920, 1080)
+                    , displaystrings = [":0.0"]
+                    , size = (1.44, 0.81)
+                    , transformation = avango.gua.make_trans_mat(0.0,1.3,0.0)
+                    , stereomode = "CHECKERBOARD"
+                    )
+
+
 ##################################################
 # STORE ALL DISPLAYS TO BE USED IN THIS LIST
 ##################################################
@@ -110,10 +155,10 @@ class SmallPowerwall(Display):
 displays = [
     LargePowerwall()
   , Display(hostname = "atalante"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.0, 0.0)
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+      #, transformation = avango.gua.make_trans_mat(0.645, 1.2, 0.0)
   )
-  , Display(hostname = "artemis"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.0, 0.0)
-      , displaystrings = [":0.0", ":0.0"]
+  , Display(hostname = "nestor"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
 ]

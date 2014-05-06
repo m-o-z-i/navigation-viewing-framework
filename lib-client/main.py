@@ -12,7 +12,7 @@ import avango.oculus
 # import framework libraries
 import ClientConfigFileParser
 import ClientMaterialUpdaters
-from StandardView import *
+from View import *
 from display_config import displays
 
 # import python libraries
@@ -54,7 +54,6 @@ def start():
   nettrans = avango.gua.nodes.NetTransform(
                 Name = "net",
                 # specify role, ip, and port
-                #Groupname = "AVCLIENT|127.0.0.1|7432"
                 Groupname = "AVCLIENT|{0}|7432".format(server_ip)
                 )
 
@@ -90,7 +89,7 @@ def start():
   _string_num = 0
 
   for _displaystring in handled_display_instance.displaystrings:
-    _view = StandardView()
+    _view = View()
     _view.my_constructor(graph, 
                          viewer,
                          platform_id, 

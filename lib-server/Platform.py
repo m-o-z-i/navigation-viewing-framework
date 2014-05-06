@@ -292,7 +292,7 @@ class Platform(avango.script.Script):
                                                                  'data/objects/plane.obj',
                                                                  'data/materials/CouplingPlane.gmd',
                                                                  avango.gua.LoaderFlags.LOAD_MATERIALS)
-
+    self.coupling_plane_node.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.coupling_plane_node.Transform.value = avango.gua.make_scale_mat(0.6 * self.screens[0].Width.value, 0.1, 0.2 * self.screens[0].Height.value)
 
     self.coupling_plane_node.GroupNames.value = ["do_not_display_group", "platform_group_" + str(self.platform_id)]
@@ -306,6 +306,7 @@ class Platform(avango.script.Script):
                                                                  'data/objects/plane.obj',
                                                                  'data/materials/AvatarWhiteShadeless.gmd',
                                                                  avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.decoupling_notifier.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.decoupling_notifier.Transform.value =  avango.gua.make_trans_mat(0.0, 0.0, -0.2 * self.screens[0].Height.value) * \
                                                 avango.gua.make_scale_mat(0.05, 0.05, 0.05)
 
@@ -335,6 +336,7 @@ class Platform(avango.script.Script):
                                                                 'data/objects/plane.obj',
                                                                 'data/materials/' + self.avatar_material + 'Shadeless.gmd',
                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     self.coupling_status_node.Children.value.append(self.own_color_geometry)
@@ -432,6 +434,7 @@ class Platform(avango.script.Script):
                                                      'data/objects/plane.obj',
                                                      'data/materials/' +_nav.trace_material + 'Shadeless.gmd',
                                                      avango.gua.LoaderFlags.LOAD_MATERIALS)
+          _plane.ShadowMode.value = avango.gua.ShadowMode.OFF
           self.NET_TRANS_NODE.distribute_object(_plane)
           self.coupling_status_node.Children.value.append(_plane)
       

@@ -230,7 +230,7 @@ class User:
                                                                  'data/materials/AvatarWhiteShadeless.gmd',
                                                                  avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.decoupling_notifier.Transform.value =  avango.gua.make_trans_mat(0.0, 0.0, -0.2 * self.platform.screens[0].Height.value) * \
-                                                avango.gua.make_scale_mat(0.2, 0.2, 0.2)
+                                                avango.gua.make_scale_mat(0.05, 0.05, 0.05)
 
     self.decoupling_notifier.GroupNames.value = ["do_not_display_group", "platform_group_" + str(self.platform_id)]
 

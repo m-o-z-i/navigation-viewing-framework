@@ -47,6 +47,9 @@ class GroundFollowing(avango.script.Script):
   sf_station_mat = avango.gua.SFMatrix4()
   sf_station_mat.value = avango.gua.make_identity_mat()
 
+  sf_scale = avango.SFFloat()
+  sf_scale.value = 1.0
+
   ## @var mf_ground_pick_result
   # Intersections of the ground following ray with the objects in the scene.
   mf_ground_pick_result = avango.gua.MFPickResult()
@@ -75,9 +78,9 @@ class GroundFollowing(avango.script.Script):
     # The starting velocity when the user is falling in meters per frame. Is increased the longer the falling process goes on.
     self.initial_fall_velocity = 0.05
 
-    ## @var scale_factor
+    ## @var climb_factor
     # Scaling factor used for the modification of up and down vectors.
-    self.scale_factor = 0.1
+    self.height_modification_factor = 0.1
 
     # fall velocity in meter per frame
     ## @var fall_velocity
@@ -125,17 +128,21 @@ class GroundFollowing(avango.script.Script):
       _device_trans_vec = self.sf_station_mat.value.get_translate()
 
       # prepare ground following matrix
-      _gf_start_pos = self.sf_abs_input_mat.value * avango.gua.Vec3(self.sf_station_mat.value.get_element(0,3), self.ray_start_height, self.sf_station_mat.value.get_element(2,3))
-      self.sf_gf_start_mat.value = avango.gua.make_trans_mat(_gf_start_pos.x, _gf_start_pos.y, _gf_start_pos.z)  
+      _gf_start_pos = self.sf_station_mat.value.get_translate()
+      _gf_start_pos.y = self.ray_start_height
+      _gf_start_pos *= self.sf_scale.value
+      _gf_start_pos = self.sf_abs_input_mat.value * _gf_start_pos
+      _gf_start_pos = avango.gua.Vec3(_gf_start_pos.x, _gf_start_pos.y, _gf_start_pos.z)
+      self.sf_gf_start_mat.value = avango.gua.make_trans_mat(_gf_start_pos)
 
-      if len(self.mf_ground_pick_result.value) > 0:                          # an intersection with the ground was found
+      if len(self.mf_ground_pick_result.value) > 0: # an intersection with the ground was found
 
         # get first intersection target
         _pick_result = self.mf_ground_pick_result.value[0]             
 
         # compare distance to ground and ray_start_height
         _distance_to_ground = _pick_result.Distance.value * self.ground_pick_length
-        _difference = _distance_to_ground - self.ray_start_height
+        _difference = _distance_to_ground - (self.ray_start_height * self.sf_scale.value)
         _difference = round(_difference, 3)
 
         if _difference < 0: # climb up
@@ -146,12 +153,12 @@ class GroundFollowing(avango.script.Script):
             self.fall_velocity = self.initial_fall_velocity 
 
           # move player up
-          _up_vec = avango.gua.Vec3(0.0, _difference * -1.0 * self.scale_factor, 0.0)
+          _up_vec = avango.gua.Vec3(0.0, _difference * -1.0 * self.height_modification_factor, 0.0)
           self.sf_abs_output_mat.value = avango.gua.make_trans_mat(_up_vec) * self.sf_abs_input_mat.value
 
         elif _difference > 0:
           
-          if _difference > self.ray_start_height: # falling
+          if _difference > (self.ray_start_height * self.sf_scale.value): # falling
 
             # make player fall down faster every time
             self.falling = True
@@ -167,7 +174,7 @@ class GroundFollowing(avango.script.Script):
               self.fall_velocity = self.initial_fall_velocity 
 
             # move player down
-            _down_vec = avango.gua.Vec3(0.0, _difference * -1.0 * self.scale_factor, 0.0)
+            _down_vec = avango.gua.Vec3(0.0, _difference * -1.0 * self.height_modification_factor, 0.0)
             self.sf_abs_output_mat.value = avango.gua.make_trans_mat(_down_vec) * self.sf_abs_input_mat.value
 
         else:

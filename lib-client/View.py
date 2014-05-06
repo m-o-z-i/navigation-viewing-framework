@@ -99,8 +99,8 @@ class View(avango.script.Script):
         Stereo View
       '''
 
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/screen_" + str(SCREEN_NUM)
-      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/screen_" + str(SCREEN_NUM)
+      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
+      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
       self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/head_" + str(self.view_id) + "/eyeL"
       self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/scale/head_" + str(self.view_id) + "/eyeR"
 
@@ -136,7 +136,7 @@ class View(avango.script.Script):
         Mono View
       '''
 
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/screen_" + str(SCREEN_NUM)
+      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
       self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/head_" + str(self.view_id) + "/eye"
 
       self.window.Title.value = "User_" + str(self.view_id)

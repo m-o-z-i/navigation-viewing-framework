@@ -67,7 +67,7 @@ class SmallPowerwall(Display):
                     , displaystrings = [":0.0", ":0.1"]
                     , size = (3.0, 1.98)
                     , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
-                    , stereomode = "SIDE_BY_SIDE"   
+                    , stereomode = "SIDE_BY_SIDE"
                     )
 
   ## Registers a new user at this display and return the display string and the 
@@ -139,12 +139,13 @@ class MitsubishiStereoTV(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  Display(hostname = "atalante"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.0, 0.0)
-      #, transformation = avango.gua.make_trans_mat(0.645, 1.0, 0.0)
+    LargePowerwall()
+  , Display(hostname = "atalante"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+      #, transformation = avango.gua.make_trans_mat(0.645, 1.2, 0.0)
   )
   , Display(hostname = "nestor"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.0, 0.0)
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
 ]
 

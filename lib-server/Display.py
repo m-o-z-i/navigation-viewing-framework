@@ -83,3 +83,17 @@ class Display:
     _screen.Height.value = _h
     _screen.Transform.value = self.transformation
     return _screen
+
+
+  def create_screen_visualization(self):
+  
+    _loader = avango.gua.nodes.GeometryLoader()
+  
+    _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
+
+    _w, _h = self.size
+    _node.Transform.value = self.transformation * avango.gua.make_scale_mat(_w,_h,1.0)
+    
+    return _node
+        

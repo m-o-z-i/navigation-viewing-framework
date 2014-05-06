@@ -15,7 +15,9 @@ from GroundFollowing import *
 import Tools
 
 # import of other libraries
+import time
 import math
+
 
 ## This class accumulates the relative device inputs to an absolute matrix forwarded to the platform
 # and uses an instance of GroundFollowing to correct this matrix with respect to gravity.
@@ -73,8 +75,11 @@ class InputMapping(avango.script.Script):
     # Factor to modify the rotation input.
     self.input_rot_factor    = 1.0
 
-    self.min_scale = 0.1
-    self.max_scale = 10.0
+    self.min_scale = 0.01
+    self.max_scale = 100.0
+    
+    self.scale_stop_time = None
+    self.scale_stop_duration = 1.0 # in sec
 
   ## Custom constructor.
   # @param NAVIGATION The navigation instance from which this input mapping is created.
@@ -97,6 +102,7 @@ class InputMapping(avango.script.Script):
 
     # connect ground following fields
     GROUND_FOLLOWING_INSTANCE.sf_abs_input_mat.connect_from(self.sf_abs_uncorrected_mat)
+    GROUND_FOLLOWING_INSTANCE.sf_scale.connect_from(self.sf_scale)
     self.sf_abs_mat.connect_from(GROUND_FOLLOWING_INSTANCE.sf_abs_output_mat)
 
     # create feedback loop
@@ -111,6 +117,11 @@ class InputMapping(avango.script.Script):
   def mf_rel_input_values_changed(self):
     
     if self.blocked == False:
+
+      # map scale
+      _scale = self.mf_rel_input_values.value[6]
+      if _scale != 0.0:
+        self.set_scale(self.sf_scale.value * (1.0 + _scale * 0.015))
       
       # get translation values from input device
       _trans_vec = avango.gua.Vec3(0, 0, 0)
@@ -183,11 +194,7 @@ class InputMapping(avango.script.Script):
         _new_mat = self.sf_abs_mat.value
 
       # save the computed new matrix
-      self.sf_abs_uncorrected_mat.value = _new_mat
-
-      # map scale
-      self.sf_scale.value = max(min(self.sf_scale.value * (1.0 + self.mf_rel_input_values.value[6] * 0.015), self.max_scale), self.min_scale)
-      
+      self.sf_abs_uncorrected_mat.value = _new_mat      
 
 
   ## Modify the uncorrected matrix of this input mapping with specific values. Used for coupling purposes.
@@ -244,3 +251,50 @@ class InputMapping(avango.script.Script):
   def deactivate_realistic_mode(self):
     self.realistic = False
     self.GROUND_FOLLOWING_INSTANCE.deactivate()
+
+
+
+  def set_scale(self, SCALE):
+  
+    if self.scale_stop_time == None:
+  
+      _old_scale = self.sf_scale.value
+      _old_scale = round(_old_scale,6)
+      
+      _new_scale = max(min(SCALE, self.max_scale), self.min_scale)
+      _new_scale = round(_new_scale,6)
+            
+      # stop at certain scale levels
+      if (_old_scale < 100.0 and _new_scale > 100.0) or (_new_scale < 100.0 and _old_scale > 100.0):
+        #print "snap 100:1"
+        _new_scale = 100.0
+        self.scale_stop_time = time.time()
+              
+      elif (_old_scale < 10.0 and _new_scale > 10.0) or (_new_scale < 10.0 and _old_scale > 10.0):
+        #print "snap 10:1"
+        _new_scale = 10.0
+        self.scale_stop_time = time.time()
+      
+      elif (_old_scale < 1.0 and _new_scale > 1.0) or (_new_scale < 1.0 and _old_scale > 1.0):
+        #print "snap 1:1"
+        _new_scale = 1.0
+        self.scale_stop_time = time.time()
+
+      elif (_old_scale < 0.1 and _new_scale > 0.1) or (_new_scale < 0.1 and _old_scale > 0.1):
+        #print "snap 1:10"
+        _new_scale = 0.1
+        self.scale_stop_time = time.time()
+
+
+      elif (_old_scale < 0.01 and _new_scale > 0.01) or (_new_scale < 0.01 and _old_scale > 0.01):
+        #print "snap 1:100"
+        _new_scale = 0.01
+        self.scale_stop_time = time.time()
+
+      self.sf_scale.value = _new_scale
+
+    else:
+
+      if (time.time() - self.scale_stop_time) > self.scale_stop_duration:
+        self.scale_stop_time = None
+

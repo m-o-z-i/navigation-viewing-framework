@@ -15,15 +15,16 @@
 
   </global>
 
+
   <device>
 
     <type>Spacemouse</type>
 
     <inputsensor>device-spacemouse</inputsensor>
 
-    <display>nestor_display</display>
+    <display>large_powerwall</display>
 
-    <avatartype>joseph_table</avatartype>
+    <avatartype>joseph</avatartype>
 
     <transmitteroffset>
       <x>0.0</x>
@@ -33,8 +34,8 @@
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.2</y>
-      <z>0.6</z>
+      <y>1.75</y>
+      <z>1.6</z>
     </notrackingposition>
 
     <platformpos>
@@ -47,13 +48,19 @@
       <yaw>0.0</yaw>
     </platformrot>
 
+    <platformsize>
+      <width>3.8</width>
+      <depth>3.6</depth>
+    </platformsize>
+
   </device>
+
 
   <device>
 
     <type>KeyboardMouse</type>
 
-    <display>atalante_display</display>
+    <display>nestor_display</display>
 
     <avatartype>joseph_table</avatartype>
 
@@ -81,20 +88,67 @@
 
   </device>
 
-  <!-- First User -->
+  <!-- DLP First User -->
   
   <user>
 
-    <stereo>False</stereo>
+    <stereo>True</stereo>
+
+    <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
     <startplatform>0</startplatform>
 
-    <warnings>False</warnings>
+    <warnings>True</warnings>
 
   </user>
-  
 
-  <!-- Second User -->
+
+  <!-- DLP Second User -->
+  
+  <user>
+
+    <stereo>True</stereo>
+
+    <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
+
+    <startplatform>0</startplatform>
+
+    <warnings>True</warnings>
+
+  </user>
+
+
+  <!-- DLP Third User -->
+  
+  <user>
+
+    <stereo>True</stereo>
+
+    <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
+
+    <startplatform>0</startplatform>
+
+    <warnings>True</warnings>
+
+  </user>
+
+
+  <!-- DLP Forth User -->
+  
+  <user>
+
+    <stereo>True</stereo>
+
+    <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
+
+    <startplatform>0</startplatform>
+
+    <warnings>True</warnings>
+
+  </user>
+
+
+  <!-- Desktop First User -->
   
   <user>
 
@@ -105,5 +159,6 @@
     <warnings>False</warnings>
 
   </user>
-   
+  
+    
 </setup>

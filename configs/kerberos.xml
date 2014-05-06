@@ -48,6 +48,11 @@
       <yaw>0.0</yaw>
     </platformrot>
 
+    <platformsize>
+      <width>3.8</width>
+      <depth>3.6</depth>
+    </platformsize>
+
   </device>
 
   <!-- First User -->
@@ -60,7 +65,7 @@
 
     <startplatform>0</startplatform>
 
-    <warnings>False</warnings>
+    <warnings>True</warnings>
 
   </user>
 
@@ -75,7 +80,7 @@
 
     <startplatform>0</startplatform>
 
-    <warnings>False</warnings>
+    <warnings>True</warnings>
 
   </user>
 
@@ -90,7 +95,7 @@
 
     <startplatform>0</startplatform>
 
-    <warnings>False</warnings>
+    <warnings>True</warnings>
 
   </user>
 
@@ -105,7 +110,7 @@
 
     <startplatform>0</startplatform>
 
-    <warnings>False</warnings>
+    <warnings>True</warnings>
 
   </user>
   

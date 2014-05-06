@@ -258,6 +258,7 @@ class User:
                                                                 'data/objects/plane.obj',
                                                                 'data/materials/' + self.avatar_material + 'Shadeless.gmd',
                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     self.coupling_status_node.Children.value.append(self.own_color_geometry)
 

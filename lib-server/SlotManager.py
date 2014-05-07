@@ -159,17 +159,17 @@ class SlotManager:
 
             # set ids with shutter timings and values properly
             while _j < len(_open_timings):
-              print "!!!!!!!!!! OPEN USER", _user.id, "TIMING", _open_timings[_j]
-              self.radio_master_hid.set_timer_value(_user.id, _j, _open_timings[_j])
-              print "!!!!!!!!!! OPEN USER", _user.id, "ORIGINAL", _open_values[_j], "VALUE", int(str(_open_values[_j]), 16)
-              self.radio_master_hid.set_shutter_value(_user.id, _j, int(str(_open_values[_j]), 16))
+              print "!!!!!!!!!! OPEN USER", _user.glasses_id, "TIMING", _open_timings[_j]
+              self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
+              print "!!!!!!!!!! OPEN USER", _user.glasses_id, "ORIGINAL", _open_values[_j], "VALUE", int(str(_open_values[_j]), 16)
+              self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
               _j += 1
 
             while _j < 2 * len(_open_timings):
-               print "!!!!!!!!!! CLOSE USER", _user.id, "TIMING", _close_timings[_j - len(_open_timings)]
-               self.radio_master_hid.set_timer_value(_user.id, _j, _close_timings[_j - len(_open_timings)])
-               print "!!!!!!!!!! CLOSE USER", _user.id, "ORIGINAL", _close_values[_j - len(_open_timings)], "VALUE", int(str(_close_values[_j - len(_open_timings)]), 16)
-               self.radio_master_hid.set_shutter_value(_user.id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
+               print "!!!!!!!!!! CLOSE USER", _user.glasses_id, "TIMING", _close_timings[_j - len(_open_timings)]
+               self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
+               print "!!!!!!!!!! CLOSE USER", _user.glasses_id, "ORIGINAL", _close_values[_j - len(_open_timings)], "VALUE", int(str(_close_values[_j - len(_open_timings)]), 16)
+               self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                _j += 1
 
             # assign user to slot instances

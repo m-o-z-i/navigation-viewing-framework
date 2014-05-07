@@ -173,7 +173,8 @@ class View(avango.script.Script):
   # @param TRACKING_TARGET_NAME The target name of the tracked object as chosen in daemon.
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
   def init_local_tracking_override(self, TRACKING_TARGET_NAME, TRANSMITTER_OFFSET, NO_TRACKING_MAT):
-
+    pass
+    '''
     ## @var TRACKING_TARGET_NAME
     # The target name of the tracked object as chosen in daemon.
     self.TRACKING_TARGET_NAME = TRACKING_TARGET_NAME
@@ -193,6 +194,7 @@ class View(avango.script.Script):
       self.headtracking_reader.my_constructor(TRACKING_TARGET_NAME)
       self.headtracking_reader.set_transmitter_offset(TRANSMITTER_OFFSET)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
+    '''
 
   ## Sets the warp matrices if there is a correct amount of them.
   # @param WINDOW The window instance to apply the warp matrices to.

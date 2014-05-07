@@ -80,6 +80,12 @@ class User(avango.script.Script):
     # Name of the headtracking station as registered in daemon.
     self.headtracking_target_name = HEADTRACKING_TARGET_NAME
 
+    ##
+    #
+    if self.headtracking_target_name.startswith("tracking-dlp-glasses-"):
+      self.glasses_id = int(self.headtracking_target_name.replace("tracking-dlp-glasses-", ""))
+      print "USER", self.id, "WEARS GLASSES", self.glasses_id
+
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.
     if HEADTRACKING_TARGET_NAME == None:
@@ -98,7 +104,7 @@ class User(avango.script.Script):
       self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat, True)
 
     # toggles avatar display and activity
-    self.toggle_user_activity(self.is_active)
+    self.toggle_user_activity(self.is_active, False)
 
     # set evaluation policy
     self.always_evaluate(True)
@@ -112,7 +118,8 @@ class User(avango.script.Script):
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.
-  def toggle_user_activity(self, ACTIVE):
+  # @param RESEND_CONFIG Boolean indicating if the shutter configuration should be directly resent.
+  def toggle_user_activity(self, ACTIVE, RESEND_CONFIG):
 
     if ACTIVE:
       self.is_active = True
@@ -123,8 +130,8 @@ class User(avango.script.Script):
       self.head_avatar.GroupNames.value.append("do_not_display_group")
       self.body_avatar.GroupNames.value.append("do_not_display_group")
 
-
-    self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
+    if RESEND_CONFIG:
+      self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
 
   ## Changes the user's current platform.
   # @param PLATFORM_ID The new platform id to be set.

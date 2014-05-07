@@ -168,7 +168,7 @@ class SlotManager:
             while _j < 2 * len(_open_timings):
                print "!!!!!!!!!! CLOSE USER", _user.id, "TIMING", _close_timings[_j - len(_open_timings)]
                self.radio_master_hid.set_timer_value(_user.id, _j, _close_timings[_j - len(_open_timings)])
-               print "!!!!!!!!!! CLOSE USER", _user.id, "VALUE", int(str(_close_values[_j - len(_open_timings)]), 16)
+               print "!!!!!!!!!! CLOSE USER", _user.id, "ORIGINAL", _close_values[_j - len(_open_timings)], "VALUE", int(str(_close_values[_j - len(_open_timings)]), 16)
                self.radio_master_hid.set_shutter_value(_user.id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                _j += 1
 
@@ -192,6 +192,5 @@ class SlotManager:
           # no slots assigned to user - open shutters
           break
 
-      print "Send shutter configuration"
       self.radio_master_hid.send_shutter_config()
       print "Shutter configuration successfully sent"

@@ -214,6 +214,8 @@ class View(avango.script.Script):
   ## Called whenever sf_head_mat changes.
   @field_has_changed(sf_head_mat)
   def sf_head_mat_changed(self):
+    pass
+    '''
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
 
     # return when scenegraph is not yet present
@@ -239,4 +241,5 @@ class View(avango.script.Script):
     # TODO: Consider ONLY_TRANSLATION_UPDATE
     if _node_to_update != None:
       self.sf_head_mat.connect_from(self.headtracking_reader.sf_tracking_mat)
+    '''
 

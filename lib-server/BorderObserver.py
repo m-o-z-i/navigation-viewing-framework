@@ -63,13 +63,14 @@ class BorderObserver(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
+
     _left_plane_visible = False
     _right_plane_visible = False
     _front_plane_visible = False
     _back_plane_visible = False
 
     for _user in self.user_list:
-      _pos = _user.head_transform.Transform.value.get_translate()
+      _pos = _user.headtracking_reader.sf_abs_vec.value
 
       if self.checked_borders[0]:
         # toggle left border visibility

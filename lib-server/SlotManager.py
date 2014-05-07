@@ -128,6 +128,8 @@ class SlotManager:
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 
       # update shutter values according to slots assigned
+      print "?????????", _concatenated_user_list
+
       _i = 0
       for _state in _concatenated_user_list:
 
@@ -144,26 +146,30 @@ class SlotManager:
           if _stereo:
             # stereo display - set proper shutter timings
             _open_timings = _slot_instances[_i].shutter_timing[0]
-            _open_values = _slot_instances[_i].shutter_values[0]
+            _open_values = _slot_instances[_i].shutter_value[0]
             _start_i = copy(_i)
             
             _i += (_number_of_slots - 1)
 
             _close_timings = _slot_instances[_i].shutter_timing[1]
-            _close_values = _slot_instances[_i].shutter_values[1]
+            _close_values = _slot_instances[_i].shutter_value[1]
             _end_i = copy(_i)
 
             _j = 0
 
             # set ids with shutter timings and values properly
             while _j < len(_open_timings):
+              print "!!!!!!!!!! OPEN USER", _user.id, "TIMING", _open_timings[_j]
               self.radio_master_hid.set_timer_value(_user.id, _j, _open_timings[_j])
-              self.radio_master_hid.set_shutter_value(_user_id, _j, int(_open_values[_j], 16))
+              print "!!!!!!!!!! OPEN USER", _user.id, "ORIGINAL", _open_values[_j], "VALUE", int(str(_open_values[_j]), 16)
+              self.radio_master_hid.set_shutter_value(_user.id, _j, int(str(_open_values[_j]), 16))
               _j += 1
 
             while _j < 2 * len(_open_timings):
+               print "!!!!!!!!!! CLOSE USER", _user.id, "TIMING", _close_timings[_j - len(_open_timings)]
                self.radio_master_hid.set_timer_value(_user.id, _j, _close_timings[_j - len(_open_timings)])
-               self.radio_master_hid.set_shutter_value(_user.id, _j, _close_values[_j - len(_open_timings)])
+               print "!!!!!!!!!! CLOSE USER", _user.id, "VALUE", int(str(_close_values[_j - len(_open_timings)]), 16)
+               self.radio_master_hid.set_shutter_value(_user.id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                _j += 1
 
             # assign user to slot instances

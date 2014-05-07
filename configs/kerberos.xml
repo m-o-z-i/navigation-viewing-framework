@@ -59,7 +59,7 @@
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>False</vip>
 
     <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
@@ -74,7 +74,7 @@
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>False</vip>
 
     <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
 
@@ -84,12 +84,11 @@
 
   </user>
 
-
   <!-- Third User -->
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>False</vip>
 
     <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
 
@@ -99,12 +98,11 @@
 
   </user>
 
-
-  <!-- Forth User -->
+  <!-- Fourth User -->
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>False</vip>
 
     <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
 

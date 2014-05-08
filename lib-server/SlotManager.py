@@ -31,9 +31,36 @@ class SlotManager:
     ## @var radio_master_hid
     # Instance of RadioMasterHID to handle shutter glass configurations.
     self.radio_master_hid = RadioMasterHID.RadioMaster()
+    print self.radio_master_hid.openHID()
+    print "Ext clock:", self.radio_master_hid.get_master_clock(), "Transmit:", self.radio_master_hid.get_master_transmit()
+    print self.radio_master_hid.load_config("/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
+    print self.radio_master_hid.send_shutter_config()
+
     self.radio_master_hid.set_master_transmit(1)
     self.radio_master_hid.set_master_timing(16600,16500)
     self.radio_master_hid.send_master_config() 
+
+    self.print_uploaded_shutter_config()
+
+  ##
+  #
+  def print_uploaded_shutter_config(self):
+
+    print ""
+    print "==========================================="
+    print "Currently uploaded shutter configuration"
+    print "==========================================="
+    print ""
+    print "Ext clock:", self.radio_master_hid.get_master_clock(), "Transmit:", self.radio_master_hid.get_master_transmit()
+    print "Timings:", self.radio_master_hid.get_master_period(), self.radio_master_hid.get_master_offset()
+
+    ids = list(self.radio_master_hid.get_ids())
+    for _id in ids:
+      print id, self.radio_master_hid.get_description(_id), hex(self.radio_master_hid.get_init_value(_id)), ":"
+      ec = self.radio_master_hid.get_event_count(_id)
+      for e in range(ec):
+        print self.radio_master_hid.get_timer_value(_id, e), hex(self.radio_master_hid.get_shutter_value(_id, e))
+      print " "
 
 
   ## Tells the SlotManager that a new Slot instance is to be handled for a certain Display instance.
@@ -51,7 +78,7 @@ class SlotManager:
   ## Updates the shutter timings and scenegraph slot connections according to the
   # vip / active status, display and platform of users.
   def update_slot_configuration(self):
-    
+
     # loop over all displays to be handled
     for _display in self.slots:
 
@@ -159,16 +186,16 @@ class SlotManager:
 
             # set ids with shutter timings and values properly
             while _j < len(_open_timings):
-              print "!!!!!!!!!! OPEN USER", _user.glasses_id, "TIMING", _open_timings[_j]
+              print "! SET_TIMER_VALUE  ", _user.glasses_id, _j, _open_timings[_j]
               self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
-              print "!!!!!!!!!! OPEN USER", _user.glasses_id, "ORIGINAL", _open_values[_j], "VALUE", int(str(_open_values[_j]), 16)
+              print "! SET_SHUTTER_VALUE", _user.glasses_id, _j, _open_values[_j]
               self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
               _j += 1
 
             while _j < 2 * len(_open_timings):
-               print "!!!!!!!!!! CLOSE USER", _user.glasses_id, "TIMING", _close_timings[_j - len(_open_timings)]
+               print "! SET_TIMER_VALUE  ", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
-               print "!!!!!!!!!! CLOSE USER", _user.glasses_id, "ORIGINAL", _close_values[_j - len(_open_timings)], "VALUE", int(str(_close_values[_j - len(_open_timings)]), 16)
+               print "! SET_SHUTTER_VALUE", _user.glasses_id, _j, _close_values[_j - len(_open_timings)]
                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                _j += 1
 
@@ -192,5 +219,7 @@ class SlotManager:
           # no slots assigned to user - open shutters
           break
 
-      self.radio_master_hid.send_shutter_config()
-      print "Shutter configuration successfully sent"
+      return
+
+      print self.radio_master_hid.send_shutter_config()
+      self.print_uploaded_shutter_config()

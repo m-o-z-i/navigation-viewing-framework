@@ -31,17 +31,36 @@ class SlotManager:
     # Dictionary to map Display instances to a list of associated Slot instances.
     self.slots = dict()
 
+    ## @var initial_shutter_configuration
+    # Path to the initial shutter XML configuration file to be loaded.
+    self.initial_shutter_configuration = "/opt/shutterConfig/DLP_1vip456_2tv3tv.xml"
+
     ## @var radio_master_hid
     # Instance of RadioMasterHID to handle shutter glass configurations.
     self.radio_master_hid = RadioMasterHID.RadioMaster()
 
     print_headline("Initializing RadioMasterHID")
 
-    print self.radio_master_hid.openHID()
-    print "Ext clock:", self.radio_master_hid.get_master_clock(), "Transmit:", self.radio_master_hid.get_master_transmit()
-    print self.radio_master_hid.load_config("/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
-    print self.radio_master_hid.send_shutter_config()
+    # Open HID shutter communication device
+    _open_hid_output = self.radio_master_hid.openHID()
 
+    if _open_hid_output.startswith("error"):
+      print_error("openHID() - " + _open_hid_output, False)
+    else:
+      print_message("openHID() - " + _open_hid_output)
+
+    # load initial shutter configuration
+    _load_config_output = self.radio_master_hid.load_config(self.initial_shutter_configuration)
+
+    if _load_config_output != 0:
+      print_error("load_config() - Error loading shutter configuration " + self.initial_shutter_configuration, False)
+    else:
+      print_message("load_config() - Successfully loaded shutter configuration" + self.initial_shutter_configuration)
+
+    # send initial shutter configuration
+    self.send_shutter_config()
+
+    # set and send master configuration settings
     self.radio_master_hid.set_master_transmit(1)
     self.radio_master_hid.set_master_clock(1) # 0 = use internal sync signal; 1 = use external sync signal
     self.radio_master_hid.set_master_timing(16600,16500)
@@ -49,8 +68,16 @@ class SlotManager:
 
     self.print_uploaded_shutter_config()
 
-  ##
-  #
+  ## Tells the RadioMasterHID to send the shutter configuration. Formats feedback nicely.
+  def send_shutter_config(self):
+    _send_output = self.radio_master_hid.send_shutter_config()
+
+    if _send_output.startswith("error"):
+      print_error("send_shutter_config() - " + _send_output, False)
+    else:
+      print_message("send_shutter_config() - " + _send_output)
+
+  ## Prints the currently uploaded shutter configuration including timings and values.
   def print_uploaded_shutter_config(self):
 
     print_headline("Currently uploaded shutter configuration")
@@ -60,7 +87,7 @@ class SlotManager:
 
     ids = list(self.radio_master_hid.get_ids())
     for _id in ids:
-      print "Shutter", _id, self.radio_master_hid.get_description(_id), hex(self.radio_master_hid.get_init_value(_id)), ":"
+      print_subheadline("Shutter " + str(_id) + " " + str(self.radio_master_hid.get_description(_id)) + " " + str(hex(self.radio_master_hid.get_init_value(_id)) + ":"))
       ec = self.radio_master_hid.get_event_count(_id)
       for e in range(ec):
         print self.radio_master_hid.get_timer_value(_id, e), hex(self.radio_master_hid.get_shutter_value(_id, e))
@@ -228,5 +255,5 @@ class SlotManager:
 
       return
 
-      print self.radio_master_hid.send_shutter_config()
+      self.send_shutter_config()
       self.print_uploaded_shutter_config()

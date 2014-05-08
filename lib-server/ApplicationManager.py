@@ -207,7 +207,7 @@ class ApplicationManager():
     # check if all display instances were found
     for _i in range(len(_displays_found)):
       if _displays_found[_i] == False:
-        print_error("No matching display instance found for " + DISPLAYS[_i])
+        print_error("No matching display instance found for " + DISPLAYS[_i], True)
 
 
     # create the navigation instance

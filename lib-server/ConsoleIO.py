@@ -20,13 +20,16 @@ def print_warning(MESSAGE):
   print color_warning + "[" + _calling_filename + ".py] " + MESSAGE + color_reset
   print ""
 
-## Prints a colored error message on the console and ends the application.
+## Prints a colored error message on the console and ends the application optionally.
 # @param MESSAGE The message to be printed.
-def print_error(MESSAGE):
+# @param TERMINATE Boolean saying if the application is to be terminated.
+def print_error(MESSAGE, TERMINATE):
   _calling_filename = get_calling_filename()
   print color_error + "[" + _calling_filename + ".py] " + MESSAGE + color_reset
   print ""
-  raise IOError(MESSAGE)
+  
+  if TERMINATE:
+    raise IOError(MESSAGE)
 
 
 ## Prints a colored information message on the console.

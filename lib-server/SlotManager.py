@@ -8,6 +8,9 @@ import avango
 import avango.gua
 import RadioMasterHID
 
+# import framework libraries
+from ConsoleIO   import *
+
 # import python libraries
 from copy import copy
 
@@ -31,12 +34,16 @@ class SlotManager:
     ## @var radio_master_hid
     # Instance of RadioMasterHID to handle shutter glass configurations.
     self.radio_master_hid = RadioMasterHID.RadioMaster()
+
+    print_headline("Initializing RadioMasterHID")
+
     print self.radio_master_hid.openHID()
     print "Ext clock:", self.radio_master_hid.get_master_clock(), "Transmit:", self.radio_master_hid.get_master_transmit()
     print self.radio_master_hid.load_config("/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
     print self.radio_master_hid.send_shutter_config()
 
     self.radio_master_hid.set_master_transmit(1)
+    self.radio_master_hid.set_master_clock(1) # 0 = use internal sync signal; 1 = use external sync signal
     self.radio_master_hid.set_master_timing(16600,16500)
     self.radio_master_hid.send_master_config() 
 
@@ -46,17 +53,14 @@ class SlotManager:
   #
   def print_uploaded_shutter_config(self):
 
-    print ""
-    print "==========================================="
-    print "Currently uploaded shutter configuration"
-    print "==========================================="
-    print ""
+    print_headline("Currently uploaded shutter configuration")
+
     print "Ext clock:", self.radio_master_hid.get_master_clock(), "Transmit:", self.radio_master_hid.get_master_transmit()
-    print "Timings:", self.radio_master_hid.get_master_period(), self.radio_master_hid.get_master_offset()
+    print "Timings:", self.radio_master_hid.get_master_period(), self.radio_master_hid.get_master_offset(), "\n"
 
     ids = list(self.radio_master_hid.get_ids())
     for _id in ids:
-      print id, self.radio_master_hid.get_description(_id), hex(self.radio_master_hid.get_init_value(_id)), ":"
+      print "Shutter", _id, self.radio_master_hid.get_description(_id), hex(self.radio_master_hid.get_init_value(_id)), ":"
       ec = self.radio_master_hid.get_event_count(_id)
       for e in range(ec):
         print self.radio_master_hid.get_timer_value(_id, e), hex(self.radio_master_hid.get_shutter_value(_id, e))
@@ -155,7 +159,10 @@ class SlotManager:
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 
       # update shutter values according to slots assigned
-      print "?????????", _concatenated_user_list
+      print_headline("User - Slot Assignment")
+
+      for _state in _concatenated_user_list:
+        print "User", _state[0].id, "was assigned", _state[1], "slots."
 
       _i = 0
       for _state in _concatenated_user_list:

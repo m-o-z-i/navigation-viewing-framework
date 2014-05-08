@@ -82,9 +82,10 @@ class User(avango.script.Script):
 
     ##
     #
-    if self.headtracking_target_name.startswith("tracking-dlp-glasses-"):
-      self.glasses_id = int(self.headtracking_target_name.replace("tracking-dlp-glasses-", ""))
-      print "USER", self.id, "WEARS GLASSES", self.glasses_id
+    if self.headtracking_target_name != None:
+      if self.headtracking_target_name.startswith("tracking-dlp-glasses-"):
+        self.glasses_id = int(self.headtracking_target_name.replace("tracking-dlp-glasses-", ""))
+        print "USER", self.id, "WEARS GLASSES", self.glasses_id
 
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.

@@ -7,6 +7,9 @@
 import avango
 import avango.gua
 
+# import framework libraries
+from ConsoleIO   import *
+
 ## Class associated to a ApplicationManager instance in order to parse and load XML configuration files for the setup.
 #
 # Gets a reference to ApplicationManager and calls the create_navigation and create_standard_user functions
@@ -38,9 +41,8 @@ class ConfigFileParser:
   ## Parses a XML configuration file, saves settings and creates navigations and users.
   # @param FILENAME The path of the configuration file to be read in.
   def parse(self, FILENAME):
-    print "\n=============================================================================="
-    print "Loading configuration file", FILENAME
-    print "==============================================================================\n"
+    
+    print_headline("Loading configuration file " + FILENAME)
 
     _in_comment = False
     _in_global = False
@@ -329,8 +331,7 @@ class ConfigFileParser:
                                                    FILENAME,
                                                    _device_attributes[2])
 
-        print "Navigation loaded and created:"
-        print "------------------------------"
+        print_subheadline("Navigation loaded and created")
         print _device_attributes
         print "Platform size: ", _platform_size, "\n"
        
@@ -396,8 +397,7 @@ class ConfigFileParser:
 
         self.APPLICATION_MANAGER.create_standard_user(_user_attributes[3], _user_attributes[1], _user_attributes[0], _user_attributes[2])
 
-        print "\nUser loaded and created:"
-        print "-------------------------"
+        print_subheadline("User loaded and created")
         print _user_attributes, "\n"
 
         _user_attributes = [None, None, False, False]
@@ -407,15 +407,12 @@ class ConfigFileParser:
       # go to next line in file
       _current_line = self.get_next_line_in_file(_config_file)
 
-    print "Global settings loaded:"
-    print "------------------------"
+    print_subheadline("Global settings loaded")
     print "Ground Following settings:", self.ground_following_settings
     print "Coupling of Navigations animated:", self.enable_coupling_animation
     print "Movement traces animated:", self.enable_movementtraces, "\n"
 
-    print "\n=============================================================================="
-    print "Configuration file", FILENAME, "successfully loaded."
-    print "=============================================================================="
+    print_message("Configuration file " + FILENAME + " successfully loaded.")
 
   ## Gets the next line in the file. Thereby, empty lines are skipped.
   # @param FILE The opened file to get the line from.

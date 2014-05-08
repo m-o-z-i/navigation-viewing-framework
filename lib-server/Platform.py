@@ -13,6 +13,7 @@ from   avango.script import field_has_changed
 # import framework libraries
 from SlotManager import *
 from Slot        import *
+from ConsoleIO   import *
 
 # import python libraries
 import subprocess
@@ -48,7 +49,7 @@ class Platform(avango.script.Script):
 
     ## @var start_clients
     # Debug flag saying if client processes should be started.
-    self.start_clients = True
+    self.start_clients = False
 
     ## @var start_time
     # Time when a decoupling notifier was displayed.
@@ -202,6 +203,8 @@ class Platform(avango.script.Script):
             "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
             _display.name + " " + str(self.displays.index(_display))]
           , stderr=subprocess.PIPE)
+      else:
+        print_warning("Start of clients disabled for debugging reasons.")
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)

@@ -306,13 +306,13 @@ class ConfigFileParser:
        
         # error handling
         if _device_attributes[0] == None:
-          raise IOError("No device type specified for navigation.")
+          print_error("No device type specified for navigation.")
         elif (_device_attributes[0] != "KeyboardMouse") and \
              (_device_attributes[0] != "Spacemouse") and \
              (_device_attributes[0] != "XBoxController") and \
              (_device_attributes[0] != "OldSpheron") and \
              (_device_attributes[0] != "NewSpheron"):
-          raise IOError("Unknown device type: " + _device_attributes[0])
+          print_error("Unknown device type: " + _device_attributes[0])
 
         _starting_matrix = avango.gua.make_trans_mat(_device_attributes[3], _device_attributes[4], _device_attributes[5]) * \
                            avango.gua.make_rot_mat(_device_attributes[6], 0, 1, 0)
@@ -392,8 +392,7 @@ class ConfigFileParser:
 
         # error handling
         if _user_attributes[1] >= _navs_created:
-          raise IOError("Navigation number to append to is too large.")
-
+          print_error("User parsing: Navigation number to append to is too large.")
 
         self.APPLICATION_MANAGER.create_standard_user(_user_attributes[3], _user_attributes[1], _user_attributes[0], _user_attributes[2])
 

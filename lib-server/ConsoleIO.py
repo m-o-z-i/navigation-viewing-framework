@@ -6,6 +6,7 @@
 # import python libraries
 import inspect
 
+# color definitions
 color_reset = '\033[0m'
 color_warning = '\033[1;93m'
 color_error = '\033[1;91m'
@@ -19,12 +20,14 @@ def print_warning(MESSAGE):
   print color_warning + "[" + _calling_filename + ".py] " + MESSAGE + color_reset
   print ""
 
-## Prints a colored error message on the console.
+## Prints a colored error message on the console and ends the application.
 # @param MESSAGE The message to be printed.
 def print_error(MESSAGE):
   _calling_filename = get_calling_filename()
   print color_error + "[" + _calling_filename + ".py] " + MESSAGE + color_reset
   print ""
+  raise IOError(MESSAGE)
+
 
 ## Prints a colored information message on the console.
 # @param MESSAGE The message to be printed.

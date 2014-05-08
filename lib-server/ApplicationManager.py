@@ -16,6 +16,7 @@ from   User             import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
 from   SlotManager      import *
+from   ConsoleIO        import *
 from   display_config   import displays
 import Tools
 
@@ -190,11 +191,24 @@ class ApplicationManager():
     
     # convert list of parsed display strings to the corresponding instances
     _display_instances = []
+    _displays_found = list(DISPLAYS)
 
-    for _display_string in DISPLAYS:
+    # create bool list if displays were found
+    for _i in range(len(_displays_found)):
+      _displays_found[_i] = False
+
+    # search for display instances
+    for _i in range(len(DISPLAYS)):
       for _display_instance in displays:
-        if _display_instance.name == _display_string:
+        if _display_instance.name == DISPLAYS[_i]:
           _display_instances.append(_display_instance)
+          _displays_found[_i] = True
+    
+    # check if all display instances were found
+    for _i in range(len(_displays_found)):
+      if _displays_found[_i] == False:
+        print_error("No matching display instance found for " + DISPLAYS[_i])
+
 
     # create the navigation instance
     _navigation = Navigation()

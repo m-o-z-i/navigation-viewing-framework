@@ -204,7 +204,7 @@ class Platform(avango.script.Script):
             _display.name + " " + str(self.displays.index(_display))]
           , stderr=subprocess.PIPE)
       else:
-        print_warning("Start of clients disabled for debugging reasons.")
+        print_warning("Start of client on " + _display.hostname + " disabled for debugging reasons.")
 
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)

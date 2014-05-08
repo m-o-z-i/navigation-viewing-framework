@@ -253,7 +253,5 @@ class SlotManager:
           # no slots assigned to user - open shutters
           break
 
-      return
-
       self.send_shutter_config()
-      self.print_uploaded_shutter_config()
+      #self.print_uploaded_shutter_config()

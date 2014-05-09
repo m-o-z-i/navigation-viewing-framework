@@ -80,12 +80,12 @@ class User(avango.script.Script):
     # Name of the headtracking station as registered in daemon.
     self.headtracking_target_name = HEADTRACKING_TARGET_NAME
 
-    ##
-    #
+    ## @var glasses_id
+    # ID of the shutter glasses worn by the user. Used for frequency updates.
     if self.headtracking_target_name != None:
       if self.headtracking_target_name.startswith("tracking-dlp-glasses-"):
         self.glasses_id = int(self.headtracking_target_name.replace("tracking-dlp-glasses-", ""))
-        print "USER", self.id, "WEARS GLASSES", self.glasses_id
+        print "User", self.id, "wears glasses", self.glasses_id
 
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.

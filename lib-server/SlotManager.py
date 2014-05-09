@@ -13,6 +13,7 @@ from ConsoleIO   import *
 
 # import python libraries
 from copy import copy
+import atexit
 
 
 ## Class to handle shutter configurations and timings. Associates the users per display to
@@ -31,10 +32,6 @@ class SlotManager:
     # Dictionary to map Display instances to a list of associated Slot instances.
     self.slots = dict()
 
-    ## @var initial_shutter_configuration
-    # Path to the initial shutter XML configuration file to be loaded.
-    self.initial_shutter_configuration = "/opt/shutterConfig/DLP_1vip456_2tv3tv.xml"
-
     ## @var radio_master_hid
     # Instance of RadioMasterHID to handle shutter glass configurations.
     self.radio_master_hid = RadioMasterHID.RadioMaster()
@@ -49,13 +46,20 @@ class SlotManager:
     else:
       print_message("openHID() - " + _open_hid_output)
 
+    # reset to default shutter configuration and register reset function on close
+    self.reset_shutter_config("/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
+    atexit.register(self.reset_shutter_config, INITIAL_CONFIGURATION = "/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
+
+  ## Loads an XML shutter configuration and uploads it.
+  def reset_shutter_config(self, INITIAL_CONFIGURATION):
+
     # load initial shutter configuration
-    _load_config_output = self.radio_master_hid.load_config(self.initial_shutter_configuration)
+    _load_config_output = self.radio_master_hid.load_config(INITIAL_CONFIGURATION)
 
     if _load_config_output != 0:
-      print_error("load_config() - Error loading shutter configuration " + self.initial_shutter_configuration, False)
+      print_error("load_config() - Failed to load shutter configuration " + INITIAL_CONFIGURATION, False)
     else:
-      print_message("load_config() - Successfully loaded shutter configuration" + self.initial_shutter_configuration)
+      print_message("load_config() - Loaded shutter configuration " + INITIAL_CONFIGURATION)
 
     # send initial shutter configuration
     self.send_shutter_config()
@@ -66,7 +70,7 @@ class SlotManager:
     self.radio_master_hid.set_master_timing(16600,16500)
     self.radio_master_hid.send_master_config() 
 
-    self.print_uploaded_shutter_config()
+    #self.print_uploaded_shutter_config()
 
   ## Tells the RadioMasterHID to send the shutter configuration. Formats feedback nicely.
   def send_shutter_config(self):
@@ -109,7 +113,7 @@ class SlotManager:
   ## Updates the shutter timings and scenegraph slot connections according to the
   # vip / active status, display and platform of users.
   def update_slot_configuration(self):
-
+    
     # loop over all displays to be handled
     for _display in self.slots:
 
@@ -248,6 +252,8 @@ class SlotManager:
         else:
           # no slots assigned to user - open shutters
           break
-
+ 
+      print_warning("Debug: Returning too early")
+      return
       self.send_shutter_config()
       self.print_uploaded_shutter_config()

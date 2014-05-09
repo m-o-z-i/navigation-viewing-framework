@@ -115,6 +115,13 @@ class SlotManager:
   ## Updates the shutter timings and scenegraph slot connections according to the
   # vip / active status, display and platform of users.
   def update_slot_configuration(self):
+ 
+    # List to save for which glasses a configuration was set
+    _glasses_updated = []
+    for _i in range(total_number_of_shutter_glasses):
+      _glasses_updated.append(False)
+      self.radio_master_hid.set_shutter_const(_i + 1, int("22", 16), 1)  # activate all shutter glasses
+
     
     # loop over all displays to be handled
     for _display in self.slots:
@@ -226,6 +233,8 @@ class SlotManager:
 
             if _user.glasses_id > total_number_of_shutter_glasses:
               print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)
+            else:
+              _glasses_updated[_user.glasses_id - 1] = True
 
             # set ids with shutter timings and values properly
             while _j < len(_open_timings):
@@ -244,7 +253,7 @@ class SlotManager:
 
             _i += 1
           else:
-            # mono display - open shutters
+            # mono display
             _start_i = copy(_i)
             _i += (_number_of_slots - 1)
             _end_i = copy(_i)
@@ -254,9 +263,12 @@ class SlotManager:
               _slot_instances[_k].assign_user(_user)
 
             _i += 1
-        else:
-          # no slots assigned to user - open shutters
-          break
  
+      # open glasses for which no timings were assigned
+      for _i in range(total_number_of_shutter_glasses):
+        if _glasses_updated[_i] == False:
+          print_warning("Opening shutter glasses " + str(_i + 1))
+          self.radio_master_hid.set_shutter_const(_i + 1, int("88", 16), 1)
+
       self.send_shutter_config()
       self.print_uploaded_shutter_config()

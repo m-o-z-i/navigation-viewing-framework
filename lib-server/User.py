@@ -115,12 +115,13 @@ class User(avango.script.Script):
   def evaluate(self):
     # Set active flag, current platform and current display
     # call slot manager.
-    if self.id == 0 and self.toggle:
-      print self.timer.Time.value
-      if self.timer.Time.value > 20 and self.toggle:
-        self.toggle_user_activity(False, True)
-        print_warning("User 0 was toggled inactive.")
-        self.toggle = False
+    pass
+    #if self.id == 0 and self.toggle:
+    #  print self.timer.Time.value
+    #  if self.timer.Time.value > 20 and self.toggle:
+    #    self.toggle_user_activity(False, True)
+    #    print_warning("User 0 was toggled inactive.")
+    #    self.toggle = False
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

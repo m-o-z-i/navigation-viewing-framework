@@ -217,6 +217,41 @@ def init_new_spheron():
   else:
     print "Dual Spheron NOT found !"
 
+  
+
+
+## Initalizes a mouse for navigation.
+def init_mouse():
+
+  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"Logitech USB Optical Mouse\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+  
+  _string = _string.split()
+
+  if len(_string) > 0:
+    
+    _string1 = _string[0]
+
+    # create a station to propagate the input events
+    mouse = avango.daemon.HIDInput()
+    mouse.station = avango.daemon.Station('device-mouse')
+    mouse.device = _string1
+    mouse.timeout = '30'
+
+    mouse.values[0] = "EV_REL::REL_X"
+    mouse.values[1] = "EV_REL::REL_Y"
+
+    mouse.buttons[0] = "EV_KEY::BTN_LEFT"
+    mouse.buttons[1] = "EV_KEY::BTN_MIDDLE"
+    mouse.buttons[2] = "EV_KEY::BTN_RIGHT"
+
+    device_list.append(mouse)
+
+    print "Mouse started at:", _string1
+
+  else:
+    print "Mouse NOT found !"
+
+'''
 ## Initalizes a mouse for navigation.
 def init_mouse():
 
@@ -245,6 +280,8 @@ def init_mouse():
 
   else:
     print "Mouse NOT found !"
+'''
+
 
 ## Initializes a keyboard for navigation.
 def init_keyboard():
@@ -336,6 +373,9 @@ def xbox_controller(PLAYER_NUMBER):
 
     _xbox.buttons[4] = "EV_KEY::BTN_START"    # Start button
     _xbox.buttons[5] = "EV_KEY::BTN_SELECT"   # Select button
+
+    _xbox.buttons[6] = "EV_KEY::BTN_TL"
+    _xbox.buttons[7] = "EV_KEY::BTN_TR"
 
     device_list.append(_xbox)
     

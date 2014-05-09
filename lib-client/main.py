@@ -87,6 +87,7 @@ def start():
 
   # Create a view for each displaystring (= slot)
   _string_num = 0
+  views = []
 
   for _displaystring in handled_display_instance.displaystrings:
     _view = View()
@@ -97,6 +98,7 @@ def start():
                          handled_display_instance, 
                          screen_num, 
                          stereo)
+    views.append(_view)
     _string_num += 1
 
   viewer.SceneGraphs.value = [graph]

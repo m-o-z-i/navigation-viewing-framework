@@ -103,7 +103,7 @@ class ApplicationManager():
     ## @var server_transform
     # Transform node representing the position and orientation of the server control monitor.
     self.server_transform = avango.gua.nodes.TransformNode(Name = "server_transform")
-    self.server_transform.Transform.value = avango.gua.make_trans_mat(0, 15, 6) * \
+    self.server_transform.Transform.value = avango.gua.make_trans_mat(0, 20, 6) * \
                                             avango.gua.make_rot_mat(-90, 1, 0, 0)
     self.NET_TRANS_NODE.Children.value.append(self.server_transform)
 

@@ -167,13 +167,8 @@ displays = [
     LargePowerwall()
   , Display(hostname = "atalante"
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
-      #, transformation = avango.gua.make_trans_mat(0.645, 1.2, 0.0)
   )
   , Display(hostname = "daedalos"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
-      #, transformation = avango.gua.make_trans_mat(0.645, 1.2, 0.0)
-  )
-  , Display(hostname = "nestor"
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
 ]

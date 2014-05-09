@@ -30,7 +30,7 @@ class Display:
               , shutter_timings = []
               , shutter_values = []
               , size = (0.595, 0.335)
-              , transformation = avango.gua.make_trans_mat(0.0, 1.5, 0.0)
+              , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
               , stereomode = "ANAGLYPH_RED_CYAN"
               ):
 

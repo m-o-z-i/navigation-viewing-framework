@@ -29,6 +29,11 @@ import random
 
 class Navigation(avango.script.Script):
 
+  # input fields
+  sf_reset_trigger = avango.SFBool()
+  sf_coupling_trigger = avango.SFBool()
+  sf_dof_trigger = avango.SFBool()  
+
   # static class variables
   ## @var trace_materials
   # List of material pretexts to choose from when a trace is created. All avatars on this
@@ -153,6 +158,12 @@ class Navigation(avango.script.Script):
     elif self.input_sensor_type == "Spacemouse":
       self.device = SpacemouseDevice()
       self.device.my_constructor(INPUT_SENSOR_NAME, NO_TRACKING_MAT)
+
+
+    # init field connections
+    self.sf_reset_trigger.connect_from(self.device.sf_reset_trigger)
+    self.sf_coupling_trigger.connect_from(self.device.sf_coupling_trigger)
+    self.sf_dof_trigger.connect_from(self.device.sf_dof_trigger)
     
     # create ground following
     ## @var groundfollowing
@@ -166,6 +177,7 @@ class Navigation(avango.script.Script):
     self.inputmapping = InputMapping()
     self.inputmapping.my_constructor(self, self.device, self.groundfollowing, STARTING_MATRIX)
     self.inputmapping.set_input_factors(self.device.translation_factor, self.device.rotation_factor)
+    #self.inputmapping.set_input_factors(0.5,0.75)
 
     # activate correct input mapping mode according to configuration file
     if GF_SETTINGS[0]:
@@ -201,14 +213,6 @@ class Navigation(avango.script.Script):
     # Boolean variable to indicate if a movement animation for a DOF change (realistic/unrealistic) is in progress.
     self.in_dofchange_animation = False
 
-    ## @var frames_since_last_dofchange
-    # Framecount to make realistic/unrealistic switch on one button. Switching again is possible after x frames.
-    self.frames_since_last_dofchange = 0
-
-    ## @var frames_since_last_coupling
-    # Framecount since the last coupling / decoupling operation was done. Used to make functionality on one button.
-    self.frames_since_last_coupling = 0
-
     ## @var in_coupling_animation
     # Boolean variable to indicate if a movement animation for coupling is in progress.
     self.in_coupling_animation = False
@@ -237,7 +241,7 @@ class Navigation(avango.script.Script):
       # create trace and add 'Shadeless' to material string to have a nicer line apperance
       ## @var trace
       # Instance of Trace class to handle trace drawing of this navigation's movements.
-      self.trace = TraceLines.Trace(self.NET_TRANS_NODE, self.platform.platform_id, 200, 20.0, STARTING_MATRIX, self.trace_material + 'Shadeless')  
+      self.trace = TraceLines.Trace(self.NET_TRANS_NODE, self.platform.platform_id, 500, 20.0, STARTING_MATRIX, self.trace_material + 'Shadeless')    
 
     # evaluate every frame
     self.always_evaluate(True)
@@ -245,6 +249,7 @@ class Navigation(avango.script.Script):
   ## Resets the platform's matrix to the initial value.
   def reset(self):
     self.inputmapping.set_abs_mat(self.start_matrix)
+    self.inputmapping.set_scale(1.0)
     self.trace.clear(self.start_matrix)
 
   ## Activates 3-DOF (realistic) navigation mode.
@@ -295,7 +300,6 @@ class Navigation(avango.script.Script):
       _slerp_ratio = 1
       self.in_dofchange_animation = False
       self.inputmapping.activate_realistic_mode()
-      self.frames_since_last_dofchange = 0
 
     # compute slerp position and set it on the player's inputmapping
     _transformed_quat = self.start_rot.slerp_to(self.target_rot, _slerp_ratio)
@@ -308,7 +312,6 @@ class Navigation(avango.script.Script):
   ## Activates 6-DOF (unrealistic) navigation mode.
   def deactivate_realistic_mode(self):
     self.inputmapping.deactivate_realistic_mode()
-    self.frames_since_last_dofchange = 0
 
   ## Bidirectional coupling of this and another navigation.
   # @param NAVIGATION The Navigation to be coupled.
@@ -346,8 +349,6 @@ class Navigation(avango.script.Script):
   ## Triggers the coupling mechanism.
   # When other platforms are close enough, they are coupled to each other.
   def trigger_coupling(self):
-
-    self.frames_since_last_coupling = 0
     
     # list containing the navigataions close enough to couple
     _close_navs = []
@@ -412,7 +413,7 @@ class Navigation(avango.script.Script):
 
     else:
       print "No platform in range for coupling."
-      self.frames_since_last_coupling = 0
+
   
   ## Sets all the necessary attributes to perform a lerp and slerp animation to another navigation.
   # @param TARGET_NAVIGATION The Navigation instance to animate to.
@@ -473,7 +474,6 @@ class Navigation(avango.script.Script):
     if _animation_ratio > 1:
       _animation_ratio = 1
       self.in_coupling_animation = False
-      self.frames_since_last_coupling = 0
 
       # clear blockings when all coupling animations are done
       _clear_blockings = True
@@ -522,7 +522,6 @@ class Navigation(avango.script.Script):
         self.platform.remove_from_coupling_display(_nav, False)
 
       self.coupled_navigations = []
-      self.frames_since_last_coupling = 0
 
   ## Switches from realistic to unrealistic or from unrealistic to realistic mode on this
   # and all other coupled instances.
@@ -530,12 +529,14 @@ class Navigation(avango.script.Script):
 
     # if in realistic mode, switch to unrealistic mode
     if self.inputmapping.realistic == True:
+      #print "GF off"
       self.deactivate_realistic_mode()
       for _navigation in self.coupled_navigations:
         _navigation.deactivate_realistic_mode()
     
     # if in unrealistic mode, switch to realistic mode
     else:
+      #print "GF on"
       self.activate_realistic_mode()
       for _navigation in self.coupled_navigations:
         _navigation.activate_realistic_mode()
@@ -549,41 +550,11 @@ class Navigation(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
-    # increase frame counters
-    self.frames_since_last_dofchange = self.frames_since_last_dofchange + 1
-    self.frames_since_last_coupling = self.frames_since_last_coupling + 1
-
     # handle visibilities
     if self.ANIMATE_COUPLING:
       self.platform.platform_transform_node.GroupNames.value = []
       for _nav in self.coupled_navigations:
         self.platform.platform_transform_node.GroupNames.value.append("couple_group_" + str(_nav.platform.platform_id))
-
-    # handle button inputs #
-
-    
-    # Button 0 resets platform
-    if self.device.mf_buttons.value[0] == True:
-      self.reset()
-      for _navigation in self.coupled_navigations:
-          _navigation.reset()
-
-    # Button 1 triggers switch between realistic (3 DOF) and unrealistic (6 DOF) mode
-    if self.device.mf_buttons.value[1] == True:
-      # at least 25 frames must lie between two dofchanges
-      if self.frames_since_last_dofchange > 25 and self.in_dofchange_animation == False:
-         self.trigger_dofchange()
-
-    # Button 2 triggers coupling
-    if self.device.mf_buttons.value[2] == True:
-      # at least 25 frames must lie between two coupling actions to prevent double button pressing
-      if self.frames_since_last_coupling > 25 and self.in_coupling_animation == False: 
-        if len(self.coupled_navigations) == 0:
-          self.trigger_coupling()
-        else:
-          self.clear_couplings()
-           
-    
 
     # handle dofchange animation
     if self.in_dofchange_animation:
@@ -597,3 +568,39 @@ class Navigation(avango.script.Script):
     if self.movement_traces:
       _mat = self.get_current_world_pos()
       self.trace.update(_mat)
+
+
+  ## Evaluated when value changes.
+  @field_has_changed(sf_reset_trigger)
+  def sf_reset_trigger_changed(self):
+  
+    if self.sf_reset_trigger.value == True: # button pressed
+      #print "RESET"
+      self.reset()
+      for _navigation in self.coupled_navigations:
+          _navigation.reset()
+
+
+  ## Evaluated when value changes.
+  @field_has_changed(sf_coupling_trigger)
+  def sf_coupling_trigger_changed(self):
+  
+    if self.sf_coupling_trigger.value == True: # button pressed
+
+      if self.in_coupling_animation == False: 
+        if len(self.coupled_navigations) == 0:
+          self.trigger_coupling()
+        else:
+          self.clear_couplings()           
+          
+
+  ## Evaluated when value changes.
+  @field_has_changed(sf_dof_trigger)
+  def sf_dof_trigger_changed(self):
+  
+    if self.sf_dof_trigger.value == True: # button pressed
+
+      if self.in_dofchange_animation == False:
+         self.trigger_dofchange()
+    
+         

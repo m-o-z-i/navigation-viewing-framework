@@ -26,28 +26,28 @@ class InputMapping(avango.script.Script):
   ## @var mf_rel_input_values
   # The relative input values of the device.
   mf_rel_input_values = avango.MFFloat()
-  #mf_rel_input_values.value = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
   ## @var sf_station_mat
   # The absolute matrix indicating where the device is placed in space.
   sf_station_mat = avango.gua.SFMatrix4()
   sf_station_mat.value = avango.gua.make_identity_mat()
 
-  # internal field
+  # internal fields
   ## @var sf_abs_uncorrected_mat
   # The absolute matrix to accumulate the relative inputs on. Will be corrected by GroundFollowing instance.
   sf_abs_uncorrected_mat = avango.gua.SFMatrix4()
   sf_abs_uncorrected_mat.value = avango.gua.make_identity_mat()
+
+  ## @var sf_scale
+  # The current scaling factor of this input mapping.
+  sf_scale = avango.SFFloat()
+  sf_scale.value = 1.0
 
   # output field
   ## @var sf_abs_mat
   # The absolute matrix after GroundFollowing correction.
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
-
-  sf_scale = avango.SFFloat()
-  sf_scale.value = 1.0
-  
 
   ## Default constructor.
   def __init__(self):
@@ -75,11 +75,21 @@ class InputMapping(avango.script.Script):
     # Factor to modify the rotation input.
     self.input_rot_factor    = 1.0
 
+    ## @var min_scale
+    # The minimum scaling factor that can be applied.
     self.min_scale = 0.01
+
+    ## @var max_scale
+    # The maximum scaling factor that can be applied.
     self.max_scale = 100.0
     
+    ## @var scale_stop_time
+    # Time at which a scaling process stopped at a fixed step.
     self.scale_stop_time = None
-    self.scale_stop_duration = 1.0 # in sec
+
+    ## @var scale_stop_duration
+    # Time how long a scaling process is stopped at a fixed step in seconds.
+    self.scale_stop_duration = 1.0
 
   ## Custom constructor.
   # @param NAVIGATION The navigation instance from which this input mapping is created.
@@ -260,8 +270,8 @@ class InputMapping(avango.script.Script):
     self.realistic = False
     self.GROUND_FOLLOWING_INSTANCE.deactivate()
 
-
-
+  ## Applies a new scaling to this input mapping.
+  # @param SCALE The new scaling factor to be applied.
   def set_scale(self, SCALE):
   
     if self.scale_stop_time == None:
@@ -305,4 +315,3 @@ class InputMapping(avango.script.Script):
 
       if (time.time() - self.scale_stop_time) > self.scale_stop_duration:
         self.scale_stop_time = None
-

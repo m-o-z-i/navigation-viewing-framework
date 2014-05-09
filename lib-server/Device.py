@@ -290,7 +290,6 @@ class SpacemouseDevice(MultiDofDevice):
 class KeyboardMouseDevice(MultiDofDevice):
 
   ## Custom constructor.
-  # @param DEVICE_STATION The name of the input device as chosen in daemon.
   # @param NO_TRACKING_MAT The matrix to be applied as a spacemouse is not tracked.
   def my_constructor(self, NO_TRACKING_MAT):
   

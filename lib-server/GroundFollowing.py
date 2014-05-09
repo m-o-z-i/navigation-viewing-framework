@@ -78,7 +78,7 @@ class GroundFollowing(avango.script.Script):
     # The starting velocity when the user is falling in meters per frame. Is increased the longer the falling process goes on.
     self.initial_fall_velocity = 0.05
 
-    ## @var climb_factor
+    ## @var height_modification_factor
     # Scaling factor used for the modification of up and down vectors.
     self.height_modification_factor = 0.1
 

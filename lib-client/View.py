@@ -56,7 +56,9 @@ class View(avango.script.Script):
     self.ONLY_TRANSLATION_UPDATE = False
 
     # retrieve the needed values from display
-    self.display_values = DISPLAY_INSTANCE.register_view()
+    ## @var display_values
+    # Values that are retrieved from the display. Vary for each view on this display.
+    self.display_values = DISPLAY_INSTANCE.register_user()
 
     # check if no more users allowed at this screen
     if not self.display_values:
@@ -64,13 +66,19 @@ class View(avango.script.Script):
       print 'Error: no more users allowed at display "' + DISPLAY_INSTANCE.name + '"!'
       return
 
+    ## @var window_size
+    # Size of the window in which this View will be rendered.
     self.window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1]) 
 
     # create window
+    ## @var window
+    # The window in which this View will be rendered to.
     self.window = avango.gua.nodes.Window()
     self.window.Display.value = self.display_values[0] # GPU-ID
 
     # create camera
+    ## @var camera
+    # The camera from which this View will be rendered.
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = SCENEGRAPH.Name.value
 
@@ -84,6 +92,8 @@ class View(avango.script.Script):
     self.camera.RenderMask.value = _render_mask
 
     # create pipeline
+    ## @var pipeline
+    # The pipeline used to render this View.
     self.pipeline = avango.gua.nodes.Pipeline()
     self.pipeline.Enabled.value = True
 
@@ -114,7 +124,6 @@ class View(avango.script.Script):
         self.window.RightPosition.value = avango.gua.Vec2ui(0, 0)
         
         if DISPLAY_INSTANCE.stereomode == "ANAGLYPH_RED_CYAN":
-          #self.window.StereoMode.value = avango.gua.StereoMode.ANAGLYPH_RED_GREEN
           self.window.StereoMode.value = avango.gua.StereoMode.ANAGLYPH_RED_CYAN
 
         elif DISPLAY_INSTANCE.stereomode == "CHECKERBOARD":
@@ -163,9 +172,6 @@ class View(avango.script.Script):
     VIEWER.Pipelines.value.append(self.pipeline)
 
     self.always_evaluate(True)
-
-
-  ### Functions ###
   
   ## Adds a tracking reader to the view instance.
   # @param TRACKING_TARGET_NAME The target name of the tracked object as chosen in daemon.

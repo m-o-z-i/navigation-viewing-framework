@@ -22,6 +22,7 @@ class Display:
   # @param shutter_values A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring.
   # @param size Physical size of the display medium in meters.
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
+  # @param stereomode A string indicating the stereo mode that is used by this display.
   def __init__( self
               , hostname
               , name = None
@@ -75,6 +76,8 @@ class Display:
     # Number of views which are already registered with this display.
     self.num_views = 0
    
+    ## @var stereomode
+    # A string indicating the stereo mode that is used by this display.
     self.stereomode = stereomode
 
   ## Registers a new view at this display and returns the display string assigned to the new view.
@@ -96,7 +99,7 @@ class Display:
     _screen.Transform.value = self.transformation
     return _screen
 
-
+  ## Creates a visualization of the display's screen in the scene (white frame). Returns the scenegraph geometry node.
   def create_screen_visualization(self):
   
     _loader = avango.gua.nodes.GeometryLoader()
@@ -108,4 +111,3 @@ class Display:
     _node.Transform.value = self.transformation * avango.gua.make_scale_mat(_w,_h,1.0)
     
     return _node
-        

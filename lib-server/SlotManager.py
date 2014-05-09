@@ -15,6 +15,8 @@ from ConsoleIO   import *
 from copy import copy
 import atexit
 
+# @var total_number_of_shutter_glasses
+total_number_of_shutter_glasses = 6
 
 ## Class to handle shutter configurations and timings. Associates the users per display to
 # the available slots and sets the glasses correctly.
@@ -222,6 +224,9 @@ class SlotManager:
 
             _j = 0
 
+            if _user.glasses_id > total_number_of_shutter_glasses:
+              print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)
+
             # set ids with shutter timings and values properly
             while _j < len(_open_timings):
               self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
@@ -253,7 +258,5 @@ class SlotManager:
           # no slots assigned to user - open shutters
           break
  
-      print_warning("Debug: Returning too early")
-      return
       self.send_shutter_config()
       self.print_uploaded_shutter_config()

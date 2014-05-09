@@ -11,6 +11,7 @@ from avango.script import field_has_changed
 
 # import framework libraries
 from TrackingReader import *
+from ConsoleIO import *
 
 # import math libraries
 import math
@@ -24,6 +25,8 @@ class User(avango.script.Script):
 
   def __init__(self):
     self.super(User).__init__()
+    self.timer = avango.nodes.TimeSensor()
+    self.toggle = True
 
   ## Custom constructor.
   # @param APPLICATION_MANAGER Reference to the ApplicationManager instance from which this user is created.
@@ -108,12 +111,16 @@ class User(avango.script.Script):
     # set evaluation policy
     self.always_evaluate(True)
 
-
   ## Evaluated every frame.
   def evaluate(self):
     # Set active flag, current platform and current display
     # call slot manager.
-    pass
+    if self.id == 0 and self.toggle:
+      print self.timer.Time.value
+      if self.timer.Time.value > 20 and self.toggle:
+        self.toggle_user_activity(False, True)
+        print_warning("User 0 was toggled inactive.")
+        self.toggle = False
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

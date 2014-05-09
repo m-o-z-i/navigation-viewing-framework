@@ -189,7 +189,7 @@ class SlotManager:
       print_headline("User - Slot Assignment")
 
       for _state in _concatenated_user_list:
-        print "User", _state[0].id, "was assigned", _state[1], "slots."
+        print "User", _state[0].id, "(VIP:", str(_state[0].is_vip) + ") was assigned", _state[1], "slots on", _display.name
 
       _i = 0
       for _state in _concatenated_user_list:

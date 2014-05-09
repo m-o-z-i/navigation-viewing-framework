@@ -234,18 +234,21 @@ class ApplicationManager():
     self.border_observer_list.append(None)
 
   ## Create a standard (non-HMD) user.
+  # @param VIP Boolean indicating if the user to be created is a vip.
+  # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param PLATFORM_ID The ID of the platform this user belongs to.
   # @param HEADTRACKING_TARGET_NAME The headtracking target identifier attached to this user
   # @param WARNINGS Boolean indicating whether to display warning planes when the user gets close to the platform borders.
   def create_standard_user(
       self
     , VIP
+    , GLASSES_ID
     , PLATFORM_ID
     , HEADTRACKING_TARGET_NAME
     , WARNINGS
     ):
     _user = User()
-    _user.my_constructor(self, len(self.user_list), VIP, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
+    _user.my_constructor(self, len(self.user_list), VIP, GLASSES_ID, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
     self.user_list.append(_user)
 
     # init border checker to warn user on platform

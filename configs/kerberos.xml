@@ -61,6 +61,8 @@
 
     <vip>False</vip>
 
+    <glasses>1</glasses>
+
     <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
     <startplatform>0</startplatform>
@@ -76,6 +78,8 @@
 
     <vip>False</vip>
 
+    <glasses>4</glasses>
+
     <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
 
     <startplatform>0</startplatform>
@@ -90,6 +94,8 @@
 
     <vip>False</vip>
 
+    <glasses>5</glasses>
+
     <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
 
     <startplatform>0</startplatform>
@@ -103,6 +109,8 @@
   <user>
 
     <vip>False</vip>
+
+    <glasses>6</glasses>
 
     <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
 

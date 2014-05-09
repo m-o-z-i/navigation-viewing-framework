@@ -53,7 +53,7 @@ class ConfigFileParser:
                           "joseph"]                                      # avatartype]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
-    _user_attributes = [None, None, False, False]                        # [headtrackingstation, startplatform, warnings, vip]
+    _user_attributes = [None, None, False, False, None]                  # [headtrackingstation, startplatform, warnings, vip, glasses]
     _navs_created = 0
 
     _config_file = open(FILENAME, 'r')
@@ -361,6 +361,13 @@ class ConfigFileParser:
           if _current_line != "None":
             _user_attributes[0] = _current_line
 
+        # get glasses id
+        if _current_line.startswith("<glasses>"):
+          _current_line = _current_line.replace("<glasses>", "")
+          _current_line = _current_line.replace("</glasses>", "")
+          _current_line = _current_line.rstrip()
+          _user_attributes[4] = int(_current_line)
+
         # get starting platform name
         if _current_line.startswith("<startplatform>"):
           _current_line = _current_line.replace("<startplatform>", "")
@@ -394,12 +401,12 @@ class ConfigFileParser:
         if _user_attributes[1] >= _navs_created:
           print_error("User parsing: Navigation number to append to is too large.", True)
 
-        self.APPLICATION_MANAGER.create_standard_user(_user_attributes[3], _user_attributes[1], _user_attributes[0], _user_attributes[2])
+        self.APPLICATION_MANAGER.create_standard_user(_user_attributes[3], _user_attributes[4], _user_attributes[1], _user_attributes[0], _user_attributes[2])
 
         print_subheadline("User loaded and created")
         print _user_attributes, "\n"
 
-        _user_attributes = [None, None, False, False]
+        _user_attributes = [None, None, False, False, None]
         _current_line = self.get_next_line_in_file(_config_file)
         continue
 

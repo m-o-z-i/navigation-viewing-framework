@@ -29,10 +29,11 @@ class User(avango.script.Script):
   # @param APPLICATION_MANAGER Reference to the ApplicationManager instance from which this user is created.
   # @param USER_ID Global user ID to be applied.
   # @param VIP Boolean indicating if the user to be created is a vip.
+  # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
-  def my_constructor(self, APPLICATION_MANAGER, USER_ID, VIP, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
+  def my_constructor(self, APPLICATION_MANAGER, USER_ID, VIP, GLASSES_ID, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
 
     # flags 
     ## @var is_vip
@@ -82,10 +83,7 @@ class User(avango.script.Script):
 
     ## @var glasses_id
     # ID of the shutter glasses worn by the user. Used for frequency updates.
-    if self.headtracking_target_name != None:
-      if self.headtracking_target_name.startswith("tracking-dlp-glasses-"):
-        self.glasses_id = int(self.headtracking_target_name.replace("tracking-dlp-glasses-", ""))
-        print "User", self.id, "wears glasses", self.glasses_id
+    self.glasses_id = GLASSES_ID
 
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.

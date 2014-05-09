@@ -188,6 +188,11 @@ class SlotManager:
       # update shutter values according to slots assigned
       print_headline("User - Slot Assignment")
 
+      # clear all slot connections
+      _slot_instances = self.slots[_display]
+      for _slot in _slot_instances:
+        _slot.clear_user()
+
       for _state in _concatenated_user_list:
         print "User", _state[0].id, "(VIP:", str(_state[0].is_vip) + ") was assigned", _state[1], "slots on", _display.name
 
@@ -196,11 +201,6 @@ class SlotManager:
 
         _user = _state[0]
         _number_of_slots = _state[1]
-        _slot_instances = self.slots[_display]
-
-        # clear all slot connections
-        for _slot in _slot_instances:
-          _slot.clear_user()
 
         # check if the user has slots assigned to him
         if _number_of_slots > 0:
@@ -220,16 +220,12 @@ class SlotManager:
 
             # set ids with shutter timings and values properly
             while _j < len(_open_timings):
-              print "! SET_TIMER_VALUE  ", _user.glasses_id, _j, _open_timings[_j]
               self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
-              print "! SET_SHUTTER_VALUE", _user.glasses_id, _j, _open_values[_j]
               self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
               _j += 1
 
             while _j < 2 * len(_open_timings):
-               print "! SET_TIMER_VALUE  ", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
-               print "! SET_SHUTTER_VALUE", _user.glasses_id, _j, _close_values[_j - len(_open_timings)]
                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                _j += 1
 
@@ -254,4 +250,4 @@ class SlotManager:
           break
 
       self.send_shutter_config()
-      #self.print_uploaded_shutter_config()
+      self.print_uploaded_shutter_config()

@@ -66,6 +66,9 @@ class Slot:
     self.information_node = avango.gua.nodes.TransformNode(Name = "None")
     self.slot_node.Children.value.append(self.information_node)
 
+    self.no_tracking_node = avango.gua.nodes.TransformNode(Name = "no_tracking_mat")
+    self.information_node.Children.value.append(self.no_tracking_node)
+
     if self.stereo:
       # create the eyes
       ## @var left_eye
@@ -108,6 +111,12 @@ class Slot:
     else:
       self.information_node.Name.value = USER_INSTANCE.headtracking_target_name
 
+    # feed Transform field of information node with transmitter_offset
+    self.information_node.Transform.value = USER_INSTANCE.transmitter_offset
+
+    # feed Transform field of no tracking node with no_tracking_mat
+    self.no_tracking_node.Transform.value = USER_INSTANCE.no_tracking_mat
+
   ## Clears the user assignment.
   def clear_user(self):
     if self.assigned_user != None:
@@ -115,3 +124,5 @@ class Slot:
       self.slot_node.Transform.value = avango.gua.make_identity_mat()
       self.assigned_user = None
       self.information_node.Name.value = "None"
+      self.information_node.Transform.value = avango.gua.make_identity_mat()
+      self.no_tracking_node.Transform.value = avango.gua.make_identity_mat()

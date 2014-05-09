@@ -12,6 +12,7 @@ from avango.script import field_has_changed
 # import framework libraries
 from ClientTrackingReader import *
 import ClientPipelineValues
+from ConsoleIO import *
 
 
 ## Internal representation of a standard view on client side.
@@ -19,11 +20,6 @@ import ClientPipelineValues
 # Creates viewing setup and initializes a tracking sensor in order to avoid latency 
 # due to distribution in the network. Refers to a StandardUser on server side.
 class View(avango.script.Script):
-
-  ### Fields ###
-  sf_head_mat = avango.gua.SFMatrix4()
-  sf_head_mat.value = avango.gua.make_identity_mat()
-
 
   ## Default constructor.
   def __init__(self):
@@ -166,6 +162,8 @@ class View(avango.script.Script):
     # append pipeline to the viewer
     VIEWER.Pipelines.value.append(self.pipeline)
 
+    self.always_evaluate(True)
+
 
   ### Functions ###
   
@@ -173,8 +171,7 @@ class View(avango.script.Script):
   # @param TRACKING_TARGET_NAME The target name of the tracked object as chosen in daemon.
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
   def init_local_tracking_override(self, TRACKING_TARGET_NAME, TRANSMITTER_OFFSET, NO_TRACKING_MAT):
-    pass
-    '''
+    
     ## @var TRACKING_TARGET_NAME
     # The target name of the tracked object as chosen in daemon.
     self.TRACKING_TARGET_NAME = TRACKING_TARGET_NAME
@@ -194,7 +191,7 @@ class View(avango.script.Script):
       self.headtracking_reader.my_constructor(TRACKING_TARGET_NAME)
       self.headtracking_reader.set_transmitter_offset(TRANSMITTER_OFFSET)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
-    '''
+      print_message("Client tracking update - Slot " + str(self.slot_id) + ": Connected to tracking reader with target " + str(self.TRACKING_TARGET_NAME))
 
   ## Sets the warp matrices if there is a correct amount of them.
   # @param WINDOW The window instance to apply the warp matrices to.
@@ -211,29 +208,29 @@ class View(avango.script.Script):
       WINDOW.WarpMatrixBlueLeft.value    = WARPMATRICES[5]
 
   
-  ### Callbacks ###
+  ## Evaluated every frame.
+  def evaluate(self):
 
-  ## Called whenever sf_head_mat changes.
-  @field_has_changed(sf_head_mat)
-  def sf_head_mat_changed(self):
-    pass
-    '''
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
 
     # return when scenegraph is not yet present
     if _node_to_update == None:
       return
 
+    # get this slot's information node containing the tracking target and transmitter offset
     _information_node = _node_to_update.Children.value[0]
-    _tracking_target_name = _information_node.Name.value
 
+    # get this slot's no tracking node containing the no tracking matrix
+    _no_tracking_node = _information_node.Children.value[0]
+
+    _tracking_target_name = _information_node.Name.value
+    
     if _tracking_target_name == "None":
       _tracking_target_name = None
 
     # create new tracking reader when tracking target changes
-    # TODO: when transmitter offset and no tracking mat change, propagate them in the scenegraph
     if _tracking_target_name != self.TRACKING_TARGET_NAME:
-      self.init_local_tracking_override(_tracking_target_name, self.TRANSMITTER_OFFSET, self.NO_TRACKING_MAT)
+      self.init_local_tracking_override(_tracking_target_name, _information_node.Transform.value, _no_tracking_node.Transform.value)
 
     # when no value is to be updated, stop evaluation
     if self.TRACKING_TARGET_NAME == None:
@@ -242,6 +239,4 @@ class View(avango.script.Script):
     # update slot node
     # TODO: Consider ONLY_TRANSLATION_UPDATE
     if _node_to_update != None:
-      self.sf_head_mat.connect_from(self.headtracking_reader.sf_tracking_mat)
-    '''
-
+      _node_to_update.Transform.value = self.headtracking_reader.sf_tracking_mat.value

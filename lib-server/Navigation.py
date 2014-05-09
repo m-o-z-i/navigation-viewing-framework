@@ -86,7 +86,6 @@ class Navigation(avango.script.Script):
   # @param GF_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
-  # @param HUD_MANAGER Reference to the only instance of HUDManager in the setup used to update user displays.
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
   # @param DISPLAYS The names of the displays that belong to this navigation.
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
@@ -105,7 +104,6 @@ class Navigation(avango.script.Script):
     , GF_SETTINGS
     , ANIMATE_COUPLING
     , MOVEMENT_TRACES
-    , HUD_MANAGER
     , TRANSMITTER_OFFSET
     , DISPLAYS
     , AVATAR_TYPE
@@ -200,6 +198,7 @@ class Navigation(avango.script.Script):
       , DISPLAYS = DISPLAYS
       , AVATAR_TYPE = AVATAR_TYPE
       , CONFIG_FILE = CONFIG_FILE
+      , AVATAR_MATERIAL = self.trace_material
       )
 
     ## @var NAVIGATION_LIST
@@ -230,10 +229,6 @@ class Navigation(avango.script.Script):
     ## @var movement_traces_activated
     # Boolean indicating if the movement traces are generally activated.
     self.movement_traces_activated = self.movement_traces
-
-    ## @var HUD_MANAGER
-    # Reference to the HUDManager instance of the setup for updating user displays.
-    self.HUD_MANAGER = HUD_MANAGER
 
     ## @var trace
     # The trace class that handles the line segment updating.
@@ -368,7 +363,9 @@ class Navigation(avango.script.Script):
       _position_nav = (_nav.platform.sf_abs_mat.value * _nav.device.sf_station_mat.value).get_translate()
 
       # append navigation to the list of close ones if distance is smaller than a threshold
-      if _nav != self and Tools.euclidean_distance(_position_self, _position_nav) < _threshold:
+      if _nav != self and \
+         Tools.euclidean_distance(_position_self, _position_nav) < _threshold and \
+         _nav.platform.sf_scale.value == self.platform.sf_scale.value:
         _close_navs.append(_nav)
 
     # sort list of close navs, highest distance first
@@ -397,17 +394,19 @@ class Navigation(avango.script.Script):
         
         self.set_coupling_animation_settings(_nav_animation_target)
         self.inputmapping.blocked = True
-        self.HUD_MANAGER.show_coupling_plane(self.platform.platform_id)
+        self.platform.show_coupling_plane()
    
         for i in range(len(_close_navs)):
           _close_navs[i].set_coupling_animation_settings(_nav_animation_target)
           _close_navs[i].inputmapping.blocked = True
-          self.HUD_MANAGER.show_coupling_plane(_close_navs[i].platform.platform_id)
+          _close_navs[i].platform.show_coupling_plane()
 
       # notify users
       _all_coupled_navs = list(self.coupled_navigations)
       _all_coupled_navs.append(self)
-      self.HUD_MANAGER.display_coupling(_all_coupled_navs)
+
+      for _nav in _all_coupled_navs:
+        _nav.platform.display_coupling(_all_coupled_navs)
 
     else:
       print "No platform in range for coupling."
@@ -482,10 +481,10 @@ class Navigation(avango.script.Script):
 
       if _clear_blockings:
         self.inputmapping.blocked = False
-        self.HUD_MANAGER.hide_coupling_plane(self.platform.platform_id)
+        self.platform.hide_coupling_plane()
         for _nav in self.coupled_navigations:
           _nav.inputmapping.blocked = False
-          self.HUD_MANAGER.hide_coupling_plane(_nav.platform.platform_id)
+          _nav.platform.hide_coupling_plane()
 
     # compute slerp and lerp position and set it on the player's inputmapping
     _transformed_quat = self.start_rot.slerp_to(self.target_rot, _animation_ratio)
@@ -516,11 +515,10 @@ class Navigation(avango.script.Script):
       # iterate over all navigations and clear the coupling
       for _nav in _couplings:
         _nav.decouple_navigation(self)
+        _nav.platform.remove_from_coupling_display(self, True)
+        self.platform.remove_from_coupling_display(_nav, False)
 
       self.coupled_navigations = []
-
-      # notify users
-      self.HUD_MANAGER.remove_from_coupling_display(self)
 
   ## Switches from realistic to unrealistic or from unrealistic to realistic mode on this
   # and all other coupled instances.
@@ -554,7 +552,6 @@ class Navigation(avango.script.Script):
       self.platform.platform_transform_node.GroupNames.value = []
       for _nav in self.coupled_navigations:
         self.platform.platform_transform_node.GroupNames.value.append("couple_group_" + str(_nav.platform.platform_id))
-
 
     # handle dofchange animation
     if self.in_dofchange_animation:

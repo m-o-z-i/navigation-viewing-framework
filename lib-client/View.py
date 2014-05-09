@@ -27,7 +27,7 @@ class View(avango.script.Script):
 
   ## Default constructor.
   def __init__(self):
-  	self.super(View).__init__()  	
+  	self.super(View).__init__()
 
 
   ## Custom constructor.

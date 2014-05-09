@@ -15,7 +15,6 @@ from   Platform         import *
 from   User             import *
 from   BorderObserver   import *
 from   ConfigFileParser import *
-from   HUDManager       import *
 from   display_config   import displays
 import Tools
 
@@ -83,11 +82,6 @@ class ApplicationManager():
     for _display in displays:
       if _display.hostname != _own_hostname:
         _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
-
-    ## @var hud_manager
-    # A HUDManager instance in order to arrange the user display for the different stati.
-    self.hud_manager = HUDManager()
-    self.hud_manager.my_constructor(self.NET_TRANS_NODE, self.user_list)
 
     # create file parser and load file
     ## @var config_file_parser
@@ -189,11 +183,23 @@ class ApplicationManager():
     
     # convert list of parsed display strings to the corresponding instances
     _display_instances = []
+    _displays_found = list(DISPLAYS)
 
-    for _display_string in DISPLAYS:
+    # create bool list if displays were found
+    for _i in range(len(_displays_found)):
+      _displays_found[_i] = False
+
+    # search for display instances
+    for _i in range(len(DISPLAYS)):
       for _display_instance in displays:
-        if _display_instance.name == _display_string:
+        if _display_instance.name == DISPLAYS[_i]:
           _display_instances.append(_display_instance)
+          _displays_found[_i] = True
+    
+    # check if all display instances were found
+    for _i in range(len(_displays_found)):
+      if _displays_found[_i] == False:
+        print_error("No matching display instance found for " + DISPLAYS[_i], True)
 
     # create the navigation instance
     _navigation = Navigation()
@@ -209,7 +215,6 @@ class ApplicationManager():
       , GF_SETTINGS = GROUND_FOLLOWING_SETTINGS
       , ANIMATE_COUPLING = ANIMATE_COUPLING
       , MOVEMENT_TRACES = MOVEMENT_TRACES
-      , HUD_MANAGER = self.hud_manager
       , TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
       , DISPLAYS = _display_instances
       , AVATAR_TYPE = AVATAR_TYPE

@@ -7,6 +7,9 @@
 import avango
 import avango.gua
 
+# import framework libraries
+from   ConsoleIO   import *
+
 ## Class associated to a ApplicationManager instance in order to parse and load XML configuration files for the setup.
 #
 # Gets a reference to ApplicationManager and calls the create_navigation and create_standard_user functions
@@ -38,9 +41,7 @@ class ConfigFileParser:
   ## Parses a XML configuration file, saves settings and creates navigations and users.
   # @param FILENAME The path of the configuration file to be read in.
   def parse(self, FILENAME):
-    print "\n=============================================================================="
-    print "Loading configuration file", FILENAME
-    print "==============================================================================\n"
+    print_headline("Loading configuration file " + FILENAME)
 
     _in_comment = False
     _in_global = False
@@ -306,13 +307,13 @@ class ConfigFileParser:
        
         # error handling
         if _device_attributes[0] == None:
-          raise IOError("No device type specified for navigation.")
+          print_error("No device type specified for navigation.", True)
         elif (_device_attributes[0] != "KeyboardMouse") and \
              (_device_attributes[0] != "Spacemouse") and \
              (_device_attributes[0] != "XBoxController") and \
              (_device_attributes[0] != "OldSpheron") and \
              (_device_attributes[0] != "NewSpheron"):
-          raise IOError("Unknown device type: " + _device_attributes[0])
+          print_error("Unknown device type: " + _device_attributes[0], True)
 
         _starting_matrix = avango.gua.make_trans_mat(_device_attributes[3], _device_attributes[4], _device_attributes[5]) * \
                            avango.gua.make_rot_mat(_device_attributes[6], 0, 1, 0)
@@ -416,7 +417,7 @@ class ConfigFileParser:
 
         # error handling
         if _user_attributes[2] >= _navs_created:
-          raise IOError("Navigation number to append to is too large.")
+          print_error("Navigation number to append to is too large.")
 
         # distinguish between stereo and mono user
         if _user_attributes[0] == "True":
@@ -424,8 +425,7 @@ class ConfigFileParser:
         else:
           self.APPLICATION_MANAGER.create_standard_user(_user_attributes[2], False, _user_attributes[1], _user_attributes[3])
 
-        print "\nUser loaded and created:"
-        print "-------------------------"
+        print_subheadline("User loaded and created:")
         print _user_attributes, "\n"
 
         _user_attributes = [None, None, None, False]
@@ -435,15 +435,12 @@ class ConfigFileParser:
       # go to next line in file
       _current_line = self.get_next_line_in_file(_config_file)
 
-    print "Global settings loaded:"
-    print "------------------------"
+    print_subheadline("Global settings loaded:")
     print "Ground Following settings:", self.ground_following_settings
     print "Coupling of Navigations animated:", self.enable_coupling_animation
     print "Movement traces animated:", self.enable_movementtraces, "\n"
 
-    print "\n=============================================================================="
-    print "Configuration file", FILENAME, "successfully loaded."
-    print "=============================================================================="
+    print_message("Configuration file " + FILENAME + " successfully loaded.")
 
   ## Gets the next line in the file. Thereby, empty lines are skipped.
   # @param FILE The opened file to get the line from.

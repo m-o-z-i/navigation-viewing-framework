@@ -5,6 +5,7 @@
 
 # import python libraries
 import inspect
+import sys
 
 # color definitions
 color_reset = '\033[0m'
@@ -29,7 +30,7 @@ def print_error(MESSAGE, TERMINATE):
   print ""
   
   if TERMINATE:
-    raise IOError(MESSAGE)
+    sys.exit()
 
 
 ## Prints a colored information message on the console.

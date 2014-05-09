@@ -209,7 +209,6 @@ class ApplicationManager():
       if _displays_found[_i] == False:
         print_error("No matching display instance found for " + DISPLAYS[_i], True)
 
-
     # create the navigation instance
     _navigation = Navigation()
     _navigation.my_constructor(

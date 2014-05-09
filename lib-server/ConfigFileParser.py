@@ -41,7 +41,7 @@ class ConfigFileParser:
   ## Parses a XML configuration file, saves settings and creates navigations and users.
   # @param FILENAME The path of the configuration file to be read in.
   def parse(self, FILENAME):
-    
+
     print_headline("Loading configuration file " + FILENAME)
 
     _in_comment = False

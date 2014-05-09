@@ -139,14 +139,12 @@ class MitsubishiStereoTV(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  #  LargePowerwall()
-  #, Display(hostname = "atalante"
-  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
-  #    #, transformation = avango.gua.make_trans_mat(0.645, 1.2, 0.0)
-  #)
-  #,
-  Display(hostname = "nestor"),
-  Display(hostname = "daedalos", size = (0.605, 0.34)
+    LargePowerwall()
+  , Display(hostname = "atalante"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+  )
+  , Display(hostname = "daedalos"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
 ]
 

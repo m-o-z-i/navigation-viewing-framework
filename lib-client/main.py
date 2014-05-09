@@ -96,8 +96,7 @@ def start():
     # differ between stereo and mono user case
     if _user_attributes[0] == "True":
       _stereo_flag = True
-    
-    elif _user_attributes[0] == "False":
+    else:
       _stereo_flag = False
 
     _view = View()    

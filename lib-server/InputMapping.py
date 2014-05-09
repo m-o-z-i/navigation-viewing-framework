@@ -123,27 +123,35 @@ class InputMapping(avango.script.Script):
       if _scale != 0.0:
         self.set_scale(self.sf_scale.value * (1.0 + _scale * 0.015))
       
-      # get translation values from input device
-      _trans_vec = avango.gua.Vec3(0, 0, 0)
-      _trans_vec.x = self.mf_rel_input_values.value[0]
-      _trans_vec.y = self.mf_rel_input_values.value[1]
-      _trans_vec.z = self.mf_rel_input_values.value[2]
-      _trans_vec *= math.pow(_trans_vec.length()/math.sqrt(3), 3) * self.input_trans_factor * self.sf_scale.value
+      _x = self.mf_rel_input_values.value[0]
+      _y = self.mf_rel_input_values.value[1]
+      _z = self.mf_rel_input_values.value[2]
 
-      # get rotation values from input device
-      _rot_vec = avango.gua.Vec3(0, 0, 0)
-      _rot_vec.x = self.mf_rel_input_values.value[3] * self.input_rot_factor
-      _rot_vec.y = self.mf_rel_input_values.value[4] * self.input_rot_factor
-      _rot_vec.z = self.mf_rel_input_values.value[5] * self.input_rot_factor
+      _rx = self.mf_rel_input_values.value[3]
+      _ry = self.mf_rel_input_values.value[4]
+      _rz = self.mf_rel_input_values.value[5]
  
       # delete certain values that create an unrealistic movement
       if self.realistic:
-        _trans_vec.y = 0.0
-        _rot_vec.x = 0.0
-        _rot_vec.z = 0.0
+        _y = 0.0
+        _rx = 0.0
+        _rz = 0.0
+      
+      # get translation values from input device
+      _trans_vec = avango.gua.Vec3(_x,_y,_z)
+      _trans_input = _trans_vec.length()
 
+      # get rotation values from input device
+      _rot_vec = avango.gua.Vec3(_rx,_ry,_rz) * self.input_rot_factor
+      _rot_input = _rot_vec.length()
+ 
       # only accumulate inputs on absolute matrix when the device values change
-      if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
+      if _trans_input != 0.0 or _rot_input != 0.0:
+
+        # transfer function for translation
+        if _trans_input != 0.0:
+          _trans_vec.normalize()
+          _trans_vec *= math.pow(min(_trans_input,1.0), 3) * self.input_trans_factor * self.sf_scale.value
 
         # global platform rotation in the world
         _platform_quat = self.sf_abs_mat.value.get_rotate()

@@ -295,20 +295,20 @@ class SpacemouseDevice(MultiDofDevice):
 
     _loader = avango.gua.nodes.GeometryLoader()
 
-    ## @var table_transform
+    ## @var avatar_transform
     # Scenegraph transform node for the dekstop user's table.
-    self.table_transform = avango.gua.nodes.TransformNode(Name = 'table_transform')
-    self.table_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
-    PLATFORM_NODE.Children.value.append(self.table_transform)
+    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
+    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
+    PLATFORM_NODE.Children.value.append(self.avatar_transform)
 
     ## @var device_avatar
     # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file( 'device_avatar_' + str(PLATFORM_ID),
+    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
                                                            'data/objects/table/table.obj',
                                                            'data/materials/Stones.gmd',
                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-    self.table_transform.Children.value.append(self.device_avatar)
+    self.avatar_transform.Children.value.append(self.device_avatar)
     self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
 
 
@@ -365,20 +365,20 @@ class KeyboardMouseDevice(MultiDofDevice):
 
     _loader = avango.gua.nodes.GeometryLoader()
 
-    ## @var table_transform
+    ## @var avatar_transform
     # Scenegraph transform node for the dekstop user's table.
-    self.table_transform = avango.gua.nodes.TransformNode(Name = 'table_transform')
-    self.table_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
-    PLATFORM_NODE.Children.value.append(self.table_transform)
+    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
+    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
+    PLATFORM_NODE.Children.value.append(self.avatar_transform)
 
     ## @var device_avatar
     # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file( 'device_avatar_' + str(PLATFORM_ID),
+    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
                                                            'data/objects/table/table.obj',
                                                            'data/materials/Stones.gmd',
                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-    self.table_transform.Children.value.append(self.device_avatar)
+    self.avatar_transform.Children.value.append(self.device_avatar)
     self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
 
 
@@ -476,6 +476,29 @@ class OldSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_w(self.button_sensor.Button0.value*-1.0)")              # left button
     self.add_input_binding("self.set_w(self.button_sensor.Button2.value*1.0)")               # right button
 
+  ## Creates a representation of the device in the virutal world.
+  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
+  # @param PLATFORM_ID The platform id used for setting the group name correctly.
+  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+
+    _loader = avango.gua.nodes.GeometryLoader()
+
+    ## @var avatar_transform
+    # Scenegraph transform node for the dekstop user's table.
+    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
+    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_abs_mat)
+    PLATFORM_NODE.Children.value.append(self.avatar_transform)
+
+    ## @var device_avatar
+    # Scenegraph node representing the geometry and transformation of the device avatar.
+    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
+                                                           'data/objects/sphere.obj',
+                                                           'data/materials/ShadelessWhite.gmd',
+                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.device_avatar.Transform.value = avango.gua.make_scale_mat(0.1, 0.1, 0.1)
+    self.avatar_transform.Children.value.append(self.device_avatar)
+    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
+
 
 ## Internal representation and reader for the new spheron
 class NewSpheronDevice(MultiDofDevice):
@@ -527,3 +550,26 @@ class NewSpheronDevice(MultiDofDevice):
   ## Evaluated every frame.
   def evaluate(self):
     self.ry_throttle_add = self.filter_channel(self.device_sensor.Value6.value, 0.0, -0.6, 0.37, 0, 0)
+
+  ## Creates a representation of the device in the virutal world.
+  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
+  # @param PLATFORM_ID The platform id used for setting the group name correctly.
+  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+
+    _loader = avango.gua.nodes.GeometryLoader()
+
+    ## @var avatar_transform
+    # Scenegraph transform node for the dekstop user's table.
+    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
+    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_abs_mat)
+    PLATFORM_NODE.Children.value.append(self.avatar_transform)
+
+    ## @var device_avatar
+    # Scenegraph node representing the geometry and transformation of the device avatar.
+    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
+                                                           'data/objects/sphere.obj',
+                                                           'data/materials/ShadelessWhite.gmd',
+                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.device_avatar.Transform.value = avango.gua.make_scale_mat(0.1, 0.1, 0.1)
+    self.avatar_transform.Children.value.append(self.device_avatar)
+    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]

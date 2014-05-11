@@ -286,7 +286,30 @@ class SpacemouseDevice(MultiDofDevice):
     self.add_input_binding("self.set_ry(self.device_sensor.Value4.value*-1.0)")
     self.add_input_binding("self.set_rz(self.device_sensor.Value5.value)")
     self.add_input_binding("self.set_w(self.device_sensor.Button0.value*1.0)")
-    self.add_input_binding("self.set_w(self.device_sensor.Button1.value*-1.0)")    
+    self.add_input_binding("self.set_w(self.device_sensor.Button1.value*-1.0)")
+
+  ## Creates a representation of the device in the virutal world.
+  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
+  # @param PLATFORM_ID The platform id used for setting the group name correctly.
+  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+
+    _loader = avango.gua.nodes.GeometryLoader()
+
+    ## @var table_transform
+    # Scenegraph transform node for the dekstop user's table.
+    self.table_transform = avango.gua.nodes.TransformNode(Name = 'table_transform')
+    self.table_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
+    PLATFORM_NODE.Children.value.append(self.table_transform)
+
+    ## @var device_avatar
+    # Scenegraph node representing the geometry and transformation of the device avatar.
+    self.device_avatar = _loader.create_geometry_from_file( 'device_avatar_' + str(PLATFORM_ID),
+                                                           'data/objects/table/table.obj',
+                                                           'data/materials/Stones.gmd',
+                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
+    self.table_transform.Children.value.append(self.device_avatar)
+    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
 
 
 ## Internal representation and reader for a keyboard and mouse setup.
@@ -333,7 +356,30 @@ class KeyboardMouseDevice(MultiDofDevice):
     self.add_input_binding("self.set_rx(self.mouse_sensor.Value1.value*-1.0)")               # mouse up
     self.add_input_binding("self.set_ry(self.mouse_sensor.Value0.value*-1.0)")               # mouse right
     self.add_input_binding("self.set_w(self.mouse_sensor.Button0.value*-1.0)")               # left button
-    self.add_input_binding("self.set_w(self.mouse_sensor.Button2.value*1.0)")                # right button    
+    self.add_input_binding("self.set_w(self.mouse_sensor.Button2.value*1.0)")                # right button
+
+  ## Creates a representation of the device in the virutal world.
+  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
+  # @param PLATFORM_ID The platform id used for setting the group name correctly.
+  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+
+    _loader = avango.gua.nodes.GeometryLoader()
+
+    ## @var table_transform
+    # Scenegraph transform node for the dekstop user's table.
+    self.table_transform = avango.gua.nodes.TransformNode(Name = 'table_transform')
+    self.table_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
+    PLATFORM_NODE.Children.value.append(self.table_transform)
+
+    ## @var device_avatar
+    # Scenegraph node representing the geometry and transformation of the device avatar.
+    self.device_avatar = _loader.create_geometry_from_file( 'device_avatar_' + str(PLATFORM_ID),
+                                                           'data/objects/table/table.obj',
+                                                           'data/materials/Stones.gmd',
+                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
+    self.table_transform.Children.value.append(self.device_avatar)
+    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
 
 
 ## Internal representation and reader for a XBox controller
@@ -377,6 +423,12 @@ class XBoxDevice(MultiDofDevice):
     self.add_input_binding("self.set_dof_trigger(self.device_sensor.Button2.value)")         # A
     self.add_input_binding("self.set_w(self.device_sensor.Button6.value*-1.0)")              # TL
     self.add_input_binding("self.set_w(self.device_sensor.Button7.value*1.0)")               # TR
+
+  ## Creates a representation of the device in the virutal world.
+  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
+  # @param PLATFORM_ID The platform id used for setting the group name correctly.
+  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+    pass
     
 ## Internal representation and reader for the old spheron
 class OldSpheronDevice(MultiDofDevice):

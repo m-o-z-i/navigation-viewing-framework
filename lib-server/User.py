@@ -9,6 +9,7 @@ import avango.gua
 
 # import framework libraries
 from TrackingReader import *
+from ConsoleIO import *
 
 # import math libraries
 import math
@@ -107,10 +108,9 @@ class User:
 
     # create avatar representation
     if self.platform.avatar_type == "joseph":
-      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, False)
-    elif self.platform.avatar_type == "joseph_table":
-      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat, True)
-
+      self.create_avatar_representation(self.APPLICATION_MANAGER.SCENEGRAPH, self.headtracking_reader.sf_avatar_body_mat)
+    else:
+      print_error("Error: Unknown avatar type " + self.platform.avatar_type, True)
   
   ## Sets the transformation values of left and right eye.
   # @param VALUE The eye distance to be applied.
@@ -130,19 +130,10 @@ class User:
     _node = SCENEGRAPH.get_node(_platform_path)
     _node.Children.value.append(NODE)
 
-    '''
-    # find corresponding platform node
-    for _node in self.APPLICATION_MANAGER.NET_TRANS_NODE.Children.value:
-      if _node.Name.value == "platform_" + str(self.platform_id):
-        _node.Children.value.append(NODE)
-        break
-    '''
-
   ## Creates a basic "joseph" avatar for this user.
   # @param SCENEGRAPH Reference to the scenegraph.
   # @param SF_AVATAR_BODY_MATRIX Field containing the transformation matrix for the avatar's body on the platform.
-  # @param TABLE_ENABLED Boolean indicating if a table should be added to the avatar.
-  def create_avatar_representation(self, SCENEGRAPH, SF_AVATAR_BODY_MATRIX, TABLE_ENABLED):
+  def create_avatar_representation(self, SCENEGRAPH, SF_AVATAR_BODY_MATRIX):
 
     _loader = avango.gua.nodes.GeometryLoader()
     
@@ -169,22 +160,3 @@ class User:
     self.append_to_platform(SCENEGRAPH, self.body_avatar)
 
     self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX)
-
-    # create table avatar if enabled
-    if TABLE_ENABLED:
-
-      ## @var table_transform
-      # Scenegraph transform node for the dekstop user's table.
-      self.table_transform = avango.gua.nodes.TransformNode(Name = 'table_transform')
-      self.table_transform.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8)
-      self.body_avatar.Children.value.append(self.table_transform)
-
-      ## @var table_avatar
-      # Scenegraph node representing the geometry and transformation of the desktop user's table.
-      self.table_avatar = _loader.create_geometry_from_file( 'table_avatar_' + str(self.id),
-                                                             'data/objects/table/table.obj',
-                                                             'data/materials/' + self.avatar_material + '.gmd',
-                                                             avango.gua.LoaderFlags.LOAD_MATERIALS)
-      self.table_avatar.Transform.value = avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-      self.table_transform.Children.value.append(self.table_avatar)
-      self.table_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]

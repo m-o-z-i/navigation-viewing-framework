@@ -58,7 +58,7 @@ class View(avango.script.Script):
     # retrieve the needed values from display
     ## @var display_values
     # Values that are retrieved from the display. Vary for each view on this display.
-    self.display_values = DISPLAY_INSTANCE.register_user()
+    self.display_values = DISPLAY_INSTANCE.register_view()
 
     # check if no more users allowed at this screen
     if not self.display_values:

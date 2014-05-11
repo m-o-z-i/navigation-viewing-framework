@@ -17,8 +17,51 @@
 
   <device>
 
-    <type>KeyboardMouse</type>
-    
+    <type>NewSpheron</type>
+
+    <inputsensor>device-new-spheron</inputsensor>
+
+    <trackingstation>tracking-new-spheron</trackingstation>
+
+    <display>large_powerwall</display>
+
+    <avatartype>joseph</avatartype>
+
+    <transmitteroffset>
+      <x>0.0</x>
+      <y>0.043</y>
+      <z>1.6</z>
+    </transmitteroffset>
+
+    <notrackingposition>
+      <x>0.0</x>
+      <y>1.75</y>
+      <z>1.5</z>
+    </notrackingposition>
+
+    <platformpos>
+      <x>0.0</x>
+      <y>0.0</y>
+      <z>12.0</z>
+    </platformpos>
+
+    <platformrot>
+      <yaw>0.0</yaw>
+    </platformrot>
+
+    <platformsize>
+      <width>3.8</width>
+      <depth>3.6</depth>
+    </platformsize>
+
+  </device>
+
+  <device>
+
+    <type>Spacemouse</type>
+
+    <inputsensor>device-spacemouse</inputsensor>
+
     <display>nestor_display</display>
 
     <avatartype>joseph</avatartype>
@@ -31,12 +74,12 @@
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.2</y>
+      <y>1.0</y>
       <z>0.6</z>
     </notrackingposition>
 
     <platformpos>
-      <x>-2.0</x>
+      <x>0.0</x>
       <y>0.0</y>
       <z>12.0</z>
     </platformpos>
@@ -47,56 +90,20 @@
 
   </device>
 
-
-  <device>
-
-    <type>XBoxController</type>
-    
-    <inputsensor>device-xbox-1</inputsensor>    
-
-    <display>daedalos_display</display>
-
-    <avatartype>joseph</avatartype>
-
-    <transmitteroffset>
-      <x>0.0</x>
-      <y>1.06</y>
-      <z>0.77</z>
-    </transmitteroffset>
-
-    <notrackingposition>
-      <x>0.0</x>
-      <y>1.2</y>
-      <z>0.6</z>
-    </notrackingposition>
-
-    <platformpos>
-      <x>-2.0</x>
-      <y>0.0</y>
-      <z>10.0</z>
-    </platformpos>
-
-    <platformrot>
-      <yaw>180.0</yaw>
-    </platformrot>
-
-  </device>
-        
-
-  <!-- First User Nestor -->
+  <!-- First User -->
   
   <user>
 
-    <vip>False</vip>
+    <vip>True</vip>
+
+    <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
     <startplatform>0</startplatform>
 
-    <warnings>False</warnings>
+    <warnings>True</warnings>
 
   </user>
 
-  <!-- First User Daedalos -->
-  
   <user>
 
     <vip>False</vip>

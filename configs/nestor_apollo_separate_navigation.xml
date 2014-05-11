@@ -85,7 +85,7 @@
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>True</vip>
 
     <startplatform>0</startplatform>
 
@@ -98,7 +98,7 @@
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>True</vip>
 
     <startplatform>1</startplatform>
 

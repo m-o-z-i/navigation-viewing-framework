@@ -92,7 +92,7 @@
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>True</vip>
 
     <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
@@ -107,7 +107,7 @@
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>True</vip>
 
     <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
 
@@ -122,7 +122,7 @@
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>True</vip>
 
     <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
 
@@ -137,7 +137,7 @@
   
   <user>
 
-    <stereo>True</stereo>
+    <vip>True</vip>
 
     <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
 
@@ -152,7 +152,7 @@
   
   <user>
 
-    <stereo>False</stereo>
+    <vip>False</vip>
 
     <startplatform>1</startplatform>
 

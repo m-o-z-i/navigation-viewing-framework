@@ -492,10 +492,10 @@ class OldSpheronDevice(MultiDofDevice):
     ## @var device_avatar
     # Scenegraph node representing the geometry and transformation of the device avatar.
     self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/sphere.obj',
+                                                           'data/objects/spheron.obj',
                                                            'data/materials/ShadelessWhite.gmd',
                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_scale_mat(0.1, 0.1, 0.1)
+    self.device_avatar.Transform.value = avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_scale_mat(0.16, 0.16, 0.16)
     self.avatar_transform.Children.value.append(self.device_avatar)
     self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
 
@@ -567,9 +567,9 @@ class NewSpheronDevice(MultiDofDevice):
     ## @var device_avatar
     # Scenegraph node representing the geometry and transformation of the device avatar.
     self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/sphere.obj',
+                                                           'data/objects/spheron.obj',
                                                            'data/materials/ShadelessWhite.gmd',
                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_scale_mat(0.1, 0.1, 0.1)
+    self.device_avatar.Transform.value = avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_scale_mat(0.16, 0.16, 0.16)
     self.avatar_transform.Children.value.append(self.device_avatar)
     self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]

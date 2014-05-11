@@ -405,7 +405,7 @@ class OldSpheronDevice(MultiDofDevice):
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    self.rotation_factor = 1.4
+    self.rotation_factor = 0.0
 
     self.set_input_channel_parameters(self.x_parameters, -0.00787377543747, -0.0134, 0.003, 5, 5)
     self.set_input_channel_parameters(self.y_parameters, -0.00787377543747, -0.0115, -0.003, 20, 20)

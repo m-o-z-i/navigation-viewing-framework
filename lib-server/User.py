@@ -118,7 +118,14 @@ class User(avango.script.Script):
   def evaluate(self):
     # Set active flag, current platform and current display
     # call slot manager.
-    pass
+    
+    if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
+      if self.is_active == True:
+        self.toggle_user_activity(False, True)
+    else:
+      if self.is_active == False:
+        self.toggle_user_activity(True, True)
+
     #if self.id == 0 and self.toggle:
     #  print self.timer.Time.value
     #  if self.timer.Time.value > 20 and self.toggle:

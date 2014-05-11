@@ -146,5 +146,8 @@ displays = [
   , Display(hostname = "daedalos"
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
+  , Display(hostname = "agenor"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+  )
 ]
 

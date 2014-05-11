@@ -56,7 +56,11 @@ class ConfigFileParser:
     _user_attributes = [None, None, False, False, None]                  # [headtrackingstation, startplatform, warnings, vip, glasses]
     _navs_created = 0
 
-    _config_file = open(FILENAME, 'r')
+    try:
+      _config_file = open(FILENAME, 'r')
+    except:
+      print_error("Error: could not find configuration file " + str(FILENAME), True)
+
     _current_line = self.get_next_line_in_file(_config_file)
 
     while _current_line != "":

@@ -103,6 +103,9 @@ class User(avango.script.Script):
     if self.platform.avatar_type == "joseph":
       self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)
     else:
+      if self.platform.avatar_type == "joseph_table":
+        print_warning("Avatar type jospeh_table is deprecated. The creation of table avatars are now handled by the " + \
+                       "device automatically. Use avatar type jospeh instead.")
       print_error("Error: Unknown avatar type " + self.platform.avatar_type, True)
 
     # toggles avatar display and activity

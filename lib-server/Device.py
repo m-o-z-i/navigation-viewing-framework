@@ -11,6 +11,7 @@ import avango.daemon
 
 # import framework libraries
 from TrackingReader import *
+from ConsoleIO import *
 
 ## Base class for the representation of an input device supplying multiple degrees of freedom.
 #
@@ -146,7 +147,7 @@ class MultiDofDevice(avango.script.Script):
 
       else: # above negative threshold
         VALUE = 0
-      
+    
     return VALUE
 
   ## Sets given values as input channel filtering parameters.
@@ -177,8 +178,11 @@ class MultiDofDevice(avango.script.Script):
     self.dofs = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
   
     for _input_binding in self.input_bindings:
-      eval(_input_binding)
-      
+      try:
+        eval(_input_binding)
+      except:
+        print_error("Error parsing input binding " + str(_input_binding), False)
+    
     self.mf_dof.value = self.dofs
 
   ## Filters and sets the x parameter.
@@ -210,7 +214,6 @@ class MultiDofDevice(avango.script.Script):
   def set_ry(self, VALUE):
 
     self.dofs[4] += self.filter_channel(VALUE, self.ry_parameters[0], self.ry_parameters[1], self.ry_parameters[2], self.ry_parameters[3], self.ry_parameters[4])
-
   ## Filters and sets the rz parameter.
   # @param VALUE The value to be set.
   def set_rz(self, VALUE):
@@ -366,7 +369,7 @@ class XBoxDevice(MultiDofDevice):
     self.add_input_binding("self.set_x(self.device_sensor.Value0.value)")
     self.add_input_binding("self.set_z(self.device_sensor.Value1.value)")    
     #self.add_input_binding("self.set_y(self.device_sensor.Value4.value*-1.0)")
-    self.add_input_binding("self.set_y(self.device_sensor.Value5.value)")
+    #self.add_input_binding("self.set_y(self.device_sensor.Value5.value)")
     self.add_input_binding("self.set_rx(self.device_sensor.Value3.value)")
     self.add_input_binding("self.set_ry(self.device_sensor.Value2.value*-1.0)")
     self.add_input_binding("self.set_reset_trigger(self.device_sensor.Button0.value)")       # X
@@ -402,7 +405,7 @@ class OldSpheronDevice(MultiDofDevice):
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    self.rotation_factor = 1.4
+    self.rotation_factor = 0.0
 
     self.set_input_channel_parameters(self.x_parameters, -0.00787377543747, -0.0134, 0.003, 5, 5)
     self.set_input_channel_parameters(self.y_parameters, -0.00787377543747, -0.0115, -0.003, 20, 20)
@@ -450,17 +453,25 @@ class NewSpheronDevice(MultiDofDevice):
     self.set_input_channel_parameters(self.y_parameters, 0.0, -0.44, 0.24, 0, 0)
     self.set_input_channel_parameters(self.z_parameters, 0.0, -1.0, 0.94, 0, 0)
     self.set_input_channel_parameters(self.rx_parameters, 0.0, -2048, 2048, 0, 0)
-    self.set_input_channel_parameters(self.ry_parameters, -2048, 2048, 0, 0)
+    self.set_input_channel_parameters(self.ry_parameters, 0.0, -2048, 2048, 0, 0)
     self.set_input_channel_parameters(self.rz_parameters, 0.0, -2048, 2048, 0, 0)
-    self.set_input_channel_parameters(self.w_parameters, 0.0, -0.6, 0.37, 0, 0)
+    
+    self.ry_throttle_add = self.filter_channel(self.device_sensor.Value6.value, 0.0, -0.6, 0.37, 0, 0)
 
     self.add_input_binding("self.set_x(self.device_sensor.Value0.value*-1.0)")
     self.add_input_binding("self.set_y(self.device_sensor.Value1.value)")
     self.add_input_binding("self.set_z(self.device_sensor.Value2.value)")    
     self.add_input_binding("self.set_rx(self.device_sensor.Value3.value*-1.0)")
-    self.add_input_binding("self.set_ry(self.device_sensor.Value4.value*-1.0)")
+    self.add_input_binding("self.set_ry(self.device_sensor.Value4.value*-1.0 + self.ry_throttle_add*100)")
     self.add_input_binding("self.set_rz(self.device_sensor.Value5.value)")
-    self.add_input_binding("self.set_w(self.device_sensor.Value6.value)")
+    #self.add_input_binding("self.set_ry(self.device_sensor.Value6.value)")
+    
     self.add_input_binding("self.set_reset_trigger(self.device_sensor.Button1.value)")       # middle button      
-    self.add_input_binding("self.set_dof_trigger(self.device_sensor.Button0.value)")         # left button
-    self.add_input_binding("self.set_coupling_trigger(self.device_sensor.Button2.value")     # right button
+    self.add_input_binding("self.set_w(self.device_sensor.Button0.value*-1.0)")              # left button
+    self.add_input_binding("self.set_w(self.device_sensor.Button2.value*1.0)")               # right button
+
+    self.always_evaluate(True)
+
+  ## Evaluated every frame.
+  def evaluate(self):
+    self.ry_throttle_add = self.filter_channel(self.device_sensor.Value6.value, 0.0, -0.6, 0.37, 0, 0)

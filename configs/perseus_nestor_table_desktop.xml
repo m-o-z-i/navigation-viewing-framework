@@ -23,7 +23,7 @@
 
     <display>touch_table</display>
 
-    <avatartype>joseph_table</avatartype>
+    <avatartype>joseph</avatartype>
 
     <transmitteroffset>
       <x>0.0</x>
@@ -55,7 +55,7 @@
 
     <display>nestor_display</display>
 
-    <avatartype>joseph_table</avatartype>
+    <avatartype>joseph</avatartype>
 
     <transmitteroffset>
       <x>0.0</x>

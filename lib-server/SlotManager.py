@@ -231,6 +231,9 @@ class SlotManager:
 
             _j = 0
 
+            if _user.glasses_id == None:
+              print_warning("Warning: User " + _user.id + " has no glasses id specified.")
+
             if _user.glasses_id > total_number_of_shutter_glasses:
               print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)
             else:
@@ -264,11 +267,11 @@ class SlotManager:
 
             _i += 1
  
-      # open glasses for which no timings were assigned
-      for _i in range(total_number_of_shutter_glasses):
-        if _glasses_updated[_i] == False:
-          print_warning("Opening shutter glasses " + str(_i + 1))
-          self.radio_master_hid.set_shutter_const(_i + 1, int("88", 16), 1)
+    # open glasses for which no timings were assigned
+    for _i in range(total_number_of_shutter_glasses):
+      if _glasses_updated[_i] == False:
+        print_warning("Opening shutter glasses " + str(_i + 1))
+        self.radio_master_hid.set_shutter_const(_i + 1, int("88", 16), 1)
 
-      self.send_shutter_config()
-      self.print_uploaded_shutter_config()
+    self.send_shutter_config()
+    self.print_uploaded_shutter_config()

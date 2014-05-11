@@ -62,9 +62,9 @@
 
     <inputsensor>device-spacemouse</inputsensor>
 
-    <display>nestor_display</display>
+    <display>agenor_display</display>
 
-    <avatartype>joseph_table</avatartype>
+    <avatartype>joseph</avatartype>
 
     <transmitteroffset>
       <x>0.0</x>
@@ -74,7 +74,7 @@
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.0</y>
+      <y>1.2</y>
       <z>0.6</z>
     </notrackingposition>
 
@@ -97,6 +97,8 @@
     <stereo>True</stereo>
 
     <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
+
+    <glasses>1</glasses>
 
     <startplatform>0</startplatform>
 

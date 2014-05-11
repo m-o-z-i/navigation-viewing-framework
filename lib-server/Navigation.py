@@ -204,6 +204,10 @@ class Navigation(avango.script.Script):
       , AVATAR_MATERIAL = self.trace_material
       )
 
+    # create device avatar
+    self.device.create_device_avatar(self.platform.platform_scale_transform_node
+                                   , self.platform.platform_id)
+
     ## @var NAVIGATION_LIST
     # Reference to a list containing all Navigation instances in the setup.
     self.NAVIGATION_LIST = NAVIGATION_LIST

@@ -106,6 +106,56 @@
 
   </user>
 
+  <!-- Second User -->
+  
+  <user>
+
+    <stereo>True</stereo>
+
+    <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
+
+    <glasses>4</glasses>
+
+    <startplatform>0</startplatform>
+
+    <warnings>True</warnings>
+
+  </user>
+
+  <!-- Third User -->
+  
+  <user>
+
+    <stereo>True</stereo>
+
+    <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
+
+    <glasses>5</glasses>
+
+    <startplatform>0</startplatform>
+
+    <warnings>True</warnings>
+
+  </user>
+
+  <!-- Fourth User -->
+  
+  <user>
+
+    <stereo>True</stereo>
+
+    <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
+
+    <glasses>6</glasses>
+
+    <startplatform>0</startplatform>
+
+    <warnings>True</warnings>
+
+  </user>
+
+  <!-- Desktop user -->
+
   <user>
 
     <stereo>False</stereo>

@@ -199,7 +199,7 @@ class SlotManager:
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 
       # update shutter values according to slots assigned
-      print_headline("User - Slot Assignment")
+      print_headline("User - Slot Assignment on " + str(_display.name))
 
       # clear all slot connections
       _slot_instances = self.slots[_display]
@@ -207,7 +207,7 @@ class SlotManager:
         _slot.clear_user()
 
       for _state in _concatenated_user_list:
-        print "User", _state[0].id, "(VIP:", str(_state[0].is_vip) + ") was assigned", _state[1], "slots on", _display.name
+        print "User", _state[0].id, "(VIP:", str(_state[0].is_vip) + ") was assigned " + str(_state[1]) + " slots."
 
       _i = 0
       for _state in _concatenated_user_list:
@@ -268,6 +268,8 @@ class SlotManager:
             _i += 1
  
     # open glasses for which no timings were assigned
+    print_headline("Send updated shutter configuration")
+
     for _i in range(total_number_of_shutter_glasses):
       if _glasses_updated[_i] == False:
         print_warning("Opening shutter glasses " + str(_i + 1))

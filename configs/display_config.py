@@ -74,6 +74,35 @@ class LargePowerwall(Display):
     else:
       return None
 
+## Display configuration for the 3D multiuser touch table in the VR lab.
+class TouchTable3D(Display):
+
+  ## Custom constructor.
+  # @param hostname The hostname to which this display is connected to.
+  # @param name A name to be associated to that display. Will be used in XML configuration file.
+  # @param resolution The display's resolution to be used.
+  # @param displaystrings A list of strings on which the windows for each user will pop up.
+  # @param size Physical size of the display medium in meters.
+  # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
+  def __init__(self):
+    Display.__init__( self
+                    , hostname = "medusa"
+                    , name = "touch_table_3D"
+                    #, resolution = (1920, 1200)
+                    , displaystrings = [":0.0", ":0.1", ":0.2"]
+                    , shutter_timings = [  [(100, 200, 2900, 3000), (8400, 8500, 11400, 11500)],
+                                           [(2600, 2700, 5700, 5800), (11000, 11100, 14600, 14700)],
+                                           [(6000, 6100, 8700, 8800), (14300, 14400, 15900, 16000)]
+                                        ]
+                    , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
+                                           [(20, 80, 40, 10), (2, 8, 4, 1)],
+                                           [(20, 80, 40, 10), (2, 8, 4, 1)]
+                                        ]
+                    , size = (1.27, 0.93)
+                    , transformation = avango.gua.make_trans_mat(0, 0.955, 0)
+                    , stereomode = "SIDE_BY_SIDE"                    
+                    )
+
 ## Display configuration for the small powerwall in the VR lab.
 class SmallPowerwall(Display):
 
@@ -113,7 +142,6 @@ class SmallPowerwall(Display):
       return (self.displaystrings[view_num], warpmatrices)
     else:
       return None
-
 
 
 class SamsungStereoTV(Display):
@@ -165,6 +193,7 @@ class MitsubishiStereoTV(Display):
 
 displays = [
     LargePowerwall()
+  , TouchTable3D()
   , Display(hostname = "atalante"
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )

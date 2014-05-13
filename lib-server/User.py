@@ -122,12 +122,13 @@ class User(avango.script.Script):
     # only switch when user is in new range for 0.5 seconds
 
     #pass
-    if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
-      if self.is_active == True:
+    if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
+      if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
+        if self.is_active == True:
           self.toggle_user_activity(False, True)
-    else:
-      if self.is_active == False:
-        self.toggle_user_activity(True, True)
+      else:
+        if self.is_active == False:
+          self.toggle_user_activity(True, True)
 
     #if self.id == 0 and self.toggle:
     #  print self.timer.Time.value

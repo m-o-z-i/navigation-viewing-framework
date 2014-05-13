@@ -162,8 +162,7 @@ class View(avango.script.Script):
     ClientPipelineValues.set_pipeline_values(self.pipeline)
 
     # add tracking reader to avoid latency
-    print_warning("Client tracking update disabled.")
-    #self.init_local_tracking_override(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())
+    self.init_local_tracking_override(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())
 
     # set display string and warpmatrices as given by the display
     if len(self.display_values) > 1:
@@ -217,8 +216,7 @@ class View(avango.script.Script):
   
   ## Evaluated every frame.
   def evaluate(self):
-    pass
-    '''
+
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
 
     # return when scenegraph is not yet present
@@ -248,4 +246,3 @@ class View(avango.script.Script):
     # TODO: Consider ONLY_TRANSLATION_UPDATE
     if _node_to_update != None:
       _node_to_update.Transform.value = self.headtracking_reader.sf_tracking_mat.value
-    '''

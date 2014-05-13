@@ -316,7 +316,7 @@ class SlotManager(avango.script.Script):
                  self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                  _j += 1
 
-              self.queue_commands(_command_list, 10)
+              self.queue_commands(_command_list, 9)
 
             # assign user to slot instances
             for _k in range(_start_i, _end_i + 1):

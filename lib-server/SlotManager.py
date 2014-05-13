@@ -100,6 +100,8 @@ class SlotManager(avango.script.Script):
     else:
       print_message("send_shutter_config() - " + _send_output)
 
+    self.print_uploaded_shutter_config()
+
   ## Prints the currently uploaded shutter configuration including timings and values.
   def print_uploaded_shutter_config(self):
 
@@ -283,6 +285,8 @@ class SlotManager(avango.script.Script):
             else:
               _glasses_updated[_user.glasses_id - 1] = True
 
+            # set event count properly
+            self.radio_master_hid.set_event_count(_user.glasses_id, 2 * len(_open_timings))
             
             # if user glasses are closing, do it immediately
             if self.glasses_slot_status[_user.glasses_id - 1] <= _old_glasses_slot_status[_user.glasses_id - 1]:

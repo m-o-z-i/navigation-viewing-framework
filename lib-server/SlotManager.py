@@ -6,6 +6,7 @@
 # import avango-guacamole libraries
 import avango
 import avango.gua
+import avango.script
 import RadioMasterHID
 
 # import framework libraries
@@ -20,11 +21,20 @@ total_number_of_shutter_glasses = 6
 
 ## Class to handle shutter configurations and timings. Associates the users per display to
 # the available slots and sets the glasses correctly.
-class SlotManager:
+class SlotManager(avango.script.Script):
+
+  ## Default constructor
+  def __init__(self):
+    self.super(SlotManager).__init__()
+    self.always_evaluate(True)
+
+    ##
+    #
+    self.invoke = False
 
   ## Custom constructor.
   # @param USER_LIST Reference to a list of all users in the setup.
-  def __init__(self, USER_LIST):
+  def my_constructor(self, USER_LIST):
 
     ## @var users
     # Reference to a list of all users to be handled in the setup.
@@ -33,6 +43,10 @@ class SlotManager:
     ## @var slots
     # Dictionary to map Display instances to a list of associated Slot instances.
     self.slots = dict()
+
+    ##
+    #
+    self.queued_commands = []
 
     ## @var radio_master_hid
     # Instance of RadioMasterHID to handle shutter glass configurations.
@@ -50,7 +64,9 @@ class SlotManager:
 
     # reset to default shutter configuration and register reset function on close
     self.reset_shutter_config("/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
+    #self.reset_shutter_config("/home/lopa1693/test8.xml")
     atexit.register(self.reset_shutter_config, INITIAL_CONFIGURATION = "/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
+    self.print_uploaded_shutter_config()
 
   ## Loads an XML shutter configuration and uploads it.
   def reset_shutter_config(self, INITIAL_CONFIGURATION):
@@ -110,6 +126,28 @@ class SlotManager:
       self.slots[DISPLAY] = _slot_list
     else:
       self.slots[DISPLAY] = [SLOT]
+
+
+  ##
+  def evaluate(self):
+    if self.invoke:
+      self.frames_since_call += 1
+      print self.frames_since_call
+
+      if self.frames_since_call > 10:
+        self.invoke = False
+        self.frames_since_call = 0
+        self.send_shutter_config()
+        self.print_uploaded_shutter_config()
+
+        if self.call_during_invoke:
+          self.update_slot_configuration()
+
+  ##
+  def invoke_send_later(self):
+    self.invoke = True
+    self.frames_since_call = 0
+    self.call_during_invoke = False
 
 
   ## Updates the shutter timings and scenegraph slot connections according to the
@@ -275,5 +313,6 @@ class SlotManager:
         print_warning("Opening shutter glasses " + str(_i + 1))
         self.radio_master_hid.set_shutter_const(_i + 1, int("88", 16), 1)
 
-    self.send_shutter_config()
-    self.print_uploaded_shutter_config()
+    self.invoke_send_later()
+    #self.send_shutter_config()
+    #self.print_uploaded_shutter_config()

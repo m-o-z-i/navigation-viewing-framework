@@ -118,10 +118,13 @@ class User(avango.script.Script):
   def evaluate(self):
     # Set active flag, current platform and current display
     # call slot manager.
-    
+
+    # only switch when user is in new range for 0.5 seconds
+
+    #pass
     if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
       if self.is_active == True:
-        self.toggle_user_activity(False, True)
+          self.toggle_user_activity(False, True)
     else:
       if self.is_active == False:
         self.toggle_user_activity(True, True)

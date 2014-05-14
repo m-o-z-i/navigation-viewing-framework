@@ -223,7 +223,7 @@ def init_new_spheron():
 ## Initalizes a mouse for navigation.
 def init_mouse():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"Logitech USB Optical Mouse\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"Logitech USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
   
   _string = _string.split()
 

@@ -208,4 +208,4 @@ displays = [
 ## @var INTELLIGENT_SHUTTER_SWITCHING
 # If true, free display slots will be assigned to users, vip and active flags
 # of users are considered and the users' shutter timings are updated.
-INTELLIGENT_SHUTTER_SWITCHING = False
+INTELLIGENT_SHUTTER_SWITCHING = True

@@ -26,8 +26,6 @@ class User(avango.script.Script):
 
   def __init__(self):
     self.super(User).__init__()
-    self.timer = avango.nodes.TimeSensor()
-    self.toggle = True
 
   ## Custom constructor.
   # @param APPLICATION_MANAGER Reference to the ApplicationManager instance from which this user is created.
@@ -130,13 +128,6 @@ class User(avango.script.Script):
         else:
           if self.is_active == False:
             self.toggle_user_activity(True, True)
-
-    #if self.id == 0 and self.toggle:
-    #  print self.timer.Time.value
-    #  if self.timer.Time.value > 20 and self.toggle:
-    #    self.toggle_user_activity(False, True)
-    #    print_warning("User 0 was toggled inactive.")
-    #    self.toggle = False
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

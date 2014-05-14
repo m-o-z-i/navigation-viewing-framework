@@ -17,7 +17,7 @@ from display_config import INTELLIGENT_SHUTTER_SWITCHING
 from copy import copy
 import atexit
 
-# @var total_number_of_shutter_glasses
+## @var total_number_of_shutter_glasses
 total_number_of_shutter_glasses = 6
 
 ## Class to handle shutter configurations and timings. Associates the users per display to
@@ -29,8 +29,9 @@ class SlotManager(avango.script.Script):
     self.super(SlotManager).__init__()
     self.always_evaluate(True)
 
-    ##
-    #
+    ## @var glasses_slot_status
+    # List containing the number of slots for shutter glasses per display. 
+    # Form: [ [DISPLAY_NAME, [LIST OF SLOTS PER SHUTTER] ], ...  ]
     self.glasses_slot_status = []
 
   ## Custom constructor.
@@ -95,7 +96,6 @@ class SlotManager(avango.script.Script):
 
   ## Tells the RadioMasterHID to send the shutter configuration. Formats feedback nicely.
   def send_shutter_config(self):
-    print "\n\n"
 
     _send_output = self.radio_master_hid.send_shutter_config()
 
@@ -326,7 +326,7 @@ class SlotManager(avango.script.Script):
             _j = 0
 
             if _user.glasses_id == None:
-              print_warning("Warning: User " + _user.id + " has no glasses id specified.")
+              print_warning("Warning: User " + str(_user.id) + " has no glasses id specified.")
 
             if _user.glasses_id > total_number_of_shutter_glasses:
               print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)

@@ -276,7 +276,9 @@ class SlotManager(avango.script.Script):
       _old_glasses_slot_status = list(self.glasses_slot_status)
       for _state in _concatenated_user_list:
         print "User", _state[0].id, "(VIP:", str(_state[0].is_vip) + ") was assigned " + str(_state[1]) + " slots."
-        self.glasses_slot_status[_state[0].glasses_id - 1] = _state[1]
+        
+        if _state[0].glasses_id != None:
+          self.glasses_slot_status[_state[0].glasses_id - 1] = _state[1]
 
       _i = 0
       for _state in _concatenated_user_list:

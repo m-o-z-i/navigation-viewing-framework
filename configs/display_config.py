@@ -88,7 +88,7 @@ class TouchTable3D(Display):
     Display.__init__( self
                     , hostname = "medusa"
                     , name = "touch_table_3D"
-                    #, resolution = (1920, 1200)
+                    , resolution = (1400, 1050)
                     , displaystrings = [":0.0", ":0.1", ":0.2"]
                     , shutter_timings = [  [(100, 200, 2900, 3000), (8400, 8500, 11400, 11500)],
                                            [(2600, 2700, 5700, 5800), (11000, 11100, 14600, 14700)],
@@ -201,6 +201,9 @@ displays = [
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
   , Display(hostname = "agenor"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+  )
+  , Display(hostname = "apollo"
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
 ]

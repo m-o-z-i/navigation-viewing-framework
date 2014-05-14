@@ -12,6 +12,7 @@ from avango.script import field_has_changed
 # import framework libraries
 from TrackingReader import *
 from ConsoleIO import *
+from display_config import INTELLIGENT_SHUTTER_SWITCHING
 
 # import math libraries
 import math
@@ -120,15 +121,15 @@ class User(avango.script.Script):
     # call slot manager.
 
     # only switch when user is in new range for 0.5 seconds
+    if INTELLIGENT_SHUTTER_SWITCHING:
 
-    #pass
-    if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
-      if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
-        if self.is_active == True:
-          self.toggle_user_activity(False, True)
-      else:
-        if self.is_active == False:
-          self.toggle_user_activity(True, True)
+      if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
+        if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
+          if self.is_active == True:
+            self.toggle_user_activity(False, True)
+        else:
+          if self.is_active == False:
+            self.toggle_user_activity(True, True)
 
     #if self.id == 0 and self.toggle:
     #  print self.timer.Time.value

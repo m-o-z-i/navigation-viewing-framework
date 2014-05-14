@@ -11,6 +11,7 @@ import RadioMasterHID
 
 # import framework libraries
 from ConsoleIO   import *
+from display_config import INTELLIGENT_SHUTTER_SWITCHING
 
 # import python libraries
 from copy import copy
@@ -28,8 +29,8 @@ class SlotManager(avango.script.Script):
     self.super(SlotManager).__init__()
     self.always_evaluate(True)
 
-    ##
-    #
+    ## @var glasses_slot_status
+    # List of integers representing the number of slots which were assigned to the glasses.
     self.glasses_slot_status = []
     for i in range(total_number_of_shutter_glasses):
       self.glasses_slot_status.append(0)
@@ -49,6 +50,10 @@ class SlotManager(avango.script.Script):
     ## @var queued_commands
     # Format: [string list, frames] A list of commands in string form that are executed in x frames in the future.
     self.queued_commands = []
+
+    # do not create RadioMasterHID when intelligent shutter switching is off
+    if INTELLIGENT_SHUTTER_SWITCHING == False:
+      return
 
     ## @var radio_master_hid
     # Instance of RadioMasterHID to handle shutter glass configurations.
@@ -161,10 +166,11 @@ class SlotManager(avango.script.Script):
   def update_slot_configuration(self):
  
     # List to save for which glasses a configuration was set
-    _glasses_updated = []
-    for _i in range(total_number_of_shutter_glasses):
-      _glasses_updated.append(False)
-      self.radio_master_hid.set_shutter_const(_i + 1, int("22", 16), 1)  # activate all shutter glasses
+    if INTELLIGENT_SHUTTER_SWITCHING:
+      _glasses_updated = []
+      for _i in range(total_number_of_shutter_glasses):
+        _glasses_updated.append(False)
+        self.radio_master_hid.set_shutter_const(_i + 1, int("22", 16), 1)  # activate all shutter glasses
 
     
     # loop over all displays to be handled
@@ -205,7 +211,9 @@ class SlotManager(avango.script.Script):
       _number_free_slots = len(self.slots[_display]) - len(_default_user_list) - len(_vip_user_list)
 
       # if vip users are present, distribute the free slots among them
-      if len(_vip_user_list) > 0:
+      if INTELLIGENT_SHUTTER_SWITCHING == False:
+        _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
+      elif len(_vip_user_list) > 0:
         _i = 0
         
         while _number_free_slots > 0:
@@ -242,11 +250,26 @@ class SlotManager(avango.script.Script):
 
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 
+      # assign one slot to each user when intelligent switching is off
+      _slot_instances = self.slots[_display]
+      
+      if INTELLIGENT_SHUTTER_SWITCHING == False:
+        _i = 0
+
+        for _state in _concatenated_user_list:
+          _slot_instances[_i].assign_user(_state[0])
+          _i += 1
+
+        print_warning("Intelligent shutter switching disabled. Assigning one slot for each user," + \
+                      " independent from active and vip status.")
+
+        return
+
+      # if intelligent shutter switching is on
       # update shutter values according to slots assigned
       print_headline("User - Slot Assignment on " + str(_display.name))
 
       # clear all slot connections
-      _slot_instances = self.slots[_display]
       for _slot in _slot_instances:
         _slot.clear_user()
 

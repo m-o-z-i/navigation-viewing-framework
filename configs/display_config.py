@@ -204,3 +204,5 @@ displays = [
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
 ]
+
+INTELLIGENT_SHUTTER_SWITCHING = True

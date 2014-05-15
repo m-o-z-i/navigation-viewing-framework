@@ -121,9 +121,6 @@ class User(avango.script.Script):
     # only switch when user is in new range for 0.5 seconds
     if INTELLIGENT_SHUTTER_SWITCHING:
 
-      if self.headtracking_reader.tracking_sensor.Station.value == "tracking-dlp-glasses-3":
-        print self.headtracking_reader.sf_abs_vec.value.x
-
       if self.headtracking_reader.sf_abs_vec.value.x < -1.0:
 
         if self.platform_id != 1:

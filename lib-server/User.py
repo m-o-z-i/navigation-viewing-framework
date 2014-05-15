@@ -121,13 +121,26 @@ class User(avango.script.Script):
     # only switch when user is in new range for 0.5 seconds
     if INTELLIGENT_SHUTTER_SWITCHING:
 
-      if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
-        if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
-          if self.is_active == True:
-            self.toggle_user_activity(False, True)
-        else:
-          if self.is_active == False:
-            self.toggle_user_activity(True, True)
+      if self.headtracking_reader.tracking_sensor.Station.value == "tracking-dlp-glasses-3":
+        print self.headtracking_reader.sf_abs_vec.value.x
+
+      if self.headtracking_reader.sf_abs_vec.value.x < -1.0:
+
+        if self.platform_id != 1:
+          self.set_user_location(1)
+
+      else:
+
+        if self.platform_id != 0:
+          self.set_user_location(0)
+
+      #if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
+      #  if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
+      #    if self.is_active == True:
+      #      self.toggle_user_activity(False, True)
+      #  else:
+      #    if self.is_active == False:
+      #      self.toggle_user_activity(True, True)
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.
@@ -149,21 +162,33 @@ class User(avango.script.Script):
   ## Changes the user's current platform.
   # @param PLATFORM_ID The new platform id to be set.
   def set_user_location(self, PLATFORM_ID):
-    self.remove_from_platform(self.head_avatar)
-    self.remove_from_platform(self.body_avatar)
 
-    self.platform_id = PLATFORM_ID
-    self.platform = self.APPLICATION_MANAGER.navigation_list[self.platform_id].platform
-    self.current_display = self.platform.displays[0]
-    self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-    self.head_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
-    self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-    self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
+    _intended_platform = self.APPLICATION_MANAGER.navigation_list[PLATFORM_ID].platform
+    _intended_display = _intended_platform.displays[0]
 
-    self.append_to_platform(self.head_avatar)
-    self.append_to_platform(self.body_avatar)
+    if self.APPLICATION_MANAGER.slot_manager.display_has_free_slot(_intended_display):
 
-    self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
+      self.remove_from_platform(self.head_avatar)
+      self.remove_from_platform(self.body_avatar)
+
+      self.platform_id = PLATFORM_ID
+      self.platform = _intended_platform
+      self.current_display = _intended_display
+
+      self.avatar_material = self.APPLICATION_MANAGER.navigation_list[self.platform_id].trace_material
+
+      self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+      self.head_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
+      self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+      self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
+
+      self.append_to_platform(self.head_avatar)
+      self.append_to_platform(self.body_avatar)
+
+      self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
+
+    else:
+      print_warning("Blocked")
 
   
   ## Sets the transformation values of left and right eye.

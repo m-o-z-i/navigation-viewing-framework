@@ -127,6 +127,23 @@ class SlotManager(avango.script.Script):
     # add glasses slot status list to print
     print self.glasses_slot_status
 
+  ## Checks if a given Display instance has a slot left to give away to another user.
+  # @param DISPLAY The Display instance to be checked for a free slot.
+  def display_has_free_slot(self, DISPLAY):
+
+    # count users at DISPLAY
+    _num_of_users = 0
+
+    for _user in self.users:
+      if _user.current_display == DISPLAY:
+        _num_of_users += 1
+
+    # compare to number of available slots
+    if _num_of_users == len(DISPLAY.displaystrings):
+      return False
+    else:
+      return True
+
 
   ## Tells the SlotManager that a new Slot instance is to be handled for a certain Display instance.
   # @param SLOT The Slot instance to register.
@@ -175,9 +192,8 @@ class SlotManager(avango.script.Script):
  
     # List to save for which glasses a configuration was set
     if INTELLIGENT_SHUTTER_SWITCHING:
-      _glasses_updated = []
+
       for _i in range(total_number_of_shutter_glasses):
-        _glasses_updated.append(False)
         self.radio_master_hid.set_shutter_const(_i + 1, int("22", 16), 1)  # activate all shutter glasses
 
     
@@ -294,6 +310,8 @@ class SlotManager(avango.script.Script):
       # copy _display_slot_assignment to check for changes in the end
       _old_display_slot_assignment = list(_display_slot_assignment)
 
+      _glasses_updated = [False for i in range(total_number_of_shutter_glasses)]
+
       # print and update user / glasses slot assignment
       for _state in _concatenated_user_list:
         print "User", _state[0].id, "(VIP:", str(_state[0].is_vip) + ") was assigned " + str(_state[1]) + " slots."
@@ -380,14 +398,20 @@ class SlotManager(avango.script.Script):
             for _k in range(_start_i, _end_i + 1):
               _slot_instances[_k].assign_user(_user)
 
-            _i += 1
+              _i += 1
+
+      
+      for _i in range(total_number_of_shutter_glasses):
+        if _glasses_updated[_i] == False:
+          _display_slot_assignment[_i] = 0
+
  
     # open glasses for which no timings were assigned
     print_headline("Send updated shutter configuration")
 
-    for _i in range(total_number_of_shutter_glasses):
-      if _glasses_updated[_i] == False:
-        print_warning("Opening shutter glasses " + str(_i + 1))
-        self.radio_master_hid.set_shutter_const(_i + 1, int("88", 16), 1)
+    #for _i in range(total_number_of_shutter_glasses):
+    #  if _glasses_updated[_i] == False:
+    #    print_warning("Opening shutter glasses " + str(_i + 1))
+    #    self.radio_master_hid.set_shutter_const(_i + 1, int("88", 16), 1)
 
     self.send_shutter_config()

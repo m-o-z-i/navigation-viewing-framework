@@ -113,7 +113,8 @@ class TouchTable3D(Display):
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
                                         ]
                     , size = (1.27, 0.93)
-                    , transformation = avango.gua.make_trans_mat(0, 0.955, 0) * avango.gua.make_rot_mat(90.0,-1,0,0)
+                    , transformation = avango.gua.make_rot_mat(90.0,-1,0,0)
+                    #, transformation = avango.gua.make_trans_mat(0, 0.955, 0) * avango.gua.make_rot_mat(90.0,-1,0,0)
                     #, transformation = avango.gua.make_trans_mat(-2.00, 0.955, 2.25) * avango.gua.make_rot_mat(90.0,0,1,0) * avango.gua.make_rot_mat(90.0,-1,0,0)
                     , stereomode = "SIDE_BY_SIDE"                    
                     )

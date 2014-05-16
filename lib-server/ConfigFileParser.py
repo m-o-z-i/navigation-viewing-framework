@@ -219,7 +219,25 @@ class ConfigFileParser:
           _current_line = _current_line.replace("</z>", "")
           _current_line = _current_line.rstrip()
           _transmitter_z = float(_current_line)
-          _device_attributes[8] = avango.gua.make_trans_mat(_transmitter_x, _transmitter_y, _transmitter_z)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<rx>", "")
+          _current_line = _current_line.replace("</rx>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_rx = float(_current_line)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<ry>", "")
+          _current_line = _current_line.replace("</ry>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_ry = float(_current_line)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<rz>", "")
+          _current_line = _current_line.replace("</rz>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_rz = float(_current_line)
+          _device_attributes[8] = avango.gua.make_trans_mat(_transmitter_x, _transmitter_y, _transmitter_z) * \
+                                  avango.gua.make_rot_mat(_transmitter_rz, 0, 0, 1) * \
+                                  avango.gua.make_rot_mat(_transmitter_rx, 1, 0, 0) * \
+                                  avango.gua.make_rot_mat(_transmitter_ry, 0, 1, 0)
 
         # get end of transmitter offset values
         if _current_line.startswith("</transmitteroffset>"):

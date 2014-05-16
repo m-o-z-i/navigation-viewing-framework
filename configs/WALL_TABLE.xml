@@ -32,6 +32,9 @@
       <x>0.0</x>
       <y>0.043</y>
       <z>1.6</z>
+      <rx>0.0</rx>
+      <ry>0.0</ry>
+      <rz>0.0</rz>
     </transmitteroffset>
 
     <notrackingposition>
@@ -69,14 +72,17 @@
 
     <transmitteroffset>
       <x>0.65</x>
-      <y>0.043</y>
+      <y>-0.91</y>
       <z>2.0</z>
+      <rx>0.0</rx>
+      <ry>-90.0</ry>
+      <rz>0.0</rz>
     </transmitteroffset>
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.75</y>
-      <z>1.6</z>
+      <y>0.0</y>
+      <z>0.0</z>
     </notrackingposition>
 
     <platformpos>

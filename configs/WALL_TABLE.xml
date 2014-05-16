@@ -106,9 +106,9 @@
 
     <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
-    <startplatform>0</startplatform>
+    <startplatform>1</startplatform>
 
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
 
@@ -123,27 +123,12 @@
 
     <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
 
-    <startplatform>0</startplatform>
+    <startplatform>1</startplatform>
 
-    <warnings>True</warnings>
-
-  </user>
-
-  <!-- Third User -->
-  
-  <user>
-
-    <vip>False</vip>
-
-    <glasses>5</glasses>
-
-    <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
-
-    <startplatform>0</startplatform>
-
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
+
 
   <!-- Fourth User -->
   
@@ -155,9 +140,9 @@
 
     <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
 
-    <startplatform>0</startplatform>
+    <startplatform>1</startplatform>
 
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
   

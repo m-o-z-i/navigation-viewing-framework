@@ -72,7 +72,8 @@ class SlotManager(avango.script.Script):
 
     # reset to default shutter configuration and register reset function on close
     self.reset_shutter_config("/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
-    atexit.register(self.reset_shutter_config, INITIAL_CONFIGURATION = "/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
+    #self.reset_shutter_config("/home/lopa1693/test146ACTIVE.xml")
+    #atexit.register(self.reset_shutter_config, INITIAL_CONFIGURATION = "/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
 
   ## Loads an XML shutter configuration and uploads it.
   def reset_shutter_config(self, INITIAL_CONFIGURATION):
@@ -263,16 +264,17 @@ class SlotManager(avango.script.Script):
       else:
         _i = 0
 
-        while _number_free_slots > 0:
-          # add slot to default user _i
-          _default_user_list[_i][1] += 1
-          _i += 1
+        if _display.name != "touch_table_3D":
+          while _number_free_slots > 0:
+            # add slot to default user _i
+            _default_user_list[_i][1] += 1
+            _i += 1
 
-          # start again when at end of list
-          if _i == len(_default_user_list):
-            _i = 0
+            # start again when at end of list
+            if _i == len(_default_user_list):
+              _i = 0
 
-          _number_free_slots -= 1
+            _number_free_slots -= 1
 
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 
@@ -358,30 +360,55 @@ class SlotManager(avango.script.Script):
             if _display_slot_assignment[_user.glasses_id - 1] <= _old_display_slot_assignment[_user.glasses_id - 1]:
               # set ids with shutter timings and values properly
               while _j < len(_open_timings):
+                print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
                 self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
+                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
                 _j += 1
 
               while _j < 2 * len(_open_timings):
-                 self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
-                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
-                 _j += 1
+                print "SET TIMER VALUE", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
+                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
+                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16)
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
+                _j += 1
+
             # if the user glasses are opening, wait for some frames
             else:
               # set ids with shutter timings and values properly
               _command_list = []
 
               while _j < len(_open_timings):
-                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_open_timings[_j]) + ")")
+                print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
+                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
+                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
                 _j += 1
 
               while _j < 2 * len(_open_timings):
-                 _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_close_timings[_j - len(_open_timings)]) + ")")
-                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
-                 _j += 1
+                print "SET TIMER VALUE", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
+                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
+                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16)
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
+                _j += 1
+
+              '''
+              while _j < len(_open_timings):
+                print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
+                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_open_timings[_j]) + ")")
+                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
+                _j += 1
+
+              while _j < 2 * len(_open_timings):
+                print "SET TIMER VALUE", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
+                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_close_timings[_j - len(_open_timings)]) + ")")
+                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16)
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
+                _j += 1
 
               self.queue_commands(_command_list, 9)
+              '''
 
             # assign user to slot instances
             for _k in range(_start_i, _end_i + 1):

@@ -264,17 +264,16 @@ class SlotManager(avango.script.Script):
       else:
         _i = 0
 
-        if _display.name != "touch_table_3D":
-          while _number_free_slots > 0:
-            # add slot to default user _i
-            _default_user_list[_i][1] += 1
-            _i += 1
+        while _number_free_slots > 0:
+          # add slot to default user _i
+          _default_user_list[_i][1] += 1
+          _i += 1
 
-            # start again when at end of list
-            if _i == len(_default_user_list):
-              _i = 0
+          # start again when at end of list
+          if _i == len(_default_user_list):
+            _i = 0
 
-            _number_free_slots -= 1
+          _number_free_slots -= 1
 
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 
@@ -321,7 +320,6 @@ class SlotManager(avango.script.Script):
         if _state[0].glasses_id != None:
           _display_slot_assignment[_state[0].glasses_id - 1] = _state[1]
 
-
       _i = 0
 
       for _state in _concatenated_user_list:
@@ -332,20 +330,48 @@ class SlotManager(avango.script.Script):
         # check if the user has slots assigned to him
         if _number_of_slots > 0:
           if _stereo:
-            # stereo display - set proper shutter timings
-            _open_timings = _slot_instances[_i].shutter_timing[0]
-            _open_values = _slot_instances[_i].shutter_value[0]
-            _start_i = copy(_i)
 
-            print "OPEN", _open_timings
-            
-            _i += (_number_of_slots - 1)
+            print _display.name, _display.get_shutter_mode()
 
-            _close_timings = _slot_instances[_i].shutter_timing[1]
-            _close_values = _slot_instances[_i].shutter_value[1]
-            _end_i = copy(_i)
+            if _display.get_shutter_mode() == "PASSIVE_STEREO":
+              # passive stereo display - set proper shutter timings
+              _open_timings = _slot_instances[_i].shutter_timing[0]
+              _open_values = _slot_instances[_i].shutter_value[0]
+              _start_i = copy(_i)
+              
+              _i += (_number_of_slots - 1)
 
-            print "CLOSE", _close_timings
+              _close_timings = _slot_instances[_i].shutter_timing[1]
+              _close_values = _slot_instances[_i].shutter_value[1]
+              _end_i = copy(_i)
+
+            else:
+              # active stereo display - set proper shutter timings
+              _start_timings_left = _slot_instances[_i].shutter_timing[0]
+              _start_timings_right = _slot_instances[_i].shutter_timing[1]
+              _start_values_left = _slot_instances[_i].shutter_value[0]
+              _start_values_right = _slot_instances[_i].shutter_value[1]
+              _start_i = copy(_i)
+
+              _i += (_number_of_slots - 1)
+
+              _end_timings_left = _slot_instances[_i].shutter_timing[0]
+              _end_timings_right = _slot_instances[_i].shutter_timing[1]
+              _end_values_left = _slot_instances[_i].shutter_value[0]
+              _end_values_right = _slot_instances[_i].shutter_value[1]
+              _end_i = copy(_i)
+
+              _left_timings = (_start_timings_left[0], _start_timings_left[1], _end_timings_left[2], _end_timings_left[3])
+              _right_timings = (_start_timings_right[0], _start_timings_right[1], _end_timings_right[2], _end_timings_right[3])
+              _left_values = (_start_values_left[0], _start_values_left[1], _end_values_left[2], _end_values_left[3])
+              _right_values = (_start_values_right[0], _start_values_right[1], _end_values_right[2], _end_values_right[3])
+
+              # TODO: use proper name
+              _open_timings = _left_timings
+              _open_values = _left_values
+              _close_timings = _right_timings
+              _close_values = _right_values
+
 
             _j = 0
 

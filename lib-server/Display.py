@@ -99,6 +99,17 @@ class Display:
     _screen.Transform.value = self.transformation
     return _screen
 
+  ## Returns the shutter mode according to the shutter timings set.
+  # Can be ACTIVE_STEREO, PASSIVE_STEREO or NONE.
+  def get_shutter_mode(self):
+
+    if self.shutter_timings == []:
+      return "NONE"
+    elif len(self.shutter_timings[0][0]) == 2:
+      return "PASSIVE_STEREO"
+    elif len(self.shutter_timings[0][0]) == 4:
+      return "ACTIVE_STEREO"
+
   ## Creates a visualization of the display's screen in the scene (white frame). Returns the scenegraph geometry node.
   def create_screen_visualization(self):
   

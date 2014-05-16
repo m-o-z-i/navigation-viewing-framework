@@ -16,7 +16,6 @@ All the classes including their variables and functions are explained in the doc
 
 ## Contributors
 
-André Kunert: andre.kunert@uni-weimar.de
-Joshua Reibert: joshua.reibert@uni-weimar.de
-Tim Weißker: tim.weissker@uni-weimar.de
-
+André Kunert: andre.kunert@uni-weimar.de<br/>  
+Joshua Reibert: joshua.reibert@uni-weimar.de<br/>  
+Tim Weißker: tim.weissker@uni-weimar.de<br/> 

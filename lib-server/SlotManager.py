@@ -407,7 +407,7 @@ class SlotManager(avango.script.Script):
             else:
               # set ids with shutter timings and values properly
               _command_list = []
-
+              '''
               while _j < len(_open_timings):
                 #print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
                 self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
@@ -438,7 +438,7 @@ class SlotManager(avango.script.Script):
                 _j += 1
 
               self.queue_commands(_command_list, 9)
-              '''
+              
 
             # assign user to slot instances
             for _k in range(_start_i, _end_i + 1):

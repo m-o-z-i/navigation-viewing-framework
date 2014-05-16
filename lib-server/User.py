@@ -121,15 +121,18 @@ class User(avango.script.Script):
     # only switch when user is in new range for 0.5 seconds
     if INTELLIGENT_SHUTTER_SWITCHING:
 
-      if self.headtracking_reader.sf_abs_vec.value.x < -1.0:
-
-        if self.platform_id != 1:
+      if self.platform_id == 0:
+  
+        if self.headtracking_reader.sf_abs_vec.value.x < -1.0:
           self.set_user_location(1)
 
-      else:
+      elif self.platform_id == 1:
 
-        if self.platform_id != 0:
+        #if self.headtracking_reader.tracking_sensor.Station.value == "tracking-dlp-glasses-1":
+        #  print self.headtracking_reader.sf_abs_vec.value.z
+        if self.headtracking_reader.sf_abs_vec.value.z < 2.57:
           self.set_user_location(0)
+
 
       #if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
       #  if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
@@ -171,6 +174,10 @@ class User(avango.script.Script):
       self.platform_id = PLATFORM_ID
       self.platform = _intended_platform
       self.current_display = _intended_display
+
+      self.transmitter_offset = self.platform.transmitter_offset
+      self.no_tracking_mat = self.platform.no_tracking_mat
+      self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
 
       self.avatar_material = self.APPLICATION_MANAGER.navigation_list[self.platform_id].trace_material
 

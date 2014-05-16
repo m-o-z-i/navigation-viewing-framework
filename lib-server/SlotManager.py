@@ -360,9 +360,9 @@ class SlotManager(avango.script.Script):
             if _display_slot_assignment[_user.glasses_id - 1] <= _old_display_slot_assignment[_user.glasses_id - 1]:
               # set ids with shutter timings and values properly
               while _j < len(_open_timings):
-                print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
+                #print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
                 self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
-                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
+                #print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
                 _j += 1
 
@@ -379,16 +379,16 @@ class SlotManager(avango.script.Script):
               _command_list = []
 
               while _j < len(_open_timings):
-                print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
+                #print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
                 self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
-                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
+                #print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
                 _j += 1
 
               while _j < 2 * len(_open_timings):
-                print "SET TIMER VALUE", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
+                #print "SET TIMER VALUE", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
                 self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
-                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16)
+                #print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                 _j += 1
 

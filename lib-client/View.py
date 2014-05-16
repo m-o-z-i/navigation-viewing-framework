@@ -216,7 +216,8 @@ class View(avango.script.Script):
   
   ## Evaluated every frame.
   def evaluate(self):
-
+    pass
+    '''
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
 
     # return when scenegraph is not yet present
@@ -246,3 +247,4 @@ class View(avango.script.Script):
     # TODO: Consider ONLY_TRANSLATION_UPDATE
     if _node_to_update != None:
       _node_to_update.Transform.value = self.headtracking_reader.sf_tracking_mat.value
+    '''

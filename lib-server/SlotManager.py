@@ -264,17 +264,17 @@ class SlotManager(avango.script.Script):
       else:
         _i = 0
 
-        if _display.name != "touch_table_3D":
-          while _number_free_slots > 0:
-            # add slot to default user _i
-            _default_user_list[_i][1] += 1
-            _i += 1
+        #if _display.name != "touch_table_3D":
+        while _number_free_slots > 0:
+          # add slot to default user _i
+          _default_user_list[_i][1] += 1
+          _i += 1
 
-            # start again when at end of list
-            if _i == len(_default_user_list):
-              _i = 0
+          # start again when at end of list
+          if _i == len(_default_user_list):
+            _i = 0
 
-            _number_free_slots -= 1
+          _number_free_slots -= 1
 
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 
@@ -336,12 +336,16 @@ class SlotManager(avango.script.Script):
             _open_timings = _slot_instances[_i].shutter_timing[0]
             _open_values = _slot_instances[_i].shutter_value[0]
             _start_i = copy(_i)
+
+            print "OPEN", _open_timings
             
             _i += (_number_of_slots - 1)
 
             _close_timings = _slot_instances[_i].shutter_timing[1]
             _close_values = _slot_instances[_i].shutter_value[1]
             _end_i = copy(_i)
+
+            print "CLOSE", _close_timings
 
             _j = 0
 

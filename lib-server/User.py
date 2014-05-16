@@ -188,8 +188,9 @@ class User(avango.script.Script):
       self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
       self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
 
-      self.append_to_platform(self.head_avatar)
-      self.append_to_platform(self.body_avatar)
+      if self.platform.avatar_type != "None":
+        self.append_to_platform(self.head_avatar)
+        self.append_to_platform(self.body_avatar)
 
       if RESEND_CONFIG:
         self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()

@@ -99,8 +99,8 @@ class User(avango.script.Script):
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     # create avatar representation
-    if self.platform.avatar_type == "joseph":
-      self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)
+    if self.platform.avatar_type == "joseph" or self.platform.avatar_type == "None":
+      self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)  
     else:
       if self.platform.avatar_type == "joseph_table":
         print_warning("Avatar type jospeh_table is deprecated. The creation of table avatars are now handled by the " + \
@@ -124,7 +124,7 @@ class User(avango.script.Script):
       if self.platform_id == 0:
         
         if self.headtracking_reader.sf_abs_vec.value.x < -1.0:
-          self.set_user_location(1)
+          self.set_user_location(1, True)
 
       elif self.platform_id == 1:
 
@@ -132,7 +132,7 @@ class User(avango.script.Script):
         #  print self.headtracking_reader.sf_abs_vec.value
         
         if self.headtracking_reader.sf_abs_vec.value.z > 1.1:
-          self.set_user_location(0)
+          self.set_user_location(0, True)
 
 
       #if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
@@ -162,7 +162,8 @@ class User(avango.script.Script):
 
   ## Changes the user's current platform.
   # @param PLATFORM_ID The new platform id to be set.
-  def set_user_location(self, PLATFORM_ID):
+  # @param RESEND_CONFIG Boolean indicating if the shutter configuration should be directly resent.
+  def set_user_location(self, PLATFORM_ID, RESEND_CONFIG):
 
     _intended_platform = self.APPLICATION_MANAGER.navigation_list[PLATFORM_ID].platform
     _intended_display = _intended_platform.displays[0]
@@ -190,7 +191,8 @@ class User(avango.script.Script):
       self.append_to_platform(self.head_avatar)
       self.append_to_platform(self.body_avatar)
 
-      self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
+      if RESEND_CONFIG:
+        self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
 
     else:
       print_warning("Blocked")

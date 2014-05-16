@@ -159,8 +159,9 @@ class Platform(avango.script.Script):
       self.platform_scale_transform_node.Children.value.append(_screen)
       self.screens.append(_screen)
       
-      _screen_visualization = _display.create_screen_visualization()
-      self.platform_scale_transform_node.Children.value.append(_screen_visualization)
+      if AVATAR_TYPE != "None":
+        _screen_visualization = _display.create_screen_visualization()
+        self.platform_scale_transform_node.Children.value.append(_screen_visualization)
 
       _string_num = 0
       # create a slot for each displaystring

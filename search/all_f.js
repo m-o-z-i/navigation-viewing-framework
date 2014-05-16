@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['parse',['parse',['../classlib-server_1_1ConfigFileParser_1_1ConfigFileParser.html#af8bbd42c06f27f8439fce9e05ad88135',1,'lib-server.ConfigFileParser.ConfigFileParser.parse()'],['../namespaceClientConfigFileParser.html#a37930308dc98bc69f8c5fb275b132f28',1,'ClientConfigFileParser.parse()']]],
+  ['parse',['parse',['../classlib-server_1_1ConfigFileParser_1_1ConfigFileParser.html#af8bbd42c06f27f8439fce9e05ad88135',1,'lib-server::ConfigFileParser::ConfigFileParser']]],
   ['pick_5fdirection',['pick_direction',['../classlib-server_1_1Intersection_1_1Intersection.html#a2e650c063ee4485ef34c93454fb691a4',1,'lib-server::Intersection::Intersection']]],
   ['pick_5flength',['pick_length',['../classlib-server_1_1Intersection_1_1Intersection.html#a823c02c15424ba895ee3130056fc0e1a',1,'lib-server::Intersection::Intersection']]],
   ['picking_5fmask',['picking_mask',['../classlib-server_1_1Intersection_1_1Intersection.html#aa4fd96504d880a7de0b27200c81cc4a3',1,'lib-server::Intersection::Intersection']]],
@@ -12,6 +12,7 @@ var searchData=
   ['platform_5fdepth',['platform_depth',['../classlib-server_1_1BorderObserver_1_1BorderObserver.html#a0b482f33bde6393195125b9e77a24982',1,'lib-server::BorderObserver::BorderObserver']]],
   ['platform_5fid',['platform_id',['../classView_1_1View.html#a3f0aa147e0ea7beceadbc6ba56aa467a',1,'View.View.platform_id()'],['../classlib-server_1_1Platform_1_1Platform.html#a427903b9e6e09bbf46a822bd9699b3a3',1,'lib-server.Platform.Platform.platform_id()'],['../classlib-server_1_1User_1_1User.html#afa7b22cb6eedd575a8ce99cb9e276ea7',1,'lib-server.User.User.platform_id()']]],
   ['platform_5finstance',['PLATFORM_INSTANCE',['../classlib-server_1_1BorderObserver_1_1BorderObserver.html#a7c813770b66c2b6863e410ebc085241d',1,'lib-server::BorderObserver::BorderObserver']]],
+  ['platform_5fnode',['PLATFORM_NODE',['../classlib-server_1_1Slot_1_1Slot.html#a0722cf005136c0a186c5c0c3df61b558',1,'lib-server::Slot::Slot']]],
   ['platform_5fscale_5ftransform_5fnode',['platform_scale_transform_node',['../classlib-server_1_1Platform_1_1Platform.html#aeea05d461446de0b201f0221524e768a',1,'lib-server::Platform::Platform']]],
   ['platform_5ftransform_5fnode',['platform_transform_node',['../classlib-server_1_1Platform_1_1Platform.html#a429a00d24955184fbea04c043f061263',1,'lib-server::Platform::Platform']]],
   ['platform_5fwidth',['platform_width',['../classlib-server_1_1BorderObserver_1_1BorderObserver.html#a97acb0b2529583390500a9bc6a657971',1,'lib-server::BorderObserver::BorderObserver']]],
@@ -19,5 +20,6 @@ var searchData=
   ['print_5fheadline',['print_headline',['../namespacelib-server_1_1ConsoleIO.html#a4f1dca057dea5c116d61b698f31cb3a9',1,'lib-server::ConsoleIO']]],
   ['print_5fmessage',['print_message',['../namespacelib-server_1_1ConsoleIO.html#a0dd1c4e42d03529dadce62e2ba69bf06',1,'lib-server::ConsoleIO']]],
   ['print_5fsubheadline',['print_subheadline',['../namespacelib-server_1_1ConsoleIO.html#a1b962161ce1da7c9473843b53fa0f423',1,'lib-server::ConsoleIO']]],
+  ['print_5fuploaded_5fshutter_5fconfig',['print_uploaded_shutter_config',['../classlib-server_1_1SlotManager_1_1SlotManager.html#a3cec120ce9b6c3b0c369a649714f606a',1,'lib-server::SlotManager::SlotManager']]],
   ['print_5fwarning',['print_warning',['../namespacelib-server_1_1ConsoleIO.html#a0729d7382c67856b4ea33100a7a0b486',1,'lib-server::ConsoleIO']]]
 ];

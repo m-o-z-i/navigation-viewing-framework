@@ -6,5 +6,6 @@ var searchData=
   ['add_5fuser',['add_user',['../classlib-server_1_1BorderObserver_1_1BorderObserver.html#a0eec6920fed937a478dae8fec8f623fb',1,'lib-server::BorderObserver::BorderObserver']]],
   ['animate_5fcoupling',['animate_coupling',['../classlib-server_1_1Navigation_1_1Navigation.html#ae64b87bbfd829f21acf7c1183c9d4100',1,'lib-server::Navigation::Navigation']]],
   ['animate_5fdofchange',['animate_dofchange',['../classlib-server_1_1Navigation_1_1Navigation.html#a3bb4a4661f39bfb461eab84f77fd3db3',1,'lib-server::Navigation::Navigation']]],
-  ['append_5fto_5fplatform',['append_to_platform',['../classlib-server_1_1User_1_1User.html#a24927d136d61e853ced6824c6cff122b',1,'lib-server::User::User']]]
+  ['append_5fto_5fplatform',['append_to_platform',['../classlib-server_1_1User_1_1User.html#a24927d136d61e853ced6824c6cff122b',1,'lib-server::User::User']]],
+  ['assign_5fuser',['assign_user',['../classlib-server_1_1Slot_1_1Slot.html#ae2cb02e0dffd887a2415b276f350f667',1,'lib-server::Slot::Slot']]]
 ];

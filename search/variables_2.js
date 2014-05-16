@@ -12,5 +12,6 @@ var searchData=
   ['coupling_5fplane_5fnode',['coupling_plane_node',['../classlib-server_1_1Platform_1_1Platform.html#a88f5e88ccf1b47c71666b9ca4705497a',1,'lib-server::Platform::Platform']]],
   ['coupling_5fstatus_5fnode',['coupling_status_node',['../classlib-server_1_1Platform_1_1Platform.html#a59b66e7b2a8174a6016021d3792d1cd6',1,'lib-server::Platform::Platform']]],
   ['crrnt_5fidx',['crrnt_idx',['../classlib-server_1_1TraceLines_1_1Trace.html#aac49179abfc96ffe90162734890cf33a',1,'lib-server::TraceLines::Trace']]],
-  ['crrnt_5fpoint',['crrnt_point',['../classlib-server_1_1TraceLines_1_1Trace.html#aefeb6d6af352ff531d07ac22bac6571d',1,'lib-server::TraceLines::Trace']]]
+  ['crrnt_5fpoint',['crrnt_point',['../classlib-server_1_1TraceLines_1_1Trace.html#aefeb6d6af352ff531d07ac22bac6571d',1,'lib-server::TraceLines::Trace']]],
+  ['current_5fdisplay',['current_display',['../classlib-server_1_1User_1_1User.html#a112434a7bf7d8cda9d58372b51e81b11',1,'lib-server::User::User']]]
 ];

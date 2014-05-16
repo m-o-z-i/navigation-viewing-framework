@@ -15,6 +15,8 @@ var searchData=
   ['navigation',['Navigation',['../namespacelib-server_1_1Navigation.html',1,'lib-server']]],
   ['platform',['Platform',['../namespacelib-server_1_1Platform.html',1,'lib-server']]],
   ['scenemanager',['SceneManager',['../namespacelib-server_1_1SceneManager.html',1,'lib-server']]],
+  ['slot',['Slot',['../namespacelib-server_1_1Slot.html',1,'lib-server']]],
+  ['slotmanager',['SlotManager',['../namespacelib-server_1_1SlotManager.html',1,'lib-server']]],
   ['tools',['Tools',['../namespacelib-server_1_1Tools.html',1,'lib-server']]],
   ['tracelines',['TraceLines',['../namespacelib-server_1_1TraceLines.html',1,'lib-server']]],
   ['trackingreader',['TrackingReader',['../namespacelib-server_1_1TrackingReader.html',1,'lib-server']]],

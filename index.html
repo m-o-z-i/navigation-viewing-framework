@@ -24,7 +24,7 @@
   <td style="padding-left: 0.5em;">
    <div id="projectname">Navigation and Viewing Framework
    </div>
-   <div id="projectbrief">Configurable navigation and viewing setups for Oculus Rifts, Powerwalls and Desktops in the VR lab</div>
+   <div id="projectbrief">Configurable navigation and viewing setups for various display types in the VR lab</div>
   </td>
  </tr>
  </tbody>
@@ -78,9 +78,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Navigation and Viewing Framework Documentation </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>The Oculus-Powerwall Framework was designed to enable users to create a variety of viewing setups using different input devices and user types in the VR lab at Bauhaus University Weimar. It is based on the Virtual Reality framework avango and the rendering engine guacamole. In order to specify a concrete viewing setup within the framework, two types of configurations (located in configs) are used.</p>
+<div class="textblock"><p>The Navigation and Viewing Framework was designed to enable users to create a variety of viewing setups using different input devices and user types in the VR lab at Bauhaus University Weimar. It is based on the Virtual Reality framework avango and the rendering engine guacamole. In order to specify a concrete viewing setup within the framework, two types of configurations (located in subdirectory configs) are used.</p>
 <p><b>Display configuration (Python)</b><br/>
- A display is a physical medium which can show images for zero, one or multiple mono and stereo users. Displays that are available within the framework can be specified within the python file <em>display_config.py</em>. There, the <em>displays</em> contains all parametrized displays. For each display, a hostname, a name, the resolution, the possible displaystrings, the physical size and the transformation can be specified. In case of larger displays, also warpmatrices can be set. Once a display is added to this list, it can be used using the XML viewing configuration files described in the following.</p>
+ A display is a physical medium which can show images for zero, one or multiple mono and stereo users. Displays that are available within the framework can be specified within the python file <em>display_config.py</em>. There, the <em>displays</em> list at the end of the file contains all parametrized displays. For each display, a hostname, a name, the resolution, the possible displaystrings, the shutter timings / values, the stereo mode, the physical size and the transformation can be specified. In case of larger displays, also warpmatrices can be set. Once a display is added to this list, it can be used using the XML viewing configuration files described in the following.<br/>
+</p>
+<p><em>Note:</em> The framework supports an interactive assignment of display slots to shutter glasses worn by users. In this case, users may obtain multiple slots of a single display in order to see a brighter image. If this functionality is not desired, it can be switched off using the bool <em>INTELLIGENT_SHUTTER_SWITCHING</em> in the end of display_config.py.</p>
 <hr/>
 <p><b>Viewing configuration (XML)</b></p>
 <p><br/>
@@ -93,19 +95,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </p>
 <p><b>Global settings</b><br/>
  The specification of global settings is done within the &lt;global&gt;-tag and should be done at the beginning of the file. In the following, all available settings will be illustrated.</p>
-<p><em>&lt;groundfollowing&gt;</em><br/>
- This tag specifies two attributes of the ground following (gravity) algorithm to be used. The first attribute "activated" is a boolean saying if gravity should be activated by default. The second attribute "raystartheight" indicates from which height the ray is shot down to determine the intersection. The default values are False and 0.75.<br/>
- Usage example: <code>&lt;groundfollowing&gt;&lt;activated&gt;True&lt;/activated&gt;&lt;raystartheight&gt;0.75&lt;/raystartheight&gt;&lt;/groundfollowing&gt;</code></p>
 <p><em>&lt;animatecoupling&gt;</em><br/>
- A boolean saying if a rotation center interpolation during the coupling process is desired. The default is set to False.<br/>
+ A boolean saying if a rotation center interpolation during the coupling process between platforms is desired. The default is set to False.<br/>
  Usage example: <code>&lt;animatecoupling&gt;True&lt;/animatecoupling&gt;</code></p>
-<p><em>&lt;movementtraces&gt;</em><br/>
- A boolean saying if platform should leave traces behind them. The default is set to False.<br/>
- Usage example: <code>&lt;movementtraces&gt;True&lt;/movementtraces&gt;</code></p>
 <p><br/>
 </p>
 <p><b>Registration of devices and platforms</b><br/>
- Every time a device is registered, a corresponding platform in the virtual world is created which is moved and controlled by this device. All the settings for devices and platforms are done within the &lt;device&gt;-tag, one for each device that should be registered. In general, the following information is necessary.</p>
+ Every time a device is registered, a corresponding platform in the virtual world is created which is moved and controlled by this device. All the settings for devices and platforms are done within the &lt;device&gt;-tag, one for each device that should be registered. Please note that not all of the following options must be made. In case they are missing, the mentioned default values are applied.</p>
 <p><em>&lt;type&gt;</em><br/>
  A string indicating which type the new device is. To be chosen from "KeyboardMouse", "Spacemouse", "XBoxController", "OldSpheron" and "NewSpheron".<br/>
  Usage example: <code>&lt;type&gt;XBoxController&lt;/type&gt;</code></p>
@@ -113,17 +109,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
  A string indicating the name on which this device was registered in daemon.py. Not applicable for device type "KeyboardMouse", as it is assumed that just one keyboard and one mouse are connected to the computer.<br/>
  Usage example: <code>&lt;inputsensor&gt;device-xbox-1&lt;/inputsensor&gt;</code></p>
 <p><em>&lt;trackingstation&gt;</em><br/>
- A string indicating the name on which this device's tracking target was registered in daemon.py. If this attribute is not supplied, the default tracking values from the global settings section are applied.<br/>
- Usage example: <code>&lt;trackingstation&gt;tracking-oculus-stag&lt;/trackingstation&gt;</code></p>
+ A string indicating the name on which this device's tracking target was registered in daemon.py. If this attribute is not supplied, the default tracking values are taken from the &lt;notrackingposition&gt; tag specified later.<br/>
+ Usage example: <code>&lt;trackingstation&gt;tracking-dlp-glasses-1&lt;/trackingstation&gt;</code></p>
 <p><em>&lt;display&gt;</em><br/>
- Name of the display on which this platform is to be shown. When this attribute is supported multiple times, the platform is shown on both displays, each illustrating the correct view into the scene according to the transformation specified in the display configuration. The name must fit to an instance of the Display class in the <em>displays</em> list (see above).<br/>
+ Name of the display on which this platform is to be shown. When this attribute is supported multiple times, the platform is shown on both displays, each illustrating the correct view into the scene according to the transformation specified in the display configuration. The name must fit to an instance of the Display class in the <em>displays</em> list.<br/>
  Usage example: <code>&lt;display&gt;small_powerwall&lt;/display&gt;</code></p>
 <p><em>&lt;avatartype&gt;</em><br/>
- String indicating the type of avatars to be used for illustrating the users standing on this platform. To be chosen from "joseph" (robot avatar) and "joseph_table" (robot avatar with table in front of it).<br/>
+ String indicating the type of avatars to be used for illustrating the users standing on this platform. If set to "None", no device, screen and user avatars will be displayed for this platform. To be chosen. Otherwise, "joseph" (robot avatar) is specified.<br/>
  Usage example: <code>&lt;avatartype&gt;joseph&lt;/avatartype&gt;</code></p>
 <p><em>&lt;transmitteroffset&gt;</em><br/>
- This sets the transmitter offset to be applied by the framework for this platform. The default is set to (0.0, 0.0, 0.0).<br/>
- Usage example: <code>&lt;transmitteroffset&gt;&lt;x&gt;0.0&lt;/x&gt;&lt;y&gt;0.0043&lt;/y&gt;&lt;z&gt;1.6&lt;/z&gt;&lt;transmitteroffset&gt;</code></p>
+ This sets the transmitter offset to be applied by the framework for this platform. The default is set to (0.0, 0.0, 0.0, 0.0, 0.0, 0.0).<br/>
+ Usage example: <code>&lt;transmitteroffset&gt;&lt;x&gt;0.0&lt;/x&gt;&lt;y&gt;0.0043&lt;/y&gt;&lt;z&gt;1.6&lt;/z&gt;&lt;rx&gt;0.0&lt;/rx&gt;&lt;ry&gt;0.0&lt;/ry&gt;&lt;rz&gt;0.0&lt;/rz&gt;&lt;transmitteroffset&gt;</code></p>
 <p><em>&lt;notrackingposition&gt;</em><br/>
  This is the default position to be applied if the device or a user on the platform has no tracking station specified. The default is set to (0.0, 1.5, 1.0). Usage example: &lt;notrackingposition&gt;&lt;x&gt;0.0&lt;/x&gt;&lt;y&gt;1.75&lt;/y&gt;&lt;z&gt;1.5&lt;/z&gt;&lt;/notrackingposition&gt;</p>
 <p><em>&lt;platformpos&gt;</em><br/>
@@ -132,21 +128,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p><em>&lt;platformrot&gt;</em><br/>
  The starting yaw angle of the newly created platform. By default, a rotation of 0 degrees is assumed.<br/>
  Usage example: <code>&lt;platformrot&gt;&lt;yaw&gt;180.0&lt;/yaw&gt;&lt;/platformrot&gt;</code></p>
+<p><em>&lt;scale&gt;</em><br/>
+ The starting scaling factor of the newly created platform. By default, a scaling of 1.0 is assumed.<br/>
+ Usage example: <code>&lt;scale&gt;10.0&lt;/scale&gt;&lt;/platformrot&gt;</code></p>
 <p><em>&lt;platformsize&gt;</em><br/>
  The physical size of the platform in meters (e.g. size of the tracking space). The default is set to 1.0 m x 1.0 m. <br/>
  Usage example: <code>&lt;platformrot&gt;&lt;yaw&gt;0.0&lt;/yaw&gt;&lt;/platformrot&gt;</code></p>
+<p><em>&lt;groundfollowing&gt;</em><br/>
+ This tag specifies two attributes of the ground following (gravity) algorithm to be used for this platform. The first attribute "activated" is a boolean saying if gravity should be activated during startup. The second attribute "raystartheight" indicates from which height the ray is shot down to determine the intersection. The default values are False and 0.75.<br/>
+ Usage example: <code>&lt;groundfollowing&gt;&lt;activated&gt;True&lt;/activated&gt;&lt;raystartheight&gt;0.75&lt;/raystartheight&gt;&lt;/groundfollowing&gt;</code></p>
+<p><em>&lt;movementtraces&gt;</em><br/>
+ A boolean saying if the platform should leave traces behind them. The default is set to False.<br/>
+ Usage example: <code>&lt;movementtraces&gt;True&lt;/movementtraces&gt;</code></p>
 <p><br/>
 </p>
 <p><b>Registration of users</b><br/>
  This section shows which attributes are needed in order to create a user in the virtual world. The settings must be done in the &lt;user&gt;-tag for each user seperately.</p>
-<p><em>&lt;stereo&gt;</em><br/>
- Boolean value if this user is of stereo or mono type.<br/>
- Usage example: <code>&lt;stereo&gt;True&lt;/stereo&gt;</code></p>
+<p><em>&lt;vip&gt;</em><br/>
+ Boolean value saying if this user is a very important person. VIP are preferred during the display slot assignment procedure. The default is set to False.<br/>
+ Usage example: <code>&lt;vip&gt;True&lt;/vip&gt;</code></p>
+<p><em>&lt;glasses&gt;</em><br/>
+ Number of the shutter glasses worn by the user. Used to set the correct timings and values after the slot assignment.<br/>
+ Usage example: <code>&lt;glasses&gt;4&lt;/glasses&gt;</code></p>
 <p><em>&lt;headtrackingstation&gt;</em><br/>
- A string indicating the name on which this user's tracking target was registered in daemon.py. If this attribute is not supplied, the default tracking values from the global settings section are applied. Not applicable for DesktopUsers.<br/>
+ A string indicating the name on which this user's tracking target was registered in daemon.py. If this attribute is not supplied, the default tracking values from the platform are applied.<br/>
  Usage example: <code>&lt;type&gt;DesktopUser&lt;/type&gt;</code></p>
 <p><em>&lt;startplatform&gt;</em><br/>
- An integer number to indicate to which platform the new user should be appended to. Corresponds to the order in which the devices were created, the counting starts from 0.<br/>
+ An integer number to indicate to which platform the new user should be appended to during the startup procedure. Corresponds to the order in which the devices were created, the counting starts from 0.<br/>
  Usage example: <code>&lt;startplatform&gt;2&lt;/startplatform&gt;</code></p>
 <p><em>&lt;warnings&gt;</em><br/>
  A boolean indicating if the user should be warned by fences when he or she is close to the physical borders of the platform.<br/>
@@ -162,7 +170,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 9 2014 22:27:05 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 16 2014 22:23:51 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

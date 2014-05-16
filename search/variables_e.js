@@ -9,6 +9,7 @@ var searchData=
   ['platform_5fdepth',['platform_depth',['../classlib-server_1_1BorderObserver_1_1BorderObserver.html#a0b482f33bde6393195125b9e77a24982',1,'lib-server::BorderObserver::BorderObserver']]],
   ['platform_5fid',['platform_id',['../classView_1_1View.html#a3f0aa147e0ea7beceadbc6ba56aa467a',1,'View.View.platform_id()'],['../classlib-server_1_1Platform_1_1Platform.html#a427903b9e6e09bbf46a822bd9699b3a3',1,'lib-server.Platform.Platform.platform_id()'],['../classlib-server_1_1User_1_1User.html#afa7b22cb6eedd575a8ce99cb9e276ea7',1,'lib-server.User.User.platform_id()']]],
   ['platform_5finstance',['PLATFORM_INSTANCE',['../classlib-server_1_1BorderObserver_1_1BorderObserver.html#a7c813770b66c2b6863e410ebc085241d',1,'lib-server::BorderObserver::BorderObserver']]],
+  ['platform_5fnode',['PLATFORM_NODE',['../classlib-server_1_1Slot_1_1Slot.html#a0722cf005136c0a186c5c0c3df61b558',1,'lib-server::Slot::Slot']]],
   ['platform_5fscale_5ftransform_5fnode',['platform_scale_transform_node',['../classlib-server_1_1Platform_1_1Platform.html#aeea05d461446de0b201f0221524e768a',1,'lib-server::Platform::Platform']]],
   ['platform_5ftransform_5fnode',['platform_transform_node',['../classlib-server_1_1Platform_1_1Platform.html#a429a00d24955184fbea04c043f061263',1,'lib-server::Platform::Platform']]],
   ['platform_5fwidth',['platform_width',['../classlib-server_1_1BorderObserver_1_1BorderObserver.html#a97acb0b2529583390500a9bc6a657971',1,'lib-server::BorderObserver::BorderObserver']]]

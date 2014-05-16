@@ -24,7 +24,7 @@
   <td style="padding-left: 0.5em;">
    <div id="projectname">Navigation and Viewing Framework
    </div>
-   <div id="projectbrief">Configurable navigation and viewing setups for Oculus Rifts, Powerwalls and Desktops in the VR lab</div>
+   <div id="projectbrief">Configurable navigation and viewing setups for various display types in the VR lab</div>
   </td>
  </tr>
  </tbody>
@@ -115,8 +115,11 @@ Static Public Attributes</h2></td></tr>
 <tr class="memitem:a011dfb3b9104f2b8b4414f64e23e58d8"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1TrackingReader_1_1TrackingReader.html#a011dfb3b9104f2b8b4414f64e23e58d8">sf_abs_vec</a> = avango.gua.SFVec3()</td></tr>
 <tr class="memdesc:a011dfb3b9104f2b8b4414f64e23e58d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Just the translation vector read from the tracking system.  <a href="#a011dfb3b9104f2b8b4414f64e23e58d8">More...</a><br/></td></tr>
 <tr class="separator:a011dfb3b9104f2b8b4414f64e23e58d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00f4732321506bb57607d0353d528f1e"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1TrackingReader_1_1TrackingReader.html#a00f4732321506bb57607d0353d528f1e">sf_avatar_head_mat</a> = avango.gua.SFMatrix4()</td></tr>
+<tr class="memdesc:a00f4732321506bb57607d0353d528f1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix used to place an avatar head at the transformation read from the tracking system.  <a href="#a00f4732321506bb57607d0353d528f1e">More...</a><br/></td></tr>
+<tr class="separator:a00f4732321506bb57607d0353d528f1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b0347c1ef714d87ce5a780fc0b1901a"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1TrackingReader_1_1TrackingReader.html#a9b0347c1ef714d87ce5a780fc0b1901a">sf_avatar_body_mat</a> = avango.gua.SFMatrix4()</td></tr>
-<tr class="memdesc:a9b0347c1ef714d87ce5a780fc0b1901a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix used to place an avatar at the transformation read from the tracking system.  <a href="#a9b0347c1ef714d87ce5a780fc0b1901a">More...</a><br/></td></tr>
+<tr class="memdesc:a9b0347c1ef714d87ce5a780fc0b1901a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix used to place an avatar body at the transformation read from the tracking system.  <a href="#a9b0347c1ef714d87ce5a780fc0b1901a">More...</a><br/></td></tr>
 <tr class="separator:a9b0347c1ef714d87ce5a780fc0b1901a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -185,7 +188,29 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Matrix used to place an avatar at the transformation read from the tracking system. </p>
+<p>Matrix used to place an avatar body at the transformation read from the tracking system. </p>
+
+</div>
+</div>
+<a class="anchor" id="a00f4732321506bb57607d0353d528f1e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">lib-server.TrackingReader.TrackingReader.sf_avatar_head_mat = avango.gua.SFMatrix4()</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Matrix used to place an avatar head at the transformation read from the tracking system. </p>
 
 </div>
 </div>
@@ -195,7 +220,7 @@ Static Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 9 2014 22:27:04 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 16 2014 22:23:50 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

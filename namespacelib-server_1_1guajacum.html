@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Navigation and Viewing Framework: ClientConfigFileParser Namespace Reference</title>
+<title>Navigation and Viewing Framework: lib-server.guajacum Namespace Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -77,89 +77,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="namespacelib-server.html">lib-server</a></li><li class="navelem"><a class="el" href="namespacelib-server_1_1guajacum.html">guajacum</a></li>  </ul>
+</div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#nested-classes">Classes</a>  </div>
   <div class="headertitle">
-<div class="title">ClientConfigFileParser Namespace Reference</div>  </div>
+<div class="title">lib-server.guajacum Namespace Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a37930308dc98bc69f8c5fb275b132f28"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceClientConfigFileParser.html#a37930308dc98bc69f8c5fb275b132f28">parse</a></td></tr>
-<tr class="memdesc:a37930308dc98bc69f8c5fb275b132f28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the configuration file in order to find out the attributes of this client's users Outputs a list of lists of user attributes in the format: [stereo, headtrackingstation, startplatform, user_id, transmitteroffset, notrackingmat] In case resolution and screensize are not needed, the value 0 is saved.  <a href="#a37930308dc98bc69f8c5fb275b132f28">More...</a><br/></td></tr>
-<tr class="separator:a37930308dc98bc69f8c5fb275b132f28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04310787e9e310fb26554e4dc41bd502"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceClientConfigFileParser.html#a04310787e9e310fb26554e4dc41bd502">get_next_line_in_file</a></td></tr>
-<tr class="memdesc:a04310787e9e310fb26554e4dc41bd502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the next line in the file.  <a href="#a04310787e9e310fb26554e4dc41bd502">More...</a><br/></td></tr>
-<tr class="separator:a04310787e9e310fb26554e4dc41bd502"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1guajacum_1_1GuajacumTreePrinter.html">GuajacumTreePrinter</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a04310787e9e310fb26554e4dc41bd502"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">def ClientConfigFileParser.get_next_line_in_file </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>FILE</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Gets the next line in the file. </p>
-<p>Thereby, empty lines are skipped. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">FILE</td><td>The opened file to get the line from. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a37930308dc98bc69f8c5fb275b132f28"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">def ClientConfigFileParser.parse </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>CONFIG_FILE</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>PLATFORM_ID</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Parses the configuration file in order to find out the attributes of this client's users Outputs a list of lists of user attributes in the format: [stereo, headtrackingstation, startplatform, user_id, transmitteroffset, notrackingmat] In case resolution and screensize are not needed, the value 0 is saved. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">CONFIG_FILE</td><td>The configuration file to parse. </td></tr>
-    <tr><td class="paramname">PLATFORM_ID</td><td>The platform id to look for users on. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 9 2014 22:27:01 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 16 2014 21:45:03 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

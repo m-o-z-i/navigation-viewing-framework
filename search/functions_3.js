@@ -6,6 +6,7 @@ var searchData=
   ['display_5fback_5fborder',['display_back_border',['../classlib-server_1_1Platform_1_1Platform.html#aad50b23daad52b945febb8bd3b3885e5',1,'lib-server::Platform::Platform']]],
   ['display_5fcoupling',['display_coupling',['../classlib-server_1_1Platform_1_1Platform.html#a36d4f494e88a57e2c91c52ba00e73132',1,'lib-server::Platform::Platform']]],
   ['display_5ffront_5fborder',['display_front_border',['../classlib-server_1_1Platform_1_1Platform.html#a27ff93e8715b4f7bcdeae4a09a009973',1,'lib-server::Platform::Platform']]],
+  ['display_5fhas_5ffree_5fslot',['display_has_free_slot',['../classlib-server_1_1SlotManager_1_1SlotManager.html#ac999fbd59eef87a479b5d79b2735fe94',1,'lib-server::SlotManager::SlotManager']]],
   ['display_5fleft_5fborder',['display_left_border',['../classlib-server_1_1Platform_1_1Platform.html#a202fd8b1f7c3d4fbf699ca5d549c586d',1,'lib-server::Platform::Platform']]],
   ['display_5fright_5fborder',['display_right_border',['../classlib-server_1_1Platform_1_1Platform.html#ae44aee221dede72ae77fba048e08e238',1,'lib-server::Platform::Platform']]],
   ['distribute_5fall_5fnodes',['distribute_all_nodes',['../namespacelib-server_1_1main.html#acd40ea2699a5ba66679ac6fdf7b9b5ef',1,'lib-server::main']]],

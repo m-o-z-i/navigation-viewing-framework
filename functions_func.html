@@ -24,7 +24,7 @@
   <td style="padding-left: 0.5em;">
    <div id="projectname">Navigation and Viewing Framework
    </div>
-   <div id="projectbrief">Configurable navigation and viewing setups for Oculus Rifts, Powerwalls and Desktops in the VR lab</div>
+   <div id="projectbrief">Configurable navigation and viewing setups for various display types in the VR lab</div>
   </td>
  </tr>
  </tbody>
@@ -86,7 +86,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="#index_i"><span>i</span></a></li>
       <li><a href="#index_l"><span>l</span></a></li>
       <li><a href="#index_m"><span>m</span></a></li>
+      <li><a href="#index_o"><span>o</span></a></li>
       <li><a href="#index_p"><span>p</span></a></li>
+      <li><a href="#index_q"><span>q</span></a></li>
       <li><a href="#index_r"><span>r</span></a></li>
       <li><a href="#index_s"><span>s</span></a></li>
       <li><a href="#index_t"><span>t</span></a></li>
@@ -125,6 +127,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="classlib-server_1_1Navigation_1_1Navigation.html#aa381095b5b037e872c58f72b3904a466">lib-server.Navigation.Navigation</a>
 , <a class="el" href="classlib-server_1_1Platform_1_1Platform.html#a0a625da282161202820ee3e057df50cb">lib-server.Platform.Platform</a>
 , <a class="el" href="classlib-server_1_1SceneManager_1_1SceneManager.html#a5176053cb5669ced261ba6fd295876f1">lib-server.SceneManager.SceneManager</a>
+, <a class="el" href="classlib-server_1_1Slot_1_1Slot.html#a422ee49335b1b3594191870f082093f3">lib-server.Slot.Slot</a>
+, <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a7357b6925aa7a6febc1227b62d04f22a">lib-server.SlotManager.SlotManager</a>
 , <a class="el" href="classlib-server_1_1TraceLines_1_1Trace.html#a3835abd24f1cb8f08f45a657a02d6a83">lib-server.TraceLines.Trace</a>
 , <a class="el" href="classlib-server_1_1TrackingReader_1_1TrackingDefaultReader.html#ab356b69a87ee1060e7312d089e6349ec">lib-server.TrackingReader.TrackingDefaultReader</a>
 , <a class="el" href="classlib-server_1_1TrackingReader_1_1TrackingTargetReader.html#ad508112e388324984c6a3ef3769bdade">lib-server.TrackingReader.TrackingTargetReader</a>
@@ -158,6 +162,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>append_to_platform()
 : <a class="el" href="classlib-server_1_1User_1_1User.html#a24927d136d61e853ced6824c6cff122b">lib-server.User.User</a>
 </li>
+<li>assign_user()
+: <a class="el" href="classlib-server_1_1Slot_1_1Slot.html#ae2cb02e0dffd887a2415b276f350f667">lib-server.Slot.Slot</a>
+</li>
 </ul>
 
 
@@ -170,6 +177,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>clear_couplings()
 : <a class="el" href="classlib-server_1_1Navigation_1_1Navigation.html#ae883a33e136258535d20e930e90f30b4">lib-server.Navigation.Navigation</a>
+</li>
+<li>clear_user()
+: <a class="el" href="classlib-server_1_1Slot_1_1Slot.html#a00f2e65b90336fcc19737c4f8049443e">lib-server.Slot.Slot</a>
 </li>
 <li>couple_navigation()
 : <a class="el" href="classlib-server_1_1Navigation_1_1Navigation.html#a2be26b1ed3ac02542eace6834f813321">lib-server.Navigation.Navigation</a>
@@ -185,6 +195,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>create_coupling_status_overview()
 : <a class="el" href="classlib-server_1_1Platform_1_1Platform.html#aa72222b3845b9f6c0f287b1c550c9279">lib-server.Platform.Platform</a>
+</li>
+<li>create_device_avatar()
+: <a class="el" href="classlib-server_1_1Device_1_1KeyboardMouseDevice.html#a5c0867d4399d43d2299734e9eec166a9">lib-server.Device.KeyboardMouseDevice</a>
+, <a class="el" href="classlib-server_1_1Device_1_1NewSpheronDevice.html#af1923bb08d5588dcf559745e8626d139">lib-server.Device.NewSpheronDevice</a>
+, <a class="el" href="classlib-server_1_1Device_1_1OldSpheronDevice.html#a9f46ae80d8ae93f0f2198d828c2b4b9e">lib-server.Device.OldSpheronDevice</a>
+, <a class="el" href="classlib-server_1_1Device_1_1SpacemouseDevice.html#a1a499ca23143bc4b280ec40247f7a59b">lib-server.Device.SpacemouseDevice</a>
+, <a class="el" href="classlib-server_1_1Device_1_1XBoxDevice.html#a9aecac1639e785ac61b17e155dc5e220">lib-server.Device.XBoxDevice</a>
 </li>
 <li>create_navigation()
 : <a class="el" href="classlib-server_1_1ApplicationManager_1_1ApplicationManager.html#a838d72eb09984e2b6f5a923b54e55a1b">lib-server.ApplicationManager.ApplicationManager</a>
@@ -225,6 +242,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>display_front_border()
 : <a class="el" href="classlib-server_1_1Platform_1_1Platform.html#a27ff93e8715b4f7bcdeae4a09a009973">lib-server.Platform.Platform</a>
 </li>
+<li>display_has_free_slot()
+: <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#ac999fbd59eef87a479b5d79b2735fe94">lib-server.SlotManager.SlotManager</a>
+</li>
 <li>display_left_border()
 : <a class="el" href="classlib-server_1_1Platform_1_1Platform.html#a202fd8b1f7c3d4fbf699ca5d549c586d">lib-server.Platform.Platform</a>
 </li>
@@ -240,10 +260,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h3><a class="anchor" id="index_e"></a>- e -</h3><ul>
 <li>evaluate()
 : <a class="el" href="classlib-server_1_1BorderObserver_1_1BorderObserver.html#abde19b2cd6a848e5618d49022f904f63">lib-server.BorderObserver.BorderObserver</a>
+, <a class="el" href="classlib-server_1_1Device_1_1NewSpheronDevice.html#ab110b01231a692c3b18bc6b0d387a8f7">lib-server.Device.NewSpheronDevice</a>
 , <a class="el" href="classlib-server_1_1GroundFollowing_1_1GroundFollowing.html#a379c3cf2a52c1ce5bbba7ad8977e7369">lib-server.GroundFollowing.GroundFollowing</a>
 , <a class="el" href="classlib-server_1_1Intersection_1_1Intersection.html#ac1cff63ddebe6e14f8d820cfe5d37dfe">lib-server.Intersection.Intersection</a>
 , <a class="el" href="classlib-server_1_1Navigation_1_1Navigation.html#a070d5aa22b3b8baa11bf23c4a2002e64">lib-server.Navigation.Navigation</a>
 , <a class="el" href="classlib-server_1_1Platform_1_1Platform.html#afb44be1baeda019e5f290c3dc47fd979">lib-server.Platform.Platform</a>
+, <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a6177b462d849b1e2e4e5a0e224d97ccf">lib-server.SlotManager.SlotManager</a>
+, <a class="el" href="classlib-server_1_1User_1_1User.html#a51bd910d453f091f02ff1f3c25e73f42">lib-server.User.User</a>
+, <a class="el" href="classView_1_1View.html#ae7dcdd18a93277d1bea88d0e4041ff40">View.View</a>
 </li>
 </ul>
 
@@ -264,6 +288,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>get_next_line_in_file()
 : <a class="el" href="classlib-server_1_1ConfigFileParser_1_1ConfigFileParser.html#a89ac828835faa0015146d30b4871cec3">lib-server.ConfigFileParser.ConfigFileParser</a>
+</li>
+<li>get_shutter_mode()
+: <a class="el" href="classlib-server_1_1Display_1_1Display.html#a61cea6a518badca5c3b2dcbdc39c4239">lib-server.Display.Display</a>
 </li>
 </ul>
 
@@ -321,8 +348,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="classlib-server_1_1Intersection_1_1Intersection.html#a8683acd30636d5be2b8edbd6422ad6f7">lib-server.Intersection.Intersection</a>
 , <a class="el" href="classlib-server_1_1Navigation_1_1Navigation.html#a8bb2bed478813e77af5413a15876aa6e">lib-server.Navigation.Navigation</a>
 , <a class="el" href="classlib-server_1_1Platform_1_1Platform.html#aa552683fea4dbd1930111ff676c632f0">lib-server.Platform.Platform</a>
+, <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a8a56914e672e544bc7eef93d29dea1c5">lib-server.SlotManager.SlotManager</a>
 , <a class="el" href="classlib-server_1_1TrackingReader_1_1TrackingTargetReader.html#a9088f4762166052c86526bd63ba8b635">lib-server.TrackingReader.TrackingTargetReader</a>
+, <a class="el" href="classlib-server_1_1User_1_1User.html#a6b1e0dd98f42afc96b79e6b83a82a706">lib-server.User.User</a>
 , <a class="el" href="classView_1_1View.html#aa69b97a9f3b10f45316e4f8218276a34">View.View</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_o"></a>- o -</h3><ul>
+<li>open_unused_shutter_glasses()
+: <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a3dc3f82875742e926542e25aee87eed3">lib-server.SlotManager.SlotManager</a>
 </li>
 </ul>
 
@@ -331,18 +367,37 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>parse()
 : <a class="el" href="classlib-server_1_1ConfigFileParser_1_1ConfigFileParser.html#af8bbd42c06f27f8439fce9e05ad88135">lib-server.ConfigFileParser.ConfigFileParser</a>
 </li>
+<li>print_uploaded_shutter_config()
+: <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a3cec120ce9b6c3b0c369a649714f606a">lib-server.SlotManager.SlotManager</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_q"></a>- q -</h3><ul>
+<li>queue_commands()
+: <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a22f10499a4f0f5ab435b5402cc605172">lib-server.SlotManager.SlotManager</a>
+</li>
 </ul>
 
 
 <h3><a class="anchor" id="index_r"></a>- r -</h3><ul>
-<li>register_user()
-: <a class="el" href="classlib-server_1_1Display_1_1Display.html#a28312c6ae1243db3e72864a06931d91a">lib-server.Display.Display</a>
+<li>register_slot()
+: <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a92ee8d8ecb66102a85f7d4f3f9dc2c6d">lib-server.SlotManager.SlotManager</a>
+</li>
+<li>register_view()
+: <a class="el" href="classlib-server_1_1Display_1_1Display.html#a1fd76651d01a4f56672401517e068aa8">lib-server.Display.Display</a>
 </li>
 <li>remove_from_coupling_display()
 : <a class="el" href="classlib-server_1_1Platform_1_1Platform.html#a15413aafd39d9054b50e960bbf3ba70f">lib-server.Platform.Platform</a>
 </li>
+<li>remove_from_platform()
+: <a class="el" href="classlib-server_1_1User_1_1User.html#a5b0abab18d98eb7ade8d7e756a48a990">lib-server.User.User</a>
+</li>
 <li>reset()
 : <a class="el" href="classlib-server_1_1Navigation_1_1Navigation.html#ab68556723ac3c72927fc4811ea888a79">lib-server.Navigation.Navigation</a>
+</li>
+<li>reset_shutter_config()
+: <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#ae4dd85459aadbdcef7f8de39bed249cd">lib-server.SlotManager.SlotManager</a>
 </li>
 <li>run()
 : <a class="el" href="classlib-server_1_1ApplicationManager_1_1ApplicationManager.html#a2a598ee25850e08140e6fef98b030c29">lib-server.ApplicationManager.ApplicationManager</a>
@@ -351,6 +406,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
+<li>send_shutter_config()
+: <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a29a9f5e7455cd73322cbaa995e50a79c">lib-server.SlotManager.SlotManager</a>
+</li>
 <li>set_abs_mat()
 : <a class="el" href="classlib-server_1_1InputMapping_1_1InputMapping.html#a9d2007b1cba8917f0df5596a6cee12e1">lib-server.InputMapping.InputMapping</a>
 </li>
@@ -364,7 +422,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classlib-server_1_1Device_1_1MultiDofDevice.html#a74395c5f4b8ae5e7a5226a6e421e5d2d">lib-server.Device.MultiDofDevice</a>
 </li>
 <li>set_eye_distance()
-: <a class="el" href="classlib-server_1_1User_1_1User.html#a6cef8ad424a31aa9e0a109b56bd0ebe1">lib-server.User.User</a>
+: <a class="el" href="classlib-server_1_1Slot_1_1Slot.html#a536e5324d0e00de91f5eceb7b7f41905">lib-server.Slot.Slot</a>
 </li>
 <li>set_input_channel_parameters()
 : <a class="el" href="classlib-server_1_1Device_1_1MultiDofDevice.html#aa8399ac16a2e3f70da96d83a8bec57c1">lib-server.Device.MultiDofDevice</a>
@@ -404,6 +462,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classClientTrackingReader_1_1ClientTrackingTargetReader.html#a34514c5eba78392fe9ecc69e020ef91d">ClientTrackingReader.ClientTrackingTargetReader</a>
 , <a class="el" href="classlib-server_1_1TrackingReader_1_1TrackingTargetReader.html#a912704f720a828917e0df559d406971c">lib-server.TrackingReader.TrackingTargetReader</a>
 </li>
+<li>set_user_location()
+: <a class="el" href="classlib-server_1_1User_1_1User.html#a1d8446614132d7a7c1c37197bafa22b3">lib-server.User.User</a>
+</li>
 <li>set_w()
 : <a class="el" href="classlib-server_1_1Device_1_1MultiDofDevice.html#aeaea213c6aa48e9cec9756277ee1105e">lib-server.Device.MultiDofDevice</a>
 </li>
@@ -425,9 +486,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>sf_dof_trigger_changed()
 : <a class="el" href="classlib-server_1_1Navigation_1_1Navigation.html#af041e82aa17a8292bc7dc9b3875acd0b">lib-server.Navigation.Navigation</a>
 </li>
-<li>sf_head_mat_changed()
-: <a class="el" href="classView_1_1View.html#a0d7090c1570cbe3565fba95e4b1bb8b9">View.View</a>
-</li>
 <li>sf_reset_trigger_changed()
 : <a class="el" href="classlib-server_1_1Navigation_1_1Navigation.html#adf072b419bf026dc45ddd40768e5ef13">lib-server.Navigation.Navigation</a>
 </li>
@@ -444,6 +502,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
+<li>toggle_user_activity()
+: <a class="el" href="classlib-server_1_1User_1_1User.html#accb57a7d01f9ba2af7d22a678243a995">lib-server.User.User</a>
+</li>
 <li>transform_vector_with_matrix()
 : <a class="el" href="classlib-server_1_1InputMapping_1_1InputMapping.html#ad56b45e10c64e5424e4509a4d3fd6e2a">lib-server.InputMapping.InputMapping</a>
 </li>
@@ -470,11 +531,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>update_nettrans_node()
 : <a class="el" href="classlib-server_1_1Platform_1_1Platform.html#aef8d71a22fa01a9fc7dc79a81a87b5c5">lib-server.Platform.Platform</a>
 </li>
+<li>update_slot_configuration()
+: <a class="el" href="classlib-server_1_1SlotManager_1_1SlotManager.html#a0d0fdbcd64056114ff17b03dce5c9c23">lib-server.SlotManager.SlotManager</a>
+</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 9 2014 22:27:05 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 16 2014 22:23:51 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

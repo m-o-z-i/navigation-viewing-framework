@@ -24,7 +24,7 @@
   <td style="padding-left: 0.5em;">
    <div id="projectname">Navigation and Viewing Framework
    </div>
-   <div id="projectbrief">Configurable navigation and viewing setups for Oculus Rifts, Powerwalls and Desktops in the VR lab</div>
+   <div id="projectbrief">Configurable navigation and viewing setups for various display types in the VR lab</div>
   </td>
  </tr>
  </tbody>
@@ -512,6 +512,12 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>SCALE</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
           <td class="paramname"><em>STARTING_MATRIX</em>, </td>
         </tr>
         <tr>
@@ -560,6 +566,18 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>INVERT</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>SLOT_MANAGER</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
           <td class="paramname"><em>TRANSMITTER_OFFSET</em>, </td>
         </tr>
         <tr>
@@ -600,6 +618,7 @@ Static Public Attributes</h2></td></tr>
     <tr><td class="paramname">NET_TRANS_NODE</td><td>Reference to the net matrix node in the scenegraph for distribution. </td></tr>
     <tr><td class="paramname">SCENEGRAPH</td><td>Reference to the scenegraph in which the navigation should take place. </td></tr>
     <tr><td class="paramname">PLATFORM_SIZE</td><td>Physical size of the platform in meters. Passed in an two-element list: [width, depth] </td></tr>
+    <tr><td class="paramname">SCALE</td><td>Start scaling of the platform. </td></tr>
     <tr><td class="paramname">STARTING_MATRIX</td><td>Initial position matrix of the platform to be created. </td></tr>
     <tr><td class="paramname">NAVIGATION_LIST</td><td>List of all navigations in the setup. </td></tr>
     <tr><td class="paramname">INPUT_SENSOR_TYPE</td><td>String indicating the type of input device to be created, e.g. "XBoxController" or "OldSpheron" </td></tr>
@@ -608,6 +627,8 @@ Static Public Attributes</h2></td></tr>
     <tr><td class="paramname">GF_SETTINGS</td><td>Setting list for the <a class="el" href="namespacelib-server_1_1GroundFollowing.html">GroundFollowing</a> instance: [activated, ray_start_height] </td></tr>
     <tr><td class="paramname">ANIMATE_COUPLING</td><td>Boolean indicating if an animation should be done when a coupling of navigations is initiated. </td></tr>
     <tr><td class="paramname">MOVEMENT_TRACES</td><td>Boolean indicating if the device should leave traces behind. </td></tr>
+    <tr><td class="paramname">INVERT</td><td>Boolean indicating if the input values should be inverted. </td></tr>
+    <tr><td class="paramname">SLOT_MANAGER</td><td>Reference to the one and only <a class="el" href="namespacelib-server_1_1SlotManager.html">SlotManager</a> instance in the setup. </td></tr>
     <tr><td class="paramname">TRANSMITTER_OFFSET</td><td>The matrix offset that is applied to the values delivered by the tracking system. </td></tr>
     <tr><td class="paramname">DISPLAYS</td><td>The names of the displays that belong to this navigation. </td></tr>
     <tr><td class="paramname">AVATAR_TYPE</td><td>A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"]. </td></tr>
@@ -1259,7 +1280,7 @@ Static Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 9 2014 22:27:03 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 16 2014 22:23:49 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

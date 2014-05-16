@@ -24,7 +24,7 @@
   <td style="padding-left: 0.5em;">
    <div id="projectname">Navigation and Viewing Framework
    </div>
-   <div id="projectbrief">Configurable navigation and viewing setups for Oculus Rifts, Powerwalls and Desktops in the VR lab</div>
+   <div id="projectbrief">Configurable navigation and viewing setups for various display types in the VR lab</div>
   </td>
  </tr>
  </tbody>
@@ -103,12 +103,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae32c4c98a9a3c49daecfab87dfa0d3a0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#ae32c4c98a9a3c49daecfab87dfa0d3a0">__init__</a></td></tr>
 <tr class="memdesc:ae32c4c98a9a3c49daecfab87dfa0d3a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom constructor.  <a href="#ae32c4c98a9a3c49daecfab87dfa0d3a0">More...</a><br/></td></tr>
 <tr class="separator:ae32c4c98a9a3c49daecfab87dfa0d3a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28312c6ae1243db3e72864a06931d91a"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a28312c6ae1243db3e72864a06931d91a">register_user</a></td></tr>
-<tr class="memdesc:a28312c6ae1243db3e72864a06931d91a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new user at this display and return the display string assigned to the new user.  <a href="#a28312c6ae1243db3e72864a06931d91a">More...</a><br/></td></tr>
-<tr class="separator:a28312c6ae1243db3e72864a06931d91a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fd76651d01a4f56672401517e068aa8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a1fd76651d01a4f56672401517e068aa8">register_view</a></td></tr>
+<tr class="memdesc:a1fd76651d01a4f56672401517e068aa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new view at this display and returns the display string assigned to the new view.  <a href="#a1fd76651d01a4f56672401517e068aa8">More...</a><br/></td></tr>
+<tr class="separator:a1fd76651d01a4f56672401517e068aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97f1795ce46e7251fe3df47b2e6474a8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a97f1795ce46e7251fe3df47b2e6474a8">create_screen_node</a></td></tr>
 <tr class="memdesc:a97f1795ce46e7251fe3df47b2e6474a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates the screen node of this display to be appended to the <a class="el" href="namespacelib-server_1_1Platform.html">Platform</a> transformation node.  <a href="#a97f1795ce46e7251fe3df47b2e6474a8">More...</a><br/></td></tr>
 <tr class="separator:a97f1795ce46e7251fe3df47b2e6474a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61cea6a518badca5c3b2dcbdc39c4239"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a61cea6a518badca5c3b2dcbdc39c4239">get_shutter_mode</a></td></tr>
+<tr class="memdesc:a61cea6a518badca5c3b2dcbdc39c4239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the shutter mode according to the shutter timings set.  <a href="#a61cea6a518badca5c3b2dcbdc39c4239">More...</a><br/></td></tr>
+<tr class="separator:a61cea6a518badca5c3b2dcbdc39c4239"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab729b740b7faf3975d85e275687b36b6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#ab729b740b7faf3975d85e275687b36b6">create_screen_visualization</a></td></tr>
 <tr class="memdesc:ab729b740b7faf3975d85e275687b36b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a visualization of the display's screen in the scene (white frame).  <a href="#ab729b740b7faf3975d85e275687b36b6">More...</a><br/></td></tr>
 <tr class="separator:ab729b740b7faf3975d85e275687b36b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -127,15 +130,21 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ad4dd2385b4b34de4f130bbcdc67adc37"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#ad4dd2385b4b34de4f130bbcdc67adc37">displaystrings</a></td></tr>
 <tr class="memdesc:ad4dd2385b4b34de4f130bbcdc67adc37"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list of strings on which the windows for each user will pop up.  <a href="#ad4dd2385b4b34de4f130bbcdc67adc37">More...</a><br/></td></tr>
 <tr class="separator:ad4dd2385b4b34de4f130bbcdc67adc37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a325d50f91c9963ff3206f318ccf9a912"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a325d50f91c9963ff3206f318ccf9a912">shutter_timings</a></td></tr>
+<tr class="memdesc:a325d50f91c9963ff3206f318ccf9a912"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list of lists of opening and closing times of shutter glasses for each displaystring.  <a href="#a325d50f91c9963ff3206f318ccf9a912">More...</a><br/></td></tr>
+<tr class="separator:a325d50f91c9963ff3206f318ccf9a912"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa96446b0864643395d1cc3514a58b2da"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#aa96446b0864643395d1cc3514a58b2da">shutter_values</a></td></tr>
+<tr class="memdesc:aa96446b0864643395d1cc3514a58b2da"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring.  <a href="#aa96446b0864643395d1cc3514a58b2da">More...</a><br/></td></tr>
+<tr class="separator:aa96446b0864643395d1cc3514a58b2da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a25cfe3c42a2cb4047fbde59b9579ce"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a2a25cfe3c42a2cb4047fbde59b9579ce">size</a></td></tr>
 <tr class="memdesc:a2a25cfe3c42a2cb4047fbde59b9579ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list of strings on which the windows for each user will pop up.  <a href="#a2a25cfe3c42a2cb4047fbde59b9579ce">More...</a><br/></td></tr>
 <tr class="separator:a2a25cfe3c42a2cb4047fbde59b9579ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40213be0b1fd95ea98a7bd3bbc8e600b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a40213be0b1fd95ea98a7bd3bbc8e600b">transformation</a></td></tr>
 <tr class="memdesc:a40213be0b1fd95ea98a7bd3bbc8e600b"><td class="mdescLeft">&#160;</td><td class="mdescRight">A matrix specifying the display's transformation with respect to the platform coordinate system.  <a href="#a40213be0b1fd95ea98a7bd3bbc8e600b">More...</a><br/></td></tr>
 <tr class="separator:a40213be0b1fd95ea98a7bd3bbc8e600b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f5507e12e809ef88db541e1cdd42963"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a0f5507e12e809ef88db541e1cdd42963">num_users</a></td></tr>
-<tr class="memdesc:a0f5507e12e809ef88db541e1cdd42963"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of users who are already registered with this display.  <a href="#a0f5507e12e809ef88db541e1cdd42963">More...</a><br/></td></tr>
-<tr class="separator:a0f5507e12e809ef88db541e1cdd42963"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7f727e9e7a1c72692b70639249c65fa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#ad7f727e9e7a1c72692b70639249c65fa">num_views</a></td></tr>
+<tr class="memdesc:ad7f727e9e7a1c72692b70639249c65fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of views which are already registered with this display.  <a href="#ad7f727e9e7a1c72692b70639249c65fa">More...</a><br/></td></tr>
+<tr class="separator:ad7f727e9e7a1c72692b70639249c65fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2856789666a1595a65494d0462d84153"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Display_1_1Display.html#a2856789666a1595a65494d0462d84153">stereomode</a></td></tr>
 <tr class="memdesc:a2856789666a1595a65494d0462d84153"><td class="mdescLeft">&#160;</td><td class="mdescRight">A string indicating the stereo mode that is used by this display.  <a href="#a2856789666a1595a65494d0462d84153">More...</a><br/></td></tr>
 <tr class="separator:a2856789666a1595a65494d0462d84153"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -182,6 +191,18 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>shutter_timings</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>shutter_values</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
           <td class="paramname"><em>size</em> = <code>(0.595,&#160;0.335</code>, </td>
         </tr>
         <tr>
@@ -211,6 +232,8 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">name</td><td>A name to be associated to that display. Will be used in XML configuration file. </td></tr>
     <tr><td class="paramname">resolution</td><td>The display's resolution to be used. </td></tr>
     <tr><td class="paramname">displaystrings</td><td>A list of strings on which the windows for each user will pop up. </td></tr>
+    <tr><td class="paramname">shutter_timings</td><td>A list of lists of opening and closing times of shutter glasses for each displaystring. </td></tr>
+    <tr><td class="paramname">shutter_values</td><td>A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring. </td></tr>
     <tr><td class="paramname">size</td><td>Physical size of the display medium in meters. </td></tr>
     <tr><td class="paramname">transformation</td><td>A matrix specifying the display's transformation with respect to the platform coordinate system. </td></tr>
     <tr><td class="paramname">stereomode</td><td>A string indicating the stereo mode that is used by this display. </td></tr>
@@ -274,12 +297,12 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a28312c6ae1243db3e72864a06931d91a"></a>
+<a class="anchor" id="a61cea6a518badca5c3b2dcbdc39c4239"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">def lib-server.Display.Display.register_user </td>
+          <td class="memname">def lib-server.Display.Display.get_shutter_mode </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>self</em></td><td>)</td>
@@ -288,7 +311,26 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Registers a new user at this display and return the display string assigned to the new user. </p>
+<p>Returns the shutter mode according to the shutter timings set. </p>
+<p>Can be ACTIVE_STEREO, PASSIVE_STEREO or NONE. </p>
+
+</div>
+</div>
+<a class="anchor" id="a1fd76651d01a4f56672401517e068aa8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def lib-server.Display.Display.register_view </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Registers a new view at this display and returns the display string assigned to the new view. </p>
 
 </div>
 </div>
@@ -336,17 +378,17 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a0f5507e12e809ef88db541e1cdd42963"></a>
+<a class="anchor" id="ad7f727e9e7a1c72692b70639249c65fa"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">lib-server.Display.Display.num_users</td>
+          <td class="memname">lib-server.Display.Display.num_views</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Number of users who are already registered with this display. </p>
+<p>Number of views which are already registered with this display. </p>
 
 </div>
 </div>
@@ -361,6 +403,34 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The display's resolution to be used. </p>
+
+</div>
+</div>
+<a class="anchor" id="a325d50f91c9963ff3206f318ccf9a912"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">lib-server.Display.Display.shutter_timings</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A list of lists of opening and closing times of shutter glasses for each displaystring. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa96446b0864643395d1cc3514a58b2da"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">lib-server.Display.Display.shutter_values</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring. </p>
 
 </div>
 </div>
@@ -412,7 +482,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 9 2014 22:27:03 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 16 2014 22:23:48 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

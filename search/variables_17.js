@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['z_5fparameters',['z_parameters',['../classlib-server_1_1Device_1_1MultiDofDevice.html#a9b3babf055b9e5c6303db7a8348e5d2c',1,'lib-server::Device::MultiDofDevice']]]
+  ['y_5fincrement',['y_increment',['../classlib-server_1_1Platform_1_1Platform.html#a95f68b4fb332c677a24492de53eb8421',1,'lib-server::Platform::Platform']]],
+  ['y_5fparameters',['y_parameters',['../classlib-server_1_1Device_1_1MultiDofDevice.html#a0d57a4d7df4814baa7a1060c188687bd',1,'lib-server::Device::MultiDofDevice']]]
 ];

@@ -24,7 +24,7 @@
   <td style="padding-left: 0.5em;">
    <div id="projectname">Navigation and Viewing Framework
    </div>
-   <div id="projectbrief">Configurable navigation and viewing setups for Oculus Rifts, Powerwalls and Desktops in the VR lab</div>
+   <div id="projectbrief">Configurable navigation and viewing setups for various display types in the VR lab</div>
   </td>
  </tr>
  </tbody>
@@ -112,6 +112,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6d7e4a9bdd1a2b3e41d45bfffe7b7e51"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Device_1_1KeyboardMouseDevice.html#a6d7e4a9bdd1a2b3e41d45bfffe7b7e51">my_constructor</a></td></tr>
 <tr class="memdesc:a6d7e4a9bdd1a2b3e41d45bfffe7b7e51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom constructor.  <a href="#a6d7e4a9bdd1a2b3e41d45bfffe7b7e51">More...</a><br/></td></tr>
 <tr class="separator:a6d7e4a9bdd1a2b3e41d45bfffe7b7e51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c0867d4399d43d2299734e9eec166a9"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Device_1_1KeyboardMouseDevice.html#a5c0867d4399d43d2299734e9eec166a9">create_device_avatar</a></td></tr>
+<tr class="memdesc:a5c0867d4399d43d2299734e9eec166a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a representation of the device in the virutal world.  <a href="#a5c0867d4399d43d2299734e9eec166a9">More...</a><br/></td></tr>
+<tr class="separator:a5c0867d4399d43d2299734e9eec166a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classlib-server_1_1Device_1_1MultiDofDevice"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classlib-server_1_1Device_1_1MultiDofDevice')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classlib-server_1_1Device_1_1MultiDofDevice.html">lib-server.Device.MultiDofDevice</a></td></tr>
 <tr class="memitem:ad8d06660ed32e1c011114239d33e31a5 inherit pub_methods_classlib-server_1_1Device_1_1MultiDofDevice"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Device_1_1MultiDofDevice.html#ad8d06660ed32e1c011114239d33e31a5">__init__</a></td></tr>
 <tr class="memdesc:ad8d06660ed32e1c011114239d33e31a5 inherit pub_methods_classlib-server_1_1Device_1_1MultiDofDevice"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#ad8d06660ed32e1c011114239d33e31a5">More...</a><br/></td></tr>
@@ -176,6 +179,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:af59f4f597b3a8f8be8071eccb13b6956"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Device_1_1KeyboardMouseDevice.html#af59f4f597b3a8f8be8071eccb13b6956">rotation_factor</a></td></tr>
 <tr class="memdesc:af59f4f597b3a8f8be8071eccb13b6956"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factor to modify the device's rotation input.  <a href="#af59f4f597b3a8f8be8071eccb13b6956">More...</a><br/></td></tr>
 <tr class="separator:af59f4f597b3a8f8be8071eccb13b6956"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49981f1a55be0384b545015b4fbaa9fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Device_1_1KeyboardMouseDevice.html#a49981f1a55be0384b545015b4fbaa9fb">avatar_transform</a></td></tr>
+<tr class="memdesc:a49981f1a55be0384b545015b4fbaa9fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scenegraph transform node for the dekstop user's table.  <a href="#a49981f1a55be0384b545015b4fbaa9fb">More...</a><br/></td></tr>
+<tr class="separator:a49981f1a55be0384b545015b4fbaa9fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aade790c4420b69a193d2ada2e72ffe73"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Device_1_1KeyboardMouseDevice.html#aade790c4420b69a193d2ada2e72ffe73">device_avatar</a></td></tr>
+<tr class="memdesc:aade790c4420b69a193d2ada2e72ffe73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scenegraph node representing the geometry and transformation of the device avatar.  <a href="#aade790c4420b69a193d2ada2e72ffe73">More...</a><br/></td></tr>
+<tr class="separator:aade790c4420b69a193d2ada2e72ffe73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classlib-server_1_1Device_1_1MultiDofDevice"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classlib-server_1_1Device_1_1MultiDofDevice')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classlib-server_1_1Device_1_1MultiDofDevice.html">lib-server.Device.MultiDofDevice</a></td></tr>
 <tr class="memitem:a9153d3076553e895f2d4355f54aedd13 inherit pub_attribs_classlib-server_1_1Device_1_1MultiDofDevice"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classlib-server_1_1Device_1_1MultiDofDevice.html#a9153d3076553e895f2d4355f54aedd13">input_bindings</a></td></tr>
 <tr class="memdesc:a9153d3076553e895f2d4355f54aedd13 inherit pub_attribs_classlib-server_1_1Device_1_1MultiDofDevice"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of bindings between input values / button values and events.  <a href="#a9153d3076553e895f2d4355f54aedd13">More...</a><br/></td></tr>
@@ -239,6 +248,47 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Internal representation and reader for a keyboard and mouse setup. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a5c0867d4399d43d2299734e9eec166a9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def lib-server.Device.KeyboardMouseDevice.create_device_avatar </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>PLATFORM_NODE</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>PLATFORM_ID</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a representation of the device in the virutal world. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">PLATFORM_NODE</td><td>The platform node to which the avatar should be appended to. </td></tr>
+    <tr><td class="paramname">PLATFORM_ID</td><td>The platform id used for setting the group name correctly. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a6d7e4a9bdd1a2b3e41d45bfffe7b7e51"></a>
 <div class="memitem">
 <div class="memproto">
@@ -274,6 +324,34 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a49981f1a55be0384b545015b4fbaa9fb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">lib-server.Device.KeyboardMouseDevice.avatar_transform</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Scenegraph transform node for the dekstop user's table. </p>
+
+</div>
+</div>
+<a class="anchor" id="aade790c4420b69a193d2ada2e72ffe73"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">lib-server.Device.KeyboardMouseDevice.device_avatar</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Scenegraph node representing the geometry and transformation of the device avatar. </p>
+
+</div>
+</div>
 <a class="anchor" id="a4fc2f22a48b9249a3bb2293cff095af1"></a>
 <div class="memitem">
 <div class="memproto">
@@ -336,7 +414,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 9 2014 22:27:02 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 16 2014 22:23:48 for Navigation and Viewing Framework by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

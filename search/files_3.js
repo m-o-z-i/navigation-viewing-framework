@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['clientconfigfileparser_2epy',['ClientConfigFileParser.py',['../ClientConfigFileParser_8py.html',1,'']]],
   ['clientdaemon_2epy',['ClientDaemon.py',['../ClientDaemon_8py.html',1,'']]],
   ['clientmaterialupdaters_2epy',['ClientMaterialUpdaters.py',['../ClientMaterialUpdaters_8py.html',1,'']]],
   ['clientpipelinevalues_2epy',['ClientPipelineValues.py',['../ClientPipelineValues_8py.html',1,'']]],

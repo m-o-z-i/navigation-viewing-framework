@@ -264,17 +264,17 @@ class SlotManager(avango.script.Script):
       else:
         _i = 0
 
-        #if _display.name != "touch_table_3D":
-        while _number_free_slots > 0:
-          # add slot to default user _i
-          _default_user_list[_i][1] += 1
-          _i += 1
+        if _display.name != "touch_table_3D":
+          while _number_free_slots > 0:
+            # add slot to default user _i
+            _default_user_list[_i][1] += 1
+            _i += 1
 
-          # start again when at end of list
-          if _i == len(_default_user_list):
-            _i = 0
+            # start again when at end of list
+            if _i == len(_default_user_list):
+              _i = 0
 
-          _number_free_slots -= 1
+            _number_free_slots -= 1
 
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
 

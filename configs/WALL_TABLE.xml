@@ -110,6 +110,8 @@
 
     <movementtraces>False</movementtraces>
 
+    <invert>True</invert>
+
   </device>
 
   <!-- First User -->

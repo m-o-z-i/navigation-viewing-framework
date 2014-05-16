@@ -167,6 +167,7 @@ class ApplicationManager():
   # @param SCALE Start scaling of the platform.
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of Navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the platform should leave traces behind.
+  # @param INVERT Boolean indicating if the input values should be inverted.
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param GROUND_FOLLOWING_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
@@ -183,6 +184,7 @@ class ApplicationManager():
     , SCALE
     , ANIMATE_COUPLING
     , MOVEMENT_TRACES
+    , INVERT
     , NO_TRACKING_MAT
     , GROUND_FOLLOWING_SETTINGS
     , TRANSMITTER_OFFSET
@@ -227,6 +229,7 @@ class ApplicationManager():
       , GF_SETTINGS = GROUND_FOLLOWING_SETTINGS
       , ANIMATE_COUPLING = ANIMATE_COUPLING
       , MOVEMENT_TRACES = MOVEMENT_TRACES
+      , INVERT = INVERT
       , SLOT_MANAGER = self.slot_manager
       , TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
       , DISPLAYS = _display_instances

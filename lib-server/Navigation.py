@@ -87,6 +87,7 @@ class Navigation(avango.script.Script):
   # @param GF_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
+  # @param INVERT Boolean indicating if the input values should be inverted.
   # @param SLOT_MANAGER Reference to the one and only SlotManager instance in the setup.
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
   # @param DISPLAYS The names of the displays that belong to this navigation.
@@ -107,6 +108,7 @@ class Navigation(avango.script.Script):
     , GF_SETTINGS
     , ANIMATE_COUPLING
     , MOVEMENT_TRACES
+    , INVERT
     , SLOT_MANAGER
     , TRANSMITTER_OFFSET
     , DISPLAYS
@@ -177,7 +179,7 @@ class Navigation(avango.script.Script):
     ## @var inputmapping
     # InputMapping instance to process and map relative device inputs to an absolute matrix.
     self.inputmapping = InputMapping()
-    self.inputmapping.my_constructor(self, self.device, self.groundfollowing, STARTING_MATRIX)
+    self.inputmapping.my_constructor(self, self.device, self.groundfollowing, STARTING_MATRIX, INVERT)
     self.inputmapping.set_input_factors(self.device.translation_factor, self.device.rotation_factor)
     self.inputmapping.sf_scale.value = SCALE
 

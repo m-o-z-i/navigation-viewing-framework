@@ -96,7 +96,8 @@ class InputMapping(avango.script.Script):
   # @param DEVICE_INSTANCE Instance of Device class to take the input values from.
   # @param GROUND_FOLLOWING_INSTANCE Instance of GroundFollowing to be used for matrix correction.
   # @param STARTING_MATRIX Initial matrix to accumulate the relative inputs on.
-  def my_constructor(self, NAVIGATION, DEVICE_INSTANCE, GROUND_FOLLOWING_INSTANCE, STARTING_MATRIX):
+  # @param INVERT Boolean indicating if the input values should be inverted.
+  def my_constructor(self, NAVIGATION, DEVICE_INSTANCE, GROUND_FOLLOWING_INSTANCE, STARTING_MATRIX, INVERT):
 
     ## @var NAVIGATION
     # Reference to the Navigation instance from which this InputMapping is created.
@@ -105,6 +106,10 @@ class InputMapping(avango.script.Script):
     ## @var GROUND_FOLLOWING_INSTANCE
     # Reference to the GroundFollowing instance used by this InputMapping.
     self.GROUND_FOLLOWING_INSTANCE = GROUND_FOLLOWING_INSTANCE
+
+    ## @var invert
+    # Boolean indicating if the input values should be inverted.
+    self.invert = INVERT
 
     # connect device fields
     self.mf_rel_input_values.connect_from(DEVICE_INSTANCE.mf_dof)
@@ -140,6 +145,15 @@ class InputMapping(avango.script.Script):
       _rx = self.mf_rel_input_values.value[3]
       _ry = self.mf_rel_input_values.value[4]
       _rz = self.mf_rel_input_values.value[5]
+
+      # invert movement if activated
+      if self.invert:
+        _x = -_x
+        _y = -_y
+        _z = -_z
+        _rx = -_rx
+        _ry = -_ry
+        _rz = -_rz
  
       # delete certain values that create an unrealistic movement
       if self.realistic:

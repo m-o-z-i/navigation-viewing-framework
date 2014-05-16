@@ -409,9 +409,24 @@ class SlotManager(avango.script.Script):
     # open glasses for which no timings were assigned
     print_headline("Send updated shutter configuration")
 
-    #for _i in range(total_number_of_shutter_glasses):
-    #  if _glasses_updated[_i] == False:
-    #    print_warning("Opening shutter glasses " + str(_i + 1))
-    #    self.radio_master_hid.set_shutter_const(_i + 1, int("88", 16), 1)
+    self.open_unused_shutter_glasses()
 
     self.send_shutter_config()
+
+  ## Determines which shutter glasses have no slots assigned and opens them.
+  def open_unused_shutter_glasses(self):
+    # determine unused glasses
+    _open_glasses = [True for i in range(total_number_of_shutter_glasses)]
+
+    for _i in range(total_number_of_shutter_glasses):
+
+      for _display in self.glasses_slot_status:
+
+        if _display[1][_i] != 0:
+          _open_glasses[_i] = False
+
+    # open unused glasses
+    for _i in range(total_number_of_shutter_glasses):
+      if _open_glasses[_i]:
+        print_warning("Opening shutter glasses " + str(_i + 1))
+        self.radio_master_hid.set_shutter_const(_i + 1, int("88", 16), 1)

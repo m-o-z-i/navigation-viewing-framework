@@ -176,6 +176,7 @@ class View(avango.script.Script):
   ## Adds a tracking reader to the view instance.
   # @param TRACKING_TARGET_NAME The target name of the tracked object as chosen in daemon.
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
+  # @param NO_TRACKING_MAT The matrix to be applied if no valid tracking target was specified.
   def init_local_tracking_override(self, TRACKING_TARGET_NAME, TRANSMITTER_OFFSET, NO_TRACKING_MAT):
     
     ## @var TRACKING_TARGET_NAME

@@ -24,6 +24,7 @@ import math
 
 class User(avango.script.Script):
 
+  ## Default constructor.
   def __init__(self):
     self.super(User).__init__()
 
@@ -197,14 +198,6 @@ class User(avango.script.Script):
 
     else:
       print_warning("Blocked")
-
-  
-  ## Sets the transformation values of left and right eye.
-  # @param VALUE The eye distance to be applied.
-  def set_eye_distance(self, VALUE):
-    self.eye_distance = VALUE
-    self.left_eye.Transform.value  = avango.gua.make_trans_mat(self.eye_distance * -0.5, 0.0, 0.0)
-    self.right_eye.Transform.value = avango.gua.make_trans_mat(self.eye_distance * 0.5, 0.0, 0.0)
 
   ## Appends a node to the children of a platform in the scenegraph.
   # @param NODE The node to be appended to the platform node.

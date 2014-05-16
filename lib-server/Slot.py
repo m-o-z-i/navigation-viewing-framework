@@ -61,11 +61,14 @@ class Slot:
     self.PLATFORM_NODE.Children.value.append(self.slot_node)
 
     ## @var information_node
-    # Node which name is set to the headtracking target name of the current user. Used for the local
-    # headtracking update on client side.
+    # Node whose name is set to the headtracking target name of the current user. Used for the local
+    # headtracking update on client side. Transform is transmitter offset to be applied
     self.information_node = avango.gua.nodes.TransformNode(Name = "None")
     self.slot_node.Children.value.append(self.information_node)
 
+    ## @var no_tracking_node
+    # Node whose Transform field contains the no tracking matrix to be applied for the headtracking.
+    # Used for the local headtracking update on client side.
     self.no_tracking_node = avango.gua.nodes.TransformNode(Name = "no_tracking_mat")
     self.information_node.Children.value.append(self.no_tracking_node)
 

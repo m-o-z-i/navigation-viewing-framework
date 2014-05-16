@@ -72,8 +72,7 @@ class SlotManager(avango.script.Script):
 
     # reset to default shutter configuration and register reset function on close
     self.reset_shutter_config("/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
-    #self.reset_shutter_config("/home/lopa1693/test146ACTIVE.xml")
-    #atexit.register(self.reset_shutter_config, INITIAL_CONFIGURATION = "/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
+    atexit.register(self.reset_shutter_config, INITIAL_CONFIGURATION = "/opt/shutterConfig/DLP_1vip456_2tv3tv.xml")
 
   ## Loads an XML shutter configuration and uploads it.
   def reset_shutter_config(self, INITIAL_CONFIGURATION):
@@ -331,10 +330,12 @@ class SlotManager(avango.script.Script):
         if _number_of_slots > 0:
           if _stereo:
 
-            print _display.name, _display.get_shutter_mode()
+            # get correct opening and closing time according to shutter mode of display
+            # PASSIVE_STEREO supports two opening and two closing times valid for both shutters of left and right eyes (4 per slot)
+            # ACTIVE_STEREO supports opening and closing times for both shutters of left and right eyes seperately (8 per slot)
 
+            # PASSIVE_STEREO shutter mode
             if _display.get_shutter_mode() == "PASSIVE_STEREO":
-              # passive stereo display - set proper shutter timings
               _open_timings = _slot_instances[_i].shutter_timing[0]
               _open_values = _slot_instances[_i].shutter_value[0]
               _start_i = copy(_i)
@@ -345,8 +346,8 @@ class SlotManager(avango.script.Script):
               _close_values = _slot_instances[_i].shutter_value[1]
               _end_i = copy(_i)
 
+            # ACTIVE_STEREO shutter mode
             else:
-              # active stereo display - set proper shutter timings
               _start_timings_left = _slot_instances[_i].shutter_timing[0]
               _start_timings_right = _slot_instances[_i].shutter_timing[1]
               _start_values_left = _slot_instances[_i].shutter_value[0]
@@ -366,7 +367,7 @@ class SlotManager(avango.script.Script):
               _left_values = (_start_values_left[0], _start_values_left[1], _end_values_left[2], _end_values_left[3])
               _right_values = (_start_values_right[0], _start_values_right[1], _end_values_right[2], _end_values_right[3])
 
-              # TODO: use proper name
+              # TODO: use proper names, open and close timings might be misleading
               _open_timings = _left_timings
               _open_values = _left_values
               _close_timings = _right_timings
@@ -375,9 +376,11 @@ class SlotManager(avango.script.Script):
 
             _j = 0
 
+            # warn if a handled user has no glasses id specified
             if _user.glasses_id == None:
               print_warning("Warning: User " + str(_user.id) + " has no glasses id specified.")
 
+            # fail if glasses id is too large, else mark the glasses id as updated for this display
             if _user.glasses_id > total_number_of_shutter_glasses:
               print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)
             else:
@@ -386,67 +389,47 @@ class SlotManager(avango.script.Script):
             # set event count properly
             self.radio_master_hid.set_event_count(_user.glasses_id, 2 * len(_open_timings))
             
-            # if user glasses are closing, do it immediately
+            # if user glasses are closing, do it immediately (slot image already present)
             if _display_slot_assignment[_user.glasses_id - 1] <= _old_display_slot_assignment[_user.glasses_id - 1]:
+              
               # set ids with shutter timings and values properly
               while _j < len(_open_timings):
-                #print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
                 self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
-                #print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
                 _j += 1
 
               while _j < 2 * len(_open_timings):
-                #print "SET TIMER VALUE", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
                 self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
-                #print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                 _j += 1
 
-            # if the user glasses are opening, wait for some frames
+            # if the user glasses are opening, wait for some frames (new slot image not yet present)
             else:
-              # set ids with shutter timings and values properly
+
+              # set ids with shutter timings and values properly, queue the commands
               _command_list = []
-              '''
-              while _j < len(_open_timings):
-                #print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
-                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
-                #print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
-                _j += 1
 
-              while _j < 2 * len(_open_timings):
-                #print "SET TIMER VALUE", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
-                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
-                #print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16)
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
-                _j += 1
-
-              '''
               while _j < len(_open_timings):
-                print "SET TIMER VALUE", _user.glasses_id, _j, _open_timings[_j]
                 _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_open_timings[_j]) + ")")
-                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_open_values[_j]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
                 _j += 1
 
               while _j < 2 * len(_open_timings):
-                print "SET TIMER VALUE", _user.glasses_id, _j, _close_timings[_j - len(_open_timings)]
                 _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_close_timings[_j - len(_open_timings)]) + ")")
-                print "SET SHUTTER VALUE", _user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16)
                 self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
                 _j += 1
 
               self.queue_commands(_command_list, 9)
               
 
-            # assign user to slot instances
+            # assign user to slot instances (headtracking matrix update)
             for _k in range(_start_i, _end_i + 1):
               _slot_instances[_k].assign_user(_user)
 
             _i += 1
+
+          # mono display
           else:
-            # mono display
             _start_i = copy(_i)
             _i += (_number_of_slots - 1)
             _end_i = copy(_i)
@@ -457,7 +440,7 @@ class SlotManager(avango.script.Script):
 
               _i += 1
 
-      
+      # set number of assigned slots to 0 if the glasses were not handled
       for _i in range(total_number_of_shutter_glasses):
         if _glasses_updated[_i] == False:
           _display_slot_assignment[_i] = 0
@@ -465,9 +448,7 @@ class SlotManager(avango.script.Script):
  
     # open glasses for which no timings were assigned
     print_headline("Send updated shutter configuration")
-
     self.open_unused_shutter_glasses()
-
     self.send_shutter_config()
 
   ## Determines which shutter glasses have no slots assigned and opens them.

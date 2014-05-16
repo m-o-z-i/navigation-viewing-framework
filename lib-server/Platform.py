@@ -36,6 +36,8 @@ class Platform(avango.script.Script):
   # A timer instance to get the current time in seconds.
   timer = avango.nodes.TimeSensor()
 
+  ## @var sf_scale
+  # The current scaling factor of this platform.
   sf_scale = avango.SFFloat()
   sf_scale.value = 1.0
 
@@ -307,7 +309,7 @@ class Platform(avango.script.Script):
     else:
       self.back_border.GroupNames.value[0] = "do_not_display_group"
          
-
+  ## Scales the platform scale transform node when the scaling changes in the inputmapping.
   @field_has_changed(sf_scale)
   def sf_scale_values_changed(self):
 

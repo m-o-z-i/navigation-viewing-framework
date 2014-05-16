@@ -122,17 +122,17 @@ class User(avango.script.Script):
     if INTELLIGENT_SHUTTER_SWITCHING:
 
       if self.platform_id == 0:
-        pass
-        #if self.headtracking_reader.sf_abs_vec.value.x < -1.0:
-          #self.set_user_location(1)
+        
+        if self.headtracking_reader.sf_abs_vec.value.x < -1.0:
+          self.set_user_location(1)
 
       elif self.platform_id == 1:
 
         #if self.headtracking_reader.tracking_sensor.Station.value == "tracking-dlp-glasses-1":
-        #  print self.headtracking_reader.sf_abs_vec.value.z
-        pass
-        #if self.headtracking_reader.sf_abs_vec.value.z < 2.57:
-        #  self.set_user_location(0)
+        #  print self.headtracking_reader.sf_abs_vec.value
+        
+        if self.headtracking_reader.sf_abs_vec.value.z > 1.1:
+          self.set_user_location(0)
 
 
       #if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:

@@ -164,6 +164,7 @@ class ApplicationManager():
   # @param INPUT_DEVICE_NAME Name of the input device values as chosen in daemon.
   # @param STARTING_MATRIX Initial platform matrix for the new device.
   # @param PLATFORM_SIZE Physical size of the platform in meters. [width, depth]
+  # @param SCALE Start scaling of the platform.
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of Navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the platform should leave traces behind.
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
@@ -179,6 +180,7 @@ class ApplicationManager():
     , INPUT_DEVICE_NAME
     , STARTING_MATRIX
     , PLATFORM_SIZE
+    , SCALE
     , ANIMATE_COUPLING
     , MOVEMENT_TRACES
     , NO_TRACKING_MAT
@@ -216,6 +218,7 @@ class ApplicationManager():
         NET_TRANS_NODE = self.NET_TRANS_NODE
       , SCENEGRAPH = self.SCENEGRAPH
       , PLATFORM_SIZE = PLATFORM_SIZE
+      , SCALE = SCALE
       , STARTING_MATRIX = STARTING_MATRIX
       , NAVIGATION_LIST = self.navigation_list
       , INPUT_SENSOR_TYPE = INPUT_DEVICE_TYPE

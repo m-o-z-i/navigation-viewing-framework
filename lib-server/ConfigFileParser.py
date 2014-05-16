@@ -43,7 +43,7 @@ class ConfigFileParser:
     _device_attributes = [None, None, None, 0, 0, 0, 0, [],              # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw), displays,
                           avango.gua.make_identity_mat(),                # transmitteroffset,
                           avango.gua.make_trans_mat(0.0, 1.5, 1.0),      # notrackingmat,
-                          "joseph", [False, 0.75], False]                # avatartype, ground_following_settings, enable_traces]
+                          "joseph", [False, 0.75], False, 1.0]           # avatartype, ground_following_settings, enable_traces, scale]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
     _user_attributes = [None, None, False, False, None]                  # [headtrackingstation, startplatform, warnings, vip, glasses]
@@ -284,6 +284,13 @@ class ConfigFileParser:
           _current_line = self.get_next_line_in_file(_config_file)
           continue
 
+        # get scale
+        if _current_line.startswith("<scale>"):
+          _current_line = _current_line.replace("<scale>", "")
+          _current_line = _current_line.replace("</scale>", "")
+          _current_line = _current_line.rstrip()
+          _device_attributes[13] = float(_current_line)
+
         # get ground following attributes
         if _current_line.startswith("<groundfollowing>"):
           _current_line = self.get_next_line_in_file(_config_file)
@@ -336,6 +343,7 @@ class ConfigFileParser:
                                                    _device_attributes[1],
                                                    _starting_matrix,
                                                    _platform_size,
+                                                   _device_attributes[13],
                                                    self.enable_coupling_animation,
                                                    _device_attributes[12],
                                                    _device_attributes[9],
@@ -354,7 +362,7 @@ class ConfigFileParser:
         _device_attributes = [None, None, None, 0, 0, 0, 0, [],          # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw)), displays,
                           avango.gua.make_identity_mat(),                # transmitteroffset,
                           avango.gua.make_trans_mat(0.0, 1.5, 1.0),      # notrackingmat,
-                          "joseph", [False, 0.75], False]                # avatartype, groundfollowing_settings, enable_traces]
+                          "joseph", [False, 0.75], False, 1.0]           # avatartype, groundfollowing_settings, enable_traces, scale]
         _navs_created += 1
         _current_line = self.get_next_line_in_file(_config_file)
         continue

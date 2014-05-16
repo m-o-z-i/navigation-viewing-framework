@@ -78,6 +78,7 @@ class Navigation(avango.script.Script):
   # @param NET_TRANS_NODE Reference to the net matrix node in the scenegraph for distribution.
   # @param SCENEGRAPH Reference to the scenegraph in which the navigation should take place.
   # @param PLATFORM_SIZE Physical size of the platform in meters. Passed in an two-element list: [width, depth]
+  # @param SCALE Start scaling of the platform.
   # @param STARTING_MATRIX Initial position matrix of the platform to be created.
   # @param NAVIGATION_LIST List of all navigations in the setup.
   # @param INPUT_SENSOR_TYPE String indicating the type of input device to be created, e.g. "XBoxController" or "OldSpheron"
@@ -97,6 +98,7 @@ class Navigation(avango.script.Script):
     , NET_TRANS_NODE
     , SCENEGRAPH
     , PLATFORM_SIZE
+    , SCALE
     , STARTING_MATRIX
     , NAVIGATION_LIST
     , INPUT_SENSOR_TYPE
@@ -177,7 +179,7 @@ class Navigation(avango.script.Script):
     self.inputmapping = InputMapping()
     self.inputmapping.my_constructor(self, self.device, self.groundfollowing, STARTING_MATRIX)
     self.inputmapping.set_input_factors(self.device.translation_factor, self.device.rotation_factor)
-    #self.inputmapping.set_input_factors(0.5,0.75)
+    self.inputmapping.sf_scale.value = SCALE
 
     # activate correct input mapping mode according to configuration file
     if GF_SETTINGS[0]:

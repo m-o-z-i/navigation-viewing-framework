@@ -96,6 +96,8 @@
       <yaw>0.0</yaw>
     </platformrot>
 
+    <scale>50.0</scale>
+
     <platformsize>
       <width>3.8</width>
       <depth>3.6</depth>

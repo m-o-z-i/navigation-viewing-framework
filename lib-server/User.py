@@ -116,9 +116,7 @@ class User(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
-    pass
 
-    '''
     if INTELLIGENT_SHUTTER_SWITCHING:
 
       if self.platform_id == 0:
@@ -142,7 +140,6 @@ class User(avango.script.Script):
       #  else:
       #    if self.is_active == False:
       #      self.toggle_user_activity(True, True)
-    '''
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

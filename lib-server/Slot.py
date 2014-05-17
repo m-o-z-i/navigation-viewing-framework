@@ -58,6 +58,7 @@ class Slot:
     ## @var slot_node
     # Scenegraph transformation node of this slot.
     self.slot_node = avango.gua.nodes.TransformNode(Name = "s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID))
+    self.slot_node.Transform.value = avango.gua.make_trans_mat(10, 10, 10)
     self.PLATFORM_NODE.Children.value.append(self.slot_node)
 
     ## @var information_node
@@ -124,7 +125,7 @@ class Slot:
   def clear_user(self):
     if self.assigned_user != None:
       self.slot_node.Transform.disconnect()
-      self.slot_node.Transform.value = avango.gua.make_identity_mat()
+      self.slot_node.Transform.value = avango.gua.make_trans_mat(10, 10, 10)
       self.assigned_user = None
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()

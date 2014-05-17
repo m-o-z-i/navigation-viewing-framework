@@ -1,0 +1,23 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*~",
+				"*.pyc",
+				"list-ev",
+				".gitignore",
+				"*.sublime-project",
+				"*.nfs*"
+			],
+			"follow_symlinks": true,
+			"path": "."
+		}
+	],
+
+	"settings":
+	{
+		"tab_size": 2
+	}
+}

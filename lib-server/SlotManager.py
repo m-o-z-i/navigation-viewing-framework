@@ -86,7 +86,7 @@ class SlotManager(avango.script.Script):
       print_message("load_config() - Loaded shutter configuration " + INITIAL_CONFIGURATION)
 
     # send initial shutter configuration
-    self.send_shutter_config()
+    self.send_shutter_config(False)
 
     # set and send master configuration settings
     self.radio_master_hid.set_master_transmit(1)
@@ -95,7 +95,8 @@ class SlotManager(avango.script.Script):
     self.radio_master_hid.send_master_config() 
 
   ## Tells the RadioMasterHID to send the shutter configuration. Formats feedback nicely.
-  def send_shutter_config(self):
+  # @param PRINT_CONFIG Boolean saying if the newly uploaded configuration is to be printed on the console.
+  def send_shutter_config(self, PRINT_CONFIG):
 
     _send_output = self.radio_master_hid.send_shutter_config()
 
@@ -104,7 +105,8 @@ class SlotManager(avango.script.Script):
     else:
       print_message("send_shutter_config() - " + _send_output)
 
-    self.print_uploaded_shutter_config()
+    if PRINT_CONFIG:
+      self.print_uploaded_shutter_config()
 
   ## Prints the currently uploaded shutter configuration including timings and values.
   def print_uploaded_shutter_config(self):
@@ -161,6 +163,8 @@ class SlotManager(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
+    _entries_to_clear = []
+
     # handle queued commands
     for _entry in self.queued_commands:
 
@@ -168,16 +172,27 @@ class SlotManager(avango.script.Script):
       _entry[1] -= 1
 
       if _entry[1] == 0:
+        _entries_to_clear.append(_entry)
 
-        # clear commands when frame counter is zero
-        for _command in _entry[0]:
-          try:
-            eval(_command)
-          except:
-            print_error("Could not execute command " + _entry[0], False)
+    
+    # clear commands when frame counter is zero
+    for _i in range(len(_entries_to_clear)):
 
-        self.send_shutter_config()
-        self.queued_commands.remove(_entry)
+      _entry = _entries_to_clear[_i]
+
+      for _command in _entry[0]:
+        try:
+          eval(_command)
+        except:
+          print_error("Could not execute command " + _entry[0], False)
+
+      self.queued_commands.remove(_entry)
+
+      # Only print newly uploaded shutter config when last entry was cleared
+      if _i == len(_entries_to_clear) - 1:
+        self.send_shutter_config(True)
+      else:
+        self.send_shutter_config(False)
 
   ## Registers a list of string commands to be executed in some frames in the future.
   # @param COMMAND_LIST A list of strings containing the commands.
@@ -334,45 +349,44 @@ class SlotManager(avango.script.Script):
             # PASSIVE_STEREO supports two opening and two closing times valid for both shutters of left and right eyes (4 per slot)
             # ACTIVE_STEREO supports opening and closing times for both shutters of left and right eyes seperately (8 per slot)
 
+            _start_timings_left = _slot_instances[_i].shutter_timing[0]
+            _start_timings_right = _slot_instances[_i].shutter_timing[1]
+            _start_values_left = _slot_instances[_i].shutter_value[0]
+            _start_values_right = _slot_instances[_i].shutter_value[1]
+            _start_i = copy(_i)
+
+            _i += (_number_of_slots - 1)
+
+            _end_timings_left = _slot_instances[_i].shutter_timing[0]
+            _end_timings_right = _slot_instances[_i].shutter_timing[1]
+            _end_values_left = _slot_instances[_i].shutter_value[0]
+            _end_values_right = _slot_instances[_i].shutter_value[1]
+            _end_i = copy(_i)
+
             # PASSIVE_STEREO shutter mode
             if _display.get_shutter_mode() == "PASSIVE_STEREO":
-              _open_timings = _slot_instances[_i].shutter_timing[0]
-              _open_values = _slot_instances[_i].shutter_value[0]
-              _start_i = copy(_i)
-              
-              _i += (_number_of_slots - 1)
 
-              _close_timings = _slot_instances[_i].shutter_timing[1]
-              _close_values = _slot_instances[_i].shutter_value[1]
-              _end_i = copy(_i)
+              # Note: The terms _left_timings and _right_timings might be misleading here
+              # In this case, they are opening and closing times. Unfortunately, this order is not
+              # to be changed and in order to avoid redundant code pieces, the naming was chosen as is.
+
+              _left_timings = (_start_timings_left[0], _start_timings_right[0])
+              _left_values = (_start_values_left[0], _start_values_right[0])
+              _right_timings = (_end_timings_left[1], _end_timings_right[1])
+              _right_values = (_end_values_left[1], _end_values_right[1])
+
+              # set event count properly
+              self.radio_master_hid.set_event_count(_user.glasses_id, 4)
 
             # ACTIVE_STEREO shutter mode
             else:
-              _start_timings_left = _slot_instances[_i].shutter_timing[0]
-              _start_timings_right = _slot_instances[_i].shutter_timing[1]
-              _start_values_left = _slot_instances[_i].shutter_value[0]
-              _start_values_right = _slot_instances[_i].shutter_value[1]
-              _start_i = copy(_i)
-
-              _i += (_number_of_slots - 1)
-
-              _end_timings_left = _slot_instances[_i].shutter_timing[0]
-              _end_timings_right = _slot_instances[_i].shutter_timing[1]
-              _end_values_left = _slot_instances[_i].shutter_value[0]
-              _end_values_right = _slot_instances[_i].shutter_value[1]
-              _end_i = copy(_i)
-
               _left_timings = (_start_timings_left[0], _start_timings_left[1], _end_timings_left[2], _end_timings_left[3])
               _right_timings = (_start_timings_right[0], _start_timings_right[1], _end_timings_right[2], _end_timings_right[3])
               _left_values = (_start_values_left[0], _start_values_left[1], _end_values_left[2], _end_values_left[3])
               _right_values = (_start_values_right[0], _start_values_right[1], _end_values_right[2], _end_values_right[3])
 
-              # TODO: use proper names, open and close timings might be misleading
-              _open_timings = _left_timings
-              _open_values = _left_values
-              _close_timings = _right_timings
-              _close_values = _right_values
-
+              # set event count properly
+              self.radio_master_hid.set_event_count(_user.glasses_id, 8)
 
             _j = 0
 
@@ -385,22 +399,19 @@ class SlotManager(avango.script.Script):
               print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)
             else:
               _glasses_updated[_user.glasses_id - 1] = True
-
-            # set event count properly
-            self.radio_master_hid.set_event_count(_user.glasses_id, 2 * len(_open_timings))
             
             # if user glasses are closing, do it immediately (slot image already present)
             if _display_slot_assignment[_user.glasses_id - 1] <= _old_display_slot_assignment[_user.glasses_id - 1]:
               
               # set ids with shutter timings and values properly
-              while _j < len(_open_timings):
-                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _open_timings[_j])
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
+              while _j < len(_left_timings):
+                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _left_timings[_j])
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
                 _j += 1
 
-              while _j < 2 * len(_open_timings):
-                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _close_timings[_j - len(_open_timings)])
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
+              while _j < 2 * len(_left_timings):
+                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _right_timings[_j - len(_left_timings)])
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
                 _j += 1
 
             # if the user glasses are opening, wait for some frames (new slot image not yet present)
@@ -408,18 +419,31 @@ class SlotManager(avango.script.Script):
 
               # set ids with shutter timings and values properly, queue the commands
               _command_list = []
-
-              while _j < len(_open_timings):
-                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_open_timings[_j]) + ")")
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_open_values[_j]), 16))
+              '''
+              # set ids with shutter timings and values properly
+              while _j < len(_left_timings):
+                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _left_timings[_j])
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
                 _j += 1
 
-              while _j < 2 * len(_open_timings):
-                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_close_timings[_j - len(_open_timings)]) + ")")
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_close_values[_j - len(_open_timings)]), 16))
+              while _j < 2 * len(_left_timings):
+                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _right_timings[_j - len(_left_timings)])
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
+                _j += 1
+
+              '''
+              while _j < len(_left_timings):
+                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_left_timings[_j]) + ")")
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
+                _j += 1
+
+              while _j < 2 * len(_left_timings):
+                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_right_timings[_j - len(_left_timings)]) + ")")
+                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
                 _j += 1
 
               self.queue_commands(_command_list, 9)
+              
               
 
             # assign user to slot instances (headtracking matrix update)
@@ -449,7 +473,7 @@ class SlotManager(avango.script.Script):
     # open glasses for which no timings were assigned
     print_headline("Send updated shutter configuration")
     self.open_unused_shutter_glasses()
-    self.send_shutter_config()
+    self.send_shutter_config(False)
 
   ## Determines which shutter glasses have no slots assigned and opens them.
   def open_unused_shutter_glasses(self):

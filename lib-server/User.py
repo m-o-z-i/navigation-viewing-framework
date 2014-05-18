@@ -139,30 +139,28 @@ class User(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
-
-    #if self.platform_id == 1:
     
+    # update view vector on intersection tests
     _glob_mat = self.headtracking_reader.sf_global_mat.value
     _view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
-    #print "Position ", _glob_mat.get_translate()
-    #print "View dir ", _view_vector
-    #print "Screen to find"
-    #print self.APPLICATION_MANAGER.SCENEGRAPH["/proxy_0_0"].Transform.value
     self.intersection_tester.set_pick_direction(_view_vector)
 
-    #print self.intersection_tester.sf_pick_mat.value
-
     if len(self.mf_screen_pick_result.value) > 0:
-      print self.glasses_id, self.mf_screen_pick_result.value[0].Object.value.Name.value
-    else:
-      print self.glasses_id, "None"
-    
-    #print "Tracking Matrix"
-    #print self.headtracking_reader.sf_abs_mat.value
-    #print "Normalized Matrix"
-    #print self.headtracking_reader.sf_global_mat.value
+      #print self.glasses_id, self.mf_screen_pick_result.value[0].Object.value.Name.value
 
-      
+      _hit = self.mf_screen_pick_result.value[0].Object.value.Name.value
+      _hit = _hit.replace("proxy_", "")
+      _hit = _hit.split("_")
+
+      _hit_platform = int(_hit[0])
+      _hit_screen   = int(_hit[1])
+
+      if _hit_platform != self.platform_id:
+        self.set_user_location(_hit_platform, True)
+
+    else:
+      pass
+      #print self.glasses_id, "None"
 
     '''
     if INTELLIGENT_SHUTTER_SWITCHING:

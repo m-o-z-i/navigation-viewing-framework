@@ -141,7 +141,7 @@
 
     <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
 
-    <startplatform>1</startplatform>
+    <startplatform>0</startplatform>
 
     <warnings>False</warnings>
 
@@ -158,7 +158,7 @@
 
     <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
 
-    <startplatform>1</startplatform>
+    <startplatform>0</startplatform>
 
     <warnings>False</warnings>
 

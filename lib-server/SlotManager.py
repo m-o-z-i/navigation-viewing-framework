@@ -304,9 +304,9 @@ class SlotManager(avango.script.Script):
         print_warning("Intelligent shutter switching disabled. Assigning one slot for each user," + \
                       " independent from active and vip status.")
 
-        return
+        continue
 
-      ''' Rest of function only executed when INTELLIGENT_SHUTTER_SWITCHING is switched on '''
+      ''' Rest of functionality only executed when INTELLIGENT_SHUTTER_SWITCHING is switched on '''
 
       # update shutter values according to slots assigned
       print_headline("User - Slot Assignment on " + str(_display.name))
@@ -471,9 +471,10 @@ class SlotManager(avango.script.Script):
 
  
     # open glasses for which no timings were assigned
-    print_headline("Send updated shutter configuration")
-    self.open_unused_shutter_glasses()
-    self.send_shutter_config(False)
+    if INTELLIGENT_SHUTTER_SWITCHING:
+      print_headline("Send updated shutter configuration")
+      self.open_unused_shutter_glasses()
+      self.send_shutter_config(False)
 
   ## Determines which shutter glasses have no slots assigned and opens them.
   def open_unused_shutter_glasses(self):

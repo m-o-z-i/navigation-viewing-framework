@@ -5,13 +5,7 @@
 
   <global>
 
-    <groundfollowing>
-      <activated>True</activated>
-      <raystartheight>0.75</raystartheight>
-    </groundfollowing>
-
     <animatecoupling>True</animatecoupling>
-    <movementtraces>True</movementtraces>
 
   </global>
 
@@ -50,6 +44,13 @@
       <yaw>0.0</yaw>
     </platformrot>
 
+    <groundfollowing>
+      <activated>True</activated>
+      <raystartheight>0.75</raystartheight>
+    </groundfollowing>
+
+    <movementtraces>True</movementtraces>
+
   </device>
 
   <device>
@@ -62,8 +63,11 @@
 
     <transmitteroffset>
       <x>0.0</x>
-      <y>1.06</y>
-      <z>0.77</z>
+      <y>0.043</y>
+      <z>1.6</z>
+      <rx>0.0</rx>
+      <ry>0.0</ry>
+      <rz>0.0</rz>
     </transmitteroffset>
 
     <notrackingposition>
@@ -81,6 +85,13 @@
     <platformrot>
       <yaw>180.0</yaw>
     </platformrot>
+
+    <groundfollowing>
+      <activated>True</activated>
+      <raystartheight>0.75</raystartheight>
+    </groundfollowing>
+
+    <movementtraces>True</movementtraces>
 
   </device>
 

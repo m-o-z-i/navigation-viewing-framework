@@ -7,6 +7,9 @@
 import avango
 import avango.gua
 
+# import framework libraries
+from ConsoleIO import *
+
 ## Class representing a display. A display is a physical projection medium
 # running on a host and having certain resolution, size and transformation. It
 # supports a specific amount of users. In the Platform class, a screen node 
@@ -120,5 +123,32 @@ class Display:
 
     _w, _h = self.size
     _node.Transform.value = self.transformation * avango.gua.make_scale_mat(_w,_h,1.0)
+    
+    return _node
+
+  ## Creates a proxy geometry for this display to be checked for intesections in the global tracking space.
+  # @param PLATFORM Reference to the Platform instance to which the display is belonging.
+  # @param SCREEN_ID Number of the screen this display is representing on the platform.
+  def create_transformed_proxy_geometry(self, PLATFORM, SCREEN_ID):
+  
+    _loader = avango.gua.nodes.GeometryLoader()
+  
+    _node = _loader.create_geometry_from_file("proxy_" + str(PLATFORM.platform_id) + "_" + str(SCREEN_ID), "data/objects/screen.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    _node.GroupNames.value = ["do_not_display_group", "screen_proxy_geometry"]
+    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
+
+    _w, _h = self.size
+    _node.Transform.value = self.transformation * avango.gua.make_scale_mat(_w,_h,1.0)
+
+    print_warning(str(_node.Transform.value))
+
+    # eliminate transmitter offset to transform screen in tracking space
+    _node.Transform.value =  avango.gua.make_inverse_mat(PLATFORM.transmitter_offset) * _node.Transform.value
+
+    print_warning(str(PLATFORM.transmitter_offset))
+
+    print_warning(str(avango.gua.make_inverse_mat(PLATFORM.transmitter_offset)))
+
+    print_warning(str(_node.Transform.value))
     
     return _node

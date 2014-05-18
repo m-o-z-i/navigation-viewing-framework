@@ -124,7 +124,7 @@
 
     <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
-    <startplatform>1</startplatform>
+    <startplatform>0</startplatform>
 
     <warnings>False</warnings>
 

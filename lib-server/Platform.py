@@ -165,6 +165,10 @@ class Platform(avango.script.Script):
         _screen_visualization = _display.create_screen_visualization()
         self.platform_scale_transform_node.Children.value.append(_screen_visualization)
 
+      # create screen proxy geometry for hit tests
+      _proxy_geometry = _display.create_transformed_proxy_geometry(self, self.displays.index(_display))
+      SCENEGRAPH.Root.value.Children.value.append(_proxy_geometry)
+
       _string_num = 0
       # create a slot for each displaystring
       for _displaystring in _display.displaystrings:

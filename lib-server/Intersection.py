@@ -42,7 +42,8 @@ class Intersection(avango.script.Script):
   # @param SF_MAT Starting matrix of the ray.
   # @param PICK_LENGTH Length of the ray in meters.
   # @param PICK_DIRECTION Direction of the ray.
-  def my_constructor(self, SCENEGRAPH, SF_MAT, PICK_LENGTH, PICK_DIRECTION):
+  # @pararm PICK_MASK Picking mask of the intersection process.
+  def my_constructor(self, SCENEGRAPH, SF_MAT, PICK_LENGTH, PICK_DIRECTION, PICK_MASK = ""):
     
     ## @var SCENEGRAPH
     # Reference to the scenegraph.
@@ -58,14 +59,17 @@ class Intersection(avango.script.Script):
   
     ## @var picking_options
     # Picking options for the intersection process.
-    self.picking_options = avango.gua.PickingOptions.PICK_ONLY_FIRST_OBJECT \
-                         | avango.gua.PickingOptions.GET_WORLD_NORMALS \
+    self.picking_options = avango.gua.PickingOptions.GET_WORLD_NORMALS \
                          | avango.gua.PickingOptions.INTERPOLATE_NORMALS \
                          | avango.gua.PickingOptions.PICK_ONLY_FIRST_FACE
+    #self.picking_options = avango.gua.PickingOptions.PICK_ONLY_FIRST_OBJECT \
+    #                     | avango.gua.PickingOptions.GET_WORLD_NORMALS \
+    #                     | avango.gua.PickingOptions.INTERPOLATE_NORMALS \
+    #                     | avango.gua.PickingOptions.PICK_ONLY_FIRST_FACE
     
     ## @var picking_mask
     # Picking mask of the intersection process.
-    self.picking_mask = ""
+    self.picking_mask = PICK_MASK
   
     # init field connections
     self.sf_pick_mat.connect_from(SF_MAT)

@@ -10,6 +10,7 @@ import avango.script
 from avango.script import field_has_changed
 
 # import framework libraries
+from Intersection import *
 from TrackingReader import *
 from ConsoleIO import *
 from display_config import INTELLIGENT_SHUTTER_SWITCHING
@@ -24,6 +25,10 @@ import math
 
 class User(avango.script.Script):
 
+  ## @var mf_screen_pick_result
+  # Intersections of the viewing ray with the screens in the setup.
+  mf_screen_pick_result = avango.gua.MFPickResult()
+
   ## Default constructor.
   def __init__(self):
     self.super(User).__init__()
@@ -36,7 +41,14 @@ class User(avango.script.Script):
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
-  def my_constructor(self, APPLICATION_MANAGER, USER_ID, VIP, GLASSES_ID, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
+  def my_constructor(self
+                   , APPLICATION_MANAGER
+                   , USER_ID
+                   , VIP
+                   , GLASSES_ID
+                   , HEADTRACKING_TARGET_NAME
+                   , PLATFORM_ID
+                   , AVATAR_MATERIAL):
 
     # flags 
     ## @var is_vip
@@ -111,12 +123,47 @@ class User(avango.script.Script):
     # toggles avatar display and activity
     self.toggle_user_activity(self.is_active, False)
 
+    # init intersection class for proxy geometry hit test
+    ## @var intersection_tester
+    # Instance of Intersection to determine intersection points of user with screens.
+    self.intersection_tester = Intersection()
+    self.intersection_tester.my_constructor(self.APPLICATION_MANAGER.SCENEGRAPH
+                                          , self.headtracking_reader.sf_global_mat
+                                          , 100.0
+                                          , avango.gua.Vec3(0.0, 0.0, -1.0)
+                                          , "")
+    self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
+
+
     # set evaluation policy
     self.always_evaluate(True)
 
   ## Evaluated every frame.
   def evaluate(self):
 
+    if self.platform_id == 0:
+      
+      _glob_mat = self.headtracking_reader.sf_global_mat.value
+      _view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
+      print "Position ", _glob_mat.get_translate()
+      print "View dir ", _view_vector
+      print "Screen to find"
+      print self.APPLICATION_MANAGER.SCENEGRAPH["/proxy_0_0"].Transform.value
+      self.intersection_tester.set_pick_direction(_view_vector)
+
+      #print self.intersection_tester.sf_pick_mat.value
+      print len(self.mf_screen_pick_result.value)
+      if len(self.mf_screen_pick_result.value) > 0:
+        for _result in self.mf_screen_pick_result.value:
+          print _result.Object.value.Name.value
+      #print "Tracking Matrix"
+      #print self.headtracking_reader.sf_abs_mat.value
+      #print "Normalized Matrix"
+      #print self.headtracking_reader.sf_global_mat.value
+
+      
+
+    '''
     if INTELLIGENT_SHUTTER_SWITCHING:
 
       if self.platform_id == 0:
@@ -131,15 +178,15 @@ class User(avango.script.Script):
         
         if self.headtracking_reader.sf_abs_vec.value.z > 1.1:
           self.set_user_location(0, True)
+    '''
 
-
-      #if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
-      #  if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
-      #    if self.is_active == True:
-      #      self.toggle_user_activity(False, True)
-      #  else:
-      #    if self.is_active == False:
-      #      self.toggle_user_activity(True, True)
+    #if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
+    #  if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
+    #    if self.is_active == True:
+    #      self.toggle_user_activity(False, True)
+    #  else:
+    #    if self.is_active == False:
+    #      self.toggle_user_activity(True, True)
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

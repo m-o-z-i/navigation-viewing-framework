@@ -137,21 +137,12 @@ class Display:
                                             , "data/objects/plane.obj", "data/materials/AvatarBlue.gmd"
                                             , avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.MAKE_PICKABLE)
     _node.GroupNames.value = ["do_not_display_group", "screen_proxy_geometry"]
-    #_node.GroupNames.value = ["screen_proxy_geometry", "avatar_group_" + str(PLATFORM.platform_id)]
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     _w, _h = self.size
     _node.Transform.value = self.transformation * avango.gua.make_rot_mat(90, 1, 0 ,0) * avango.gua.make_scale_mat(_w,1.0,_h)
 
-    print_warning(str(_node.Transform.value))
-
     # eliminate transmitter offset to transform screen in tracking space
     _node.Transform.value =  avango.gua.make_inverse_mat(PLATFORM.transmitter_offset) * _node.Transform.value
-
-    print_warning(str(PLATFORM.transmitter_offset))
-
-    print_warning(str(avango.gua.make_inverse_mat(PLATFORM.transmitter_offset)))
-
-    print_warning(str(_node.Transform.value))
     
     return _node

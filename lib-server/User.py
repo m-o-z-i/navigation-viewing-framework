@@ -129,11 +129,10 @@ class User(avango.script.Script):
     self.intersection_tester = Intersection()
     self.intersection_tester.my_constructor(self.APPLICATION_MANAGER.SCENEGRAPH
                                           , self.headtracking_reader.sf_global_mat
-                                          , 100.0
+                                          , 5.0
                                           , avango.gua.Vec3(0.0, 0.0, -1.0)
-                                          , "")
+                                          , "screen_proxy_geometry")
     self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
-
 
     # set evaluation policy
     self.always_evaluate(True)
@@ -141,26 +140,27 @@ class User(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
-    if self.platform_id == 0:
-      
-      _glob_mat = self.headtracking_reader.sf_global_mat.value
-      _view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
-      print "Position ", _glob_mat.get_translate()
-      print "View dir ", _view_vector
-      #print "Screen to find"
-      #print self.APPLICATION_MANAGER.SCENEGRAPH["/proxy_0_0"].Transform.value
-      self.intersection_tester.set_pick_direction(_view_vector)
+    #if self.platform_id == 1:
+    
+    _glob_mat = self.headtracking_reader.sf_global_mat.value
+    _view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
+    #print "Position ", _glob_mat.get_translate()
+    #print "View dir ", _view_vector
+    #print "Screen to find"
+    #print self.APPLICATION_MANAGER.SCENEGRAPH["/proxy_0_0"].Transform.value
+    self.intersection_tester.set_pick_direction(_view_vector)
 
-      print self.intersection_tester.sf_pick_mat.value
-      print len(self.mf_screen_pick_result.value)
-      if len(self.mf_screen_pick_result.value) > 0:
-        for _result in self.mf_screen_pick_result.value:
-          print _result.Object.value.Name.value
-      
-      #print "Tracking Matrix"
-      #print self.headtracking_reader.sf_abs_mat.value
-      #print "Normalized Matrix"
-      #print self.headtracking_reader.sf_global_mat.value
+    #print self.intersection_tester.sf_pick_mat.value
+
+    if len(self.mf_screen_pick_result.value) > 0:
+      print self.glasses_id, self.mf_screen_pick_result.value[0].Object.value.Name.value
+    else:
+      print self.glasses_id, "None"
+    
+    #print "Tracking Matrix"
+    #print self.headtracking_reader.sf_abs_mat.value
+    #print "Normalized Matrix"
+    #print self.headtracking_reader.sf_global_mat.value
 
       
 

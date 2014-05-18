@@ -147,15 +147,16 @@ class User(avango.script.Script):
       _view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
       print "Position ", _glob_mat.get_translate()
       print "View dir ", _view_vector
-      print "Screen to find"
-      print self.APPLICATION_MANAGER.SCENEGRAPH["/proxy_0_0"].Transform.value
+      #print "Screen to find"
+      #print self.APPLICATION_MANAGER.SCENEGRAPH["/proxy_0_0"].Transform.value
       self.intersection_tester.set_pick_direction(_view_vector)
 
-      #print self.intersection_tester.sf_pick_mat.value
+      print self.intersection_tester.sf_pick_mat.value
       print len(self.mf_screen_pick_result.value)
       if len(self.mf_screen_pick_result.value) > 0:
         for _result in self.mf_screen_pick_result.value:
           print _result.Object.value.Name.value
+      
       #print "Tracking Matrix"
       #print self.headtracking_reader.sf_abs_mat.value
       #print "Normalized Matrix"

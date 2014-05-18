@@ -167,6 +167,7 @@ class Platform(avango.script.Script):
 
       # create screen proxy geometry for hit tests
       _proxy_geometry = _display.create_transformed_proxy_geometry(self, self.displays.index(_display))
+      #self.platform_scale_transform_node.Children.value.append(_proxy_geometry)
       SCENEGRAPH.Root.value.Children.value.append(_proxy_geometry)
 
       _string_num = 0

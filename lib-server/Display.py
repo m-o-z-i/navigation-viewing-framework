@@ -133,12 +133,15 @@ class Display:
   
     _loader = avango.gua.nodes.GeometryLoader()
   
-    _node = _loader.create_geometry_from_file("proxy_" + str(PLATFORM.platform_id) + "_" + str(SCREEN_ID), "data/objects/screen.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    _node = _loader.create_geometry_from_file("proxy_" + str(PLATFORM.platform_id) + "_" + str(SCREEN_ID)
+                                            , "data/objects/plane.obj", "data/materials/AvatarBlue.gmd"
+                                            , avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.MAKE_PICKABLE)
     _node.GroupNames.value = ["do_not_display_group", "screen_proxy_geometry"]
+    #_node.GroupNames.value = ["screen_proxy_geometry", "avatar_group_" + str(PLATFORM.platform_id)]
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     _w, _h = self.size
-    _node.Transform.value = self.transformation * avango.gua.make_scale_mat(_w,_h,1.0)
+    _node.Transform.value = self.transformation * avango.gua.make_rot_mat(90, 1, 0 ,0) * avango.gua.make_scale_mat(_w,1.0,_h)
 
     print_warning(str(_node.Transform.value))
 

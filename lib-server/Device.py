@@ -194,19 +194,19 @@ class MultiDofDevice(avango.script.Script):
   ## Filters and sets the y parameter.
   # @param VALUE The value to be set.
   def set_y(self, VALUE):
- 
+
     self.dofs[1] += self.filter_channel(VALUE, self.y_parameters[0], self.y_parameters[1], self.y_parameters[2], self.y_parameters[3], self.y_parameters[4])
  
   ## Filters and sets the z parameter.
   # @param VALUE The value to be set.
   def set_z(self, VALUE):
-  
+
     self.dofs[2] += self.filter_channel(VALUE, self.z_parameters[0], self.z_parameters[1], self.z_parameters[2], self.z_parameters[3], self.z_parameters[4])
 
   ## Filters and sets the rx parameter.
   # @param VALUE The value to be set.
   def set_rx(self, VALUE):
-  
+
     self.dofs[3] += self.filter_channel(VALUE, self.rx_parameters[0], self.rx_parameters[1], self.rx_parameters[2], self.rx_parameters[3], self.rx_parameters[4])
 
   ## Filters and sets the ry parameter.
@@ -312,6 +312,69 @@ class SpacemouseDevice(MultiDofDevice):
     self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
 
 
+## Internal representation and reader for a globefish device.
+class GlobefishDevice(MultiDofDevice):
+
+  ## Custom constructor.
+  # @param DEVICE_STATION The name of the input device as chosen in daemon.
+  # @param NO_TRACKING_MAT The matrix to be applied as a spacemouse is not tracked.
+  def my_constructor(self, DEVICE_STATION, NO_TRACKING_MAT):
+  
+    # init sensor
+    ## @var device_sensor
+    # Device sensor for the device's inputs.
+    self.device_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
+    self.device_sensor.Station.value = DEVICE_STATION
+
+    self.init_station_tracking(None, NO_TRACKING_MAT)
+
+    ## @var translation_factor
+    # Factor to modify the device's translation input.
+    self.translation_factor = 0.2#0.15
+
+    ## @var rotation_factor
+    # Factor to modify the device's rotation input.
+    self.rotation_factor = 10.0
+
+    self.set_input_channel_parameters(self.x_parameters, 0.0, -0.6, 0.85, 0, 0)
+    self.set_input_channel_parameters(self.y_parameters, 0.0, -0.25, 0.25, 0, 0)
+    self.set_input_channel_parameters(self.z_parameters, 0.0, -0.15, 0.15, 0, 0)
+    self.set_input_channel_parameters(self.rx_parameters, 0.0, -512.0, 512.0, 0, 0)
+    self.set_input_channel_parameters(self.ry_parameters, 0.0, -512.0, 512.0, 0, 0)
+    self.set_input_channel_parameters(self.rz_parameters, 0.0, -512.0, 512.0, 0, 0)
+    
+    self.add_input_binding("self.set_x(self.device_sensor.Value0.value)")
+    self.add_input_binding("self.set_y(self.device_sensor.Value1.value*-1.0)")
+    self.add_input_binding("self.set_z(self.device_sensor.Value2.value*-1.0)")
+    self.add_input_binding("self.set_rx(self.device_sensor.Value3.value*-1.0)")
+    self.add_input_binding("self.set_ry(self.device_sensor.Value4.value*-1.0)")
+    self.add_input_binding("self.set_rz(self.device_sensor.Value5.value)")
+
+
+  ## Creates a representation of the device in the virutal world.
+  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
+  # @param PLATFORM_ID The platform id used for setting the group name correctly.
+  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+
+    _loader = avango.gua.nodes.GeometryLoader()
+
+    ## @var avatar_transform
+    # Scenegraph transform node for the dekstop user's table.
+    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
+    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
+    PLATFORM_NODE.Children.value.append(self.avatar_transform)
+
+    ## @var device_avatar
+    # Scenegraph node representing the geometry and transformation of the device avatar.
+    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
+                                                           'data/objects/table/table.obj',
+                                                           'data/materials/Stones.gmd',
+                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
+    self.avatar_transform.Children.value.append(self.device_avatar)
+    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
+
+
 ## Internal representation and reader for a keyboard and mouse setup.
 class KeyboardMouseDevice(MultiDofDevice):
 
@@ -339,7 +402,7 @@ class KeyboardMouseDevice(MultiDofDevice):
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    self.rotation_factor = 5.0
+    self.rotation_factor = 8.0
 
     self.set_input_channel_parameters(self.rx_parameters, 0.0, -100.0, 100.0, 0, 0)
     self.set_input_channel_parameters(self.ry_parameters, 0.0, -100.0, 100.0, 0, 0)

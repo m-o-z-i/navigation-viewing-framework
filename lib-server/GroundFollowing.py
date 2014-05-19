@@ -13,7 +13,7 @@ from   avango.script import field_has_changed
 from Intersection import *
 
 # import python libraries
-import math
+# ...
 
 ## Class to realize a simple ground following method.
 # 
@@ -94,7 +94,7 @@ class GroundFollowing(avango.script.Script):
 
     ## @var ground_pick_direction
     # Direction of the ground following ray (downwards).
-    self.ground_pick_direction = avango.gua.Vec3(0.0, -1.0, 0.0)
+    self.ground_pick_direction_mat = avango.gua.make_identity_mat()
 
     ## @var SCENEGRAPH
     # Reference to the scenegraph to intersect the ground following ray with.
@@ -107,6 +107,8 @@ class GroundFollowing(avango.script.Script):
     # initialize shoot and output matrices
     self.sf_abs_output_mat.value = self.sf_abs_input_mat.value
 
+    self.set_pick_direction(avango.gua.Vec3(0.0, -1.0, 0.0))
+
     # init field connections
     self.sf_station_mat.connect_from(SF_STATION_MAT)
 
@@ -114,13 +116,13 @@ class GroundFollowing(avango.script.Script):
     ## @var ground_intersection
     # Intersection class to determine the intersections of the ground following ray with the objects in the scenegraph.
     self.ground_intersection = Intersection()
-    self.ground_intersection.my_constructor(SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length, self.ground_pick_direction)
+    self.ground_intersection.my_constructor(SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length)
     self.mf_ground_pick_result.connect_from(self.ground_intersection.mf_pick_result)
 
 
   ## Evaluated every frame.
   def evaluate(self):
-    if self.activated:
+    if self.activated == True:
       # platform translation in the world
       _platform_trans_vec = self.sf_abs_input_mat.value.get_translate()
 
@@ -133,7 +135,7 @@ class GroundFollowing(avango.script.Script):
       _gf_start_pos *= self.sf_scale.value
       _gf_start_pos = self.sf_abs_input_mat.value * _gf_start_pos
       _gf_start_pos = avango.gua.Vec3(_gf_start_pos.x, _gf_start_pos.y, _gf_start_pos.z)
-      self.sf_gf_start_mat.value = avango.gua.make_trans_mat(_gf_start_pos)
+      self.sf_gf_start_mat.value = avango.gua.make_trans_mat(_gf_start_pos) * self.ground_pick_direction_mat
 
       if len(self.mf_ground_pick_result.value) > 0: # an intersection with the ground was found
 
@@ -186,12 +188,26 @@ class GroundFollowing(avango.script.Script):
     else:
       self.sf_abs_output_mat.value = self.sf_abs_input_mat.value            # ground following is deactivated
 
+
+  ## Sets the pick_direction attribute.
+  # @param PICK_DIRECTION New pick direction.
+  def set_pick_direction(self, PICK_DIRECTION):
+
+    PICK_DIRECTION.normalize()
+
+    _ref = avango.gua.Vec3(0.0,0.0,-1.0)
+    _angle = _ref.dot(PICK_DIRECTION)
+    _axis = _ref.cross(PICK_DIRECTION)
+      
+    self.ground_pick_direction_mat = avango.gua.make_rot_mat(_angle, _axis)
+
+
   ## Activates the ground following algorithm.
   def activate(self):
     self.activated = True
-    self.ground_intersection.activate()
+    self.ground_intersection.activate(True)
 
   ## Deactivates the ground following algorithm. The input matrix is just passed through after calling this method.
   def deactivate(self):
     self.activated = False
-    self.ground_intersection.deactivate()
+    self.ground_intersection.activate(False)

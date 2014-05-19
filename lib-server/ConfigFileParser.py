@@ -313,6 +313,7 @@ class ConfigFileParser:
           print_error("No device type specified for navigation.", True)
         elif (_device_attributes[0] != "KeyboardMouse") and \
              (_device_attributes[0] != "Spacemouse") and \
+             (_device_attributes[0] != "Globefish") and \
              (_device_attributes[0] != "XBoxController") and \
              (_device_attributes[0] != "OldSpheron") and \
              (_device_attributes[0] != "NewSpheron"):

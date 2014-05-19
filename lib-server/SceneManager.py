@@ -12,12 +12,14 @@ import avango.daemon
 
 # import framework libraries
 import Tools
+from Objects import *
+from Scene import *
 
 # import python libraries
 import math
 import time
-import random
 
+'''
 ## Helper class to update material values with respect to the current time.
 class TimedMaterialUniformUpdate(avango.script.Script):
 
@@ -128,89 +130,124 @@ class DayAnimationUpdate(avango.script.Script):
     # between noon and evening
     elif (_sun_angle > 135) and (_sun_angle < 180): 
       self.sf_sun_color.value = self.lerp_color(self.noon_sun_color, self.evening_sun_color, (_sun_angle - 135.0) / 45.0)
-
+'''
 
 ## Class for building a scene and appending the necessary nodes to the scenegraph.
 #
 # The actual member variables vary from scene to scene and can be chosen at will.
 class SceneManager:
 
+  hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
+
   ## Custom constructor
-  # @param LOADER The geometry loader to be used.
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
-  def __init__(self, LOADER, NET_TRANS_NODE):
+  def __init__(self, NET_TRANS_NODE, SCENEGRAPH):
 
-    self.timer = avango.nodes.TimeSensor()
+    # create loader class for geometry loading
+    _loader = avango.gua.nodes.GeometryLoader()
 
-    # create town
-    self.town = LOADER.create_geometry_from_file( 'town',
-                                                  'data/objects/medieval_harbour/town.obj',
-                                                  'data/materials/Stones.gmd',
-                                                  avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-    self.town.Transform.value = avango.gua.make_scale_mat(7.5, 7.5, 7.5)
-    NET_TRANS_NODE.Children.value.append(self.town)
+    # references
+    self.SCENEGRAPH = SCENEGRAPH
+    self.NET_TRANS_NODE = NET_TRANS_NODE
 
-    # create water
+    # variables
+    self.objects = [] # interactive objects    
+
+
+    # init scene
+    #self.scene1 = SceneVRHyperspace(self, NET_TRANS_NODE)
+
+    self.scene2 = MedievalTown(self, NET_TRANS_NODE)    
+
+
+    self.reset() # enforce BoundingBox update
+
+
+  # functions
+  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE):
+
+    _loader = avango.gua.nodes.GeometryLoader()
     
-    self.water = LOADER.create_geometry_from_file('water_geometry',
-                                                  'data/objects/plane.obj',
-                                                  'data/materials/Water.gmd',
-                                                  avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-    self.water.Transform.value =  avango.gua.make_trans_mat(0, -3.15, 0) *\
-                                  avango.gua.make_scale_mat(1500.0, 1.0, 1500.0)
-    NET_TRANS_NODE.Children.value.append(self.water)
-    self.water_updater = TimedMaterialUniformUpdate()
-    self.water_updater.MaterialName.value = "data/materials/Water.gmd"
-    self.water_updater.UniformName.value = "time"
-    self.water_updater.TimeIn.connect_from(self.timer.Time)
+    if MATERIAL == None: # no material defined --> get materials from file
+
+      if PICKABLE == True:
+        _node = _loader.create_geometry_from_file(NAME, FILENAME, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.MAKE_PICKABLE)
+  
+      else:
+        _node = _loader.create_geometry_from_file(NAME, FILENAME, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY)
     
-
-    '''
-    # create ship
-    self.ship_transform = avango.gua.nodes.TransformNode(Name = 'ship_transform')
-    self.ship_transform.Transform.value = avango.gua.make_trans_mat(0, 2.2, 33) * avango.gua.make_scale_mat(7, 7, 7)
-    self.ship = LOADER.create_geometry_from_file( 'ship_geometry', 
-                                                  'data/objects/suzannes_revenge/ship.dae', 
-                                                  'data/materials/SimplePhongWhite.gmd', 
-                                                  avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-    self.ship_transform.Children.value.append(self.ship)
-    NET_TRANS_NODE.Children.value.append(self.ship_transform)
-    self.swaying_updater = TimedSwayingUpdate()
-    self.swaying_updater.TimeIn.connect_from(self.timer.Time)
-    self.ship.Transform.connect_from(self.swaying_updater.SFRotMat)
-
-
-    #create plank
-    self.plank_transform = avango.gua.nodes.TransformNode(Name = 'plank_transform')
-    self.plank = LOADER.create_geometry_from_file( 'plank_geometry',
-                                                   'data/objects/cube.obj',
-                                                   'data/materials/Wood.gmd',
-                                                   avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-    self.plank.Transform.value = avango.gua.make_trans_mat(0.45, 0.76, 26) *\
-                                  avango.gua.make_rot_mat(-18, 1, 0, 0) *\
-                                  avango.gua.make_scale_mat(0.4, 0.05, 2.4)
-    self.plank_transform.Transform.connect_from(self.swaying_updater.SFRotMat)
-    self.plank_transform.Children.value.append(self.plank)
-    NET_TRANS_NODE.Children.value.append(self.plank_transform)
-    '''
+    else: # material defined --> use material
     
-    # commented out because SunLightNode is not distributable yet, so we use the SpotLightNode above instead
-    self.sun = avango.gua.nodes.SunLightNode( Name = "sun",
-                                              Color = avango.gua.Color(1.0, 0.7, 0.5),
-                                              EnableShadows = True,
-                                              EnableGodrays = True,
-                                              EnableDiffuseShading = True,
-                                              EnableSpecularShading = True,
-                                              ShadowMapSize = 2048,
-                                              ShadowOffset = 0.0008
-                                        )
+      if PICKABLE == True:
+        _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.MAKE_PICKABLE)
+        
+      else:
+        _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY)
 
-    self.day_updater = DayAnimationUpdate()
-    #self.day_updater.TimeIn.connect_from(self.timer.Time)
-    test = avango.SFFloat()
-    test.value = 30.0
-    self.day_updater.TimeIn.connect_from(test)
-    self.sun.Transform.connect_from(self.day_updater.sf_sun_mat)
-    self.sun.Color.connect_from(self.day_updater.sf_sun_color)
+    _node.Transform.value = MATRIX
+  
+    self.init_objects(_node, PARENT_NODE)
+
+
+  def init_light(self, TYPE, NAME, COLOR, MATRIX, PARENT_NODE):
+
+    if TYPE == 0: # sun light
+      _node = avango.gua.nodes.SunLightNode()
+      _node.EnableShadows.value = True
+      _node.ShadowMapSize.value = 2048
+      _node.ShadowOffset.value = 0.001
+
+    elif TYPE == 1: # point light
+      _node = avango.gua.nodes.PointLightNode()
+      _node.Falloff.value = 1.0 # exponent
+
+    elif TYPE == 2: # spot light
+      _node = avango.gua.nodes.SpotLightNode()
+      _node.EnableShadows.value = True
+      _node.ShadowMapSize.value = 2048
+      _node.ShadowOffset.value = 0.001
+      _node.Softness.value = 1.0 # exponent
+      _node.Falloff.value = 1.0 # exponent
+
+      
+    _node.Name.value = NAME
+    _node.Color.value = COLOR
+    _node.Transform.value = MATRIX
+    _node.EnableDiffuseShading.value = True
+    _node.EnableSpecularShading.value = True
+    _node.EnableGodrays.value = True
+
+    self.init_objects(_node, PARENT_NODE)
+
+
+  def init_objects(self, NODE, PARENT_OBJECT):
+
+    if NODE.get_type() == 'av::gua::TransformNode' and len(NODE.Children.value) > 0: # group node 
+      _transform = avango.gua.nodes.TransformNode(Name = NODE.Name.value, Transform = NODE.Transform.value)
+
+      _object = InteractiveObject()
+      _object.my_constructor(self, _transform, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE)
+
+      self.objects.append(_object)
+
+      for _child in NODE.Children.value:
+        self.init_objects(_child, _object)
+        
+    elif NODE.get_type() == 'av::gua::GeometryNode' or NODE.get_type() == 'av::gua::SunLightNode' or NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
+
+      _object = InteractiveObject()
+      _object.my_constructor(self, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE)
+
+      self.objects.append(_object)
+
     
-    NET_TRANS_NODE.Children.value.append(self.sun)
+  def reset(self):
+  
+    for _object in self.objects:
+      _object.reset()
+
+
+  def get_hierarchy_material(self, INDEX):
+  
+    return self.hierarchy_materials[INDEX]
+    

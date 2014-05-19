@@ -158,6 +158,9 @@ class Navigation(avango.script.Script):
     elif self.input_sensor_type == "Spacemouse":
       self.device = SpacemouseDevice()
       self.device.my_constructor(INPUT_SENSOR_NAME, NO_TRACKING_MAT)
+    elif self.input_sensor_type == "Globefish":
+      self.device = GlobefishDevice()
+      self.device.my_constructor(INPUT_SENSOR_NAME, NO_TRACKING_MAT)
 
 
     # init field connections

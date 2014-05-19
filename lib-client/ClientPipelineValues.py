@@ -9,8 +9,10 @@ import avango.gua
 
 ## Sets all the pipeline values to obtain a nice appearance.
 def set_pipeline_values(PIPELINE):
-  avango.gua.create_texture("data/textures/sky.jpg")
-  PIPELINE.BackgroundTexture.value = "data/textures/sky.jpg"
+  #avango.gua.create_texture("data/textures/sky.jpg")
+  avango.gua.create_texture("data/textures/skymap.png")
+  #PIPELINE.BackgroundTexture.value = "data/textures/sky.jpg"
+  PIPELINE.BackgroundTexture.value = "data/textures/skymap.png"
 
   PIPELINE.EnableBloom.value              = True
   PIPELINE.BloomIntensity.value           = 0.1
@@ -18,11 +20,11 @@ def set_pipeline_values(PIPELINE):
   PIPELINE.BloomRadius.value              = 10
   PIPELINE.EnableFXAA.value               = True
   PIPELINE.EnableFog.value                = True
-  PIPELINE.FogStart.value                 = 150.0
-  PIPELINE.FogEnd.value                   = 200.0
+  PIPELINE.FogStart.value                 = 500.0
+  PIPELINE.FogEnd.value                   = 800.0
   PIPELINE.EnableFrustumCulling.value     = False
-  PIPELINE.AmbientColor.value             = avango.gua.Color(0.3, 0.3, 0.3)
-  PIPELINE.FarClip.value                  = 800.0
+  PIPELINE.AmbientColor.value             = avango.gua.Color(0.25, 0.25, 0.25)
+  PIPELINE.FarClip.value                  = 1000.0
   PIPELINE.EnableBackfaceCulling.value    = False
   PIPELINE.EnableSsao.value               = True
   PIPELINE.SsaoRadius.value               = 2.0

@@ -46,14 +46,19 @@ def init_dlp_wall_tracking():
   _dtrack = avango.daemon.DTrack()
   _dtrack.port = "5002" # ART port at LED wall
   
-  _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron')     # new spheron device
-
+  # glasses
   _dtrack.stations[1] = avango.daemon.Station('tracking-dlp-glasses-1')
   _dtrack.stations[2] = avango.daemon.Station('tracking-dlp-glasses-2')
   _dtrack.stations[3] = avango.daemon.Station('tracking-dlp-glasses-3')
   _dtrack.stations[4] = avango.daemon.Station('tracking-dlp-glasses-4')
   _dtrack.stations[5] = avango.daemon.Station('tracking-dlp-glasses-5')        
   _dtrack.stations[6] = avango.daemon.Station('tracking-dlp-glasses-6')
+
+  # devices
+  _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron') # new spheron device
+
+  _dtrack.stations[23] = avango.daemon.Station('tracking-dlp-pointer1') # AUGUST1 pointer
+
 
   device_list.append(_dtrack)
   print "ART Tracking started at DLP WALL"
@@ -217,6 +222,42 @@ def init_new_spheron():
   else:
     print "Dual Spheron NOT found !"
 
+
+## Initializes a new spheron for navigation.
+def init_new_globefish():
+
+  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"BUW Spheron\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+  
+  _string = _string.split()
+
+  if len(_string) > 0:
+    
+    _string1 = _string[0]
+
+    # create a station to propagate the input events
+    _globefish = avango.daemon.HIDInput()
+    _globefish.station = avango.daemon.Station("device-new-globefish")
+    _globefish.device = _string1
+    _globefish.timeout = '30'
+    
+    # map incoming events to station values
+    _globefish.values[0] = "EV_ABS::ABS_THROTTLE" # X
+    _globefish.values[1] = "EV_ABS::ABS_Z" # Y    
+    _globefish.values[2] = "EV_ABS::ABS_X" # Z
+    
+    _globefish.values[3] = "EV_REL::REL_RY" # PITCH
+    _globefish.values[4] = "EV_REL::REL_RX" # HEAD 
+    _globefish.values[5] = "EV_REL::REL_RZ" # ROLL
+    
+    # buttons
+    # ...
+        
+    device_list.append(_globefish)
+
+    print "New Globefish found at:", _string1
+
+  else:
+    print "New Globefish NOT found !"
   
 
 
@@ -317,18 +358,18 @@ def init_keyboard():
     keyboard.buttons[16] = "EV_KEY::KEY_J"
     keyboard.buttons[17] = "EV_KEY::KEY_K"
     keyboard.buttons[18] = "EV_KEY::KEY_L"
-    keyboard.buttons[19] = "EV_KEY::KEY_Y"
-    keyboard.buttons[20] = "EV_KEY::KEY_X"
-    keyboard.buttons[21] = "EV_KEY::KEY_C"
-    keyboard.buttons[22] = "EV_KEY::KEY_V"
-    keyboard.buttons[23] = "EV_KEY::KEY_B"
-    keyboard.buttons[24] = "EV_KEY::KEY_N"
-    keyboard.buttons[25] = "EV_KEY::KEY_M"
+    keyboard.buttons[19] = "EV_KEY::KEY_F1"
+    keyboard.buttons[20] = "EV_KEY::KEY_F2"
+    keyboard.buttons[21] = "EV_KEY::KEY_F3"
+    keyboard.buttons[22] = "EV_KEY::KEY_F4"
+    keyboard.buttons[23] = "EV_KEY::KEY_F5"
+    keyboard.buttons[24] = "EV_KEY::KEY_F6"
+    keyboard.buttons[25] = "EV_KEY::KEY_F7"
 
-    keyboard.buttons[26] = "EV_KEY::KEY_1"
-    keyboard.buttons[27] = "EV_KEY::KEY_2"
-    keyboard.buttons[28] = "EV_KEY::KEY_3"
-    keyboard.buttons[29] = "EV_KEY::KEY_6"
+    keyboard.buttons[26] = "EV_KEY::KEY_F8"
+    keyboard.buttons[27] = "EV_KEY::KEY_F9"
+    keyboard.buttons[28] = "EV_KEY::KEY_F10"
+    keyboard.buttons[29] = "EV_KEY::KEY_F11"
 
     keyboard.buttons[30] = "EV_KEY::KEY_UP"
     keyboard.buttons[31] = "EV_KEY::KEY_DOWN"
@@ -384,6 +425,37 @@ def xbox_controller(PLAYER_NUMBER):
   else:
     print "XBox Controller NOT found !"
 
+
+
+def init_august_pointer(ID, DEVICE_STATION_STRING):
+
+	_string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"MOUSE USB MOUSE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()	
+	_string = _string.split()
+
+	if len(_string) > ID:
+		
+		_string = _string[ID]
+
+		_pointer = avango.daemon.HIDInput()
+		_pointer.station = avango.daemon.Station(DEVICE_STATION_STRING) # create a station to propagate the input events
+		_pointer.device = _string
+		#_pointer.timeout = '15'
+
+		# map incoming events to station values
+		_pointer.buttons[0] = "EV_KEY::KEY_F5" # front button
+		#_pointer.buttons[0] = "EV_KEY::KEY_ESC" # front button
+		_pointer.buttons[1] = "EV_KEY::KEY_PAGEDOWN" # back button
+		_pointer.buttons[2] = "EV_KEY::KEY_PAGEUP" # center button
+
+		device_list.append(_pointer)
+		print 'August Pointer found at:', _string
+		
+		os.system("xinput --set-prop keyboard:'MOUSE USB MOUSE' 'Device Enabled' 0") # disable X-forwarding of events
+		
+	else:
+		print "August Pointer NOT found !"
+
+
 ## @var device_list
 # List of devices to be handled by daemon.
 device_list = []
@@ -394,13 +466,17 @@ init_dlp_wall_tracking()
 
 # initialize x-box controllers
 xbox_controller(1)
-xbox_controller(2)
-xbox_controller(3)
-xbox_controller(4)
+#xbox_controller(2)
+#xbox_controller(3)
+#xbox_controller(4)
 
 # init spherons
-init_old_spheron()
-init_new_spheron()
+#init_old_spheron()
+#init_new_spheron()
+init_new_globefish()
+
+# init pointers
+init_august_pointer(0, "device-pointer1")
 
 # init desktop devices
 init_keyboard()
@@ -408,9 +484,9 @@ init_mouse()
 init_spacemouse()
 
 # init oculus rift sensors
-init_oculus()
+#init_oculus() # crash ???
 
 # init touch input
-init_tuio_input()
+#init_tuio_input() # crash ???
 
 avango.daemon.run(device_list)

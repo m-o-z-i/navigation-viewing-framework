@@ -116,7 +116,7 @@ class GroundFollowing(avango.script.Script):
     ## @var ground_intersection
     # Intersection class to determine the intersections of the ground following ray with the objects in the scenegraph.
     self.ground_intersection = Intersection()
-    self.ground_intersection.my_constructor(SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length)
+    self.ground_intersection.my_constructor(SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length, "!screen_proxy_geometry")
     self.mf_ground_pick_result.connect_from(self.ground_intersection.mf_pick_result)
 
 

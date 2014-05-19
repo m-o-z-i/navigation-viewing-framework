@@ -81,10 +81,10 @@ class MedievalTown:
 
     # geometry
     _mat = avango.gua.make_scale_mat(7.5)
-    SCENE_MANAGER.init_geometry("town", "data/objects/medieval_harbour/town.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("town", "data/objects/medieval_harbour/town.obj", _mat, None, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
     
     _mat = avango.gua.make_trans_mat(0, -3.15, 0) * avango.gua.make_scale_mat(1500.0, 1.0, 1500.0)
-    SCENE_MANAGER.init_geometry("water", "data/objects/plane.obj", _mat, 'data/materials/Water.gmd', False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("water", "data/objects/plane.obj", _mat, 'data/materials/Water.gmd', True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
   
     #self.water_updater = TimedMaterialUniformUpdate()
     #self.water_updater.MaterialName.value = "data/materials/Water.gmd"

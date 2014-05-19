@@ -472,8 +472,8 @@ xbox_controller(1)
 
 # init spherons
 #init_old_spheron()
-#init_new_spheron()
-init_new_globefish()
+init_new_spheron()
+#init_new_globefish()
 
 # init pointers
 init_august_pointer(0, "device-pointer1")

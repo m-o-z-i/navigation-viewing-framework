@@ -146,8 +146,7 @@ class User(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
-    pass
-    '''
+    
     if INTELLIGENT_SHUTTER_SWITCHING:
 
       # update view vector on intersection tests
@@ -180,7 +179,6 @@ class User(avango.script.Script):
         if self.timer.Time.value - self.looking_outside_start > 2.0:
           if self.is_active == True:
             self.toggle_user_activity(False, True)
-    '''
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

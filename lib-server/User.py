@@ -134,58 +134,52 @@ class User(avango.script.Script):
                                           , "screen_proxy_geometry")
     self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
 
+    ##
+    #
+    self.looking_outside_start = None
+
+    ##
+    #    
+    self.timer = avango.nodes.TimeSensor()
+
     # set evaluation policy
     self.always_evaluate(True)
 
   ## Evaluated every frame.
   def evaluate(self):
     
-    # update view vector on intersection tests
-    _glob_mat = self.headtracking_reader.sf_global_mat.value
-    _view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
-    self.intersection_tester.set_pick_direction(_view_vector)
-
-    if len(self.mf_screen_pick_result.value) > 0:
-      #print self.glasses_id, self.mf_screen_pick_result.value[0].Object.value.Name.value
-
-      _hit = self.mf_screen_pick_result.value[0].Object.value.Name.value
-      _hit = _hit.replace("proxy_", "")
-      _hit = _hit.split("_")
-
-      _hit_platform = int(_hit[0])
-      _hit_screen   = int(_hit[1])
-
-      if _hit_platform != self.platform_id:
-        self.set_user_location(_hit_platform, True)
-
-    else:
-      pass
-      #print self.glasses_id, "None"
-
-    '''
     if INTELLIGENT_SHUTTER_SWITCHING:
 
-      if self.platform_id == 0:
-        
-        if self.headtracking_reader.sf_abs_vec.value.x < -1.0:
-          self.set_user_location(1, True)
+      # update view vector on intersection tests
+      _glob_mat = self.headtracking_reader.sf_global_mat.value
+      _view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
+      self.intersection_tester.set_pick_direction(_view_vector)
 
-      elif self.platform_id == 1:
+      if len(self.mf_screen_pick_result.value) > 0:
+        #print self.glasses_id, self.mf_screen_pick_result.value[0].Object.value.Name.value
 
-        #if self.headtracking_reader.tracking_sensor.Station.value == "tracking-dlp-glasses-1":
-        #  print self.headtracking_reader.sf_abs_vec.value
-        
-        if self.headtracking_reader.sf_abs_vec.value.z > 1.1:
-          self.set_user_location(0, True)
-    '''
+        _hit = self.mf_screen_pick_result.value[0].Object.value.Name.value
+        _hit = _hit.replace("proxy_", "")
+        _hit = _hit.split("_")
 
-    #if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
-    #  if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
-    #    if self.is_active == True:
-    #      self.toggle_user_activity(False, True)
-    #  else:
-    #    if self.is_active == False:
-    #      self.toggle_user_activity(True, True)
+        _hit_platform = int(_hit[0])
+        _hit_screen   = int(_hit[1])
+
+        if self.is_active == False:
+          self.toggle_user_activity(True, True)
+
+        if _hit_platform != self.platform_id:
+          self.set_user_location(_hit_platform, True)
+          self.looking_outside_start = None
+
+      else:
+
+        if self.looking_outside_start == None:
+          self.looking_outside_start = self.timer.Time.value
+
+        if self.timer.Time.value - self.looking_outside_start > 2.0:
+          if self.is_active == True:
+            self.toggle_user_activity(False, True)
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.
@@ -200,6 +194,7 @@ class User(avango.script.Script):
       self.is_active = False
       self.head_avatar.GroupNames.value.append("do_not_display_group")
       self.body_avatar.GroupNames.value.append("do_not_display_group")
+      self.platform_id = -1
 
     if RESEND_CONFIG:
       self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()

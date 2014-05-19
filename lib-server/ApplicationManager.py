@@ -164,8 +164,10 @@ class ApplicationManager():
   # @param INPUT_DEVICE_NAME Name of the input device values as chosen in daemon.
   # @param STARTING_MATRIX Initial platform matrix for the new device.
   # @param PLATFORM_SIZE Physical size of the platform in meters. [width, depth]
+  # @param SCALE Start scaling of the platform.
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of Navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the platform should leave traces behind.
+  # @param INVERT Boolean indicating if the input values should be inverted.
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param GROUND_FOLLOWING_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
@@ -179,8 +181,10 @@ class ApplicationManager():
     , INPUT_DEVICE_NAME
     , STARTING_MATRIX
     , PLATFORM_SIZE
+    , SCALE
     , ANIMATE_COUPLING
     , MOVEMENT_TRACES
+    , INVERT
     , NO_TRACKING_MAT
     , GROUND_FOLLOWING_SETTINGS
     , TRANSMITTER_OFFSET
@@ -216,6 +220,7 @@ class ApplicationManager():
         NET_TRANS_NODE = self.NET_TRANS_NODE
       , SCENEGRAPH = self.SCENEGRAPH
       , PLATFORM_SIZE = PLATFORM_SIZE
+      , SCALE = SCALE
       , STARTING_MATRIX = STARTING_MATRIX
       , NAVIGATION_LIST = self.navigation_list
       , INPUT_SENSOR_TYPE = INPUT_DEVICE_TYPE
@@ -224,6 +229,7 @@ class ApplicationManager():
       , GF_SETTINGS = GROUND_FOLLOWING_SETTINGS
       , ANIMATE_COUPLING = ANIMATE_COUPLING
       , MOVEMENT_TRACES = MOVEMENT_TRACES
+      , INVERT = INVERT
       , SLOT_MANAGER = self.slot_manager
       , TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
       , DISPLAYS = _display_instances
@@ -249,7 +255,13 @@ class ApplicationManager():
     , WARNINGS
     ):
     _user = User()
-    _user.my_constructor(self, len(self.user_list), VIP, GLASSES_ID, HEADTRACKING_TARGET_NAME, PLATFORM_ID, self.navigation_list[PLATFORM_ID].trace_material)
+    _user.my_constructor(self
+                       , len(self.user_list)
+                       , VIP
+                       , GLASSES_ID
+                       , HEADTRACKING_TARGET_NAME
+                       , PLATFORM_ID
+                       , self.navigation_list[PLATFORM_ID].trace_material)
     self.user_list.append(_user)
 
     # init border checker to warn user on platform

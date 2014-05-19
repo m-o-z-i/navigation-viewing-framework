@@ -9,6 +9,7 @@
 
   </global>
 
+
   <device>
 
     <type>NewSpheron</type>
@@ -33,11 +34,11 @@
     <notrackingposition>
       <x>0.0</x>
       <y>1.75</y>
-      <z>1.5</z>
+      <z>1.6</z>
     </notrackingposition>
 
     <platformpos>
-      <x>0.0</x>
+      <x>-2.0</x>
       <y>0.0</y>
       <z>12.0</z>
     </platformpos>
@@ -66,28 +67,28 @@
 
     <inputsensor>device-spacemouse</inputsensor>
 
-    <display>nestor_display</display>
+    <display>touch_table_3D</display>
 
-    <avatartype>joseph</avatartype>
+    <avatartype>None</avatartype>
 
     <transmitteroffset>
-      <x>0.0</x>
-      <y>0.043</y>
-      <z>1.6</z>
+      <x>0.65</x>
+      <y>-0.91</y>
+      <z>2.0</z>
       <rx>0.0</rx>
-      <ry>0.0</ry>
+      <ry>-90.0</ry>
       <rz>0.0</rz>
     </transmitteroffset>
 
     <notrackingposition>
       <x>0.0</x>
-      <y>1.0</y>
-      <z>0.6</z>
+      <y>0.0</y>
+      <z>0.0</z>
     </notrackingposition>
 
     <platformpos>
-      <x>0.0</x>
-      <y>0.0</y>
+      <x>2.0</x>
+      <y>10.0</y>
       <z>12.0</z>
     </platformpos>
 
@@ -95,12 +96,21 @@
       <yaw>0.0</yaw>
     </platformrot>
 
+    <scale>50.0</scale>
+
+    <platformsize>
+      <width>3.8</width>
+      <depth>3.6</depth>
+    </platformsize>
+
     <groundfollowing>
-      <activated>True</activated>
+      <activated>False</activated>
       <raystartheight>0.75</raystartheight>
     </groundfollowing>
 
-    <movementtraces>True</movementtraces>
+    <movementtraces>False</movementtraces>
+
+    <invert>True</invert>
 
   </device>
 
@@ -108,25 +118,51 @@
   
   <user>
 
-    <vip>True</vip>
+    <vip>False</vip>
+
+    <glasses>1</glasses>
 
     <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
 
     <startplatform>0</startplatform>
-
-    <warnings>True</warnings>
-
-  </user>
-
-  <user>
-
-    <vip>False</vip>
-
-    <startplatform>1</startplatform>
 
     <warnings>False</warnings>
 
   </user>
 
 
+  <!-- Second User -->
+  
+  <user>
+
+    <vip>False</vip>
+
+    <glasses>4</glasses>
+
+    <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
+
+    <startplatform>0</startplatform>
+
+    <warnings>False</warnings>
+
+  </user>
+
+
+  <!-- Fourth User -->
+  
+  <user>
+
+    <vip>False</vip>
+
+    <glasses>6</glasses>
+
+    <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
+
+    <startplatform>0</startplatform>
+
+    <warnings>False</warnings>
+
+  </user>
+  
+    
 </setup>

@@ -5,13 +5,7 @@
 
   <global>
 
-    <groundfollowing>
-      <activated>True</activated>
-      <raystartheight>0.75</raystartheight>
-    </groundfollowing>
-
     <animatecoupling>True</animatecoupling>
-    <movementtraces>True</movementtraces>
 
   </global>
 
@@ -30,6 +24,9 @@
       <x>0.0</x>
       <y>0.043</y>
       <z>1.6</z>
+      <rx>0.0</rx>
+      <ry>0.0</ry>
+      <rz>0.0</rz>
     </transmitteroffset>
 
     <notrackingposition>
@@ -52,6 +49,13 @@
       <width>3.8</width>
       <depth>3.6</depth>
     </platformsize>
+
+    <groundfollowing>
+      <activated>True</activated>
+      <raystartheight>0.75</raystartheight>
+    </groundfollowing>
+
+    <movementtraces>True</movementtraces>
 
   </device>
 

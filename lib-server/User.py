@@ -10,6 +10,7 @@ import avango.script
 from avango.script import field_has_changed
 
 # import framework libraries
+from Intersection import *
 from TrackingReader import *
 from ConsoleIO import *
 from display_config import INTELLIGENT_SHUTTER_SWITCHING
@@ -24,6 +25,11 @@ import math
 
 class User(avango.script.Script):
 
+  ## @var mf_screen_pick_result
+  # Intersections of the viewing ray with the screens in the setup.
+  mf_screen_pick_result = avango.gua.MFPickResult()
+
+  ## Default constructor.
   def __init__(self):
     self.super(User).__init__()
 
@@ -35,7 +41,14 @@ class User(avango.script.Script):
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
-  def my_constructor(self, APPLICATION_MANAGER, USER_ID, VIP, GLASSES_ID, HEADTRACKING_TARGET_NAME, PLATFORM_ID, AVATAR_MATERIAL):
+  def my_constructor(self
+                   , APPLICATION_MANAGER
+                   , USER_ID
+                   , VIP
+                   , GLASSES_ID
+                   , HEADTRACKING_TARGET_NAME
+                   , PLATFORM_ID
+                   , AVATAR_MATERIAL):
 
     # flags 
     ## @var is_vip
@@ -99,8 +112,8 @@ class User(avango.script.Script):
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     # create avatar representation
-    if self.platform.avatar_type == "joseph":
-      self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)
+    if self.platform.avatar_type == "joseph" or self.platform.avatar_type == "None":
+      self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)  
     else:
       if self.platform.avatar_type == "joseph_table":
         print_warning("Avatar type jospeh_table is deprecated. The creation of table avatars are now handled by the " + \
@@ -110,24 +123,64 @@ class User(avango.script.Script):
     # toggles avatar display and activity
     self.toggle_user_activity(self.is_active, False)
 
+    # init intersection class for proxy geometry hit test
+    ## @var intersection_tester
+    # Instance of Intersection to determine intersection points of user with screens.
+    self.intersection_tester = Intersection()
+    self.intersection_tester.my_constructor(self.APPLICATION_MANAGER.SCENEGRAPH
+                                          , self.headtracking_reader.sf_global_mat
+                                          , 5.0
+                                          , "screen_proxy_geometry")
+    self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
+
+    ##
+    #
+    self.looking_outside_start = None
+
+    ##
+    #    
+    self.timer = avango.nodes.TimeSensor()
+
     # set evaluation policy
     self.always_evaluate(True)
 
   ## Evaluated every frame.
   def evaluate(self):
-    # Set active flag, current platform and current display
-    # call slot manager.
-
-    # only switch when user is in new range for 0.5 seconds
+    pass
+    '''
     if INTELLIGENT_SHUTTER_SWITCHING:
 
-      if self.APPLICATION_MANAGER.slot_manager.queued_commands == []:
-        if self.headtracking_reader.sf_abs_vec.value.y < 0.8:
+      # update view vector on intersection tests
+      #_glob_mat = self.headtracking_reader.sf_global_mat.value
+      #_view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
+      #self.intersection_tester.set_pick_direction(_view_vector)
+
+      if len(self.mf_screen_pick_result.value) > 0:
+        #print self.glasses_id, self.mf_screen_pick_result.value[0].Object.value.Name.value
+
+        _hit = self.mf_screen_pick_result.value[0].Object.value.Name.value
+        _hit = _hit.replace("proxy_", "")
+        _hit = _hit.split("_")
+
+        _hit_platform = int(_hit[0])
+        _hit_screen   = int(_hit[1])
+
+        if self.is_active == False:
+          self.toggle_user_activity(True, True)
+
+        if _hit_platform != self.platform_id:
+          self.set_user_location(_hit_platform, True)
+          self.looking_outside_start = None
+
+      else:
+
+        if self.looking_outside_start == None:
+          self.looking_outside_start = self.timer.Time.value
+
+        if self.timer.Time.value - self.looking_outside_start > 2.0:
           if self.is_active == True:
             self.toggle_user_activity(False, True)
-        else:
-          if self.is_active == False:
-            self.toggle_user_activity(True, True)
+    '''
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.
@@ -142,36 +195,48 @@ class User(avango.script.Script):
       self.is_active = False
       self.head_avatar.GroupNames.value.append("do_not_display_group")
       self.body_avatar.GroupNames.value.append("do_not_display_group")
+      self.platform_id = -1
 
     if RESEND_CONFIG:
       self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
 
   ## Changes the user's current platform.
   # @param PLATFORM_ID The new platform id to be set.
-  def set_user_location(self, PLATFORM_ID):
-    self.remove_from_platform(self.head_avatar)
-    self.remove_from_platform(self.body_avatar)
+  # @param RESEND_CONFIG Boolean indicating if the shutter configuration should be directly resent.
+  def set_user_location(self, PLATFORM_ID, RESEND_CONFIG):
 
-    self.platform_id = PLATFORM_ID
-    self.platform = self.APPLICATION_MANAGER.navigation_list[self.platform_id].platform
-    self.current_display = self.platform.displays[0]
-    self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-    self.head_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
-    self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-    self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
+    _intended_platform = self.APPLICATION_MANAGER.navigation_list[PLATFORM_ID].platform
+    _intended_display = _intended_platform.displays[0]
 
-    self.append_to_platform(self.head_avatar)
-    self.append_to_platform(self.body_avatar)
+    if self.APPLICATION_MANAGER.slot_manager.display_has_free_slot(_intended_display):
 
-    self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
+      self.remove_from_platform(self.head_avatar)
+      self.remove_from_platform(self.body_avatar)
 
-  
-  ## Sets the transformation values of left and right eye.
-  # @param VALUE The eye distance to be applied.
-  def set_eye_distance(self, VALUE):
-    self.eye_distance = VALUE
-    self.left_eye.Transform.value  = avango.gua.make_trans_mat(self.eye_distance * -0.5, 0.0, 0.0)
-    self.right_eye.Transform.value = avango.gua.make_trans_mat(self.eye_distance * 0.5, 0.0, 0.0)
+      self.platform_id = PLATFORM_ID
+      self.platform = _intended_platform
+      self.current_display = _intended_display
+
+      self.transmitter_offset = self.platform.transmitter_offset
+      self.no_tracking_mat = self.platform.no_tracking_mat
+      self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
+
+      self.avatar_material = self.APPLICATION_MANAGER.navigation_list[self.platform_id].trace_material
+
+      self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+      self.head_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
+      self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
+      self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
+
+      if self.platform.avatar_type != "None":
+        self.append_to_platform(self.head_avatar)
+        self.append_to_platform(self.body_avatar)
+
+      if RESEND_CONFIG:
+        self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
+
+    else:
+      print_warning("Blocked")
 
   ## Appends a node to the children of a platform in the scenegraph.
   # @param NODE The node to be appended to the platform node.

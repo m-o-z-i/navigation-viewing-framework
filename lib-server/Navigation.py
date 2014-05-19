@@ -78,6 +78,7 @@ class Navigation(avango.script.Script):
   # @param NET_TRANS_NODE Reference to the net matrix node in the scenegraph for distribution.
   # @param SCENEGRAPH Reference to the scenegraph in which the navigation should take place.
   # @param PLATFORM_SIZE Physical size of the platform in meters. Passed in an two-element list: [width, depth]
+  # @param SCALE Start scaling of the platform.
   # @param STARTING_MATRIX Initial position matrix of the platform to be created.
   # @param NAVIGATION_LIST List of all navigations in the setup.
   # @param INPUT_SENSOR_TYPE String indicating the type of input device to be created, e.g. "XBoxController" or "OldSpheron"
@@ -86,6 +87,7 @@ class Navigation(avango.script.Script):
   # @param GF_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
+  # @param INVERT Boolean indicating if the input values should be inverted.
   # @param SLOT_MANAGER Reference to the one and only SlotManager instance in the setup.
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system.
   # @param DISPLAYS The names of the displays that belong to this navigation.
@@ -97,6 +99,7 @@ class Navigation(avango.script.Script):
     , NET_TRANS_NODE
     , SCENEGRAPH
     , PLATFORM_SIZE
+    , SCALE
     , STARTING_MATRIX
     , NAVIGATION_LIST
     , INPUT_SENSOR_TYPE
@@ -105,6 +108,7 @@ class Navigation(avango.script.Script):
     , GF_SETTINGS
     , ANIMATE_COUPLING
     , MOVEMENT_TRACES
+    , INVERT
     , SLOT_MANAGER
     , TRANSMITTER_OFFSET
     , DISPLAYS
@@ -178,9 +182,9 @@ class Navigation(avango.script.Script):
     ## @var inputmapping
     # InputMapping instance to process and map relative device inputs to an absolute matrix.
     self.inputmapping = InputMapping()
-    self.inputmapping.my_constructor(self, self.device, self.groundfollowing, STARTING_MATRIX)
+    self.inputmapping.my_constructor(self, self.device, self.groundfollowing, STARTING_MATRIX, INVERT)
     self.inputmapping.set_input_factors(self.device.translation_factor, self.device.rotation_factor)
-    #self.inputmapping.set_input_factors(0.5,0.75)
+    self.inputmapping.sf_scale.value = SCALE
 
     # activate correct input mapping mode according to configuration file
     if GF_SETTINGS[0]:
@@ -208,8 +212,9 @@ class Navigation(avango.script.Script):
       )
 
     # create device avatar
-    self.device.create_device_avatar(self.platform.platform_scale_transform_node
-                                   , self.platform.platform_id)
+    if AVATAR_TYPE != "None":
+      self.device.create_device_avatar(self.platform.platform_scale_transform_node
+                                     , self.platform.platform_id)
 
     ## @var NAVIGATION_LIST
     # Reference to a list containing all Navigation instances in the setup.

@@ -27,29 +27,29 @@ class LargePowerwall(Display):
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
                     #, displaystrings = [":0.0", ":0.1", ":0.2", ":0.3", ":0.4", "0.5"]
-                    #, shutter_timings = [ [(0,100), (2400,2500)], 
-                    #                      [(3000,3100),(4600,4700)],
-                    #                      [(5700,5800), (8175,8275)],
-                    #                      [(8200,8300), (10700,10800)],
-                    #                      [(11400,11500), (12900,13000)],
-                    #                      [(14000,14100), (15800,15900)]
+                    #, shutter_timings = [ [(0,2400), (100,2500)], 
+                    #                      [(3000,4600),(3100,4700)],
+                    #                      [(5700,8175), (5800,8275)],
+                    #                      [(8200,10700), (8300,10800)],
+                    #                      [(11400,12900), (11500,13000)],
+                    #                      [(14000,15800), (14100,15900)]
                     #                    ]
-                    , shutter_timings = [ [(0,100), (8175,8275)],
-                                          [(8200,8300), (10700,10800)],
-                                          [(11400,11500), (12900,13000)],
-                                          [(14000,14100), (15800,15900)]
+                    , shutter_timings = [ [(0,8175), (100,8275)],
+                                          [(8200,10700), (8300,10800)],
+                                          [(11400,12900), (11500,13000)],
+                                          [(14000,15800), (14100,15900)]
                                         ]
-                    #, shutter_values = [  [(22,88), (44,11)],
-                    #                      [(22,88), (44,11)],
-                    #                      [(22,88), (44,11)],
-                    #                      [(22,88), (44,11)],
-                    #                      [(22,88), (44,11)],
-                    #                      [(22,88), (44,11)]
+                    #, shutter_values = [  [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)]
                     #                   ]
-                    , shutter_values = [  [(22,88), (44,11)],
-                                          [(22,88), (44,11)],
-                                          [(22,88), (44,11)],
-                                          [(22,88), (44,11)]
+                    , shutter_values = [  [(22,44), (88,11)],
+                                          [(22,44), (88,11)],
+                                          [(22,44), (88,11)],
+                                          [(22,44), (88,11)]
                                        ]
                     , size = (4.16, 2.6)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
@@ -89,19 +89,39 @@ class TouchTable3D(Display):
                     , hostname = "medusa"
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
-                    , displaystrings = [":0.0", ":0.1", ":0.2"]
+                    , displaystrings = [":0.0", ":0.1", ":0.2"] 
                     , shutter_timings = [  [(100, 200, 2900, 3000), (8400, 8500, 11400, 11500)],
                                            [(2600, 2700, 5700, 5800), (11000, 11100, 14600, 14700)],
-                                           [(6000, 6100, 8700, 8800), (14300, 14400, 15900, 16000)]
+                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]                                          
                                         ]
+
                     , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
                                         ]
                     , size = (1.27, 0.93)
-                    , transformation = avango.gua.make_trans_mat(0, 0.955, 0)
+                    , transformation = avango.gua.make_rot_mat(90.0, -1,0, 0)
                     , stereomode = "SIDE_BY_SIDE"                    
                     )
+
+  ## Registers a new view at this display and returns the display string 
+  # and the warp matrices assigned to the new view.
+  def register_view(self):
+    view_num = self.num_views
+    if view_num < 3:
+      warpmatrices = [
+          "/opt/3D43-warpmatrices/3D43_warp_P4.warp"
+        , "/opt/3D43-warpmatrices/3D43_warp_P5.warp"
+        , "/opt/3D43-warpmatrices/3D43_warp_P6.warp"
+        , "/opt/3D43-warpmatrices/3D43_warp_P1.warp"
+        , "/opt/3D43-warpmatrices/3D43_warp_P2.warp"
+        , "/opt/3D43-warpmatrices/3D43_warp_P3.warp"
+      ]
+      self.num_views += 1
+      return (self.displaystrings[view_num], warpmatrices)
+    else:
+      return None
+
 
 ## Display configuration for the small powerwall in the VR lab.
 class SmallPowerwall(Display):
@@ -211,4 +231,4 @@ displays = [
 ## @var INTELLIGENT_SHUTTER_SWITCHING
 # If true, free display slots will be assigned to users, vip and active flags
 # of users are considered and the users' shutter timings are updated.
-INTELLIGENT_SHUTTER_SWITCHING = True
+INTELLIGENT_SHUTTER_SWITCHING = False

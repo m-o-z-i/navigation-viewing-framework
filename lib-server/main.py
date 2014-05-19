@@ -54,7 +54,8 @@ def start():
   )
 
   nettrans.Children.value = pseudo_nettrans.Children.value
-  graph.Root.value.Children.value = [nettrans]
+  graph.Root.value.Children.value.remove(pseudo_nettrans)
+  graph.Root.value.Children.value.append(nettrans)
 
   # update nettrans node on all platforms
   for _nav in application_manager.navigation_list:

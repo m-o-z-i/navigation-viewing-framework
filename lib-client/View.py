@@ -176,6 +176,7 @@ class View(avango.script.Script):
   ## Adds a tracking reader to the view instance.
   # @param TRACKING_TARGET_NAME The target name of the tracked object as chosen in daemon.
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
+  # @param NO_TRACKING_MAT The matrix to be applied if no valid tracking target was specified.
   def init_local_tracking_override(self, TRACKING_TARGET_NAME, TRANSMITTER_OFFSET, NO_TRACKING_MAT):
     
     ## @var TRACKING_TARGET_NAME
@@ -216,7 +217,8 @@ class View(avango.script.Script):
   
   ## Evaluated every frame.
   def evaluate(self):
-
+    pass
+    '''
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
 
     # return when scenegraph is not yet present
@@ -234,8 +236,11 @@ class View(avango.script.Script):
     if _tracking_target_name == "None":
       _tracking_target_name = None
 
-    # create new tracking reader when tracking target changes
-    if _tracking_target_name != self.TRACKING_TARGET_NAME:
+    # create new tracking reader when tracking target properties change
+    if _tracking_target_name != self.TRACKING_TARGET_NAME or \
+       self.TRANSMITTER_OFFSET != _information_node.Transform.value or \
+       self.NO_TRACKING_MAT != _no_tracking_node.Transform.value:
+
       self.init_local_tracking_override(_tracking_target_name, _information_node.Transform.value, _no_tracking_node.Transform.value)
 
     # when no value is to be updated, stop evaluation
@@ -246,3 +251,4 @@ class View(avango.script.Script):
     # TODO: Consider ONLY_TRANSLATION_UPDATE
     if _node_to_update != None:
       _node_to_update.Transform.value = self.headtracking_reader.sf_tracking_mat.value
+   '''

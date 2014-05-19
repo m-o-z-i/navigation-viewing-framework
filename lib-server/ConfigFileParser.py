@@ -26,17 +26,10 @@ class ConfigFileParser:
     self.APPLICATION_MANAGER = APPLICATION_MANAGER
 
     # global settings (can be overwritten by config file)
-    ## @var ground_following_settings
-    # Settings for the GroundFollowing instance to be read in from configuration file: [activated, ray_start_height]
-    self.ground_following_settings = [False, 0.75]
-
     ## @var enable_coupling_animation
     # Boolean indicating if an animation should be done when a coupling of Navigations is initiated.
     self.enable_coupling_animation = False
 
-    ## @var enable_movementtraces
-    # Boolean indicating if the movement of every platform should be visualized by line segments.
-    self.enable_movementtraces = False
 
   ## Parses a XML configuration file, saves settings and creates navigations and users.
   # @param FILENAME The path of the configuration file to be read in.
@@ -50,7 +43,7 @@ class ConfigFileParser:
     _device_attributes = [None, None, None, 0, 0, 0, 0, [],              # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw), displays,
                           avango.gua.make_identity_mat(),                # transmitteroffset,
                           avango.gua.make_trans_mat(0.0, 1.5, 1.0),      # notrackingmat,
-                          "joseph"]                                      # avatartype]
+                          "joseph", [False, 0.75], False, 1.0, False]    # avatartype, ground_following_settings, enable_traces, scale, invert]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
     _user_attributes = [None, None, False, False, None]                  # [headtrackingstation, startplatform, warnings, vip, glasses]
@@ -112,29 +105,6 @@ class ConfigFileParser:
 
       if _in_global:
 
-        # get ground following attributes
-        if _current_line.startswith("<groundfollowing>"):
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<activated>", "")
-          _current_line = _current_line.replace("</activated>", "")
-          _current_line = _current_line.rstrip()
-           
-          if _current_line == "True":
-            self.ground_following_settings[0] = True
-          else:
-            self.ground_following_settings[0] = False
-
-          _current_line = self.get_next_line_in_file(_config_file)
-          _current_line = _current_line.replace("<raystartheight>", "")
-          _current_line = _current_line.replace("</raystartheight>", "")
-          _current_line = _current_line.rstrip()
-          self.ground_following_settings[1] = float(_current_line)
-        
-        # get end of ground following attributes
-        if _current_line.startswith("</groundfollowing>"):
-          _current_line = self.get_next_line_in_file(_config_file)
-          continue
-
         # get coupling animation boolean
         if _current_line.startswith("<animatecoupling>"):
           _current_line = _current_line.replace("<animatecoupling>", "")
@@ -142,14 +112,6 @@ class ConfigFileParser:
           _current_line = _current_line.rstrip()
           if _current_line == "True":
             self.enable_coupling_animation = True
-
-        # get platformtraces boolean
-        if _current_line.startswith("<movementtraces>"):
-          _current_line = _current_line.replace("<movementtraces>", "")
-          _current_line = _current_line.replace("</movementtraces>", "")
-          _current_line = _current_line.rstrip()
-          if _current_line == "True":
-            self.enable_movementtraces = True
 
       # detect end of global settings
       if _current_line.startswith("</global>"):
@@ -219,7 +181,25 @@ class ConfigFileParser:
           _current_line = _current_line.replace("</z>", "")
           _current_line = _current_line.rstrip()
           _transmitter_z = float(_current_line)
-          _device_attributes[8] = avango.gua.make_trans_mat(_transmitter_x, _transmitter_y, _transmitter_z)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<rx>", "")
+          _current_line = _current_line.replace("</rx>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_rx = float(_current_line)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<ry>", "")
+          _current_line = _current_line.replace("</ry>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_ry = float(_current_line)
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<rz>", "")
+          _current_line = _current_line.replace("</rz>", "")
+          _current_line = _current_line.rstrip()
+          _transmitter_rz = float(_current_line)
+          _device_attributes[8] = avango.gua.make_trans_mat(_transmitter_x, _transmitter_y, _transmitter_z) * \
+                                  avango.gua.make_rot_mat(_transmitter_rz, 0, 0, 1) * \
+                                  avango.gua.make_rot_mat(_transmitter_rx, 1, 0, 0) * \
+                                  avango.gua.make_rot_mat(_transmitter_ry, 0, 1, 0)
 
         # get end of transmitter offset values
         if _current_line.startswith("</transmitteroffset>"):
@@ -303,6 +283,52 @@ class ConfigFileParser:
         if _current_line.startswith("</platformrot>"):
           _current_line = self.get_next_line_in_file(_config_file)
           continue
+
+        # get scale
+        if _current_line.startswith("<scale>"):
+          _current_line = _current_line.replace("<scale>", "")
+          _current_line = _current_line.replace("</scale>", "")
+          _current_line = _current_line.rstrip()
+          _device_attributes[13] = float(_current_line)
+
+        # get ground following attributes
+        if _current_line.startswith("<groundfollowing>"):
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<activated>", "")
+          _current_line = _current_line.replace("</activated>", "")
+          _current_line = _current_line.rstrip()
+           
+          if _current_line == "True":
+            _device_attributes[11][0] = True
+          else:
+            _device_attributes[11][0] = False
+
+          _current_line = self.get_next_line_in_file(_config_file)
+          _current_line = _current_line.replace("<raystartheight>", "")
+          _current_line = _current_line.replace("</raystartheight>", "")
+          _current_line = _current_line.rstrip()
+          _device_attributes[11][1] = float(_current_line)
+        
+        # get end of ground following attributes
+        if _current_line.startswith("</groundfollowing>"):
+          _current_line = self.get_next_line_in_file(_config_file)
+          continue
+
+        # get platformtraces boolean
+        if _current_line.startswith("<movementtraces>"):
+          _current_line = _current_line.replace("<movementtraces>", "")
+          _current_line = _current_line.replace("</movementtraces>", "")
+          _current_line = _current_line.rstrip()
+          if _current_line == "True":
+            _device_attributes[12] = True
+
+        # get invert boolean
+        if _current_line.startswith("<invert>"):
+          _current_line = _current_line.replace("<invert>", "")
+          _current_line = _current_line.replace("</invert>", "")
+          _current_line = _current_line.rstrip()
+          if _current_line == "True":
+            _device_attributes[14] = True
       
       # detect end of device declaration
       if _current_line.startswith("</device>"):
@@ -326,10 +352,12 @@ class ConfigFileParser:
                                                    _device_attributes[1],
                                                    _starting_matrix,
                                                    _platform_size,
+                                                   _device_attributes[13],
                                                    self.enable_coupling_animation,
-                                                   self.enable_movementtraces,
+                                                   _device_attributes[12],
+                                                   _device_attributes[14],
                                                    _device_attributes[9],
-                                                   self.ground_following_settings,
+                                                   _device_attributes[11],
                                                    _device_attributes[8],
                                                    _device_attributes[7],
                                                    _device_attributes[10],
@@ -344,7 +372,7 @@ class ConfigFileParser:
         _device_attributes = [None, None, None, 0, 0, 0, 0, [],          # [type, inputsensor, trackingstation, platformpos (x,y,z), platformrot (yaw)), displays,
                           avango.gua.make_identity_mat(),                # transmitteroffset,
                           avango.gua.make_trans_mat(0.0, 1.5, 1.0),      # notrackingmat,
-                          "joseph"]                                      # avatartype]
+                          "joseph", [False, 0.75], False, 1.0, False]    # avatartype, groundfollowing_settings, enable_traces, scale, invert]
         _navs_created += 1
         _current_line = self.get_next_line_in_file(_config_file)
         continue
@@ -419,9 +447,7 @@ class ConfigFileParser:
       _current_line = self.get_next_line_in_file(_config_file)
 
     print_subheadline("Global settings loaded")
-    print "Ground Following settings:", self.ground_following_settings
     print "Coupling of Navigations animated:", self.enable_coupling_animation
-    print "Movement traces animated:", self.enable_movementtraces, "\n"
 
     print_message("Configuration file " + FILENAME + " successfully loaded.")
 

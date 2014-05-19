@@ -36,6 +36,8 @@ class Platform(avango.script.Script):
   # A timer instance to get the current time in seconds.
   timer = avango.nodes.TimeSensor()
 
+  ## @var sf_scale
+  # The current scaling factor of this platform.
   sf_scale = avango.SFFloat()
   sf_scale.value = 1.0
 
@@ -159,8 +161,13 @@ class Platform(avango.script.Script):
       self.platform_scale_transform_node.Children.value.append(_screen)
       self.screens.append(_screen)
       
-      _screen_visualization = _display.create_screen_visualization()
-      self.platform_scale_transform_node.Children.value.append(_screen_visualization)
+      if AVATAR_TYPE != "None":
+        _screen_visualization = _display.create_screen_visualization()
+        self.platform_scale_transform_node.Children.value.append(_screen_visualization)
+
+      # create screen proxy geometry for view ray hit tests
+      _proxy_geometry = _display.create_transformed_proxy_geometry(self, self.displays.index(_display))
+      SCENEGRAPH.Root.value.Children.value.append(_proxy_geometry)
 
       _string_num = 0
       # create a slot for each displaystring
@@ -306,7 +313,7 @@ class Platform(avango.script.Script):
     else:
       self.back_border.GroupNames.value[0] = "do_not_display_group"
          
-
+  ## Scales the platform scale transform node when the scaling changes in the inputmapping.
   @field_has_changed(sf_scale)
   def sf_scale_values_changed(self):
 

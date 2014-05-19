@@ -40,6 +40,11 @@ class TrackingReader(avango.script.Script):
   sf_avatar_body_mat = avango.gua.SFMatrix4()
   sf_avatar_body_mat.value = avango.gua.make_identity_mat()
 
+  ## @var sf_global_mat
+  # Tracking matrix without the consideration of the transmitter offset.
+  sf_global_mat = avango.gua.SFMatrix4()
+  sf_global_mat.value = avango.gua.make_identity_mat()
+
 
 ## Reads tracking values of a device registered in daemon.
 class TrackingTargetReader(TrackingReader):
@@ -73,6 +78,7 @@ class TrackingTargetReader(TrackingReader):
   def sf_tracking_mat_changed(self):
   
     self.sf_abs_mat.value = self.tracking_sensor.Matrix.value
+    self.sf_global_mat.value = avango.gua.make_inverse_mat(self.tracking_sensor.TransmitterOffset.value) * self.tracking_sensor.Matrix.value
     self.sf_abs_vec.value = self.sf_abs_mat.value.get_translate()
     _yaw = Tools.get_yaw(self.sf_abs_mat.value)
     self.sf_avatar_head_mat.value = self.sf_abs_mat.value * \
@@ -103,6 +109,7 @@ class TrackingDefaultReader(TrackingReader):
   # @param CONSTANT_MATRIX The constant matrix to be supplied as tracking values.
   def set_no_tracking_matrix(self, CONSTANT_MATRIX):
     self.sf_abs_mat.value = CONSTANT_MATRIX
+    self.sf_global_mat.value = CONSTANT_MATRIX
     self.sf_abs_vec.value = self.sf_abs_mat.value.get_translate()
     self.sf_avatar_head_mat.value = self.sf_abs_mat.value * \
                                     avango.gua.make_rot_mat(-90, 0, 1, 0) * \

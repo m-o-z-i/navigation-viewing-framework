@@ -581,11 +581,11 @@ class NewSpheronDevice(MultiDofDevice):
     
     ## @var translation_factor
     # Factor to modify the device's translation input.
-    self.translation_factor = 1.0
+    self.translation_factor = 0.25
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    self.rotation_factor = 10.0
+    self.rotation_factor = 25.0
 
     self.set_input_channel_parameters(self.x_parameters, 0.0, -0.98, 1.0, 0, 0)
     self.set_input_channel_parameters(self.y_parameters, 0.0, -0.44, 0.24, 0, 0)

@@ -148,8 +148,8 @@ class Display:
     _w, _h = self.size
 
     # make proxy geometry a little larger than the actual screen
-    _w += 0.5
-    _h += 0.5
+    _w += 2.0
+    _h += 2.0
 
     _node.Transform.value = self.transformation * avango.gua.make_rot_mat(90, 1, 0 ,0) * avango.gua.make_scale_mat(_w,1.0,_h)
 

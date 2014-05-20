@@ -165,50 +165,9 @@ class BoundingBoxVisualization(avango.script.Script):
  
   def calc_bb(self):
   
-    #_time_sav = time.time()
-  
     _node = self.OBJECT.get_node()
-    
-    #_local_mat = self.OBJECT.get_local_transform()
-  
-    '''
-    _parent_object = self.OBJECT.parent_object
-    
-    if _parent_object._get_type() == "Objects::InteractiveObject": # interactive object
-  
-      _parent_object.remove_child_object(self.OBJECT)
-  
-    else: # scene root
-
-      _parent_object.Children.value.remove(_node)
-    '''
-  
-    #self.SCENEGRAPH.Root.value.Children.value.append(_node)
-          
-    #self.OBJECT.set_local_transform(avango.gua.make_identity_mat())
-
-    #self.SCENEGRAPH.update_cache() # enforce scenegraph update --> update BoundingBox state
 
     self.bb = _node.BoundingBox.value
-
-    #self.SCENEGRAPH.Root.value.Children.value.remove(_node)
-
-
-    '''
-    if _parent_object._get_type() == "Objects::InteractiveObject": # interactive object
-     
-      _parent_object.append_child_object(self.OBJECT)
-
-    else: # scene root
-
-      _parent_object.Children.value.append(_node)
-    '''
-
-    #self.OBJECT.set_local_transform(_local_mat)
-
-    #self.SCENEGRAPH.update_cache()
-
-    #print _node.Name.value, time.time() - _time_sav 
 
     self.update_bb_scale()
 
@@ -272,5 +231,3 @@ class BoundingBoxVisualization(avango.script.Script):
       self.edge11.Transform.value = avango.gua.make_trans_mat(_x_max, _y_min, _center_z) * _scale_mat
 
       self.edge12.Transform.value = avango.gua.make_trans_mat(_x_max, _y_max, _center_z) * _scale_mat
-    
-  

@@ -158,13 +158,22 @@ class User(avango.script.Script):
     
     if INTELLIGENT_SHUTTER_SWITCHING:
 
-      # update view vector on intersection tests
-      #_glob_mat = self.headtracking_reader.sf_global_mat.value
-      #_view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
-      #self.intersection_tester.set_pick_direction(_view_vector)
+      if len(self.mf_screen_pick_result.value) > 0:
 
-      #print "On platform", self.platform_id
+        _hit = self.mf_screen_pick_result.value[0].Object.value.Name.value
+        _hit = _hit.replace("proxy_", "")
+        _hit = _hit.split("_")
 
+        _hit_platform = int(_hit[0])
+        _hit_screen = int(_hit[1])
+
+        if _hit_platform != self.platform_id:
+          self.set_user_location(_hit_platform, True)
+
+      else:
+        pass
+
+      '''
       if len(self.mf_screen_pick_result.value) > 0:
 
         _hit = self.mf_screen_pick_result.value[0]
@@ -212,6 +221,7 @@ class User(avango.script.Script):
           if self.is_active == True:
             #print_message("Opening user")
             self.toggle_user_activity(False, True)
+      '''
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

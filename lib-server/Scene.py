@@ -90,7 +90,6 @@ class MedievalTown:
     #self.water_updater.UniformName.value = "time"
     #self.water_updater.TimeIn.connect_from(self.timer.Time)
     
-
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
     SCENE_MANAGER.init_light(0, "sun_light", avango.gua.Color(1.0, 0.7, 0.5), _mat, NET_TRANS_NODE) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
@@ -147,22 +146,4 @@ class MedievalTown:
     
     NET_TRANS_NODE.Children.value.append(self.sun)
     '''
-
-
-class Test:
-
-
-  def __init__(self, SCENE_MANAGER, NET_TRANS_NODE):
-
-    # geometry
-    _mat = avango.gua.make_scale_mat(2.0)
-    SCENE_MANAGER.init_geometry("test", "data/objects/Joseph/JosephBody.obj", _mat, "data/materials/AvatarBlue.gmd", False, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(2.0, 0.0, 0.0)
-    SCENE_MANAGER.init_geometry("test2", "data/objects/Joseph/Joseph.obj", _mat, "data/materials/AvatarGreen.gmd", False, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-
-    # lights
-    _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
-    SCENE_MANAGER.init_light(0, "sun_light", avango.gua.Color(1.0, 0.7, 0.5), _mat, NET_TRANS_NODE) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
     

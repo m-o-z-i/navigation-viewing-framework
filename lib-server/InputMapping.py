@@ -226,8 +226,7 @@ class InputMapping(avango.script.Script):
         _new_mat = self.sf_abs_mat.value
 
       # save the computed new matrix
-      self.sf_abs_uncorrected_mat.value = _new_mat      
-
+      self.sf_abs_uncorrected_mat.value = _new_mat    
 
   ## Modify the uncorrected matrix of this input mapping with specific values. Used for coupling purposes.
   # @param TRANSFORMED_TRANS_VECTOR The translation vector to be applied.

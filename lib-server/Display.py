@@ -25,6 +25,7 @@ class Display:
   # @param shutter_values A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring.
   # @param size Physical size of the display medium in meters.
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
+  # @param max_viewing_distance Specification of the maximum viewing distance for the shutters to sync in.
   # @param stereomode A string indicating the stereo mode that is used by this display.
   def __init__( self
               , hostname
@@ -35,6 +36,7 @@ class Display:
               , shutter_values = []
               , size = (0.595, 0.335)
               , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+              , max_viewing_distance = 1.0
               , stereomode = "ANAGLYPH_RED_CYAN"
               ):
 
@@ -74,6 +76,10 @@ class Display:
     ## @var transformation
     # A matrix specifying the display's transformation with respect to the platform coordinate system.
     self.transformation = transformation
+
+    ## @var max_viewing_distance 
+    # Specification of the maximum viewing distance for the shutters to sync in.
+    self.max_viewing_distance = max_viewing_distance
 
     ## @var num_views
     # Number of views which are already registered with this display.

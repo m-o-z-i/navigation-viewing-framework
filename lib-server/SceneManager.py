@@ -137,7 +137,7 @@ class DayAnimationUpdate(avango.script.Script):
 # The actual member variables vary from scene to scene and can be chosen at will.
 class SceneManager:
 
-  hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
+  hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd.gmd", "data/materials/AvatarGreenShadeless.gmd.gmd"]
 
   ## Custom constructor
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.

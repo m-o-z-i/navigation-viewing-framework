@@ -14,6 +14,7 @@ from Intersection import *
 from TrackingReader import *
 from ConsoleIO import *
 from display_config import INTELLIGENT_SHUTTER_SWITCHING
+import Tools
 
 # import math libraries
 import math
@@ -172,7 +173,7 @@ class User(avango.script.Script):
 
       else:
         pass
-
+      
       '''
       if len(self.mf_screen_pick_result.value) > 0:
 
@@ -185,11 +186,14 @@ class User(avango.script.Script):
 
         _intended_platform = self.APPLICATION_MANAGER.navigation_list[_hit_platform].platform
         _max_viewing_distance = _intended_platform.displays[_hit_screen].max_viewing_distance
+        _distance_to_center = Tools.euclidean_distance(_hit.Object.value.Transform.value.get_translate()
+                                                     , self.headtracking_reader.sf_global_mat.value.get_translate())
         _hit_distance = _hit.Distance.value * self.pick_length
 
 
         if _hit_platform != self.platform_id and \
-           _hit_distance < _max_viewing_distance:
+           _hit_distance < _max_viewing_distance and \
+           _distance_to_center < 1.0:
 
           if self.is_active == False:
             self.toggle_user_activity(True, True)
@@ -222,6 +226,7 @@ class User(avango.script.Script):
             #print_message("Opening user")
             self.toggle_user_activity(False, True)
       '''
+      
 
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

@@ -53,6 +53,7 @@ class LargePowerwall(Display):
                                        ]
                     , size = (4.16, 2.6)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
+                    , max_viewing_distance = 5.0
                     , stereomode = "SIDE_BY_SIDE"                    
                     )
 
@@ -101,6 +102,7 @@ class TouchTable3D(Display):
                                         ]
                     , size = (1.27, 0.93)
                     , transformation = avango.gua.make_rot_mat(90.0, -1,0, 0)
+                    , max_viewing_distance = 1.0
                     , stereomode = "SIDE_BY_SIDE"                    
                     )
 

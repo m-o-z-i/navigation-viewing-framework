@@ -124,21 +124,31 @@ class User(avango.script.Script):
     self.toggle_user_activity(self.is_active, False)
 
     # init intersection class for proxy geometry hit test
+
+    ## @var pick_length
+    # Length of the picking ray in meters to check for screen intersections.
+    self.pick_length = 5.0
+
     ## @var intersection_tester
     # Instance of Intersection to determine intersection points of user with screens.
     self.intersection_tester = Intersection()
     self.intersection_tester.my_constructor(self.APPLICATION_MANAGER.SCENEGRAPH
                                           , self.headtracking_reader.sf_global_mat
-                                          , 5.0
+                                          , self.pick_length
+                                          , avango.gua.Vec3(0.0, 0.0, -1.0)
                                           , "screen_proxy_geometry")
     self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
 
-    ##
-    #
+    ## @var looking_outside_start
+    # If the user is not facing a screen, the start time of this behaviour is saved to open glasses after a certain amount of time.
     self.looking_outside_start = None
 
-    ##
-    #    
+    ## @var open_threshold
+    # Time in seconds after which shutter glasses should open when no screen is hit by the viewing ray.
+    self.open_threshold = 2.0
+
+    ## @var timer
+    # Time sensor to handle time events.
     self.timer = avango.nodes.TimeSensor()
 
     # set evaluation policy
@@ -154,30 +164,54 @@ class User(avango.script.Script):
       #_view_vector = avango.gua.Vec3(-_glob_mat.get_element(0,2), -_glob_mat.get_element(1,2), -_glob_mat.get_element(2,2))
       #self.intersection_tester.set_pick_direction(_view_vector)
 
+      #print "On platform", self.platform_id
+
       if len(self.mf_screen_pick_result.value) > 0:
-        #print self.glasses_id, self.mf_screen_pick_result.value[0].Object.value.Name.value
 
-        _hit = self.mf_screen_pick_result.value[0].Object.value.Name.value
-        _hit = _hit.replace("proxy_", "")
-        _hit = _hit.split("_")
+        _hit = self.mf_screen_pick_result.value[0]
+        _hit_name = _hit.Object.value.Name.value.replace("proxy_", "")
+        _hit_name = _hit_name.split("_")
 
-        _hit_platform = int(_hit[0])
-        _hit_screen   = int(_hit[1])
+        _hit_platform = int(_hit_name[0])
+        _hit_screen   = int(_hit_name[1])
 
-        if self.is_active == False:
-          self.toggle_user_activity(True, True)
+        _intended_platform = self.APPLICATION_MANAGER.navigation_list[_hit_platform].platform
+        _max_viewing_distance = _intended_platform.displays[_hit_screen].max_viewing_distance
+        _hit_distance = _hit.Distance.value * self.pick_length
 
-        if _hit_platform != self.platform_id:
+
+        if _hit_platform != self.platform_id and \
+           _hit_distance < _max_viewing_distance:
+
+          if self.is_active == False:
+            self.toggle_user_activity(True, True)
+
+          # new intersection with other platform found in range
+
           self.set_user_location(_hit_platform, True)
           self.looking_outside_start = None
 
+        elif _hit_distance > _max_viewing_distance:
+
+          # intersection found but too far away
+
+          if self.looking_outside_start == None:
+            self.looking_outside_start = self.timer.Time.value
+
+          if self.timer.Time.value - self.looking_outside_start > self.open_threshold:
+            if self.is_active == True:
+              self.toggle_user_activity(False, True)
+
       else:
+
+        # no intersection found
 
         if self.looking_outside_start == None:
           self.looking_outside_start = self.timer.Time.value
 
-        if self.timer.Time.value - self.looking_outside_start > 2.0:
+        if self.timer.Time.value - self.looking_outside_start > self.open_threshold:
           if self.is_active == True:
+            #print_message("Opening user")
             self.toggle_user_activity(False, True)
 
   ## Sets the user's active flag.

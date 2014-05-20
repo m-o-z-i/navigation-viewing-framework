@@ -136,7 +136,7 @@ class Display:
     _node = _loader.create_geometry_from_file("proxy_" + str(PLATFORM.platform_id) + "_" + str(SCREEN_ID)
                                             , "data/objects/plane.obj", "data/materials/AvatarBlue.gmd"
                                             , avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-    _node.GroupNames.value = ["do_not_display_group", "screen_proxy_geometry"]
+    _node.GroupNames.value = ["do_not_display_group", "screen_proxy_group"]
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     _w, _h = self.size

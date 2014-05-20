@@ -154,6 +154,7 @@ class ApplicationManager():
     self.pipeline.LeftResolution.value = self.window.LeftResolution.value
     self.pipeline.EnableStereo.value = False
     self.pipeline.Camera.value = self.camera
+    self.pipeline.EnableFrustumCulling.value = True
     
     # add pipeline and scenegraph to viewer
     self.viewer.Pipelines.value = [self.pipeline]

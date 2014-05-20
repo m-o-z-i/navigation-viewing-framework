@@ -76,7 +76,7 @@ def start():
   #animation_manager.my_constructor([ graph["/net/ceiling_light1"], graph["/net/ceiling_light2"] ]
   #                               , [ None, None])
 
-  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

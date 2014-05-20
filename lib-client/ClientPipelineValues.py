@@ -22,7 +22,7 @@ def set_pipeline_values(PIPELINE):
   PIPELINE.EnableFog.value                = True
   PIPELINE.FogStart.value                 = 500.0
   PIPELINE.FogEnd.value                   = 800.0
-  PIPELINE.EnableFrustumCulling.value     = False
+  PIPELINE.EnableFrustumCulling.value     = True
   PIPELINE.AmbientColor.value             = avango.gua.Color(0.25, 0.25, 0.25)
   PIPELINE.FarClip.value                  = 1000.0
   PIPELINE.EnableBackfaceCulling.value    = False

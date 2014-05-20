@@ -97,7 +97,7 @@ class RayPointer(avango.script.Script):
       
     # init sub classes
     self.pointer_intersection = Intersection() # ray intersection for target identification
-    self.pointer_intersection.my_constructor(SCENEGRAPH, self.ray_transform.WorldTransform, self.ray_length) # parameters: SCENEGRAPH, SF_PICK_MATRIX, PICK_LENGTH
+    self.pointer_intersection.my_constructor(SCENEGRAPH, self.ray_transform.WorldTransform, self.ray_length, "man_pick_group") # parameters: SCENEGRAPH, SF_PICK_MATRIX, PICK_LENGTH, PICKMASK
     
     # init field connections
     self.ray_transform.Transform.connect_from(self.pointer_tracking_sensor.Matrix)
@@ -179,6 +179,8 @@ class RayPointer(avango.script.Script):
   
     if len(self.mf_pointer_pick_result.value) > 0: # intersection found    
       _pick_result = self.mf_pointer_pick_result.value[0] # get first intersection target
+    
+      #print _pick_result.Object.value, _pick_result.Object.value.Name.value
 
       # update intersection point
       #_point = _pick_result.WorldPosition.value # intersection point in world coordinate system --> not working ???
@@ -202,6 +204,7 @@ class RayPointer(avango.script.Script):
                                           avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
   
     else: # no intersection found
+      #print "None"
       self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] # set geometry invisible
   
       # set to default ray length

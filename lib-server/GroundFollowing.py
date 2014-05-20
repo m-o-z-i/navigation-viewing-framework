@@ -13,7 +13,7 @@ from   avango.script import field_has_changed
 from Intersection import *
 
 # import python libraries
-# ...
+import math
 
 ## Class to realize a simple ground following method.
 # 
@@ -116,7 +116,7 @@ class GroundFollowing(avango.script.Script):
     ## @var ground_intersection
     # Intersection class to determine the intersections of the ground following ray with the objects in the scenegraph.
     self.ground_intersection = Intersection()
-    self.ground_intersection.my_constructor(SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length)
+    self.ground_intersection.my_constructor(SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length, "gf_pick_group")
     self.mf_ground_pick_result.connect_from(self.ground_intersection.mf_pick_result)
 
 
@@ -141,6 +141,7 @@ class GroundFollowing(avango.script.Script):
 
         # get first intersection target
         _pick_result = self.mf_ground_pick_result.value[0]             
+        #print _pick_result.Object.value, _pick_result.Object.value.Name.value
 
         # compare distance to ground and ray_start_height
         _distance_to_ground = _pick_result.Distance.value * self.ground_pick_length
@@ -168,7 +169,7 @@ class GroundFollowing(avango.script.Script):
             self.sf_abs_output_mat.value = avango.gua.make_trans_mat(_fall_vec) * self.sf_abs_input_mat.value
             self.fall_velocity += 0.005
 
-          else:                                   # climb down
+          else: # climb down
             
             # end falling when necessary
             if self.falling:
@@ -183,6 +184,7 @@ class GroundFollowing(avango.script.Script):
           self.sf_abs_output_mat.value = self.sf_abs_input_mat.value        # player remains on ground
 
       else:
+        #print "None"
         self.sf_abs_output_mat.value = self.sf_abs_input_mat.value          # no intersection with ground was found
   
     else:
@@ -194,11 +196,11 @@ class GroundFollowing(avango.script.Script):
   def set_pick_direction(self, PICK_DIRECTION):
 
     PICK_DIRECTION.normalize()
-
+    
     _ref = avango.gua.Vec3(0.0,0.0,-1.0)
-    _angle = _ref.dot(PICK_DIRECTION)
+    _angle = math.degrees(math.acos(_ref.dot(PICK_DIRECTION)))
     _axis = _ref.cross(PICK_DIRECTION)
-      
+
     self.ground_pick_direction_mat = avango.gua.make_rot_mat(_angle, _axis)
 
 

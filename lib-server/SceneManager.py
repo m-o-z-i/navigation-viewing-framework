@@ -159,35 +159,30 @@ class SceneManager:
 
     self.scene2 = MedievalTown(self, NET_TRANS_NODE)    
 
+    #self.scene3 = Test(self, NET_TRANS_NODE)
 
     self.reset() # enforce BoundingBox update
 
 
   # functions
-  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE):
+  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE):
 
     _loader = avango.gua.nodes.GeometryLoader()
-    
-    if MATERIAL == None: # no material defined --> get materials from file
 
-      if PICKABLE == True:
-        _node = _loader.create_geometry_from_file(NAME, FILENAME, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.MAKE_PICKABLE)
-  
-      else:
-        _node = _loader.create_geometry_from_file(NAME, FILENAME, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY)
-    
-    else: # material defined --> use material
-    
-      if PICKABLE == True:
-        _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY | avango.gua.LoaderFlags.MAKE_PICKABLE)
-        
-      else:
-        _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY)
+    _loader_flags = "avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY"
 
+    if MATERIAL == None: # no material defined --> get materials from file description
+      _loader_flags += " | avango.gua.LoaderFlags.LOAD_MATERIALS"
+      MATERIAL = "data/materials/White.gmd" # default material
+
+    if GROUNDFOLLOWING_PICK_FLAG == True or MANIPULATION_PICK_FLAG == True:
+      _loader_flags += " | avango.gua.LoaderFlags.MAKE_PICKABLE"
+
+    _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, eval(_loader_flags))
     _node.Transform.value = MATRIX
   
-    self.init_objects(_node, PARENT_NODE)
-
+    self.init_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+ 
 
   def init_light(self, TYPE, NAME, COLOR, MATRIX, PARENT_NODE):
 
@@ -217,26 +212,25 @@ class SceneManager:
     _node.EnableSpecularShading.value = True
     _node.EnableGodrays.value = True
 
-    self.init_objects(_node, PARENT_NODE)
+    self.init_objects(_node, PARENT_NODE, False, False)
 
 
-  def init_objects(self, NODE, PARENT_OBJECT):
+  def init_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG):
 
     if NODE.get_type() == 'av::gua::TransformNode' and len(NODE.Children.value) > 0: # group node 
-      _transform = avango.gua.nodes.TransformNode(Name = NODE.Name.value, Transform = NODE.Transform.value)
 
       _object = InteractiveObject()
-      _object.my_constructor(self, _transform, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE)
+      _object.my_constructor(self, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
 
       self.objects.append(_object)
 
       for _child in NODE.Children.value:
-        self.init_objects(_child, _object)
+        self.init_objects(_child, _object, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
         
     elif NODE.get_type() == 'av::gua::GeometryNode' or NODE.get_type() == 'av::gua::SunLightNode' or NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
 
       _object = InteractiveObject()
-      _object.my_constructor(self, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE)
+      _object.my_constructor(self, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
 
       self.objects.append(_object)
 

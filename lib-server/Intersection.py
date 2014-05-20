@@ -78,6 +78,8 @@ class Intersection(avango.script.Script):
       # set ray properties
       self.ray.Transform.value =  self.sf_pick_mat.value * \
                                   avango.gua.make_scale_mat(1.0, 1.0, self.pick_length)
+
+      #print self.pick_length, self.ray.Transform.value, self.ray.Transform.value.get_rotate()
           
       # compute picking results
       _pick_result = self.SCENEGRAPH.ray_test(self.ray, self.picking_options, self.picking_mask)

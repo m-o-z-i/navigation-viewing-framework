@@ -19,59 +19,58 @@ class SceneVRHyperspace:
 
     # geometry
     _mat = avango.gua.make_identity_mat()
-    #SCENE_MANAGER.init_geometry("bwb_outer_rest", "data/objects/vr_hyperspace/bwb/outer_rest.obj", _mat, "data/materials/bwb/Aircraft.gmd", True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
-    #SCENE_MANAGER.init_geometry("bwb_outer_med", "data/objects/vr_hyperspace/bwb/outer_med.obj", _mat, "data/materials/bwb/Aircraft.gmd", True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
-    #SCENE_MANAGER.init_geometry("bwb_outer_dark", "data/objects/vr_hyperspace/bwb/outer_dark.obj", _mat, "data/materials/bwb/AircraftDark.gmd", True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
-    #SCENE_MANAGER.init_geometry("bwb_outer_bright", "data/objects/vr_hyperspace/bwb/outer_bright.obj", _mat, "data/materials/bwb/AircraftBright.gmd", True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE            
+    #SCENE_MANAGER.init_geometry("bwb_outer_rest", "data/objects/vr_hyperspace/bwb/outer_rest.obj", _mat, "data/materials/bwb/Aircraft.gmd", False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    #SCENE_MANAGER.init_geometry("bwb_outer_med", "data/objects/vr_hyperspace/bwb/outer_med.obj", _mat, "data/materials/bwb/Aircraft.gmd", False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    #SCENE_MANAGER.init_geometry("bwb_outer_dark", "data/objects/vr_hyperspace/bwb/outer_dark.obj", _mat, "data/materials/bwb/AircraftDark.gmd", False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    #SCENE_MANAGER.init_geometry("bwb_outer_bright", "data/objects/vr_hyperspace/bwb/outer_bright.obj", _mat, "data/materials/bwb/AircraftBright.gmd", False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE            
 
-    SCENE_MANAGER.init_geometry("bwb_inner", "data/objects/vr_hyperspace/bwb/inner.obj", _mat, None, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
-    #SCENE_MANAGER.init_geometry("bwb_inner_windows", "data/objects/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE            
+    SCENE_MANAGER.init_geometry("bwb_inner", "data/objects/vr_hyperspace/bwb/inner.obj", _mat, None, True, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    #SCENE_MANAGER.init_geometry("bwb_inner_windows", "data/objects/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", False, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE            
 
-    SCENE_MANAGER.init_geometry("bwb_inner_left_seats", "data/objects/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE            
+    SCENE_MANAGER.init_geometry("bwb_inner_left_seats", "data/objects/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze.obj", _mat, None, False, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE            
 
-
+    '''
     _tile_scale = 2.0
     _tile_height = -150.0
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile1", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
-    #'''
+    SCENE_MANAGER.init_geometry("terrain_tile1", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile2", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("terrain_tile2", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 1, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile3", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("terrain_tile3", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile1", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("terrain_tile1", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile2", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("terrain_tile2", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 1, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile3", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("terrain_tile3", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile1", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("terrain_tile1", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile2", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("terrain_tile2", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 1, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
-    SCENE_MANAGER.init_geometry("terrain_tile3", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
-    #'''
+    SCENE_MANAGER.init_geometry("terrain_tile3", "data/objects/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    '''
 
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
     SCENE_MANAGER.init_light(0, "sun_light", avango.gua.Color(1.0, 0.7, 0.5), _mat, NET_TRANS_NODE) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
-    _mat = avango.gua.make_trans_mat(-59.0, 7.6, 5.0) * avango.gua.make_scale_mat(5.0)
+    _mat = avango.gua.make_trans_mat(-59.0, 7.6, 5.0)
     SCENE_MANAGER.init_light(1, "ceiling_light1", avango.gua.Color(1.0, 0.25, 0.25), _mat, NET_TRANS_NODE) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(-50.0, 7.6, 5.0) * avango.gua.make_scale_mat(5.0)
     SCENE_MANAGER.init_light(1, "ceiling_light2", avango.gua.Color(0.0, 1.0, 0.0), _mat, NET_TRANS_NODE) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
-
 
 
 class MedievalTown:
@@ -81,10 +80,10 @@ class MedievalTown:
 
     # geometry
     _mat = avango.gua.make_scale_mat(7.5)
-    SCENE_MANAGER.init_geometry("town", "data/objects/medieval_harbour/town.obj", _mat, None, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("town", "data/objects/medieval_harbour/town.obj", _mat, None, True, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     
     _mat = avango.gua.make_trans_mat(0, -3.15, 0) * avango.gua.make_scale_mat(1500.0, 1.0, 1500.0)
-    SCENE_MANAGER.init_geometry("water", "data/objects/plane.obj", _mat, 'data/materials/Water.gmd', False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, PICKABLE, PARENT_NODE
+    SCENE_MANAGER.init_geometry("water", "data/objects/plane.obj", _mat, 'data/materials/Water.gmd', True, False, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
   
     #self.water_updater = TimedMaterialUniformUpdate()
     #self.water_updater.MaterialName.value = "data/materials/Water.gmd"
@@ -149,4 +148,21 @@ class MedievalTown:
     NET_TRANS_NODE.Children.value.append(self.sun)
     '''
 
+
+class Test:
+
+
+  def __init__(self, SCENE_MANAGER, NET_TRANS_NODE):
+
+    # geometry
+    _mat = avango.gua.make_scale_mat(2.0)
+    SCENE_MANAGER.init_geometry("test", "data/objects/Joseph/JosephBody.obj", _mat, "data/materials/AvatarBlue.gmd", False, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(2.0, 0.0, 0.0)
+    SCENE_MANAGER.init_geometry("test2", "data/objects/Joseph/Joseph.obj", _mat, "data/materials/AvatarGreen.gmd", False, True, NET_TRANS_NODE) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+
+    # lights
+    _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
+    SCENE_MANAGER.init_light(0, "sun_light", avango.gua.Color(1.0, 0.7, 0.5), _mat, NET_TRANS_NODE) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
     

@@ -130,7 +130,7 @@ class User(avango.script.Script):
     self.intersection_tester.my_constructor(self.APPLICATION_MANAGER.SCENEGRAPH
                                           , self.headtracking_reader.sf_global_mat
                                           , 5.0
-                                          , "screen_proxy_geometry")
+                                          , "screen_proxy_group")
     self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
 
     ##

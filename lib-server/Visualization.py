@@ -93,7 +93,6 @@ class BoundingBoxVisualization(avango.script.Script):
   
     self.edge_group.Transform.connect_from(self.sf_node_mat)
   
-    #self.always_evaluate(True)
   
 
   # callbacks
@@ -141,13 +140,11 @@ class BoundingBoxVisualization(avango.script.Script):
       self.update_bb_scale()
       
     self.lf_node_mat = self.sf_node_mat.value
+    
+    #self.calc_bb()
   #'''
 
-  '''
-  def evaluate(self):
 
-    self.update()
-  '''
 
   # functions
   def set_material(self, MATERIAL):
@@ -164,22 +161,7 @@ class BoundingBoxVisualization(avango.script.Script):
     self.edge10.Material.value = MATERIAL
     self.edge11.Material.value = MATERIAL
     self.edge12.Material.value = MATERIAL
-  
-    
-  '''
-  def update(self):
-
-    _world_mat = self.OBJECT.get_world_transform()
-
-    if self.lf_world_mat != _world_mat:
-                        
-      if self.lf_world_mat.get_scale() != _world_mat.get_scale():
-        self.update_bb_scale()
       
-      self.lf_world_mat = _world_mat
-
-      self.edge_group.Transform.value = self.lf_world_mat
-  '''      
  
   def calc_bb(self):
   
@@ -187,10 +169,9 @@ class BoundingBoxVisualization(avango.script.Script):
   
     _node = self.OBJECT.get_node()
     
-    _local_mat = self.OBJECT.get_local_transform()
-    #_world_mat = self.OBJECT.get_world_transform()
+    #_local_mat = self.OBJECT.get_local_transform()
   
-    #'''
+    '''
     _parent_object = self.OBJECT.parent_object
     
     if _parent_object._get_type() == "Objects::InteractiveObject": # interactive object
@@ -200,20 +181,20 @@ class BoundingBoxVisualization(avango.script.Script):
     else: # scene root
 
       _parent_object.Children.value.remove(_node)
-    #'''
+    '''
   
-    self.SCENEGRAPH.Root.value.Children.value.append(_node)
+    #self.SCENEGRAPH.Root.value.Children.value.append(_node)
           
-    self.OBJECT.set_local_transform(avango.gua.make_identity_mat())
+    #self.OBJECT.set_local_transform(avango.gua.make_identity_mat())
 
-    self.SCENEGRAPH.update_cache() # enforce scenegraph update --> update BoundingBox state
+    #self.SCENEGRAPH.update_cache() # enforce scenegraph update --> update BoundingBox state
 
     self.bb = _node.BoundingBox.value
 
-    self.SCENEGRAPH.Root.value.Children.value.remove(_node)
+    #self.SCENEGRAPH.Root.value.Children.value.remove(_node)
 
 
-    #'''
+    '''
     if _parent_object._get_type() == "Objects::InteractiveObject": # interactive object
      
       _parent_object.append_child_object(self.OBJECT)
@@ -221,11 +202,11 @@ class BoundingBoxVisualization(avango.script.Script):
     else: # scene root
 
       _parent_object.Children.value.append(_node)
-    #'''
+    '''
 
-    self.OBJECT.set_local_transform(_local_mat)
+    #self.OBJECT.set_local_transform(_local_mat)
 
-    self.SCENEGRAPH.update_cache()
+    #self.SCENEGRAPH.update_cache()
 
     #print _node.Name.value, time.time() - _time_sav 
 

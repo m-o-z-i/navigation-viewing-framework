@@ -26,7 +26,7 @@ class InteractiveObject(avango.script.Script):
     self.super(InteractiveObject).__init__()
 
 
-  def my_constructor(self, SCENE_MANAGER, NODE, PARENT_OBJECT, SCENEGRAPH, NET_TRANS_NODE):
+  def my_constructor(self, SCENE_MANAGER, NODE, PARENT_OBJECT, SCENEGRAPH, NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG):
 
     # references
     self.SCENE_MANAGER = SCENE_MANAGER
@@ -44,6 +44,10 @@ class InteractiveObject(avango.script.Script):
 
     self.home_mat = self.node.Transform.value
 
+    self.gf_pick_flag = GROUNDFOLLOWING_PICK_FLAG
+    self.man_pick_flag = MANIPULATION_PICK_FLAG
+
+
     if self.parent_object.get_type() == "Objects::InteractiveObject": # interactive object
       #print "append to IO"
       self.parent_object.append_child_object(self)
@@ -52,7 +56,13 @@ class InteractiveObject(avango.script.Script):
       #print "append to scene root"
       self.parent_object.Children.value.append(self.node)
     
-    #print "new object", self, self.hierarchy_level, self.node, self.node.Name.value, self.node.Transform.value.get_translate(), self.parent_object, self.parent_object.get_type()
+    #print "new object", self, self.hierarchy_level, self.node, self.node.Name.value, self.node.Transform.value.get_translate(), self.parent_object#, self.parent_object.get_type()
+
+    if self.gf_pick_flag == True:
+      self.node.GroupNames.value.append("gf_pick_group")
+
+    if self.man_pick_flag == True:
+      self.node.GroupNames.value.append("man_pick_group")
 
     # init sub classes       
     self.bb_vis = BoundingBoxVisualization()
@@ -79,7 +89,7 @@ class InteractiveObject(avango.script.Script):
 
     self.child_objects.append(OBJECT)
 
-    self.node.Children.value.append(OBJECT.get_node())
+    #self.node.Children.value.append(OBJECT.get_node())
 
     OBJECT.hierarchy_level = self.hierarchy_level + 1
 

@@ -609,7 +609,6 @@ class AnimationManager(avango.script.Script):
       for _path_recorder_player in self.path_recorder_players:
         _path_recorder_player.next_recording()
 
-      self.play_key()
 
   ## Called whenever sf_prior changes.
   @field_has_changed(sf_prior)
@@ -620,7 +619,6 @@ class AnimationManager(avango.script.Script):
       for _path_recorder_player in self.path_recorder_players:
         _path_recorder_player.prior_recording()
 
-      self.play_key()
 
   ## Calls the play function in all RecorderPlayer instances created.
   def play_key(self):

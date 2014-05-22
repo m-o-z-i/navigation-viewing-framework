@@ -18,7 +18,7 @@ from Scene import *
 import math
 import time
 
-'''
+
 ## Helper class to update material values with respect to the current time.
 class TimedMaterialUniformUpdate(avango.script.Script):
 
@@ -129,7 +129,7 @@ class DayAnimationUpdate(avango.script.Script):
     # between noon and evening
     elif (_sun_angle > 135) and (_sun_angle < 180): 
       self.sf_sun_color.value = self.lerp_color(self.noon_sun_color, self.evening_sun_color, (_sun_angle - 135.0) / 45.0)
-'''
+
 
 ## Class for building a scene and appending the necessary nodes to the scenegraph.
 #

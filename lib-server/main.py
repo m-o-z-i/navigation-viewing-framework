@@ -65,18 +65,15 @@ def start():
   distribute_all_nodes(nettrans, nettrans)
 
   # initialize scene
-  scene_manager = SceneManager(nettrans, graph)
+  scene_manager = SceneManager()
+  scene_manager.my_constructor(nettrans, graph)
 
   # initialize animation manager
   animation_manager = AnimationManager()
   #animation_manager.my_constructor([ graph["/net/platform_0"]]
   #                               , [ application_manager.navigation_list[0]])
-  #animation_manager.my_constructor([ graph["/net/platform_0"], graph["/net/platform_1"] ]
-  #                               , [ application_manager.navigation_list[0], application_manager.navigation_list[1]])
-  #animation_manager.my_constructor([ graph["/net/ceiling_light1"], graph["/net/ceiling_light2"] ]
-  #                               , [ None, None])
 
-  manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

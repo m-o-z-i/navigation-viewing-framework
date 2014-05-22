@@ -96,6 +96,7 @@ class SceneVRHyperspace2(SceneObject):
 
 
 class SceneVRHyperspace3(SceneObject):
+
   # constructor
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "SceneVRHyperspace3", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
@@ -168,7 +169,6 @@ class MedievalTown(SceneObject):
     _mat = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
     self.init_geometry("steppo", "data/objects/avatars_obj/shot_steppo_animation_010000000001.obj", _mat, None, False, True, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     
-
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
     self.init_light(0, "sun_light", avango.gua.Color(1.0, 0.7, 0.5), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE

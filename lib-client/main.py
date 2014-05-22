@@ -10,7 +10,6 @@ import avango.gua
 import avango.oculus
 
 # import framework libraries
-import ClientConfigFileParser
 import ClientMaterialUpdaters
 from View import *
 from display_config import displays

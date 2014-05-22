@@ -17,21 +17,44 @@ import time
 import math
 from os import listdir
 
-
+## Class to record paths of scenegraph nodes over a specific timespan. Can record the whole
+# path or just keyframes. An attached player can reproduce recorded paths for the scenegraph nodes.
+# Either interpolated between the checkpoints, or by jumping directly to them.
 class RecorderPlayer(avango.script.Script):
 
   # input fields
+  ## @var sf_record_key
+  # Boolean field to indicate if the record key was pressed.
   sf_record_key = avango.SFBool()
+
+  ## @var sf_save_key
+  # Boolean field to indicate if the save key was pressed.
   sf_save_key = avango.SFBool()
+
+  ## @var sf_save_key
+  # Boolean field to indicate if the keyframe triggering key was pressed.
   sf_trigger_key = avango.SFBool()
+
+  ## @var sf_play_mode_key
+  # Boolean field to indicate if the play mode changing key was pressed.
   sf_play_mode_key = avango.SFBool()
+
+  ## @var sf_record_mode_key
+  # Boolean field to indicate if the play mode changing key was pressed.
   sf_record_mode_key = avango.SFBool()
 
-  # constructor
+  ## Default constructor.
   def __init__(self):
     self.super(RecorderPlayer).__init__()
 
-  # constructor
+  ## Custom constructor.
+  # @param SCENEGRAPH_NODE The scenegraph node to be recorded and played.
+  # @param NAVIGATION If a Navigation instance to be updated belongs to the node, it can be specified here. None otherwise.
+  # @param SF_RECORD_KEY Boolean field containing the record key values.
+  # @param SF_SAVE_KEY Boolean field containing the save key values.
+  # @param SF_TRIGGER_KEY Boolean field containing the keyframe trigger key values.
+  # @param SF_PLAY_MODE_KEY Boolean field containing the play mode key values.
+  # @param SF_RECORD_MODE_KEY Boolean field containing the record mode key values.
   def my_constructor(self
                    , SCENEGRAPH_NODE
                    , NAVIGATION
@@ -42,27 +65,66 @@ class RecorderPlayer(avango.script.Script):
                    , SF_RECORD_MODE_CHANGE):
 
     # references
+    ## @var SCENEGRAPH_NODE
+    # The scenegraph node to be recorded and played.
     self.SCENEGRAPH_NODE = SCENEGRAPH_NODE
+
+    ## @var NAVIGATION
+    # If a Navigation instance to be updated belongs to the node, it can be specified here. None otherwise.
     self.NAVIGATION = NAVIGATION
 
     # variables
+    # @var self.recordings_list
+    # List of all the recordings captured or loaded for this scenegraph node.
     self.recordings_list = []
+
+    ## @var recording_list
+    # Currently loaded recording to be played. List of waypoints and timestamps.
     self.recording_list = []
+
+    ## @var recorder_start_time
+    # Point in time when a recording was started.
     self.recorder_start_time = None
+
+    ## @var in_keyframe_recording
+    # Boolean indicating if a recording in keyframe mode is currently in progress.
     self.in_keyframe_recording = False
+
+    ## @var player_start_time
+    # Point in time when the player was started.
     self.player_start_time = None
+
+    ## @var play_index
+    # Index of the current waypoint in the recording currently played by the player.
     self.play_index = None
+
+    ## @var play_reset_flag
+    # Boolean indicating if the end of the path to be played was reached.
     self.play_reset_flag = False
+
+    ## @var recording_index
+    # Index of the recording currently played by the player.
     self.recording_index = None
 
+    ## @var record_mode
+    # String specifying the record mode. ALL_FRAMES records the complete path of the scenegraph node.
+    # KEYFRAMES requires the user to explicitly press the trigger key to capture keyframes.
     self.record_mode = "ALL_FRAMES"
     #self.record_mode = "KEYFRAMES"
 
+    ## @var play_mode
+    # String specifying the play mode. CONTINUOUS interpolates between the waypoints captured.
+    # DISCRETE jumps to the waypoints after the correct amount of time recorded.
     self.play_mode = "CONTINUOUS"
     #self.play_mode = "DISCRETE"
 
     # init frame callbacks
+    ## @var recorder_trigger
+    # Callback when a recording is in progress.
     self.recorder_trigger = avango.script.nodes.Update(Callback = self.recorder_callback, Active = False)
+
+    ## @var player_trigger
+    # Callback when a playing progress is active.
     self.player_trigger = avango.script.nodes.Update(Callback = self.player_callback, Active = False)
 
     self.load_recorded_paths()
@@ -76,6 +138,7 @@ class RecorderPlayer(avango.script.Script):
 
 
   # callbacks
+  ## Called whenever sf_record_key changes.
   @field_has_changed(sf_record_key)
   def sf_record_key_changed(self):
 
@@ -87,7 +150,7 @@ class RecorderPlayer(avango.script.Script):
       else:
         self.start_recorder()
 
-
+  ## Called whenever sf_save_key changes.
   @field_has_changed(sf_save_key)
   def sf_save_key_changed(self):
 
@@ -96,6 +159,7 @@ class RecorderPlayer(avango.script.Script):
 
       print_message("Saving recording " + str(self.recording_index))
 
+  ## Called whenever sf_trigger_key changes.
   @field_has_changed(sf_trigger_key)
   def sf_trigger_key_changed(self):
 
@@ -106,6 +170,7 @@ class RecorderPlayer(avango.script.Script):
       _time_step = time.time() - self.recorder_start_time
       self.record_parameters(_time_step)
 
+  ## Called whenever sf_play_mode_key changes.
   @field_has_changed(sf_play_mode_key)
   def sf_play_mode_key_changed(self):
     
@@ -118,6 +183,7 @@ class RecorderPlayer(avango.script.Script):
         self.play_mode = "CONTINUOUS"
         print_message("Play mode switched to CONTINUOUS.")
 
+  ## Called whenever sf_record_mode_key changes.
   @field_has_changed(sf_record_mode_key)
   def sf_record_mode_key_changed(self):
     
@@ -130,15 +196,15 @@ class RecorderPlayer(avango.script.Script):
         self.record_mode = "ALL_FRAMES"
         print_message("Record mode switched to ALL_FRAMES.")
 
-
-  def recorder_callback(self): # evaluated every frame when active
+  ## Evaluated every frame when a recording is in progress.
+  def recorder_callback(self):
 
     if self.record_mode == "ALL_FRAMES":
       _time_step = time.time() - self.recorder_start_time
       self.record_parameters(_time_step)
 
-
-  def player_callback(self): # evaluated every frame when active
+  ## Evaluated every frame when a playing in in progress.
+  def player_callback(self):
 
     _time_step = time.time() - self.player_start_time
 
@@ -150,6 +216,7 @@ class RecorderPlayer(avango.script.Script):
       self.start_player() # restart player
 
   # functions
+  ## Called when the play key was pressed. Starts or stops the playing progress.
   def play_key(self):
 
     if len(self.recording_list) > 0:
@@ -160,7 +227,7 @@ class RecorderPlayer(avango.script.Script):
       else:
         self.start_player()
 
-
+  ## Switches to the next recording to be played.
   def next_recording(self):
 
     if self.recording_index != None:
@@ -179,7 +246,7 @@ class RecorderPlayer(avango.script.Script):
 
       print_message("Switch to recording " + str(self.recording_index))
 
-
+  ## Switches to the next recording to be played.
   def prior_recording(self):
 
     if self.recording_index != None:
@@ -198,7 +265,7 @@ class RecorderPlayer(avango.script.Script):
 
       print_message("Switch to recording " + str(self.recording_index))
 
-
+  ## Loads all the paths for the handled scenegraph node from the path_recordings directory.
   def load_recorded_paths(self):
 
     _entries = listdir("path_recordings/")
@@ -218,7 +285,8 @@ class RecorderPlayer(avango.script.Script):
       self.recording_list = self.recordings_list[0]
       self.recording_index = 0
 
-
+  ## Loads a single path from a file.
+  # @param PATH The path to the file to be loaded.
   def load_path_from_file(self, PATH):
 
     try:
@@ -256,7 +324,7 @@ class RecorderPlayer(avango.script.Script):
 
       self.recordings_list.append(_recording_list)
 
-
+  ## Starts the recording progress for the handled scenegraph node.
   def start_recorder(self):
 
     print_message("Start recording")
@@ -275,7 +343,7 @@ class RecorderPlayer(avango.script.Script):
 
     self.recorder_trigger.Active.value = True # activate recorder callback
 
-
+  ## Stops the recording progress for the handled scenegraph node.
   def stop_recorder(self):
 
     if self.recorder_trigger.Active.value == True:
@@ -292,7 +360,7 @@ class RecorderPlayer(avango.script.Script):
       self.recorder_start_time = None
       self.in_keyframe_recording = False
 
-
+  ## Saves the recording captured.
   def save_recording(self):
 
     self.recording_index = len(self.recordings_list)
@@ -323,14 +391,15 @@ class RecorderPlayer(avango.script.Script):
 
     self.recordings_list.append(_recording_list)
 
-
+  ## Records the current parameters of the scenegraph node and stores it together with the current time step.
+  # @param TIME_STEP The current point in time to be stored with the parameters.
   def record_parameters(self, TIME_STEP):
 
     _mat = self.SCENEGRAPH_NODE.Transform.value
 
     self.recording_list.append( [TIME_STEP, _mat.get_translate(), _mat.get_rotate(), _mat.get_scale()] )
 
-
+  ## Starts the player.
   def start_player(self):
 
     print_message("Start playing")
@@ -342,7 +411,7 @@ class RecorderPlayer(avango.script.Script):
 
     self.player_trigger.Active.value = True # activate player callback
 
-
+  ## Stops the player.
   def stop_player(self):
 
     if self.player_trigger.Active.value == True:
@@ -352,7 +421,7 @@ class RecorderPlayer(avango.script.Script):
 
       self.player_trigger.Active.value = False # deactivate player callback
 
-
+  ## Resets the player to the next recording when one animation is done.
   def reset_player(self):
 
     if len(self.recording_list) > 0:
@@ -372,7 +441,8 @@ class RecorderPlayer(avango.script.Script):
       self.SCENEGRAPH_NODE.Transform.value = _mat
 
 
-
+  ## Sets the matrix of the handled scenegraph node according to the current recording.
+  # @param TIME_STEP The point in time to which the node is set.
   def play(self, TIME_STEP):
 
     if self.play_index != None:
@@ -410,7 +480,8 @@ class RecorderPlayer(avango.script.Script):
 
               break
 
-
+  ## Interpolates between the two frames at play_index and play_index + 1.
+  # @param FACTOR The factor to interpolate to between frames. [0; 1]
   def interpolate_between_frames(self, FACTOR):
 
     _tupel1 = self.recording_list[self.play_index]
@@ -436,26 +507,54 @@ class RecorderPlayer(avango.script.Script):
     if self.NAVIGATION != None:
       self.NAVIGATION.inputmapping.set_abs_mat(_new_mat)
 
-
+## Class to build all the RecorderPlayer instances for all the scenegraph nodes to be handled.
 class AnimationManager(avango.script.Script):
 
   # input fields
+  ## @var sf_record
+  # Boolean field to indicate if the record key was pressed.
   sf_record = avango.SFBool()
+
+  ## @var sf_save
+  # Boolean field to indicate if the save key was pressed.
   sf_save = avango.SFBool()
+
+  ## @var sf_play
+  # Boolean field to indicate if the play key was pressed.
   sf_play = avango.SFBool()
+
+  ## @var sf_next
+  # Boolean field to indicate if the next recording key was pressed.
   sf_next = avango.SFBool()
+
+  ## @var sf_prior
+  # Boolean field to indicate if the prior recording key was pressed.
   sf_prior = avango.SFBool()
+
+  ## @var sf_trigger
+  # Boolean field to indicate if the keyframe trigger key was pressed.
   sf_trigger = avango.SFBool()
+
+  ## @var sf_play_mode_change
+  # Boolean field to indicate if the play mode key was pressed.
   sf_play_mode_change = avango.SFBool()
+
+  ## @var sf_record_mode_change
+  # Boolean field to indicate if the record mode key was pressed.
   sf_record_mode_change = avango.SFBool()
 
+  ## Default constructor.
   def __init__(self):
     self.super(AnimationManager).__init__()
 
-  # constructor
+  ## Custom constructor.
+  # @param SCENEGRAPH_NODE_LIST List of scenegraph nodes to be handled for animations.
+  # @param NAVIGATION_LIST Navigation instances associated to the scenegraph nodes. If no instance is associated, 
+  #                        None is given in the list.
   def my_constructor(self, SCENEGRAPH_NODE_LIST, NAVIGATION_LIST):
  
-    # sensor
+    ## @var keyboard_sensor
+    # Daemon sensor representing the inputs from the keyboard.
     self.keyboard_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.keyboard_sensor.Station.value = "device-keyboard0"
         
@@ -473,6 +572,8 @@ class AnimationManager(avango.script.Script):
     self.sf_play_mode_change.connect_from(self.keyboard_sensor.Button28) # F10
     self.sf_record_mode_change.connect_from(self.keyboard_sensor.Button29) # F11
 
+    ## @var path_recorder_players
+    # List of RecorderPlayer instances that were created.
     self.path_recorder_players = []
 
     for _i in range(len(SCENEGRAPH_NODE_LIST)):
@@ -487,7 +588,7 @@ class AnimationManager(avango.script.Script):
       self.path_recorder_players.append(_path_recorder_player)
 
 
-  # callbacks
+  ## Called whenever sf_play changes.
   @field_has_changed(sf_play)
   def sf_play_changed(self):
 
@@ -495,6 +596,7 @@ class AnimationManager(avango.script.Script):
       
       self.play_key()
 
+  ## Called whenever sf_next changes.
   @field_has_changed(sf_next)
   def sf_next_changed(self):
 
@@ -505,6 +607,7 @@ class AnimationManager(avango.script.Script):
 
       self.play_key()
 
+  ## Called whenever sf_prior changes.
   @field_has_changed(sf_prior)
   def sf_prior_changed(self):
 
@@ -515,8 +618,7 @@ class AnimationManager(avango.script.Script):
 
       self.play_key()
 
-
-  # functions
+  ## Calls the play function in all RecorderPlayer instances created.
   def play_key(self):
 
     for _path_recorder_player in self.path_recorder_players:

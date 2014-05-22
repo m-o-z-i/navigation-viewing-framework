@@ -12,7 +12,6 @@ import avango.daemon
 
 # import framework libraries
 import Tools
-from Objects import *
 from Scene import *
 
 # import python libraries
@@ -135,112 +134,172 @@ class DayAnimationUpdate(avango.script.Script):
 ## Class for building a scene and appending the necessary nodes to the scenegraph.
 #
 # The actual member variables vary from scene to scene and can be chosen at will.
-class SceneManager:
+class SceneManager(avango.script.Script):
 
-  hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
+  # input fields
+  sf_key1 = avango.SFBool()
+  sf_key2 = avango.SFBool()
+  sf_key3 = avango.SFBool()
+  sf_key4 = avango.SFBool()
+  sf_key5 = avango.SFBool()
+  sf_key6 = avango.SFBool()
+  sf_key7 = avango.SFBool()
+  sf_key8 = avango.SFBool()
+  sf_key9 = avango.SFBool()
+  sf_key0 = avango.SFBool()
+
+  sf_key_home = avango.SFBool()
+
+
+  # constructor
+  def __init__(self):
+    self.super(SceneManager).__init__()
+
+    # parameters
+    self.hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
+
+    # variables
+    self.scenes = []
+    self.active_scene = None
+
+    # sensor
+    self.keyboard_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
+    self.keyboard_sensor.Station.value = "device-keyboard0"
+
+    # init field connections
+    self.sf_key1.connect_from(self.keyboard_sensor.Button10) # key 1
+    self.sf_key2.connect_from(self.keyboard_sensor.Button11) # key 2
+    self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3       
+    self.sf_key4.connect_from(self.keyboard_sensor.Button13) # key 4
+    self.sf_key5.connect_from(self.keyboard_sensor.Button14) # key 5
+    self.sf_key6.connect_from(self.keyboard_sensor.Button15) # key 6
+    self.sf_key7.connect_from(self.keyboard_sensor.Button16) # key 7
+    self.sf_key8.connect_from(self.keyboard_sensor.Button17) # key 8
+    self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
+    self.sf_key0.connect_from(self.keyboard_sensor.Button9) # key 0
+    self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
+
 
   ## Custom constructor
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
-  def __init__(self, NET_TRANS_NODE, SCENEGRAPH):
+  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH):
 
-    # create loader class for geometry loading
-    _loader = avango.gua.nodes.GeometryLoader()
+    # init scenes   
+    self.scene1 = MedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)    
 
-    # references
-    self.SCENEGRAPH = SCENEGRAPH
-    self.NET_TRANS_NODE = NET_TRANS_NODE
+    #self.scene2 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene3 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene4 = SceneVRHyperspace3(self, SCENEGRAPH, NET_TRANS_NODE)    
 
-    # variables
-    self.objects = [] # interactive objects    
+    self.activate_scene(0) # activate first scene
+    
+
+ # callbacks
+  @field_has_changed(sf_key1)
+  def sf_key1_changed(self):
+
+    if self.sf_key1.value == True: # key pressed
+      self.activate_scene(0)
 
 
-    # init scene
-    #self.scene1 = SceneVRHyperspace(self, NET_TRANS_NODE)
+  @field_has_changed(sf_key2)
+  def sf_key2_changed(self):
 
-    self.scene2 = MedievalTown(self, NET_TRANS_NODE)    
+    if self.sf_key2.value == True: # key pressed
+      self.activate_scene(1)
 
-    #self.scene3 = Test(self, NET_TRANS_NODE)
 
-    self.reset() # enforce BoundingBox update
+  @field_has_changed(sf_key3)
+  def sf_key3_changed(self):
+
+    if self.sf_key3.value == True: # key pressed
+      self.activate_scene(2)
+
+
+  @field_has_changed(sf_key4)
+  def sf_key4_changed(self):
+
+    if self.sf_key4.value == True: # key pressed
+      self.activate_scene(3)
+
+
+  @field_has_changed(sf_key5)
+  def sf_key5_changed(self):
+
+    if self.sf_key5.value == True: # key pressed
+      self.activate_scene(4)
+
+
+  @field_has_changed(sf_key6)
+  def sf_key6_changed(self):
+
+    if self.sf_key6.value == True: # key pressed
+      self.activate_scene(5)
+
+
+  @field_has_changed(sf_key7)
+  def sf_key7_changed(self):
+
+    if self.sf_key7.value == True: # key pressed
+      self.activate_scene(6)
+
+
+  @field_has_changed(sf_key8)
+  def sf_key8_changed(self):
+
+    if self.sf_key8.value == True: # key pressed
+      self.activate_scene(7)
+      
+
+  @field_has_changed(sf_key9)
+  def sf_key9_changed(self):
+
+    if self.sf_key9.value == True: # key pressed
+      self.activate_scene(8)
+      
+
+  @field_has_changed(sf_key0)
+  def sf_key0_changed(self):
+
+    if self.sf_key0.value == True: # key pressed
+      self.activate_scene(9)
+
+
+  @field_has_changed(sf_key_home)
+  def sf_key_home_changed(self):
+
+    if self.sf_key_home.value == True: # key pressed
+      self.print_active_scene()
 
 
   # functions
-  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE):
-
-    _loader = avango.gua.nodes.GeometryLoader()
-
-    _loader_flags = "avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY"
-
-    if MATERIAL == None: # no material defined --> get materials from file description
-      _loader_flags += " | avango.gua.LoaderFlags.LOAD_MATERIALS"
-      MATERIAL = "data/materials/White.gmd" # default material
-
-    if GROUNDFOLLOWING_PICK_FLAG == True or MANIPULATION_PICK_FLAG == True:
-      _loader_flags += " | avango.gua.LoaderFlags.MAKE_PICKABLE"
-
-    _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, eval(_loader_flags))
-    _node.Transform.value = MATRIX
+  def activate_scene(self, ID):
   
-    self.init_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
- 
-
-  def init_light(self, TYPE, NAME, COLOR, MATRIX, PARENT_NODE):
-
-    if TYPE == 0: # sun light
-      _node = avango.gua.nodes.SunLightNode()
-      _node.EnableShadows.value = True
-      _node.ShadowMapSize.value = 2048
-      _node.ShadowOffset.value = 0.001
-
-    elif TYPE == 1: # point light
-      _node = avango.gua.nodes.PointLightNode()
-      _node.Falloff.value = 1.0 # exponent
-
-    elif TYPE == 2: # spot light
-      _node = avango.gua.nodes.SpotLightNode()
-      _node.EnableShadows.value = True
-      _node.ShadowMapSize.value = 2048
-      _node.ShadowOffset.value = 0.001
-      _node.Softness.value = 1.0 # exponent
-      _node.Falloff.value = 1.0 # exponent
-
+    # disable all scenes
+    for _scene in self.scenes:
+      _scene.enable_scene(False)
+  
+    if ID < len(self.scenes):
+      self.active_scene = self.scenes[ID]
+      self.active_scene.enable_scene(True)
+  
+      print "Switching to Scene: " + self.active_scene.name
+  
+  
+  def print_active_scene(self):
+  
+    if self.active_scene != None:
       
-    _node.Name.value = NAME
-    _node.Color.value = COLOR
-    _node.Transform.value = MATRIX
-    _node.EnableDiffuseShading.value = True
-    _node.EnableSpecularShading.value = True
-    _node.EnableGodrays.value = True
-
-    self.init_objects(_node, PARENT_NODE, False, False)
-
-
-  def init_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG):
-
-    if NODE.get_type() == 'av::gua::TransformNode' and len(NODE.Children.value) > 0: # group node 
-
-      _object = InteractiveObject()
-      _object.my_constructor(self, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
-
-      self.objects.append(_object)
-
-      for _child in NODE.Children.value:
-        self.init_objects(_child, _object, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
-        
-    elif NODE.get_type() == 'av::gua::GeometryNode' or NODE.get_type() == 'av::gua::SunLightNode' or NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
-
-      _object = InteractiveObject()
-      _object.my_constructor(self, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
-
-      self.objects.append(_object)
-
-    
-  def reset(self):
+      for _object in self.active_scene.objects:
+        _node = _object.node
+         
+        print "\n"
+        print _node.Name.value
+        print _node.Path.value
+        print _object.hierarchy_level
+        print _node.Transform.value
   
-    for _object in self.objects:
-      _object.reset()
-
-
+  
   def get_hierarchy_material(self, INDEX):
   
     return self.hierarchy_materials[INDEX]

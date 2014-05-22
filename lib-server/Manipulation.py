@@ -24,7 +24,7 @@ class ManipulationManager:
   
     # init first ray
     _parent_node = SCENEGRAPH["/net/platform_0"]
-    _transmitter_offset = avango.gua.make_trans_mat(0.0,0.043,1.6)
+    _transmitter_offset = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
   
     self.ray_pointer1 = RayPointer()
     self.ray_pointer1.my_constructor(self, 1, SCENEGRAPH, NET_TRANS_NODE, _parent_node, _transmitter_offset, "tracking-dlp-pointer1", "device-pointer1")

@@ -50,38 +50,6 @@ class MultiDofDevice(avango.script.Script):
     # List of bindings between input values / button values and events. Code form.
     self.input_bindings = []
     
-    ## @var dofs
-    # Temporary list of degrees of freedom used for storage before setting mf_dof
-    self.dofs = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    
-    ## @var x_parameters
-    # Filer channel parameters for x.
-    self.x_parameters = [0.0,-1.0,1.0,0.0,0.0]  # [OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD]
-
-    ## @var y_parameters
-    # Filer channel parameters for y.
-    self.y_parameters = [0.0,-1.0,1.0,0.0,0.0]  # [OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD]
-    
-    ## @var z_parameters
-    # Filer channel parameters for z.
-    self.z_parameters = [0.0,-1.0,1.0,0.0,0.0]  # [OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD]
-    
-    ## @var rx_parameters
-    # Filer channel parameters for rx.
-    self.rx_parameters = [0.0,-1.0,1.0,0.0,0.0] # [OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD]
-    
-    ## @var ry_parameters
-    # Filer channel parameters for ry.
-    self.ry_parameters = [0.0,-1.0,1.0,0.0,0.0] # [OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD]
-    
-    ## @var rz_parameters
-    # Filer channel parameters for rz.
-    self.rz_parameters = [0.0,-1.0,1.0,0.0,0.0] # [OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD]
-
-    ## @var w_parameters
-    # Filer channel parameters for w.
-    self.w_parameters = [0.0,-1.0,1.0,0.0,0.0]  # [OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD]
-
     # factors for amplifying
     ## @var translation_factor
     # Factor to modify the device's translation input.
@@ -187,44 +155,15 @@ class MultiDofDevice(avango.script.Script):
 
   ## Filters and sets the x parameter.
   # @param VALUE The value to be set.
-  def set_x(self, VALUE):
+  def set_and_filter_dof(self, ID, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD):
 
-    self.dofs[0] += self.filter_channel(VALUE, self.x_parameters[0], self.x_parameters[1], self.x_parameters[2], self.x_parameters[3], self.x_parameters[4])
+    self.dofs[ID] += self.filter_channel(VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD)
 
-  ## Filters and sets the y parameter.
-  # @param VALUE The value to be set.
-  def set_y(self, VALUE):
 
-    self.dofs[1] += self.filter_channel(VALUE, self.y_parameters[0], self.y_parameters[1], self.y_parameters[2], self.y_parameters[3], self.y_parameters[4])
- 
-  ## Filters and sets the z parameter.
-  # @param VALUE The value to be set.
-  def set_z(self, VALUE):
+  def set_dof(self, ID, VALUE):
 
-    self.dofs[2] += self.filter_channel(VALUE, self.z_parameters[0], self.z_parameters[1], self.z_parameters[2], self.z_parameters[3], self.z_parameters[4])
+    self.dofs[ID] += VALUE
 
-  ## Filters and sets the rx parameter.
-  # @param VALUE The value to be set.
-  def set_rx(self, VALUE):
-
-    self.dofs[3] += self.filter_channel(VALUE, self.rx_parameters[0], self.rx_parameters[1], self.rx_parameters[2], self.rx_parameters[3], self.rx_parameters[4])
-
-  ## Filters and sets the ry parameter.
-  # @param VALUE The value to be set.
-  def set_ry(self, VALUE):
-
-    self.dofs[4] += self.filter_channel(VALUE, self.ry_parameters[0], self.ry_parameters[1], self.ry_parameters[2], self.ry_parameters[3], self.ry_parameters[4])
-  ## Filters and sets the rz parameter.
-  # @param VALUE The value to be set.
-  def set_rz(self, VALUE):
-  
-    self.dofs[5] += self.filter_channel(VALUE, self.rz_parameters[0], self.rz_parameters[1], self.rz_parameters[2], self.rz_parameters[3], self.rz_parameters[4])
-
-  ## Filters and sets the w parameter.
-  # @param VALUE The value to be set.
-  def set_w(self, VALUE):
-  
-    self.dofs[6] += self.filter_channel(VALUE, self.w_parameters[0], self.w_parameters[1], self.w_parameters[2], self.w_parameters[3], self.w_parameters[4])
 
   ## Sets the reset trigger.
   # @param VALUE The value to be set.
@@ -271,22 +210,15 @@ class SpacemouseDevice(MultiDofDevice):
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
     self.rotation_factor = 0.75
-
-    self.set_input_channel_parameters(self.x_parameters, 0.0, -0.76, 0.82, 3, 3)
-    self.set_input_channel_parameters(self.y_parameters, 0.0, -0.7, 0.6, 3, 3)
-    self.set_input_channel_parameters(self.z_parameters, 0.0, -0.95, 0.8, 3, 3)
-    self.set_input_channel_parameters(self.rx_parameters, 0.0, -0.82, 0.8, 12, 12)
-    self.set_input_channel_parameters(self.ry_parameters, 0.0, -0.5, 0.6, 12, 12)
-    self.set_input_channel_parameters(self.rz_parameters, 0.0, -0.86, 0.77, 12, 12)
     
-    self.add_input_binding("self.set_x(self.device_sensor.Value0.value)")
-    self.add_input_binding("self.set_y(self.device_sensor.Value1.value*-1.0)")
-    self.add_input_binding("self.set_z(self.device_sensor.Value2.value)")
-    self.add_input_binding("self.set_rx(self.device_sensor.Value3.value)")
-    self.add_input_binding("self.set_ry(self.device_sensor.Value4.value*-1.0)")
-    self.add_input_binding("self.set_rz(self.device_sensor.Value5.value)")
-    self.add_input_binding("self.set_w(self.device_sensor.Button0.value*1.0)")
-    self.add_input_binding("self.set_w(self.device_sensor.Button1.value*-1.0)")
+    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value, 0.0, -0.76, 0.82, 3, 3)")
+    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, 0.0, -0.7, 0.6, 3, 3)")
+    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value, 0.0, -0.95, 0.8, 3, 3)")
+    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value, 0.0, -0.82, 0.8, 12, 12)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value*-1.0, 0.0, -0.5, 0.6, 12, 12)")
+    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, 0.0, -0.86, 0.77, 12, 12)")
+    self.add_input_binding("self.set_dof(6, self.device_sensor.Button0.value*1.0)")
+    self.add_input_binding("self.set_dof(6, self.device_sensor.Button1.value*-1.0)")
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
@@ -407,15 +339,15 @@ class KeyboardMouseDevice(MultiDofDevice):
     self.set_input_channel_parameters(self.rx_parameters, 0.0, -100.0, 100.0, 0, 0)
     self.set_input_channel_parameters(self.ry_parameters, 0.0, -100.0, 100.0, 0, 0)
 
-    self.add_input_binding("self.set_x(self.keyboard_sensor.Button10.value*-1.0)")           # A
-    self.add_input_binding("self.set_x(self.keyboard_sensor.Button12.value)")                # D
-    self.add_input_binding("self.set_y(self.keyboard_sensor.Button30.value)")                # PAGE UP
-    self.add_input_binding("self.set_y(self.keyboard_sensor.Button31.value*-1.0)")           # PAGE DOWN
-    self.add_input_binding("self.set_z(self.keyboard_sensor.Button1.value*-1.0)")            # W
-    self.add_input_binding("self.set_z(self.keyboard_sensor.Button11.value)")                # S
-    self.add_input_binding("self.set_reset_trigger(self.keyboard_sensor.Button3.value)")     # R
-    self.add_input_binding("self.set_coupling_trigger(self.keyboard_sensor.Button21.value)") # C
-    self.add_input_binding("self.set_dof_trigger(self.keyboard_sensor.Button14.value)")      # G
+    self.add_input_binding("self.set_x(self.keyboard_sensor.Button1.value*-1.0)")           # A
+    self.add_input_binding("self.set_x(self.keyboard_sensor.Button3.value)")                # D
+    self.add_input_binding("self.set_y(self.keyboard_sensor.Button7.value)")                # UP
+    self.add_input_binding("self.set_y(self.keyboard_sensor.Button8.value*-1.0)")           #  DOWN
+    self.add_input_binding("self.set_z(self.keyboard_sensor.Button0.value*-1.0)")            # W
+    self.add_input_binding("self.set_z(self.keyboard_sensor.Button2.value)")                # S
+    self.add_input_binding("self.set_reset_trigger(self.keyboard_sensor.Button4.value)")     # R
+    self.add_input_binding("self.set_coupling_trigger(self.keyboard_sensor.Button5.value)") # C
+    self.add_input_binding("self.set_dof_trigger(self.keyboard_sensor.Button6.value)")      # G
     self.add_input_binding("self.set_rx(self.mouse_sensor.Value1.value*-1.0)")               # mouse up
     self.add_input_binding("self.set_ry(self.mouse_sensor.Value0.value*-1.0)")               # mouse right
     self.add_input_binding("self.set_w(self.mouse_sensor.Button0.value*-1.0)")               # left button

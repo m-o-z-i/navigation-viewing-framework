@@ -119,9 +119,11 @@ class RecorderPlayer(avango.script.Script):
 
     ## @var play_mode
     # String specifying the play mode. CONTINUOUS interpolates between the waypoints captured.
-    # DISCRETE jumps to the waypoints after the correct amount of time recorded.
+    # DISCRETE jumps to the waypoints after the correct amount of time recorded. EQUAL_SPEED uses
+    # a fixed speed to interpolate between the frames.
     self.play_mode = "CONTINUOUS"
     #self.play_mode = "DISCRETE"
+    #self.play_mode  = "EQUAL_SPEED"
 
     # init frame callbacks
     ## @var recorder_trigger
@@ -184,9 +186,13 @@ class RecorderPlayer(avango.script.Script):
       if self.play_mode == "CONTINUOUS":
         self.play_mode = "DISCRETE"
         print_message("Play mode switched to DISCRETE.")
+      elif self.play_mode == "DISCRETE":
+        self.play_mode = "EQUAL_SPEED"
+        print_message("Play mode switched to EQUAL_SPEED.")
       else:
         self.play_mode = "CONTINUOUS"
         print_message("Play mode switched to CONTINUOUS.")
+
 
   ## Called whenever sf_record_mode_key changes.
   @field_has_changed(sf_record_mode_key)
@@ -409,18 +415,18 @@ class RecorderPlayer(avango.script.Script):
 
     print_message("Start playing")
 
-    '''
-    _velocity = 2 # in m/s
-    _current_time = 0.0
-    self.recording_list[0][0] = 0.0
+    if self.play_mode == "EQUAL_SPEED":
+      _velocity = 2 # in m/s
+      _current_time = 0.0
+      self.recording_list[0][0] = 0.0
+      
+      for _i in range(1, len(self.recording_list)):
+        _pos_last = self.recording_list[_i-1][1]
+        _pos_curr = self.recording_list[_i][1]
+        _distance = Tools.euclidean_distance(_pos_last, _pos_curr)
+        self.recording_list[_i][0] = _current_time + (_distance * 1/_velocity)
+        _current_time += (_distance * 1/_velocity)
     
-    for _i in range(1, len(self.recording_list)):
-      _pos_last = self.recording_list[_i-1][1]
-      _pos_curr = self.recording_list[_i][1]
-      _distance = Tools.euclidean_distance(_pos_last, _pos_curr)
-      self.recording_list[_i][0] = _current_time + (_distance * 1/_velocity)
-      _current_time += (_distance * 1/_velocity)
-    '''
 
     self.play_reset_flag = False
 
@@ -447,7 +453,7 @@ class RecorderPlayer(avango.script.Script):
       self.play_index = 0
       self.playing_time = 0
 
-      _values 	= self.recording_list[0]
+      _values = self.recording_list[0]
       _pos		= _values[1]
       _quat		= _values[2]
       _scale  = _values[3]

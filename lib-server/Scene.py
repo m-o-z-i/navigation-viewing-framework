@@ -167,7 +167,7 @@ class MedievalTown(SceneObject):
     #self.water_updater.TimeIn.connect_from(self.timer.Time)
 
     _mat = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
-    self.init_geometry("steppo", "data/objects/avatars_obj/shot_steppo_animation_010000000001.obj", _mat, None, False, True, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    #self.init_geometry("steppo", "data/objects/avatars_obj/shot_steppo_animation_010000000001.obj", _mat, None, False, True, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)

@@ -267,20 +267,13 @@ class GlobefishDevice(MultiDofDevice):
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
     self.rotation_factor = 10.0
-
-    self.set_input_channel_parameters(self.x_parameters, 0.0, -0.6, 0.85, 0, 0)
-    self.set_input_channel_parameters(self.y_parameters, 0.0, -0.25, 0.25, 0, 0)
-    self.set_input_channel_parameters(self.z_parameters, 0.0, -0.15, 0.15, 0, 0)
-    self.set_input_channel_parameters(self.rx_parameters, 0.0, -512.0, 512.0, 0, 0)
-    self.set_input_channel_parameters(self.ry_parameters, 0.0, -512.0, 512.0, 0, 0)
-    self.set_input_channel_parameters(self.rz_parameters, 0.0, -512.0, 512.0, 0, 0)
     
-    self.add_input_binding("self.set_x(self.device_sensor.Value0.value)")
-    self.add_input_binding("self.set_y(self.device_sensor.Value1.value*-1.0)")
-    self.add_input_binding("self.set_z(self.device_sensor.Value2.value*-1.0)")
-    self.add_input_binding("self.set_rx(self.device_sensor.Value3.value*-1.0)")
-    self.add_input_binding("self.set_ry(self.device_sensor.Value4.value*-1.0)")
-    self.add_input_binding("self.set_rz(self.device_sensor.Value5.value)")
+    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value, 0.0, -0.6, 0.85, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, 0.0, -0.25, 0.25, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value*-1.0, 0.0, -0.15, 0.15, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value*-1.0, 0.0, -512.0, 512.0, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value*-1.0, 0.0, -512.0, 512.0, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, 0.0, -512.0, 512.0, 0, 0)")
 
 
   ## Creates a representation of the device in the virutal world.
@@ -336,22 +329,20 @@ class KeyboardMouseDevice(MultiDofDevice):
     # Factor to modify the device's rotation input.
     self.rotation_factor = 8.0
 
-    self.set_input_channel_parameters(self.rx_parameters, 0.0, -100.0, 100.0, 0, 0)
-    self.set_input_channel_parameters(self.ry_parameters, 0.0, -100.0, 100.0, 0, 0)
 
-    self.add_input_binding("self.set_x(self.keyboard_sensor.Button1.value*-1.0)")           # A
-    self.add_input_binding("self.set_x(self.keyboard_sensor.Button3.value)")                # D
-    self.add_input_binding("self.set_y(self.keyboard_sensor.Button7.value)")                # UP
-    self.add_input_binding("self.set_y(self.keyboard_sensor.Button8.value*-1.0)")           #  DOWN
-    self.add_input_binding("self.set_z(self.keyboard_sensor.Button0.value*-1.0)")            # W
-    self.add_input_binding("self.set_z(self.keyboard_sensor.Button2.value)")                # S
-    self.add_input_binding("self.set_reset_trigger(self.keyboard_sensor.Button4.value)")     # R
-    self.add_input_binding("self.set_coupling_trigger(self.keyboard_sensor.Button5.value)") # C
-    self.add_input_binding("self.set_dof_trigger(self.keyboard_sensor.Button6.value)")      # G
-    self.add_input_binding("self.set_rx(self.mouse_sensor.Value1.value*-1.0)")               # mouse up
-    self.add_input_binding("self.set_ry(self.mouse_sensor.Value0.value*-1.0)")               # mouse right
-    self.add_input_binding("self.set_w(self.mouse_sensor.Button0.value*-1.0)")               # left button
-    self.add_input_binding("self.set_w(self.mouse_sensor.Button2.value*1.0)")                # right button
+    self.add_input_binding("self.set_dof(0, self.keyboard_sensor.Button1.value*-1.0)")           # A
+    self.add_input_binding("self.set_dof(0, self.keyboard_sensor.Button3.value)")                # D
+    self.add_input_binding("self.set_dof(1, self.keyboard_sensor.Button7.value)")                # UP
+    self.add_input_binding("self.set_dof(1, self.keyboard_sensor.Button8.value*-1.0)")           #  DOWN
+    self.add_input_binding("self.set_dof(2, self.keyboard_sensor.Button0.value*-1.0)")           # W
+    self.add_input_binding("self.set_dof(2, self.keyboard_sensor.Button2.value)")                # S
+    self.add_input_binding("self.set_reset_trigger(self.keyboard_sensor.Button4.value)")         # R
+    self.add_input_binding("self.set_coupling_trigger(self.keyboard_sensor.Button5.value)")      # C
+    self.add_input_binding("self.set_dof_trigger(self.keyboard_sensor.Button6.value)")           # G
+    self.add_input_binding("self.set_and_filter_dof(3, self.mouse_sensor.Value1.value*-1.0, 0.0, -100.0, 100.0, 0, 0)") # mouse up
+    self.add_input_binding("self.set_and_filter_dof(4, self.mouse_sensor.Value0.value*-1.0, 0.0, -100.0, 100.0, 0, 0)") # mouse right
+    self.add_input_binding("self.set_dof(6, self.mouse_sensor.Button0.value*-1.0)")              # left button
+    self.add_input_binding("self.set_dof(6, self.mouse_sensor.Button2.value*1.0)")               # right button
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
@@ -401,23 +392,17 @@ class XBoxDevice(MultiDofDevice):
     # Factor to modify the device's rotation input.
     self.rotation_factor = 1.2
 
-    self.set_input_channel_parameters(self.x_parameters, 0.0, -1.0, 1.0, 15, 15)
-    self.set_input_channel_parameters(self.z_parameters, 0.0, -1.0, 1.0, 15, 15)
-    self.set_input_channel_parameters(self.y_parameters, -1.0, -1.0, 1.0, 10, 10)
-    self.set_input_channel_parameters(self.rx_parameters, 0.0, -1.0, 1.0, 15, 15)
-    self.set_input_channel_parameters(self.ry_parameters, 0.0, -1.0, 1.0, 15, 15)
-
-    self.add_input_binding("self.set_x(self.device_sensor.Value0.value)")
-    self.add_input_binding("self.set_z(self.device_sensor.Value1.value)")    
-    #self.add_input_binding("self.set_y(self.device_sensor.Value4.value*-1.0)")
-    #self.add_input_binding("self.set_y(self.device_sensor.Value5.value)")
-    self.add_input_binding("self.set_rx(self.device_sensor.Value3.value)")
-    self.add_input_binding("self.set_ry(self.device_sensor.Value2.value*-1.0)")
+    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value, 0.0, -1.0, 1.0, 15, 15)")
+    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value1.value, 0.0, -1.0, 1.0, 15, 15)")    
+    #self.add_input_binding("self.set_dof(1, self.device_sensor.Value4.value*-1.0)")
+    #self.add_input_binding("self.set_dof(1, self.device_sensor.Value5.value)")
+    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value, 0.0, -1.0, 1.0, 15, 15)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value2.value*-1.0, 0.0, -1.0, 1.0, 15, 15)")
     self.add_input_binding("self.set_reset_trigger(self.device_sensor.Button0.value)")       # X
     self.add_input_binding("self.set_coupling_trigger(self.device_sensor.Button1.value)")    # B
     self.add_input_binding("self.set_dof_trigger(self.device_sensor.Button2.value)")         # A
-    self.add_input_binding("self.set_w(self.device_sensor.Button6.value*-1.0)")              # TL
-    self.add_input_binding("self.set_w(self.device_sensor.Button7.value*1.0)")               # TR
+    self.add_input_binding("self.set_dof(6, self.device_sensor.Button6.value*-1.0)")         # TL
+    self.add_input_binding("self.set_dof(6, self.device_sensor.Button7.value*1.0)")          # TR
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
@@ -454,22 +439,15 @@ class OldSpheronDevice(MultiDofDevice):
     # Factor to modify the device's rotation input.
     self.rotation_factor = 0.0
 
-    self.set_input_channel_parameters(self.x_parameters, -0.00787377543747, -0.0134, 0.003, 5, 5)
-    self.set_input_channel_parameters(self.y_parameters, -0.00787377543747, -0.0115, -0.003, 20, 20)
-    self.set_input_channel_parameters(self.z_parameters, -0.00787377543747, -0.015, 0.0, 5, 5)
-    self.set_input_channel_parameters(self.rx_parameters, -0.00787377543747, -0.0095, -0.006, 0, 0)
-    self.set_input_channel_parameters(self.ry_parameters, 0.00787377543747, 0.00622577592731, 0.00912503432482, 0, 0)
-    self.set_input_channel_parameters(self.rz_parameters, -0.00787377543747, -0.0095, -0.006, 0, 0)
-
-    self.add_input_binding("self.set_x(self.device_sensor.Value0.value)")
-    self.add_input_binding("self.set_y(self.device_sensor.Value1.value*-1.0)")
-    self.add_input_binding("self.set_z(self.device_sensor.Value2.value)")    
-    self.add_input_binding("self.set_rx(self.device_sensor.Value3.value)")
-    self.add_input_binding("self.set_ry(self.device_sensor.Value4.value*-1.0)")
-    self.add_input_binding("self.set_rz(self.device_sensor.Value5.value)")
+    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value, -0.00787377543747, -0.0134, 0.003, 5, 5)")
+    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, -0.00787377543747, -0.0115, -0.003, 20, 20)")
+    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value, -0.00787377543747, -0.015, 0.0, 5, 5)")    
+    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value*-1.0, 0.00787377543747, 0.00622577592731, 0.00912503432482, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
     self.add_input_binding("self.set_reset_trigger(self.button_sensor.Button1.value)")       # middle button      
-    self.add_input_binding("self.set_w(self.button_sensor.Button0.value*-1.0)")              # left button
-    self.add_input_binding("self.set_w(self.button_sensor.Button2.value*1.0)")               # right button
+    self.add_input_binding("self.set_dof(6, self.button_sensor.Button0.value*-1.0)")              # left button
+    self.add_input_binding("self.set_dof(6, self.button_sensor.Button2.value*1.0)")               # right button
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
@@ -519,32 +497,19 @@ class NewSpheronDevice(MultiDofDevice):
     # Factor to modify the device's rotation input.
     self.rotation_factor = 25.0
 
-    self.set_input_channel_parameters(self.x_parameters, 0.0, -0.98, 1.0, 0, 0)
-    self.set_input_channel_parameters(self.y_parameters, 0.0, -0.44, 0.24, 0, 0)
-    self.set_input_channel_parameters(self.z_parameters, 0.0, -1.0, 0.94, 0, 0)
-    self.set_input_channel_parameters(self.rx_parameters, 0.0, -2048, 2048, 0, 0)
-    self.set_input_channel_parameters(self.ry_parameters, 0.0, -2048, 2048, 0, 0)
-    self.set_input_channel_parameters(self.rz_parameters, 0.0, -2048, 2048, 0, 0)
-    
-    self.ry_throttle_add = self.filter_channel(self.device_sensor.Value6.value, 0.0, -0.6, 0.37, 0, 0)
 
-    self.add_input_binding("self.set_x(self.device_sensor.Value0.value*-1.0)")
-    self.add_input_binding("self.set_y(self.device_sensor.Value1.value)")
-    self.add_input_binding("self.set_z(self.device_sensor.Value2.value)")    
-    self.add_input_binding("self.set_rx(self.device_sensor.Value3.value*-1.0)")
-    self.add_input_binding("self.set_ry(self.device_sensor.Value4.value*-1.0 + self.ry_throttle_add*100)")
-    self.add_input_binding("self.set_rz(self.device_sensor.Value5.value)")
-    #self.add_input_binding("self.set_ry(self.device_sensor.Value6.value)")
+    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value*-1.0, 0.0, -0.98, 1.0, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value, 0.0, -0.44, 0.24, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value, 0.0, -1.0, 0.94, 0, 0)")    
+    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value*-1.0, 0.0, -2048, 2048, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value*-1.0, 0.0, -2048, 2048, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, 100 * self.device_sensor.Value6.value, 0.0, -0.6, 0.37, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, 0.0, -2048, 2048, 0, 0)")
     
     self.add_input_binding("self.set_reset_trigger(self.device_sensor.Button1.value)")       # middle button      
-    self.add_input_binding("self.set_w(self.device_sensor.Button0.value*-1.0)")              # left button
-    self.add_input_binding("self.set_w(self.device_sensor.Button2.value*1.0)")               # right button
+    self.add_input_binding("self.set_dof(6, self.device_sensor.Button0.value*-1.0)")         # left button
+    self.add_input_binding("self.set_dof(6, self.device_sensor.Button2.value*1.0)")          # right button
 
-    self.always_evaluate(True)
-
-  ## Evaluated every frame.
-  def evaluate(self):
-    self.ry_throttle_add = self.filter_channel(self.device_sensor.Value6.value, 0.0, -0.6, 0.37, 0, 0)
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.

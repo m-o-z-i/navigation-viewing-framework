@@ -98,7 +98,9 @@ class RecorderPlayer(avango.script.Script):
     # Index of the current waypoint in the recording currently played by the player.
     self.play_index = 0
 
-    self.time_step = 0
+    ## @var playing_time
+    # Variable used to store the point in time when an animation was paused.
+    self.playing_time = 0
 
     ## @var play_reset_flag
     # Boolean indicating if the end of the path to be played was reached.
@@ -208,7 +210,7 @@ class RecorderPlayer(avango.script.Script):
   ## Evaluated every frame when a playing in in progress.
   def player_callback(self):
 
-    _time_step = self.time_step + (time.time() - self.player_start_time)
+    _time_step = self.playing_time + (time.time() - self.player_start_time)
 
     self.play(_time_step)
 
@@ -406,7 +408,6 @@ class RecorderPlayer(avango.script.Script):
 
     print_message("Start playing")
 
-    #self.play_index = 0
     self.play_reset_flag = False
 
     self.player_start_time = time.time()
@@ -419,9 +420,7 @@ class RecorderPlayer(avango.script.Script):
     if self.player_trigger.Active.value == True:
       print_message("Stop playing")
 
-      #self.play_index = None
-      self.time_step += time.time() - self.player_start_time
-      print self.time_step
+      self.playing_time += time.time() - self.player_start_time
 
       self.player_trigger.Active.value = False # deactivate player callback
 
@@ -432,7 +431,7 @@ class RecorderPlayer(avango.script.Script):
       print_message("Reset player")
 
       self.play_index = 0
-      self.time_step = 0
+      self.playing_time = 0
 
       _values 	= self.recording_list[0]
       _pos		= _values[1]

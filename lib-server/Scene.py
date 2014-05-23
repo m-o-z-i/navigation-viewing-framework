@@ -22,24 +22,30 @@ class SceneVRHyperspace1(SceneObject):
     # geometry
     _mat = avango.gua.make_identity_mat()
     self.init_geometry("bwb_inner", "data/objects/vr_hyperspace/bwb/inner.obj", _mat, None, True, False, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    #self.init_geometry("bwb_inner_windows", "data/objects/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", False, False, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    #self.init_geometry("bwb_inner_left_seats", "data/objects/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze.obj", _mat, None, False, False, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_windows", "data/objects/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", False, False, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats", "data/objects/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze.obj", _mat, None, False, False, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(-60.0, 5.5, 4.5)
     self.init_geometry("steppo", "data/objects/avatars_obj/shot_steppo_animation_010000000001.obj", _mat, None, False, True, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     # lights    
-    _mat = avango.gua.make_trans_mat(-59.0, 7.6, 5.0)
+    _mat = avango.gua.make_trans_mat(-59.0, 7.75, 5.0)
     self.init_light(1, "ceiling_light1", avango.gua.Color(1.0, 0.25, 0.25), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
-    #_mat = avango.gua.make_trans_mat(-50.0, 7.6, 5.0) * avango.gua.make_scale_mat(5.0)
-    #self.init_light(1, "ceiling_light2", avango.gua.Color(0.0, 1.0, 0.0), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+    _mat = avango.gua.make_trans_mat(-50.0, 7.75, 5.0)
+    self.init_light(1, "ceiling_light2", avango.gua.Color(1.0, 1.0, 0.0), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
-    #_mat = avango.gua.make_trans_mat(-59.0, 7.6, 0.0) * avango.gua.make_scale_mat(5.0)
-    #self.init_light(1, "ceiling_light3", avango.gua.Color(0.0, 1.0, 1.0), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+    _mat = avango.gua.make_trans_mat(-59.0, 7.75, 0.0)
+    self.init_light(1, "ceiling_light3", avango.gua.Color(0.0, 1.0, 1.0), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
-    #_mat = avango.gua.make_trans_mat(-50.0, 7.6, 0.0) * avango.gua.make_scale_mat(10.0)
-    #self.init_light(1, "ceiling_light4", avango.gua.Color(0.0, 0.0, 1.0), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+    _mat = avango.gua.make_trans_mat(-50.0, 7.75, 0.0)
+    self.init_light(1, "ceiling_light4", avango.gua.Color(1.0, 1.0, 1.0), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(-50.0, 7.75, 0.0)
+    self.init_light(1, "ceiling_light5", avango.gua.Color(1.0, 0.0, 1.0), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(-50.0, 7.75, 0.0)
+    self.init_light(1, "ceiling_light6", avango.gua.Color(0.6, 0.3, 0.7), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
 
 class SceneVRHyperspace2(SceneObject):
@@ -167,7 +173,7 @@ class MedievalTown(SceneObject):
     #self.water_updater.TimeIn.connect_from(self.timer.Time)
 
     _mat = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
-    #self.init_geometry("steppo", "data/objects/avatars_obj/shot_steppo_animation_010000000001.obj", _mat, None, False, True, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("steppo", "data/objects/avatars_obj/shot_steppo_animation_010000000001.obj", _mat, None, False, True, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)

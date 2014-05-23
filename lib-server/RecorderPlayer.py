@@ -279,14 +279,14 @@ class RecorderPlayer(avango.script.Script):
   ## Loads all the paths for the handled scenegraph node from the path_recordings directory.
   def load_recorded_paths(self):
 
-    _entries = listdir("path_recordings/")
+    _entries = listdir("recordings/paths/")
 
     for _entry in _entries:
 
       if _entry.endswith("~"):
         continue
 
-      _path = "path_recordings/{0}".format(_entry)
+      _path = "recordings/paths/{0}".format(_entry)
 
       self.load_path_from_file(_path)
 
@@ -379,7 +379,7 @@ class RecorderPlayer(avango.script.Script):
     _path = self.SCENEGRAPH_NODE.Path.value
     _path = _path.replace("/", "-")
 
-    _name = "path_recordings/" + _path +"_path_" + str(self.recording_index)
+    _name = "recordings/paths/" + _path +"_path_" + str(self.recording_index)
     _file = open(_name,"w")
 
     _recording_list = []
@@ -416,7 +416,7 @@ class RecorderPlayer(avango.script.Script):
     print_message("Start playing")
 
     if self.play_mode == "EQUAL_SPEED":
-      _velocity = 2 # in m/s
+      _velocity = 1 # in m/s
       _current_time = 0.0
       self.recording_list[0][0] = 0.0
       

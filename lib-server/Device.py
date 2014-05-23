@@ -484,10 +484,15 @@ class NewSpheronDevice(MultiDofDevice):
 
     self.init_station_tracking(TRACKING_TARGET_NAME, NO_TRACKING_MAT)
     
-    ## @var device_sensor
-    # Device sensor for the device's inputs.
-    self.device_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
-    self.device_sensor.Station.value = DEVICE_STATION
+    ## @var device_sensor_right
+    # Device sensor for the device's right inputs.
+    self.device_sensor_right = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
+    self.device_sensor_right.Station.value = DEVICE_STATION + "-right"
+
+    ## @var device_sensor_left
+    # Device sensor for the device's left inputs.
+    self.device_sensor_left = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
+    self.device_sensor_left.Station.value = DEVICE_STATION + "-left"
     
     ## @var translation_factor
     # Factor to modify the device's translation input.
@@ -497,19 +502,20 @@ class NewSpheronDevice(MultiDofDevice):
     # Factor to modify the device's rotation input.
     self.rotation_factor = 25.0
 
-
-    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value*-1.0, 0.0, -0.98, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value, 0.0, -0.44, 0.24, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value, 0.0, -1.0, 0.94, 0, 0)")    
-    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value*-1.0, 0.0, -2048, 2048, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value*-1.0, 0.0, -2048, 2048, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, 100 * self.device_sensor.Value6.value, 0.0, -0.6, 0.37, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, 0.0, -2048, 2048, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_right.Value0.value*-1.0, 0.0, -0.98, 1.0, 0, 0)")
+    self.add_input_binding("self.set_dof(0, self.device_sensor_left.Value0.value)")
+    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_right.Value1.value, 0.0, -0.44, 0.24, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_right.Value2.value, 0.0, -1.0, 0.94, 0, 0)")    
+    self.add_input_binding("self.set_dof(2, self.device_sensor_left.Value1.value)")
+    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor_right.Value3.value*-1.0, 0.0, -2048, 2048, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value4.value*-1.0, 0.0, -2048, 2048, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, 0.05 * self.device_sensor_right.Value6.value, 0.0, -0.6, 0.37, 0, 0)")
+    self.add_input_binding("self.set_dof(4, -0.05 * self.device_sensor_left.Value2.value)")
+    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor_right.Value5.value, 0.0, -2048, 2048, 0, 0)")
     
-    self.add_input_binding("self.set_reset_trigger(self.device_sensor.Button1.value)")       # middle button      
-    self.add_input_binding("self.set_dof(6, self.device_sensor.Button0.value*-1.0)")         # left button
-    self.add_input_binding("self.set_dof(6, self.device_sensor.Button2.value*1.0)")          # right button
-
+    self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
+    self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
+    self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.

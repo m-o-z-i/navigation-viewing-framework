@@ -262,6 +262,12 @@ class RecorderPlayer(avango.script.Script):
 
       self.reset_player()
 
+      # set node to new starting position without starting the playing progress
+      self.interpolate_between_frames(self.recording_list, 0)
+
+      if self.NAVIGATION != None:
+        self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
+
       print_message("Switch to recording " + str(self.recording_index))
 
   ## Switches to the next recording to be played.
@@ -280,6 +286,12 @@ class RecorderPlayer(avango.script.Script):
       self.recording_list = self.recordings_list[self.recording_index]
 
       self.reset_player()
+
+      # set node to new starting position without starting the playing progress
+      self.interpolate_between_frames(self.recording_list, 0)
+      
+      if self.NAVIGATION != None:
+        self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
 
       print_message("Switch to recording " + str(self.recording_index))
 

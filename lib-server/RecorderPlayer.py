@@ -16,6 +16,7 @@ import Tools
 # import python libraries
 import time
 import math
+import copy
 from os import listdir
 
 ## Class to record paths of scenegraph nodes over a specific timespan. Can record the whole
@@ -181,6 +182,9 @@ class RecorderPlayer(avango.script.Script):
   @field_has_changed(sf_play_mode_key)
   def sf_play_mode_key_changed(self):
     
+    self.stop_player()
+    self.stop_recorder()
+
     if self.sf_play_mode_key.value == True:
 
       if self.play_mode == "CONTINUOUS":
@@ -197,6 +201,9 @@ class RecorderPlayer(avango.script.Script):
   ## Called whenever sf_record_mode_key changes.
   @field_has_changed(sf_record_mode_key)
   def sf_record_mode_key_changed(self):
+
+    self.stop_player()
+    self.stop_recorder()
     
     if self.sf_record_mode_key.value == True:
 
@@ -416,15 +423,16 @@ class RecorderPlayer(avango.script.Script):
     print_message("Start playing")
 
     if self.play_mode == "EQUAL_SPEED":
+      self.mod_recording_list = self.unshared_copy(self.recording_list)
       _velocity = 2 # in m/s
       _current_time = 0.0
-      self.recording_list[0][0] = 0.0
+      self.mod_recording_list[0][0] = 0.0
       
-      for _i in range(1, len(self.recording_list)):
-        _pos_last = self.recording_list[_i-1][1]
-        _pos_curr = self.recording_list[_i][1]
+      for _i in range(1, len(self.mod_recording_list)):
+        _pos_last = self.mod_recording_list[_i-1][1]
+        _pos_curr = self.mod_recording_list[_i][1]
         _distance = Tools.euclidean_distance(_pos_last, _pos_curr)
-        self.recording_list[_i][0] = _current_time + (_distance * 1/_velocity)
+        self.mod_recording_list[_i][0] = _current_time + (_distance * 1/_velocity)
         _current_time += (_distance * 1/_velocity)
     
 
@@ -433,6 +441,14 @@ class RecorderPlayer(avango.script.Script):
     self.player_start_time = time.time()
 
     self.player_trigger.Active.value = True # activate player callback
+
+  ## Returns a deep copy without references of a given list.
+  # @param IN_LIST The list to be copied.
+  def unshared_copy(self, IN_LIST):
+    
+    if isinstance(IN_LIST, list):
+        return list( map(self.unshared_copy, IN_LIST) )
+    return IN_LIST
 
   ## Stops the player.
   def stop_player(self):
@@ -469,21 +485,29 @@ class RecorderPlayer(avango.script.Script):
   # @param TIME_STEP The point in time to which the node is set.
   def play(self, TIME_STEP):
 
+    _recording_to_play = []
+
+    if self.play_mode == "EQUAL_SPEED":
+      _recording_to_play = self.mod_recording_list
+    else:
+      _recording_to_play = self.recording_list
+
+
     if self.play_index != None:
 
-      _last_recorded_time_step = self.recording_list[-1][0]
+      _last_recorded_time_step = _recording_to_play[-1][0]
 
       if TIME_STEP > _last_recorded_time_step:
         self.play_reset_flag = True # object has finished it's animation
 
       else:
-        _time_step1 = self.recording_list[self.play_index][0]
+        _time_step1 = _recording_to_play[self.play_index][0]
 
         if TIME_STEP >= _time_step1:
 
-          for _index in range(self.play_index, len(self.recording_list)):
-            _time_step2 = self.recording_list[_index+1][0]
-            _time_step1 = self.recording_list[_index][0]
+          for _index in range(self.play_index, len(_recording_to_play)):
+            _time_step2 = _recording_to_play[_index+1][0]
+            _time_step1 = _recording_to_play[_index][0]
 
             if TIME_STEP <= _time_step2:
               self.play_index = _index
@@ -497,7 +521,7 @@ class RecorderPlayer(avango.script.Script):
                 else:
                   _factor = 1.0
 
-              self.interpolate_between_frames(_factor) # interpolate position and orientation and scale
+              self.interpolate_between_frames(_recording_to_play, _factor) # interpolate position and orientation and scale
 
               if self.NAVIGATION != None and TIME_STEP < 0.1:
                 self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
@@ -505,15 +529,16 @@ class RecorderPlayer(avango.script.Script):
               break
 
   ## Interpolates between the two frames at play_index and play_index + 1.
+  # @param RECORDING_TO_PLAY The recording list to be played.
   # @param FACTOR The factor to interpolate to between frames. [0; 1]
-  def interpolate_between_frames(self, FACTOR):
+  def interpolate_between_frames(self, RECORDING_TO_PLAY, FACTOR):
 
-    _tupel1 = self.recording_list[self.play_index]
+    _tupel1 = RECORDING_TO_PLAY[self.play_index]
     _pos1 = _tupel1[1]
     _quat1 = _tupel1[2]
     _scale1 = _tupel1[3]
 
-    _tupel2 = self.recording_list[self.play_index+1]
+    _tupel2 = RECORDING_TO_PLAY[self.play_index+1]
     _pos2	= _tupel2[1]
     _quat2 = _tupel2[2]
     _scale2 = _tupel2[3]

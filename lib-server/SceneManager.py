@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains classes SceneManager, TimedMaterialUniformUpdate and TimedRotationUpdate.
+# Contains classes SceneManager, TimedMaterialUniformUpdate, TimedSwayingUpdate and TimedRotationUpdate.
 
 # import avango-guacamole libraries
 import avango

@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+## @file
+# Contains class BoundingBoxVisualization.
+
 # import guacamole libraries
 import avango
 import avango.gua
@@ -26,7 +29,7 @@ class BoundingBoxVisualization(avango.script.Script):
     self.super(BoundingBoxVisualization).__init__()
 
   ## Custom constructor.
-  # @param OBJECT Reference to a SceneObject instance to be handled.
+  # @param OBJECT Reference to an InteractiveObject instance to be handled.
   # @param SCENEGRAPH Reference to the scenegraph in which the object is located.
   # @param NET_TRANS_NODE Active nettrans node to be used for distribution.
   # @param MATERIAL Material string to be used for the visualization.
@@ -34,7 +37,7 @@ class BoundingBoxVisualization(avango.script.Script):
 
     # references
     ## @var OBJECT
-    # Reference to the SceneObject instance to be handled.
+    # Reference to the InteractiveObject instance to be handled.
     self.OBJECT = OBJECT
 
     ## @var SCENEGRAPH

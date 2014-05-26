@@ -243,6 +243,9 @@ class RayPointer(avango.script.Script):
               
             # enable highlight of new object
             self.highlighted_object.enable_highlight(True)
+
+            # evtl. print data from database
+            self.highlighted_object.print_db_data()
  
     else: # no intersection found
     

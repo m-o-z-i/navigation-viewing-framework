@@ -137,32 +137,70 @@ class DayAnimationUpdate(avango.script.Script):
 class SceneManager(avango.script.Script):
 
   # input fields
+  ## @var sf_key1
+  # Boolean field representing the key for scene 1.
   sf_key1 = avango.SFBool()
+
+  ## @var sf_key2
+  # Boolean field representing the key for scene 2.
   sf_key2 = avango.SFBool()
+  
+  ## @var sf_key3
+  # Boolean field representing the key for scene 3.
   sf_key3 = avango.SFBool()
+
+  ## @var sf_key4
+  # Boolean field representing the key for scene 4.
   sf_key4 = avango.SFBool()
+
+  ## @var sf_key5
+  # Boolean field representing the key for scene 5.
   sf_key5 = avango.SFBool()
+
+  ## @var sf_key6
+  # Boolean field representing the key for scene 6.
   sf_key6 = avango.SFBool()
+
+  ## @var sf_key7
+  # Boolean field representing the key for scene 7.
   sf_key7 = avango.SFBool()
+
+  ## @var sf_key8
+  # Boolean field representing the key for scene 8.
   sf_key8 = avango.SFBool()
+
+  ## @var sf_key9
+  # Boolean field representing the key for scene 9.
   sf_key9 = avango.SFBool()
+
+  ## @var sf_key0
+  # Boolean field representing the key for scene 0.
   sf_key0 = avango.SFBool()
 
+  ## @var sf_key_home
+  # Boolean field representing the home key.
   sf_key_home = avango.SFBool()
 
-
-  # constructor
+  # Default constructor.
   def __init__(self):
     self.super(SceneManager).__init__()
 
     # parameters
+    ## @var hierarchy_materials
+    # List of material strings to be used for representing the bounding box hierarchies.
     self.hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
 
     # variables
+    ## @var scenes
+    # A list of scenes that were loaded.
     self.scenes = []
+
+    ## @var active_scene
+    # Number of the currently active (displayed) scene.
     self.active_scene = None
 
-    # sensor
+    ## @var keyboard_sensor
+    # Device sensor representing the keyboard attached to the computer.
     self.keyboard_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.keyboard_sensor.Station.value = "device-keyboard0"
 
@@ -176,12 +214,13 @@ class SceneManager(avango.script.Script):
     self.sf_key7.connect_from(self.keyboard_sensor.Button16) # key 7
     self.sf_key8.connect_from(self.keyboard_sensor.Button17) # key 8
     self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
-    self.sf_key0.connect_from(self.keyboard_sensor.Button9) # key 0
+    self.sf_key0.connect_from(self.keyboard_sensor.Button9)  # key 0
     self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
 
 
   ## Custom constructor
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
+  # @param SCENEGRAPH Reference to the scenegraph to which the nettrans node is appended.
   def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH):
 
     # init scenes   
@@ -194,77 +233,78 @@ class SceneManager(avango.script.Script):
     self.activate_scene(0) # activate first scene
     
 
- # callbacks
+  # callbacks
+  ## Called whenever sf_key1 changes.
   @field_has_changed(sf_key1)
   def sf_key1_changed(self):
 
     if self.sf_key1.value == True: # key pressed
       self.activate_scene(0)
 
-
+  ## Called whenever sf_key2 changes.
   @field_has_changed(sf_key2)
   def sf_key2_changed(self):
 
     if self.sf_key2.value == True: # key pressed
       self.activate_scene(1)
 
-
+  ## Called whenever sf_key3 changes.
   @field_has_changed(sf_key3)
   def sf_key3_changed(self):
 
     if self.sf_key3.value == True: # key pressed
       self.activate_scene(2)
 
-
+  ## Called whenever sf_key4 changes.
   @field_has_changed(sf_key4)
   def sf_key4_changed(self):
 
     if self.sf_key4.value == True: # key pressed
       self.activate_scene(3)
 
-
+  ## Called whenever sf_key5 changes.
   @field_has_changed(sf_key5)
   def sf_key5_changed(self):
 
     if self.sf_key5.value == True: # key pressed
       self.activate_scene(4)
 
-
+  ## Called whenever sf_key6 changes.
   @field_has_changed(sf_key6)
   def sf_key6_changed(self):
 
     if self.sf_key6.value == True: # key pressed
       self.activate_scene(5)
 
-
+  ## Called whenever sf_key7 changes.
   @field_has_changed(sf_key7)
   def sf_key7_changed(self):
 
     if self.sf_key7.value == True: # key pressed
       self.activate_scene(6)
 
-
+  ## Called whenever sf_key8 changes.
   @field_has_changed(sf_key8)
   def sf_key8_changed(self):
 
     if self.sf_key8.value == True: # key pressed
       self.activate_scene(7)
       
-
+  ## Called whenever sf_key9 changes.
   @field_has_changed(sf_key9)
   def sf_key9_changed(self):
 
     if self.sf_key9.value == True: # key pressed
       self.activate_scene(8)
       
-
+  ## Called whenever sf_key0 changes.
   @field_has_changed(sf_key0)
   def sf_key0_changed(self):
 
     if self.sf_key0.value == True: # key pressed
       self.activate_scene(9)
 
-
+  ## Called whenever sf_key_home changes.
   @field_has_changed(sf_key_home)
   def sf_key_home_changed(self):
 
@@ -273,6 +313,8 @@ class SceneManager(avango.script.Script):
 
 
   # functions
+  ## Sets one of the loaded scene to the active (displayed) one.
+  # @param ID The scene id to be activated.
   def activate_scene(self, ID):
   
     # disable all scenes
@@ -285,7 +327,7 @@ class SceneManager(avango.script.Script):
   
       print "Switching to Scene: " + self.active_scene.name
   
-  
+  ## Prints all the nodes of the active scene on the console.
   def print_active_scene(self):
   
     if self.active_scene != None:
@@ -299,7 +341,8 @@ class SceneManager(avango.script.Script):
         print _object.hierarchy_level
         print _node.Transform.value
   
-  
+  ## Returns the hierarchy material string for a given depth.
+  # @param INDEX The material index / depth to be returned.
   def get_hierarchy_material(self, INDEX):
   
     return self.hierarchy_materials[INDEX]

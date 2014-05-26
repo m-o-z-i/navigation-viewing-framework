@@ -10,10 +10,13 @@ import avango.script
 from avango.script import field_has_changed
 
 # import framework libraries
+from ConsoleIO   import *
 from Visualization import *
 
 # import python libraries
 # ...
+
+import psycopg2
 
 
 class SceneObject:
@@ -37,6 +40,28 @@ class SceneObject:
 
 
   # functions
+  def load_objects_from_database(self, USER, PASSWORD, DBNAME, TABLENAME, HOST = "localhost", SELECT = "*"):
+    # connect to database
+    try:
+      _dbconn = psycopg2.connect("dbname='" + DBNAME + "' user='" + USER + "' host='" + HOST + "' password = '" + PASSWORD + "'")
+    except:
+      print_error("Unable to access database '{0}' as user '{1}' on '{2}'".format(DBNAME, USER, HOST), False)
+      return False
+
+    # select rows from table according to given select-string
+    _cursor = _dbconn.cursor()
+    _cursor.execute("SELECT {0} FROM {1}".format(SELECT, TABLENAME))
+
+    # load geometry for each row
+    for _id, _name, _filename, _color, _trans, _rot, _scale in _cursor.fetchall():
+      _trans_mat = avango.gua.make_trans_mat(_trans[0], _trans[1], _trans[2])
+      _rot_mat = avango.gua.make_rot_mat(_rot[0], _rot[1], _rot[2], _rot[3])
+      _scale_mat = avango.gua.make_scale_mat(_scale[0], _scale[1], _scale[2])
+      _mat = _trans_mat * _scale_mat * _rot_mat
+
+      self.init_geometry(_name, _filename, _mat, None, True, True, self.scene_root)
+
+
   def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE):
 
     _loader = avango.gua.nodes.GeometryLoader()

@@ -186,8 +186,9 @@ class SceneManager(avango.script.Script):
 
     # init scenes   
     #self.scene1 = MedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)    
+    self.scene1 = SceneDatabaseTest(self, SCENEGRAPH, NET_TRANS_NODE)
 
-    self.scene2 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene2 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene3 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene4 = SceneVRHyperspace3(self, SCENEGRAPH, NET_TRANS_NODE)    
 

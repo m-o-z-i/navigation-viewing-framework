@@ -6,83 +6,130 @@ import avango.gua
 import avango.script
 from avango.script import field_has_changed
 
-
+# import python libraries
 import time
 
-
+## Initializes a bounding box visualization of an object in the scene.
 class BoundingBoxVisualization(avango.script.Script):
 
   # internal fields
+  ## @var sf_node_mat
+  # Matrix to represent the WorldTransform of the object to be handled.
   sf_node_mat = avango.gua.SFMatrix4()
+
+  ## @var sf_enable_flag
+  # Boolean field indicating if this bounding box visualization is activated.
   sf_enable_flag = avango.SFBool()
 
-  # constructor
+  ## Default constructor.
   def __init__(self):
     self.super(BoundingBoxVisualization).__init__()
 
+  ## Custom constructor.
+  # @param OBJECT Reference to a SceneObject instance to be handled.
+  # @param SCENEGRAPH Reference to the scenegraph in which the object is located.
+  # @param NET_TRANS_NODE Active nettrans node to be used for distribution.
+  # @param MATERIAL Material string to be used for the visualization.
   def my_constructor(self, OBJECT, SCENEGRAPH, NET_TRANS_NODE, MATERIAL):
 
     # references
+    ## @var OBJECT
+    # Reference to the SceneObject instance to be handled.
     self.OBJECT = OBJECT
+
+    ## @var SCENEGRAPH
+    # Reference to the scenegraph in which the handled object is located.
     self.SCENEGRAPH = SCENEGRAPH
 
-    # parameters
-    self.bb_thickness	= 0.035 # in meter
+    ## @var bb_thickness
+    # Thickness of the bounding box lines in meters.
+    self.bb_thickness	= 0.035
 
     # variables
+    ## @var lf_node_mat
+    # Last frame matrix of the handled object to detect changes.
     self.lf_node_mat = avango.gua.make_identity_mat()
+
+    ## @var bb
+    # The bounding box to be visualized.
     self.bb = None
 
     # init nodes    
     _loader = avango.gua.nodes.GeometryLoader()
-        
+    
+    ## @var edge_group
+    # Scenegraph transformation node to group all the bounding box edges.
     self.edge_group = avango.gua.nodes.TransformNode()
     NET_TRANS_NODE.Children.value.append(self.edge_group)
     
+    ## @var edge1
+    # Geometry node representing the first edge of the visualized bounding box.
     self.edge1 = _loader.create_geometry_from_file("edge1", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge1.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge1)
 
+    ## @var edge2
+    # Geometry node representing the second edge of the visualized bounding box.
     self.edge2 = _loader.create_geometry_from_file("edge2", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge2.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge2)
 
+    ## @var edge3
+    # Geometry node representing the third edge of the visualized bounding box.
     self.edge3 = _loader.create_geometry_from_file("edge3", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge3.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge3)
 
+    ## @var edge4
+    # Geometry node representing the fourth edge of the visualized bounding box.
     self.edge4 = _loader.create_geometry_from_file("edge4", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge4.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge4)
 
+    ## @var edge5
+    # Geometry node representing the fifth edge of the visualized bounding box.
     self.edge5 = _loader.create_geometry_from_file("edge5", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge5.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge5)
 
+    ## @var edge6
+    # Geometry node representing the sixth edge of the visualized bounding box.
     self.edge6 = _loader.create_geometry_from_file("edge6", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge6.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge6)
  
+    ## @var edge7
+    # Geometry node representing the seventh edge of the visualized bounding box.
     self.edge7 = _loader.create_geometry_from_file("edge7", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge7.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge7)
 
+    ## @var edge8
+    # Geometry node representing the eighth edge of the visualized bounding box.
     self.edge8 = _loader.create_geometry_from_file("edge8", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge8.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge8)
 
+    ## @var edge9
+    # Geometry node representing the nineth edge of the visualized bounding box.
     self.edge9 = _loader.create_geometry_from_file("edge9", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge9.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge9)
 
+    ## @var edge10
+    # Geometry node representing the tenth edge of the visualized bounding box.
     self.edge10 = _loader.create_geometry_from_file("edge10", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge10.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge10)
 
+    ## @var edge11
+    # Geometry node representing the eleventh edge of the visualized bounding box.
     self.edge11 = _loader.create_geometry_from_file("edge11", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge11.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge11)
 
+    ## @var edge12
+    # Geometry node representing the twelveth edge of the visualized bounding box.
     self.edge12 = _loader.create_geometry_from_file("edge12", "data/objects/cube.obj", MATERIAL, avango.gua.LoaderFlags.DEFAULTS)
     self.edge12.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.edge_group.Children.value.append(self.edge12)
@@ -96,6 +143,7 @@ class BoundingBoxVisualization(avango.script.Script):
   
 
   # callbacks
+  ## Called whenever sf_enable_flag changes.
   @field_has_changed(sf_enable_flag)
   def sf_enable_flag_changed(self):
   
@@ -128,7 +176,7 @@ class BoundingBoxVisualization(avango.script.Script):
       self.edge12.GroupNames.value = ["do_not_display_group"]
   
   
-  #'''
+  ## Called whenever sf_node_mat changes.
   @field_has_changed(sf_node_mat)
   def sf_node_mat_changed(self):
 
@@ -140,13 +188,11 @@ class BoundingBoxVisualization(avango.script.Script):
       self.update_bb_scale()
       
     self.lf_node_mat = self.sf_node_mat.value
-    
-    #self.calc_bb()
-  #'''
-
 
 
   # functions
+  ## Changes the material of the visualized bounding box.
+  # @param MATERIAL The material string to be set and used.
   def set_material(self, MATERIAL):
 
     self.edge1.Material.value = MATERIAL
@@ -162,7 +208,7 @@ class BoundingBoxVisualization(avango.script.Script):
     self.edge11.Material.value = MATERIAL
     self.edge12.Material.value = MATERIAL
       
- 
+  ## Calculates the bounding box of the current object.
   def calc_bb(self):
   
     _node = self.OBJECT.get_node()
@@ -171,7 +217,7 @@ class BoundingBoxVisualization(avango.script.Script):
 
     self.update_bb_scale()
 
-  
+  ## Computes and sets the correct transformations for the edges of the visualized bounding box.
   def update_bb_scale(self):
     
     if self.bb != None:

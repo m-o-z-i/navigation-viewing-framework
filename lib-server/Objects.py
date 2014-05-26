@@ -59,10 +59,10 @@ class SceneObject:
       _scale_mat = avango.gua.make_scale_mat(_scale[0], _scale[1], _scale[2])
       _mat = _trans_mat * _scale_mat * _rot_mat
 
-      self.init_geometry(_name, _filename, _mat, None, True, True, self.scene_root)
+      self.init_geometry(_name, _filename, _mat, None, True, True, self.scene_root, _id)
 
 
-  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE):
+  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, DB_ID = -1):
 
     _loader = avango.gua.nodes.GeometryLoader()
 
@@ -78,7 +78,7 @@ class SceneObject:
     _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, eval(_loader_flags))
     _node.Transform.value = MATRIX
   
-    self.init_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+    self.init_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, DB_ID)
  
 
   def init_light(self, TYPE, NAME, COLOR, MATRIX, PARENT_NODE):
@@ -112,7 +112,7 @@ class SceneObject:
     self.init_objects(_node, PARENT_NODE, False, True)
 
 
-  def init_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG):
+  def init_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, DB_ID = -1):
 
     if NODE.get_type() == 'av::gua::TransformNode' and len(NODE.Children.value) > 0: # group node 
 
@@ -133,7 +133,7 @@ class SceneObject:
     elif NODE.get_type() == 'av::gua::GeometryNode' or NODE.get_type() == 'av::gua::SunLightNode' or NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
 
       _object = InteractiveObject()
-      _object.my_constructor(self.SCENE_MANAGER, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+      _object.my_constructor(self.SCENE_MANAGER, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, DB_ID)
 
       self.objects.append(_object)
 
@@ -163,7 +163,7 @@ class InteractiveObject(avango.script.Script):
     self.super(InteractiveObject).__init__()
 
 
-  def my_constructor(self, SCENE_MANAGER, NODE, PARENT_OBJECT, SCENEGRAPH, NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG):
+  def my_constructor(self, SCENE_MANAGER, NODE, PARENT_OBJECT, SCENEGRAPH, NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, DB_ID = -1):
 
     # references
     self.SCENE_MANAGER = SCENE_MANAGER
@@ -203,6 +203,7 @@ class InteractiveObject(avango.script.Script):
 
     self.gf_pick_flag = GROUNDFOLLOWING_PICK_FLAG
     self.man_pick_flag = MANIPULATION_PICK_FLAG
+    self.db_id = DB_ID
 
 
     if self.parent_object.get_type() == "Objects::InteractiveObject": # interactive object
@@ -345,5 +346,29 @@ class InteractiveObject(avango.script.Script):
 
       else: # scene root
         return None
-    
-    
+  
+
+  def print_db_data(self):
+
+    if self.db_id >= 0:
+
+      DBNAME = "pitoti"
+      USER = "pitoti"
+      HOST = "localhost"
+      PASSWORD = "seradina"
+      TABLENAME = "testscene"
+      
+      # connect to database
+      try:
+        _dbconn = psycopg2.connect("dbname='" + DBNAME + "' user='" + USER + "' host='" + HOST + "' password = '" + PASSWORD + "'")
+      except:
+        print_error("Unable to access database '{0}' as user '{1}' on '{2}'".format(DBNAME, USER, HOST), False)
+        return False
+
+      # select rows from table according to given select-string
+      _cursor = _dbconn.cursor()
+      _cursor.execute("SELECT * FROM {0} WHERE id = {1}".format(TABLENAME, self.db_id))
+
+      # load geometry for each row
+      for _id, _name, _filename, _color, _trans, _rot, _scale in _cursor.fetchall():
+        print "PICKED '{0}', loaded from '{1}'".format(_name, _filename)

@@ -72,8 +72,8 @@ def start():
   animation_manager = AnimationManager()
   #animation_manager.my_constructor([ graph["/net/platform_0"]]
   #                               , [ application_manager.navigation_list[0]])
-  animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"], graph["/net/SceneVRHyperspace1/ceiling_light5"], graph["/net/SceneVRHyperspace1/ceiling_light6"]]
-                                 , [None, None, None, None, None, None])
+  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"], graph["/net/SceneVRHyperspace1/ceiling_light5"], graph["/net/SceneVRHyperspace1/ceiling_light6"]]
+  #                               , [None, None, None, None, None, None])
 
 
   manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)

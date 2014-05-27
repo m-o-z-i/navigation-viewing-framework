@@ -21,7 +21,7 @@ class SceneDatabaseTest(SceneObject):
     
     # load all objects from given database
     for row in DATABASE.get_rows():
-      _id, _name, _file, _material, _color, _trans, _rot, _scale, _category = row
+      _id, _name, _file, _material, _trans, _rot, _scale, _category = row
       _trans_mat = avango.gua.make_trans_mat(_trans[0], _trans[1], _trans[2])
       _rot_mat = avango.gua.make_rot_mat(_rot[0], _rot[1], _rot[2], _rot[3])
       _scale_mat = avango.gua.make_scale_mat(_scale[0], _scale[1], _scale[2])

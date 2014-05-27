@@ -27,7 +27,9 @@ class SceneDatabaseTest(SceneObject):
       _scale_mat = avango.gua.make_scale_mat(_scale[0], _scale[1], _scale[2])
       _mat = _trans_mat * _scale_mat * _rot_mat
 
-      self.init_geometry(_name, _file, _mat, None, True, True, self.scene_root, DATABASE, _id)
+      self.init_geometry(_name, _file, _mat, _material, True, True, self.scene_root, DATABASE, _id)
+
+    self.init_light(0, "sun_light", avango.gua.Color(1.0, 0.7, 0.5), _mat, self.scene_root)
 
 
 class SceneVRHyperspace1(SceneObject):

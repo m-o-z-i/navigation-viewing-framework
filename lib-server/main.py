@@ -76,7 +76,7 @@ def start():
   #                               , [None, None, None, None, None, None])
 
 
-  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

@@ -16,9 +16,18 @@ from Objects import *
 class SceneDatabaseTest(SceneObject):
 
   # constructor
-  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE, DATABASE):
     SceneObject.__init__(self, "SceneDatabaseTest", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
-    self.load_objects_from_database(USER = "pitoti", PASSWORD = "seradina", DBNAME = "pitoti", TABLENAME = "testscene")
+    
+    # load all objects from given database
+    for row in DATABASE.get_rows():
+      _id, _name, _file, _material, _color, _trans, _rot, _scale, _category = row
+      _trans_mat = avango.gua.make_trans_mat(_trans[0], _trans[1], _trans[2])
+      _rot_mat = avango.gua.make_rot_mat(_rot[0], _rot[1], _rot[2], _rot[3])
+      _scale_mat = avango.gua.make_scale_mat(_scale[0], _scale[1], _scale[2])
+      _mat = _trans_mat * _scale_mat * _rot_mat
+
+      self.init_geometry(_name, _file, _mat, None, True, True, self.scene_root, DATABASE, _id)
 
 
 class SceneVRHyperspace1(SceneObject):

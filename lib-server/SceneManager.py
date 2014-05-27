@@ -12,6 +12,7 @@ import avango.daemon
 
 # import framework libraries
 import Tools
+from ConsoleIO   import *
 from Scene import *
 
 # import python libraries
@@ -131,6 +132,40 @@ class DayAnimationUpdate(avango.script.Script):
       self.sf_sun_color.value = self.lerp_color(self.noon_sun_color, self.evening_sun_color, (_sun_angle - 135.0) / 45.0)
 
 
+class Database:
+
+  def __init__(self, DBNAME, USER, PASSWORD, TABLE, HOST = "localhost", ID_COLUMN_NAME = "id"):
+
+    self.cursor = None
+
+    try:
+      self.connection = psycopg2.connect("dbname='" + DBNAME + "' user='" + USER + "' host='" + HOST + "' password = '" + PASSWORD + "'")
+      self.cursor = self.connection.cursor()
+      self.TABLE = TABLE
+      self.ID_COLUMN_NAME = ID_COLUMN_NAME
+    except:
+      print_error("Unable to access database '{0}' as user '{1}' on '{2}'".format(DBNAME, USER, HOST), False)
+
+
+  def execute(self, COMMAND):
+
+    if self.cursor:
+      self.cursor.execute(COMMAND)
+      return self.cursor.fetchall()
+    else:
+      return None
+
+
+  def get_rows(self):
+
+    return self.execute("SELECT * FROM {0}".format(self.TABLE))
+
+
+  def get_by_id(self, ID):
+
+    return self.execute("SELECT * FROM {0} WHERE {1} = {2}".format(self.TABLE, self.ID_COLUMN_NAME, ID))
+
+
 ## Class for building a scene and appending the necessary nodes to the scenegraph.
 #
 # The actual member variables vary from scene to scene and can be chosen at will.
@@ -185,8 +220,9 @@ class SceneManager(avango.script.Script):
   def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH):
 
     # init scenes   
-    #self.scene1 = MedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)    
-    self.scene1 = SceneDatabaseTest(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene1 = MedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.database = Database(DBNAME = "pitoti", USER = "pitoti", PASSWORD = "seradina", TABLE = "testscene")    
+    self.scene1 = SceneDatabaseTest(self, SCENEGRAPH, NET_TRANS_NODE, self.database)
 
     #self.scene2 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene3 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE)

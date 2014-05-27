@@ -331,5 +331,7 @@ class InteractiveObject(avango.script.Script):
     # there is a database entry associated with this interactive object
     if self.DATABASE and self.DATABASE_ID >= 0:
 
-      # print the complete database row
-      print self.DATABASE.get_by_id(self.DATABASE_ID)
+      # print the complete database row with headers
+      for _header, _val in zip(self.DATABASE.get_column_header(), self.DATABASE.get_by_id(self.DATABASE_ID)):
+        print "{0}: {1}".format(_header, _val)
+      print ""

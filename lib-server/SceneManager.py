@@ -156,6 +156,18 @@ class Database:
       return None
 
 
+  def get_column_header(self):
+
+    if self.cursor:
+      self.cursor.execute("Select * FROM {0}".format(self.TABLE))
+      return [desc[0] for desc in self.cursor.description]
+
+
+  def select(self, SELECT, WHERE):
+
+    return self.execute("SELECT {0} FROM {1} WHERE {2}".format(SELECT, self.TABLE, WHERE))
+
+
   def get_rows(self):
 
     return self.execute("SELECT * FROM {0}".format(self.TABLE))
@@ -163,7 +175,12 @@ class Database:
 
   def get_by_id(self, ID):
 
-    return self.execute("SELECT * FROM {0} WHERE {1} = {2}".format(self.TABLE, self.ID_COLUMN_NAME, ID))
+    _result = self.execute("SELECT * FROM {0} WHERE {1} = {2}".format(self.TABLE, self.ID_COLUMN_NAME, ID))
+
+    if len(_result) > 0:
+      return _result[0]
+    else:
+      return None
 
 
 ## Class for building a scene and appending the necessary nodes to the scenegraph.
@@ -183,6 +200,8 @@ class SceneManager(avango.script.Script):
   sf_key9 = avango.SFBool()
   sf_key0 = avango.SFBool()
 
+  sf_key_f12 = avango.SFBool()
+
   sf_key_home = avango.SFBool()
 
 
@@ -196,6 +215,7 @@ class SceneManager(avango.script.Script):
     # variables
     self.scenes = []
     self.active_scene = None
+    self.database = None
 
     # sensor
     self.keyboard_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
@@ -213,6 +233,7 @@ class SceneManager(avango.script.Script):
     self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
     self.sf_key0.connect_from(self.keyboard_sensor.Button9) # key 0
     self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
+    self.sf_key_f12.connect_from(self.keyboard_sensor.Button30) # key F12
 
 
   ## Custom constructor
@@ -308,6 +329,22 @@ class SceneManager(avango.script.Script):
     if self.sf_key_home.value == True: # key pressed
       self.print_active_scene()
 
+
+  @field_has_changed(sf_key_f12)
+  def sf_key_f12_changed(self):
+
+    if self.database:
+
+      _shape_ids = [_row[0] for _row in self.database.select(SELECT = "id", WHERE = "category = 'shapes'")]
+
+      for _object in self.active_scene.objects:
+
+        if _object.DATABASE_ID in _shape_ids:
+          if self.sf_key_f12.value:
+            _object.enable_highlight(True)
+          else:
+            _object.enable_highlight(False)
+    
 
   # functions
   def activate_scene(self, ID):

@@ -205,11 +205,11 @@ class SpacemouseDevice(MultiDofDevice):
 
     ## @var translation_factor
     # Factor to modify the device's translation input.
-    self.translation_factor = 0.1
+    self.translation_factor = 0.02
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    self.rotation_factor = 0.75
+    self.rotation_factor = 0.5
     
     self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value, 0.0, -0.76, 0.82, 3, 3)")
     self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, 0.0, -0.7, 0.6, 3, 3)")
@@ -516,6 +516,7 @@ class NewSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
+
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.

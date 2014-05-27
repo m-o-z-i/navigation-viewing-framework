@@ -166,10 +166,12 @@ class User(avango.script.Script):
         _hit = _hit.split("_")
 
         _hit_platform = int(_hit[0])
+        _intended_platform = self.APPLICATION_MANAGER.navigation_list[_hit_platform].platform
         _hit_screen = int(_hit[1])
+        _intended_display = _intended_platform.displays[_hit_screen]
 
-        if _hit_platform != self.platform_id:
-          self.set_user_location(_hit_platform, True)
+        if _intended_display != self.current_display:
+          self.set_user_location(_hit_platform, _hit_screen, True)
 
       else:
         pass
@@ -248,11 +250,12 @@ class User(avango.script.Script):
 
   ## Changes the user's current platform.
   # @param PLATFORM_ID The new platform id to be set.
+  # @param SCREEN_ID The new screen id to be set.
   # @param RESEND_CONFIG Boolean indicating if the shutter configuration should be directly resent.
-  def set_user_location(self, PLATFORM_ID, RESEND_CONFIG):
+  def set_user_location(self, PLATFORM_ID, SCREEN_ID, RESEND_CONFIG):
 
     _intended_platform = self.APPLICATION_MANAGER.navigation_list[PLATFORM_ID].platform
-    _intended_display = _intended_platform.displays[0]
+    _intended_display = _intended_platform.displays[SCREEN_ID]
 
     if self.APPLICATION_MANAGER.slot_manager.display_has_free_slot(_intended_display):
 

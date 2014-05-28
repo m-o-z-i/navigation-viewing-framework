@@ -141,6 +141,8 @@ class Platform(avango.script.Script):
     self.platform_transform_node.Transform.connect_from(self.sf_abs_mat)
     NET_TRANS_NODE.Children.value.append(self.platform_transform_node)
 
+    ## @var platform_scale_transform_node
+    # Scenegraph node representing this platform's scale. Is below platform_transform_node.
     self.platform_scale_transform_node = avango.gua.nodes.TransformNode(Name = "scale")
     self.platform_transform_node.Children.value = [self.platform_scale_transform_node]
 

@@ -153,13 +153,21 @@ class MultiDofDevice(avango.script.Script):
     
     self.mf_dof.value = self.dofs
 
-  ## Filters and sets the x parameter.
-  # @param VALUE The value to be set.
+  ## Sets a specific degree of freedom to a value which is filtered before.
+  # @param ID ID Number of the degree of freedom to be set.
+  # @param VALUE The value to be filtered.
+  # @param OFFSET The offset to be applied to VALUE, MIN and MAX.
+  # @param MIN The minimum value of the old interval.
+  # @param MAX The maximum value of the old interval.
+  # @param NEG_THRESHOLD The negative threshold to be used.
+  # @param POS_THRESHOLD The positive threshold to be used.
   def set_and_filter_dof(self, ID, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD):
 
     self.dofs[ID] += self.filter_channel(VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD)
 
-
+  ## Sets a specific degree of freedom to a value.
+  # @param ID ID Number of the degree of freedom to be set.
+  # @param VALUE The value to be set.
   def set_dof(self, ID, VALUE):
 
     self.dofs[ID] += VALUE

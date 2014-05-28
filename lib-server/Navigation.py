@@ -30,8 +30,16 @@ import random
 class Navigation(avango.script.Script):
 
   # input fields
+  ## @var sf_reset_trigger
+  # Boolean field to indicate if the platform is to be reset.
   sf_reset_trigger = avango.SFBool()
+
+  ## @var sf_coupling_trigger
+  # Boolean field to indicate if the coupling mechanism is to be triggered.
   sf_coupling_trigger = avango.SFBool()
+
+  ## @var sf_dof_trigger
+  # Boolean field to indicate if the change of the dof mode is to be triggered.
   sf_dof_trigger = avango.SFBool()  
 
   # static class variables

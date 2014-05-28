@@ -47,6 +47,8 @@ class GroundFollowing(avango.script.Script):
   sf_station_mat = avango.gua.SFMatrix4()
   sf_station_mat.value = avango.gua.make_identity_mat()
 
+  ## @var sf_scale
+  # The current scaling factor of the Navigation.
   sf_scale = avango.SFFloat()
   sf_scale.value = 1.0
 

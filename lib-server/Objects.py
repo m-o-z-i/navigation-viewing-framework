@@ -168,7 +168,7 @@ class InteractiveObject(avango.script.Script):
   # Boolean field indicating if this object is to be highlighted.
   sf_highlight_flag = avango.SFBool()
 
-  # Default constructor.
+  ## Default constructor.
   def __init__(self):
     self.super(InteractiveObject).__init__()
 

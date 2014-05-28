@@ -55,8 +55,8 @@ class RecorderPlayer(avango.script.Script):
   # @param SF_RECORD_KEY Boolean field containing the record key values.
   # @param SF_SAVE_KEY Boolean field containing the save key values.
   # @param SF_TRIGGER_KEY Boolean field containing the keyframe trigger key values.
-  # @param SF_PLAY_MODE_KEY Boolean field containing the play mode key values.
-  # @param SF_RECORD_MODE_KEY Boolean field containing the record mode key values.
+  # @param SF_PLAY_MODE_CHANGE Boolean field containing the play mode key values.
+  # @param SF_RECORD_MODE_CHANGE Boolean field containing the record mode key values.
   def my_constructor(self
                    , SCENEGRAPH_NODE
                    , NAVIGATION

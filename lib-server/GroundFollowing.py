@@ -92,8 +92,8 @@ class GroundFollowing(avango.script.Script):
     # Length of the ground following ray.
     self.ground_pick_length = 100.0
 
-    ## @var ground_pick_direction
-    # Direction of the ground following ray (downwards).
+    ## @var ground_pick_direction_mat
+    # Direction of the ground following ray.
     self.ground_pick_direction_mat = avango.gua.make_identity_mat()
 
     ## @var SCENEGRAPH

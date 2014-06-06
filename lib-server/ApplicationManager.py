@@ -247,6 +247,7 @@ class ApplicationManager():
   # @param PLATFORM_ID The ID of the platform this user belongs to.
   # @param HEADTRACKING_TARGET_NAME The headtracking target identifier attached to this user.
   # @param HMD_SENSOR_NAME Name of the HMD sensor belonging to the user, if applicable.
+  # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param WARNINGS Boolean indicating whether to display warning planes when the user gets close to the platform borders.
   def create_user(
       self
@@ -255,6 +256,7 @@ class ApplicationManager():
     , PLATFORM_ID
     , HEADTRACKING_TARGET_NAME
     , HMD_SENSOR_NAME
+    , EYE_DISTANCE
     , WARNINGS
     ):
     _user = User()
@@ -264,6 +266,7 @@ class ApplicationManager():
                        , GLASSES_ID
                        , HEADTRACKING_TARGET_NAME
                        , HMD_SENSOR_NAME
+                       , EYE_DISTANCE
                        , PLATFORM_ID
                        , self.navigation_list[PLATFORM_ID].trace_material
                        )

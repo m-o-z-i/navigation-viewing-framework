@@ -41,6 +41,7 @@ class User(avango.script.Script):
   # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param HMD_SENSOR_NAME Name of the HMD sensor belonging to the user, if applicable.
+  # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
   def my_constructor(self
@@ -50,6 +51,7 @@ class User(avango.script.Script):
                    , GLASSES_ID
                    , HEADTRACKING_TARGET_NAME
                    , HMD_SENSOR_NAME
+                   , EYE_DISTANCE
                    , PLATFORM_ID
                    , AVATAR_MATERIAL
                    ):
@@ -62,6 +64,10 @@ class User(avango.script.Script):
     ## @var is_active
     # Boolean indicating if this user is currently active.
     self.is_active = True
+
+    ## @var eye_distance
+    # The eye distance of the user to be applied.
+    self.eye_distance = EYE_DISTANCE
 
     # variables
     ## @var APPLICATION_MANAGER

@@ -87,7 +87,6 @@ class Slot:
       self.right_eye.Transform.value = avango.gua.make_identity_mat()
       self.slot_node.Children.value.append(self.right_eye)
 
-      self.set_eye_distance(0.06)
     else:
       ## create the eye
       # Representation of the slot's user's eye.
@@ -99,8 +98,9 @@ class Slot:
   ## Sets the transformation values of left and right eye.
   # @param VALUE The eye distance to be applied.
   def set_eye_distance(self, VALUE):
-    self.left_eye.Transform.value  = avango.gua.make_trans_mat(VALUE * -0.5, 0.0, 0.0)
-    self.right_eye.Transform.value = avango.gua.make_trans_mat(VALUE * 0.5, 0.0, 0.0)
+    if self.stereo:
+      self.left_eye.Transform.value  = avango.gua.make_trans_mat(VALUE * -0.5, 0.0, 0.0)
+      self.right_eye.Transform.value = avango.gua.make_trans_mat(VALUE * 0.5, 0.0, 0.0)
 
   ## Assigns a user to this slot. Therefore, the slot_node is connected with the user's headtracking matrix.
   # @param USER_INSTANCE An instance of User which is to be assigned.
@@ -108,6 +108,7 @@ class Slot:
     # connect tracking matrix
     self.slot_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
     self.assigned_user = USER_INSTANCE
+    self.set_eye_distance(self.assigned_user.eye_distance)
  
     # set information node
     if USER_INSTANCE.headtracking_target_name == None:

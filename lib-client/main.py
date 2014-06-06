@@ -79,11 +79,6 @@ def start():
   # create a viewer
   viewer = avango.gua.nodes.Viewer()
 
-  if handled_display_instance.shutter_timings == []:
-    stereo = False
-  else:
-    stereo = True
-
   # Create a view for each displaystring (= slot)
   _string_num = 0
   views = []
@@ -96,7 +91,7 @@ def start():
                          _string_num,
                          handled_display_instance, 
                          screen_num, 
-                         stereo)
+                         handled_display_instance.stereo)
     views.append(_view)
     _string_num += 1
 

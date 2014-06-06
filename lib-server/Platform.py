@@ -160,9 +160,13 @@ class Platform(avango.script.Script):
     for _display in self.displays:
       # append a screen node to platform
       _screen = _display.create_screen_node("screen_" + str(self.displays.index(_display)))
-      self.platform_scale_transform_node.Children.value.append(_screen)
-      self.screens.append(_screen)
+
+      # only attach non-HMD screens to the platform
+      if _screen != None:
+        self.platform_scale_transform_node.Children.value.append(_screen)
+        self.screens.append(_screen)
       
+      # create screen visualization when desired
       if AVATAR_TYPE != "None":
         _screen_visualization = _display.create_screen_visualization()
         self.platform_scale_transform_node.Children.value.append(_screen_visualization)
@@ -175,7 +179,17 @@ class Platform(avango.script.Script):
       # create a slot for each displaystring
       for _displaystring in _display.displaystrings:
         
-        if _display.shutter_timings == []:
+        if _display.stereo == True or _display.stereomode == "HMD":
+          # create stereo slot
+          _slot = Slot(_display,
+                       _string_num,
+                       self.displays.index(_display),
+                       True,
+                       self.platform_scale_transform_node)
+          self.slot_list.append(_slot)
+          SLOT_MANAGER.register_slot(_slot, _display) 
+
+        else:
           # create mono slot
           _slot = Slot(_display,
                        _string_num,
@@ -184,15 +198,7 @@ class Platform(avango.script.Script):
                        self.platform_scale_transform_node)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
-        else:
-          # create stereo slot
-          _slot = Slot(_display,
-                       _string_num,
-                       self.displays.index(_display),
-                       True,
-                       self.platform_scale_transform_node)
-          self.slot_list.append(_slot)
-          SLOT_MANAGER.register_slot(_slot, _display)
+
 
         _string_num += 1
 

@@ -98,6 +98,61 @@ class TrackingTargetReader(TrackingReader):
   def set_receiver_offset(self, RECEIVER_OFFSET):
     self.tracking_sensor.ReceiverOffset.value = RECEIVER_OFFSET
 
+##
+class TrackingHMDReader(TrackingReader):
+
+  ## Default constructor.
+  def __init__(self):
+    self.super(TrackingReader).__init__()
+
+  ## Custom constructor
+  # @param TARGET_NAME The target name of the tracked object as chosen in daemon.
+  #
+  def my_constructor(self, TARGET_NAME, HMD_SENSOR_NAME):
+
+    ## @var tracking_sensor
+    # A device sensor to capture the tracking values.
+    self.tracking_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
+    self.tracking_sensor.Station.value = TARGET_NAME
+
+    self.tracking_sensor.TransmitterOffset.value = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
+    self.tracking_sensor.ReceiverOffset.value = avango.gua.make_identity_mat()
+
+    ##
+    #
+    self.hmd_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
+    self.hmd_sensor.Station.value = HMD_SENSOR_NAME
+
+    self.always_evaluate(True)
+
+
+  ## Sets the transmitter offset for this tracking reader.
+  # @param TRANSMITTER_OFFSET The transmitter offset to be set.
+  def set_transmitter_offset(self, TRANSMITTER_OFFSET):
+    self.tracking_sensor.TransmitterOffset.value = TRANSMITTER_OFFSET
+
+  ## Sets the receiver offset for this tracking reader.
+  # @param RECEIVER_OFFSET The receiver offset to be set.
+  def set_receiver_offset(self, RECEIVER_OFFSET):
+    self.tracking_sensor.ReceiverOffset.value = RECEIVER_OFFSET
+
+  ## Evaluated every frame.
+  def evaluate(self):
+  
+    self.sf_abs_mat.value = avango.gua.make_trans_mat(self.tracking_sensor.sf_abs_vec.value) * self.hmd_sensor.Matrix.value
+    self.sf_global_mat.value = (avango.gua.make_inverse_mat(self.tracking_sensor.TransmitterOffset.value) * avango.gua.make_trans_mat(self.tracking_sensor.sf_abs_vec.value)) * self.hmd_sensor.Matrix.value
+    self.sf_abs_vec.value = self.sf_abs_mat.value.get_translate()
+    _yaw = Tools.get_yaw(self.sf_abs_mat.value)
+    self.sf_avatar_head_mat.value = self.sf_abs_mat.value * \
+                                    avango.gua.make_rot_mat(-90, 0, 1, 0) * \
+                                    avango.gua.make_scale_mat(0.4, 0.4, 0.4)
+    self.sf_avatar_body_mat.value = avango.gua.make_trans_mat(self.sf_abs_vec.value.x, self.sf_abs_vec.value.y / 2, self.sf_abs_vec.value.z) * \
+                                    avango.gua.make_rot_mat(math.degrees(_yaw) - 90, 0, 1, 0) * \
+                                    avango.gua.make_scale_mat(0.45, self.sf_abs_vec.value.y / 2, 0.45)
+
+
+
+
 ## Supplies constant tracking values if no real tracking is available.
 class TrackingDefaultReader(TrackingReader):
 

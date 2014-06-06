@@ -179,7 +179,17 @@ class Platform(avango.script.Script):
       # create a slot for each displaystring
       for _displaystring in _display.displaystrings:
         
-        if _display.stereo == True or _display.stereomode == "HMD":
+        if _display.stereomode == "HMD":
+          # create hmd slot
+          _slot = SlotHMD(_display,
+                          _string_num,
+                          self.displays.index(_display))
+                          True,
+                          self.platform_scale_transform_node)
+          self.slot_list.append(_slot)
+          SLOT_MANAGER.register_slot(_slot, _display)
+
+        if _display.stereo == True:
           # create stereo slot
           _slot = Slot(_display,
                        _string_num,

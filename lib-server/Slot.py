@@ -130,3 +130,28 @@ class Slot:
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()
       self.no_tracking_node.Transform.value = avango.gua.make_identity_mat()
+
+##
+#
+class SlotHMD(Slot):
+
+  ## Custom constructor.
+  # @param DISPLAY Display instance for which this slot is being created.
+  # @param SLOT_ID Identification number of the slot within the display.
+  # @param SCREEN_NUM Number of the screen / display on the platform.
+  # @param STEREO Boolean indicating if the slot to be created is a stereo one.
+  # @param PLATFORM_NODE Scenegraph transformation node of the platform where the slot is to be appended to.
+  def __init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE):
+    self.super(Platform).__init__(DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE)
+
+    self.left_screen = avango.gua.nodes.ScreenNode(Name = "screenL")
+    self.left_screen.Width.value = DISPLAY.size.x / 2
+    self.left_screen.Height.value = DISPLAY.size.y
+    self.left_screen.Transform.value = avango.gua.make_trans_mat(-0.04, 0.0, -0.05)
+    self.slot_node.Children.value.append(self.left_screen)
+
+    self.right_screen = avango.gua.nodes.ScreenNode(Name = "screenR")
+    self.right_screen.Width.value = DISPLAY.size.x / 2
+    self.right_screen.Height.value = DISPLAY.size.y
+    self.right_screen.Transform.value = avango.gua.make_trans_mat(0.04, 0.0, -0.05)
+    self.slot_node.Children.value.append(self.right_screen)

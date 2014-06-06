@@ -101,30 +101,50 @@ class TrackingTargetReader(TrackingReader):
 ##
 class TrackingHMDReader(TrackingReader):
 
+  # internal field
+  ## @var sf_tracking_mat
+  # Field containing the tracking system's values used for evaluation purposes.
+  sf_tracking_mat = avango.gua.SFMatrix4()
+  sf_tracking_mat.value = avango.gua.make_identity_mat()
+
+  ## @var sf_hmd_mat
+  # Field containing the HMD's values used for evaluation purposes.
+  sf_hmd_mat = avango.gua.SFMatrix4()
+  sf_hmd_mat.value = avango.gua.make_identity_mat()
+
   ## Default constructor.
   def __init__(self):
     self.super(TrackingReader).__init__()
 
   ## Custom constructor
   # @param TARGET_NAME The target name of the tracked object as chosen in daemon.
-  #
+  # @param HMD_SENSOR_NAME Name of the HMD's input values as chosen in daemon.
   def my_constructor(self, TARGET_NAME, HMD_SENSOR_NAME):
 
     ## @var tracking_sensor
     # A device sensor to capture the tracking values.
     self.tracking_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.tracking_sensor.Station.value = TARGET_NAME
-
     self.tracking_sensor.TransmitterOffset.value = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
     self.tracking_sensor.ReceiverOffset.value = avango.gua.make_identity_mat()
 
-    ##
-    #
+    ## @var hmd_sensor
+    # A device sensor to capture the HMD's input values.
     self.hmd_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.hmd_sensor.Station.value = HMD_SENSOR_NAME
 
-    self.always_evaluate(True)
+    self.sf_tracking_mat.connect_from(self.tracking_sensor.Matrix)
+    self.sf_hmd_mat.connect_from(self.hmd_sensor.Matrix)
 
+  ## Called whenever sf_tracking_mat changes.
+  @field_has_changed(sf_tracking_mat)
+  def sf_tracking_mat_changed(self):
+    self.update_matrices()
+
+  ## Called whenever sf_tracking_mat changes.
+  @field_has_changed(sf_hmd_mat)
+  def sf_hmd_mat_changed(self):
+    self.update_matrices()
 
   ## Sets the transmitter offset for this tracking reader.
   # @param TRANSMITTER_OFFSET The transmitter offset to be set.
@@ -137,7 +157,7 @@ class TrackingHMDReader(TrackingReader):
     self.tracking_sensor.ReceiverOffset.value = RECEIVER_OFFSET
 
   ## Evaluated every frame.
-  def evaluate(self):
+  def update_matrices(self):
   
     self.sf_abs_mat.value = avango.gua.make_trans_mat(self.tracking_sensor.Matrix.value.get_translate()) * self.hmd_sensor.Matrix.value
     self.sf_global_mat.value = (avango.gua.make_inverse_mat(self.tracking_sensor.TransmitterOffset.value) * avango.gua.make_trans_mat(self.tracking_sensor.Matrix.value.get_translate())) * self.hmd_sensor.Matrix.value

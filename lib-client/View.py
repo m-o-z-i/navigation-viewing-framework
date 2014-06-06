@@ -218,7 +218,7 @@ class View(avango.script.Script):
     self.TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
 
     ## @var NO_TRACKING_MAT
-    # Matrix to be applied if no headtracking of the Oculus Rift is available.
+    # Matrix to be applied if no headtracking is available.
     self.NO_TRACKING_MAT = NO_TRACKING_MAT
 
     ## @var headtracking_reader

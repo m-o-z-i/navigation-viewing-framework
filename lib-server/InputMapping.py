@@ -107,6 +107,10 @@ class InputMapping(avango.script.Script):
     # Reference to the GroundFollowing instance used by this InputMapping.
     self.GROUND_FOLLOWING_INSTANCE = GROUND_FOLLOWING_INSTANCE
 
+    ## @var DEVICE_INSTANCE
+    # Reference to Device instance used by this InputMapping.
+    self.DEVICE_INSTANCE = DEVICE_INSTANCE
+
     ## @var invert
     # Boolean indicating if the input values should be inverted.
     self.invert = INVERT

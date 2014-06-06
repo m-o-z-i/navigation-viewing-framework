@@ -504,7 +504,7 @@ init_mouse()
 init_spacemouse()
 
 # init oculus rift sensors
-init_oculus() # crash ???
+init_oculus()
 
 # init touch input
 #init_tuio_input() # crash ???

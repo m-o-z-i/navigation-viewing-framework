@@ -155,3 +155,13 @@ class SlotHMD(Slot):
     self.right_screen.Height.value = DISPLAY.size[1]
     self.right_screen.Transform.value = avango.gua.make_trans_mat(0.04, 0.0, -0.05)
     self.slot_node.Children.value.append(self.right_screen)
+
+  ## Assigns a user to this slot. Therefore, the slot_node is connected with the user's headtracking matrix.
+  # In the HMD case, the InputMapping's station matrix is overwritten.
+  # @param USER_INSTANCE An instance of User which is to be assigned.
+  def assign_user(self, USER_INSTANCE):
+    Slot.assign_user(self, USER_INSTANCE)
+
+    # connect station mat with headtracking matrix
+    USER_INSTANCE.platform.INPUT_MAPPING_INSTANCE.sf_station_mat.disconnect()
+    USER_INSTANCE.platform.INPUT_MAPPING_INSTANCE.sf_station_mat.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)

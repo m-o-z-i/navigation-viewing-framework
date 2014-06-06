@@ -7,6 +7,7 @@
 import avango
 import avango.gua
 import avango.script
+import avango.oculus
 from avango.script import field_has_changed
 
 # import framework libraries
@@ -70,12 +71,6 @@ class View(avango.script.Script):
     # Size of the window in which this View will be rendered.
     self.window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1]) 
 
-    # create window
-    ## @var window
-    # The window in which this View will be rendered to.
-    self.window = avango.gua.nodes.Window()
-    self.window.Display.value = self.display_values[0] # GPU-ID
-
     # create camera
     ## @var camera
     # The camera from which this View will be rendered.
@@ -97,17 +92,47 @@ class View(avango.script.Script):
     self.pipeline = avango.gua.nodes.Pipeline()
     self.pipeline.Enabled.value = True
 
-    if STEREO:
+    if DISPLAY_INSTANCE.stereomode == "HMD":
+
+      '''
+        HMD View
+      '''
+
+      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/screenL"
+      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/screenR"
+      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeL"
+      self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeR"
+
+      # create window
+      ## @var window
+      # The window in which this View will be rendered to.
+      self.window = avango.oculus.nodes.OculusWindow()
+      self.window.Display.value = self.display_values[0] # GPU-ID
+      self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
+      self.window.LeftResolution.value = avango.gua.Vec2ui(self.window_size.x / 2, self.window_size.y)
+      self.window.RightResolution.value = avango.gua.Vec2ui(self.window_size.x / 2, self.window_size.y)
+
+      self.pipeline.EnableStereo.value = True
+      self.pipeline.LeftResolution.value = self.window.LeftResolution.value
+      self.pipeline.RightResolution.value = self.window.RightResolution.value
+
+
+    elif STEREO:
 
       '''
         Stereo View
       '''
 
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
-      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
+      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(self.screen_num)
+      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(self.screen_num)
       self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeL"
       self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeR"
 
+      # create window
+      ## @var window
+      # The window in which this View will be rendered to.
+      self.window = avango.gua.nodes.Window()
+      self.window.Display.value = self.display_values[0] # GPU-ID
       self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       self.window.LeftResolution.value = self.window_size
       self.window.RightResolution.value = self.window_size
@@ -142,6 +167,11 @@ class View(avango.script.Script):
       self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
       self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eye"
 
+      # create window
+      ## @var window
+      # The window in which this View will be rendered to.
+      self.window = avango.gua.nodes.Window()
+      self.window.Display.value = self.display_values[0] # GPU-ID
       self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       self.window.Size.value = self.window_size
       self.window.LeftResolution.value = self.window_size

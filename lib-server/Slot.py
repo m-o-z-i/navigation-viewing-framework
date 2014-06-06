@@ -41,14 +41,14 @@ class Slot:
 
     ## @var shutter_timing
     # A list of opening and closing times of shutter glasses for this slot.
-    if self.stereo:
+    if self.stereo and DISPLAY.stereomode == "SIDE_BY_SIDE":
       self.shutter_timing = DISPLAY.shutter_timings[SLOT_ID]
     else:
       self.shutter_timing = None
 
     ## @var shutter_value
     # A list of hexadecimal commands for shutter glasses associated with the timings for this slot.
-    if self.stereo:
+    if self.stereo and DISPLAY.stereomode == "SIDE_BY_SIDE":
       self.shutter_value = DISPLAY.shutter_values[SLOT_ID]
     else:
       self.shutter_value = None
@@ -142,16 +142,16 @@ class SlotHMD(Slot):
   # @param STEREO Boolean indicating if the slot to be created is a stereo one.
   # @param PLATFORM_NODE Scenegraph transformation node of the platform where the slot is to be appended to.
   def __init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE):
-    self.super(Platform).__init__(DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE)
+    Slot.__init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE)
 
     self.left_screen = avango.gua.nodes.ScreenNode(Name = "screenL")
-    self.left_screen.Width.value = DISPLAY.size.x / 2
-    self.left_screen.Height.value = DISPLAY.size.y
+    self.left_screen.Width.value = DISPLAY.size[0] / 2
+    self.left_screen.Height.value = DISPLAY.size[1]
     self.left_screen.Transform.value = avango.gua.make_trans_mat(-0.04, 0.0, -0.05)
     self.slot_node.Children.value.append(self.left_screen)
 
     self.right_screen = avango.gua.nodes.ScreenNode(Name = "screenR")
-    self.right_screen.Width.value = DISPLAY.size.x / 2
-    self.right_screen.Height.value = DISPLAY.size.y
+    self.right_screen.Width.value = DISPLAY.size[0] / 2
+    self.right_screen.Height.value = DISPLAY.size[1]
     self.right_screen.Transform.value = avango.gua.make_trans_mat(0.04, 0.0, -0.05)
     self.slot_node.Children.value.append(self.right_screen)

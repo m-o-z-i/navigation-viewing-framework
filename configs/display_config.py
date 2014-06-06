@@ -250,6 +250,7 @@ class OculusRift(Display):
 displays = [
     LargePowerwall()
   , TouchTable3D()
+  , OculusRift()
   , Display(hostname = "atalante"
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )

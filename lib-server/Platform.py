@@ -183,7 +183,7 @@ class Platform(avango.script.Script):
           # create hmd slot
           _slot = SlotHMD(_display,
                           _string_num,
-                          self.displays.index(_display))
+                          self.displays.index(_display),
                           True,
                           self.platform_scale_transform_node)
           self.slot_list.append(_slot)
@@ -293,11 +293,13 @@ class Platform(avango.script.Script):
     self.back_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
     self.platform_scale_transform_node.Children.value.append(self.back_border)
 
-    # create coupling notification plane
-    self.create_coupling_plane()
+    # TODO: Better handling for HMDs
+    if len(self.screens) > 0:
+      # create coupling notification plane
+      self.create_coupling_plane()
 
-    # create coupling status notifications
-    self.create_coupling_status_overview()
+      # create coupling status notifications
+      self.create_coupling_status_overview()
 
   ## Toggles visibility of left platform border.
   # @param VISIBLE A boolean value if the border should be set visible or not.

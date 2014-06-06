@@ -44,6 +44,11 @@
       <yaw>0.0</yaw>
     </platformrot>
 
+    <platformsize>
+      <width>3.8</width>
+      <depth>3.6</depth>
+    </platformsize>
+
     <groundfollowing>
       <activated>True</activated>
       <raystartheight>0.75</raystartheight>
@@ -60,9 +65,11 @@
 
     <vip>False</vip>
 
+    <headtrackingstation>tracking-oculus-stag</headtrackingstation>
+
     <startplatform>0</startplatform>
 
-    <warnings>False</warnings>
+    <warnings>True</warnings>
 
   </user>
 

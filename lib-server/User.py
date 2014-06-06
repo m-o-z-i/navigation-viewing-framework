@@ -103,9 +103,21 @@ class User(avango.script.Script):
 
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.
+    if self.current_display.stereomode == "HMD":
+
+      # it is assumed that headtracking is present when using a HMD
+      if HEADTRACKING_TARGET_NAME == None:
+        print_error("Error: User " + str(self.id) + " is using a HMD display, but has no headtracking target specified.", True)
+
+      self.headtracking_reader = TrackingHMDReader()
+      self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME, "oculus-0")
+      self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
+      self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
+
     if HEADTRACKING_TARGET_NAME == None:
       self.headtracking_reader = TrackingDefaultReader()
       self.headtracking_reader.set_no_tracking_matrix(self.no_tracking_mat)
+    
     else:
       self.headtracking_reader = TrackingTargetReader()
       self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)

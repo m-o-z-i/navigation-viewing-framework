@@ -166,10 +166,10 @@ class Platform(avango.script.Script):
         self.platform_scale_transform_node.Children.value.append(_screen)
         self.screens.append(_screen)
       
-      # create screen visualization when desired
-      if AVATAR_TYPE != "None":
-        _screen_visualization = _display.create_screen_visualization()
-        self.platform_scale_transform_node.Children.value.append(_screen_visualization)
+        # create screen visualization when desired
+        if AVATAR_TYPE != "None":
+          _screen_visualization = _display.create_screen_visualization()
+          self.platform_scale_transform_node.Children.value.append(_screen_visualization)
 
       # create screen proxy geometry for view ray hit tests
       _proxy_geometry = _display.create_transformed_proxy_geometry(self, self.displays.index(_display))

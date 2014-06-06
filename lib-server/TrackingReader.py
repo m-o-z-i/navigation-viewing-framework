@@ -139,8 +139,8 @@ class TrackingHMDReader(TrackingReader):
   ## Evaluated every frame.
   def evaluate(self):
   
-    self.sf_abs_mat.value = avango.gua.make_trans_mat(self.tracking_sensor.sf_abs_vec.value) * self.hmd_sensor.Matrix.value
-    self.sf_global_mat.value = (avango.gua.make_inverse_mat(self.tracking_sensor.TransmitterOffset.value) * avango.gua.make_trans_mat(self.tracking_sensor.sf_abs_vec.value)) * self.hmd_sensor.Matrix.value
+    self.sf_abs_mat.value = avango.gua.make_trans_mat(self.tracking_sensor.Matrix.value.get_translate()) * self.hmd_sensor.Matrix.value
+    self.sf_global_mat.value = (avango.gua.make_inverse_mat(self.tracking_sensor.TransmitterOffset.value) * avango.gua.make_trans_mat(self.tracking_sensor.Matrix.value.get_translate())) * self.hmd_sensor.Matrix.value
     self.sf_abs_vec.value = self.sf_abs_mat.value.get_translate()
     _yaw = Tools.get_yaw(self.sf_abs_mat.value)
     self.sf_avatar_head_mat.value = self.sf_abs_mat.value * \

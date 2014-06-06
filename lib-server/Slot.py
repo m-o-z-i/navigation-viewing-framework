@@ -164,5 +164,5 @@ class SlotHMD(Slot):
     Slot.assign_user(self, USER_INSTANCE)
 
     # connect station mat with headtracking matrix
-    USER_INSTANCE.platform.INPUT_MAPPING_INSTANCE.sf_station_mat.disconnect()
-    USER_INSTANCE.platform.INPUT_MAPPING_INSTANCE.sf_station_mat.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
+    USER_INSTANCE.platform.INPUT_MAPPING_INSTANCE.DEVICE_INSTANCE.sf_station_mat.disconnect()
+    USER_INSTANCE.platform.INPUT_MAPPING_INSTANCE.DEVICE_INSTANCE.sf_station_mat.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)

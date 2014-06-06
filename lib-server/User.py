@@ -119,7 +119,7 @@ class User(avango.script.Script):
       self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
-    if HEADTRACKING_TARGET_NAME == None:
+    elif HEADTRACKING_TARGET_NAME == None:
       self.headtracking_reader = TrackingDefaultReader()
       self.headtracking_reader.set_no_tracking_matrix(self.no_tracking_mat)
     

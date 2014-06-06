@@ -133,7 +133,7 @@ class TrackingHMDReader(TrackingReader):
     self.hmd_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.hmd_sensor.Station.value = HMD_SENSOR_NAME
 
-    self.sf_tracking_mat.connect_from(self.tracking_sensor.Matrix)
+    #self.sf_tracking_mat.connect_from(self.tracking_sensor.Matrix)
     self.sf_hmd_mat.connect_from(self.hmd_sensor.Matrix)
 
   ## Called whenever sf_tracking_mat changes.
@@ -169,8 +169,6 @@ class TrackingHMDReader(TrackingReader):
     self.sf_avatar_body_mat.value = avango.gua.make_trans_mat(self.sf_abs_vec.value.x, self.sf_abs_vec.value.y / 2, self.sf_abs_vec.value.z) * \
                                     avango.gua.make_rot_mat(math.degrees(_yaw) - 90, 0, 1, 0) * \
                                     avango.gua.make_scale_mat(0.45, self.sf_abs_vec.value.y / 2, 0.45)
-
-
 
 
 ## Supplies constant tracking values if no real tracking is available.

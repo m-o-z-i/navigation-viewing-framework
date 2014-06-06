@@ -11,9 +11,9 @@
 
   <device>
 
-    <type>Spacemouse</type>
+    <type>XBoxController</type>
 
-    <inputsensor>device-spacemouse</inputsensor>
+    <inputsensor>device-xbox-1</inputsensor>
 
     <display>oculus_rift_atalante</display>
 

@@ -98,7 +98,7 @@ class TrackingTargetReader(TrackingReader):
   def set_receiver_offset(self, RECEIVER_OFFSET):
     self.tracking_sensor.ReceiverOffset.value = RECEIVER_OFFSET
 
-##
+## Reads the translation from the tracking system and combines the information with the rotation from a HMD.
 class TrackingHMDReader(TrackingReader):
 
   # internal field

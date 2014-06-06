@@ -40,6 +40,7 @@ class User(avango.script.Script):
   # @param VIP Boolean indicating if the user to be created is a vip.
   # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
+  # @param HMD_SENSOR_NAME Name of the HMD sensor belonging to the user, if applicable.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
   def my_constructor(self
@@ -48,8 +49,10 @@ class User(avango.script.Script):
                    , VIP
                    , GLASSES_ID
                    , HEADTRACKING_TARGET_NAME
+                   , HMD_SENSOR_NAME
                    , PLATFORM_ID
-                   , AVATAR_MATERIAL):
+                   , AVATAR_MATERIAL
+                   ):
 
     # flags 
     ## @var is_vip
@@ -107,10 +110,12 @@ class User(avango.script.Script):
 
       # it is assumed that headtracking is present when using a HMD
       if HEADTRACKING_TARGET_NAME == None:
-        print_error("Error: User " + str(self.id) + " is using a HMD display, but has no headtracking target specified.", True)
+        print_error("Error: User " + str(self.id) + " is using a platform with HMD display, but has no headtracking target specified.", True)
+      if HMD_SENSOR_NAME == None:
+        print_error("Error: User " + str(self.id) + " is using a platform with HMD display, but has no HMD sensor name specified.", True)  
 
       self.headtracking_reader = TrackingHMDReader()
-      self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME, "oculus-0")
+      self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME, HMD_SENSOR_NAME)
       self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 

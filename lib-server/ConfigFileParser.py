@@ -46,7 +46,7 @@ class ConfigFileParser:
                           "joseph", [False, 0.75], False, 1.0, False]    # avatartype, ground_following_settings, enable_traces, scale, invert]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
     _in_user = False
-    _user_attributes = [None, None, False, False, None]                  # [headtrackingstation, startplatform, warnings, vip, glasses]
+    _user_attributes = [None, None, False, False, None, None]            # [headtrackingstation, startplatform, warnings, vip, glasses, hmd_sensor]
     _navs_created = 0
 
     try:
@@ -394,6 +394,14 @@ class ConfigFileParser:
           if _current_line != "None":
             _user_attributes[0] = _current_line
 
+        # get hmd sensor name
+        if _current_line.startswith("<hmdsensor>"):
+          _current_line = _current_line.replace("<hmdsensor>", "")
+          _current_line = _current_line.replace("</hmdsensor>", "")
+          _current_line = _current_line.rstrip()
+          if _current_line != "None":
+            _user_attributes[5] = _current_line
+
         # get glasses id
         if _current_line.startswith("<glasses>"):
           _current_line = _current_line.replace("<glasses>", "")
@@ -434,12 +442,12 @@ class ConfigFileParser:
         if _user_attributes[1] >= _navs_created:
           print_error("User parsing: Navigation number to append to is too large.", True)
 
-        self.APPLICATION_MANAGER.create_standard_user(_user_attributes[3], _user_attributes[4], _user_attributes[1], _user_attributes[0], _user_attributes[2])
+        self.APPLICATION_MANAGER.create_user(_user_attributes[3], _user_attributes[4], _user_attributes[1], _user_attributes[0], _user_attributes[5], _user_attributes[2])
 
         print_subheadline("User loaded and created")
         print _user_attributes, "\n"
 
-        _user_attributes = [None, None, False, False, None]
+        _user_attributes = [None, None, False, False, None, None]
         _current_line = self.get_next_line_in_file(_config_file)
         continue
 

@@ -67,6 +67,8 @@
 
     <headtrackingstation>tracking-oculus-stag</headtrackingstation>
 
+    <hmdsensor>oculus-0</hmdsensor>
+
     <startplatform>0</startplatform>
 
     <warnings>True</warnings>

@@ -131,8 +131,8 @@ class Slot:
       self.information_node.Transform.value = avango.gua.make_identity_mat()
       self.no_tracking_node.Transform.value = avango.gua.make_identity_mat()
 
-##
-#
+## Internal representation of a display slot on a head mounted display. A Slot is one rendering output that can be handled
+# by a display, for HMDs usually one per device.
 class SlotHMD(Slot):
 
   ## Custom constructor.

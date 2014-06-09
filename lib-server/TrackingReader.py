@@ -156,7 +156,7 @@ class TrackingHMDReader(TrackingReader):
   def set_receiver_offset(self, RECEIVER_OFFSET):
     self.tracking_sensor.ReceiverOffset.value = RECEIVER_OFFSET
 
-  ## Evaluated every frame.
+  ## Evaluated every time a sensor Matrix changes.
   def update_matrices(self):
   
     self.sf_abs_mat.value = avango.gua.make_trans_mat(self.tracking_sensor.Matrix.value.get_translate()) * self.hmd_sensor.Matrix.value

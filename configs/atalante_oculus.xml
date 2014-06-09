@@ -73,7 +73,7 @@
 
     <startplatform>0</startplatform>
 
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
 

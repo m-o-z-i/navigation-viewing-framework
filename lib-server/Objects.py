@@ -89,6 +89,22 @@ class SceneObject:
     # Mapping of pipeline value SsaoIntensity.
     self.ssao_intensity = 2.0
 
+
+  # functions
+  def get_scene_manager(self):
+  
+    return self.SCENE_MANAGER
+    
+
+  def get_scenegraph(self):
+  
+    return self.SCENEGRAPH
+
+
+  def get_net_trans_node(self):
+  
+    return self.NET_TRANS_NODE   
+
   ## Returns a string of all concatenated pipeline values for this SceneObject.
   def get_pipeline_value_string(self):
     return self.background_texture + "#" + \
@@ -109,7 +125,7 @@ class SceneObject:
   # @param GROUNDFOLLOWING_PICK_FLAG Boolean indicating if the new geometry should be pickable for GroundFollowing purposes.
   # @param MANIPULATION_PICK_FLAG Boolean indicating if the new geometry should be pickable for manipulation purposes.
   # @param PARENT_NODE Scenegraph node to append the geometry to.
-  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE):
+  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP):
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
@@ -128,7 +144,7 @@ class SceneObject:
     #print "LOADED", _node, _node.Name.value
   
     self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
- 
+
    
   def init_light(self, 
                 TYPE = 0,

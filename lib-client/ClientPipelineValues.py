@@ -24,7 +24,7 @@ def set_default_pipeline_values(PIPELINE):
   PIPELINE.EnableFrustumCulling.value     = False
   PIPELINE.AmbientColor.value             = avango.gua.Color(0.25, 0.25, 0.25)
   PIPELINE.FarClip.value                  = 1000.0
-  PIPELINE.EnableBackfaceCulling.value    = Falsey^
+  PIPELINE.EnableBackfaceCulling.value    = False
   PIPELINE.EnableSsao.value               = False
   PIPELINE.SsaoRadius.value               = 2.0
   PIPELINE.SsaoIntensity.value            = 2.0

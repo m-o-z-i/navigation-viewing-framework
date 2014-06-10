@@ -181,6 +181,7 @@ class SceneManager(avango.script.Script):
   # Boolean field representing the home key.
   sf_key_home = avango.SFBool()
 
+
   # Default constructor.
   def __init__(self):
     self.super(SceneManager).__init__()
@@ -222,6 +223,15 @@ class SceneManager(avango.script.Script):
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
   # @param SCENEGRAPH Reference to the scenegraph to which the nettrans node is appended.
   def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH):
+
+    # init pipeline value node
+    _pipeline_value_node = avango.gua.nodes.TransformNode(Name = "pipeline_values")
+    NET_TRANS_NODE.Children.value.append(_pipeline_value_node)
+
+    ## @var pipeline_info_node
+    # Scenegraph node storing the actural pipeline values of the current scene.
+    self.pipeline_info_node = avango.gua.nodes.TransformNode()
+    _pipeline_value_node.Children.value.append(self.pipeline_info_node)
 
     # init scenes   
     self.scene1 = MedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)    
@@ -324,6 +334,7 @@ class SceneManager(avango.script.Script):
     if ID < len(self.scenes):
       self.active_scene = self.scenes[ID]
       self.active_scene.enable_scene(True)
+      self.pipeline_info_node.Name.value = self.active_scene.get_pipeline_value_string()
   
       print "Switching to Scene: " + self.active_scene.name
   

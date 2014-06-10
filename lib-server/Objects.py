@@ -53,6 +53,53 @@ class SceneObject:
     self.scene_root = avango.gua.nodes.TransformNode(Name = self.name)
     NET_TRANS_NODE.Children.value.append(self.scene_root)
 
+    '''
+      Pipeline values
+    '''
+
+    ## @var background_texture
+    # Mapping of pipeline value BackgroundTexture and FoxTexture.
+    self.background_texture = "data/textures/sky.jpg"
+
+    ## @var enable_bloom
+    # Mapping of pipeline value EnableBloom.
+    self.enable_bloom = True
+
+    ## @var bloom_intensity
+    # Mapping of pipeline value BloomIntensity.
+    self.bloom_intensity = 0.1
+
+    ## @var bloom_threshold
+    # Mapping of pipeline value BloomThreshold.
+    self.bloom_threshold = 1.0
+
+    ## @var bloom_radius
+    # Mapping of pipeline value BloomRadius.
+    self.bloom_radius = 10
+
+    ## @var enable_ssao
+    # Mapping of pipeline value EnableSsao.
+    self.enable_ssao = True
+
+    ## @var ssao_radius
+    # Mapping of pipeline value SsaoRadius.
+    self.ssao_radius = 2.0
+
+    ## @var ssao_intensity
+    # Mapping of pipeline value SsaoIntensity.
+    self.ssao_intensity = 2.0
+
+  ## Returns a string of all concatenated pipeline values for this SceneObject.
+  def get_pipeline_value_string(self):
+    return self.background_texture + "#" + \
+           str(self.enable_bloom) + "#" + \
+           str(self.bloom_intensity) + "#" + \
+           str(self.bloom_threshold) + "#" + \
+           str(self.bloom_radius) + "#" + \
+           str(self.enable_ssao) + "#" + \
+           str(self.ssao_radius) + "#" + \
+           str(self.ssao_intensity)
+
 
   ## Creates and initializes a geometry node in the scene.
   # @param NAME The name of the new node.

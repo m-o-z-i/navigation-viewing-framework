@@ -22,6 +22,10 @@ from ConsoleIO import *
 # due to distribution in the network. Refers to a StandardUser on server side.
 class View(avango.script.Script):
 
+  ## @var sf_pipeline_string
+  # String field containing the concatenated pipeline values.
+  sf_pipeline_string = avango.SFString()
+
   ## Default constructor.
   def __init__(self):
     self.super(View).__init__()
@@ -244,10 +248,41 @@ class View(avango.script.Script):
       WINDOW.WarpMatrixGreenLeft.value   = WARPMATRICES[4]
       WINDOW.WarpMatrixBlueLeft.value    = WARPMATRICES[5]
 
+  ## Called whenever sf_pipeline_string changes.
+  @field_has_changed(sf_pipeline_string)
+  def sf_pipeline_string_changed(self):
+      
+    _splitted_string = self.sf_pipeline_string.value.split("#")
+
+    print "set to", _splitted_string
+
+    #avango.gua.create_texture(_splitted_string[0])
+    self.pipeline.BackgroundTexture.value = _splitted_string[0]
+    self.pipeline.FogTexture.value = _splitted_string[0]
+
+    self.pipeline.EnableBloom.value = bool(_splitted_string[1])
+    self.pipeline.BloomIntensity.value = float(_splitted_string[2])
+    self.pipeline.BloomThreshold.value = float(_splitted_string[3])
+    self.pipeline.BloomRadius.value = float(_splitted_string[4])
+    self.pipeline.EnableSsao.value = bool(_splitted_string[5])
+    self.pipeline.SsaoRadius.value = float(_splitted_string[6])
+    self.pipeline.SsaoIntensity.value = float(_splitted_string[7])
+    
   
   ## Evaluated every frame.
   def evaluate(self):
-    pass
+    
+    try:
+      _pipeline_info_node = self.SCENEGRAPH["/net/pipeline_values"].Children.value[0]
+    except:
+      return
+
+    # connect sf_pipeline_string with Name field of info node once
+    if _pipeline_info_node != None and self.sf_pipeline_string.value == "":
+      self.sf_pipeline_string.connect_from(_pipeline_info_node.Name)
+
+
+    # local tracking update code, does not noticeably increase performance
     '''
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
 

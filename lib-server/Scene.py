@@ -48,6 +48,19 @@ class SceneVRHyperspace1(SceneObject):
     self.init_light(1, "ceiling_light6", avango.gua.Color(0.6, 0.3, 0.7), _mat, self.scene_root) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
 
+class Passat(SceneObject):
+
+  # constructor
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+    SceneObject.__init__(self, "Passat", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+
+    _mat = avango.gua.make_trans_mat(-1.99, 0.0, -3) * \
+           avango.gua.make_rot_mat(-90.0,1,0,0) * \
+           avango.gua.make_rot_mat(90.0,0,0,1) * \
+           avango.gua.make_scale_mat(0.04)
+    self.init_geometry("passat", "data/objects/passat/passat.obj", _mat, None, True, True, self.scene_root) 
+
+
 class SceneVRHyperspace2(SceneObject):
 
   # constructor
@@ -159,6 +172,7 @@ class MedievalTown(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "MedievalTown", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
+    self.ssao_radius = 100.0
 
     # geometry
     _mat = avango.gua.make_scale_mat(7.5)

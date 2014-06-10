@@ -23,7 +23,7 @@ class ManipulationManager:
     self.SCENE_MANAGER = SCENE_MANAGER
   
     # init first ray
-    _parent_node = SCENEGRAPH["/net/platform_0"]
+    _parent_node = SCENEGRAPH["/net/platform_0/scale"]
     _transmitter_offset = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
   
     self.ray_pointer1 = RayPointer()
@@ -73,6 +73,7 @@ class RayPointer(avango.script.Script):
     self.pointer_tracking_sensor.Station.value = POINTER_TRACKING_STATION
     self.pointer_tracking_sensor.ReceiverOffset.value = avango.gua.make_identity_mat()
     self.pointer_tracking_sensor.TransmitterOffset.value = TRACKING_TRANSMITTER_OFFSET
+    #self.pointer_tracking_sensor.Matrix.value = avango.gua.make_trans_mat(0.0,1.0,0.0)
         
     self.pointer_device_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.pointer_device_sensor.Station.value = POINTER_DEVICE_STATION
@@ -81,7 +82,7 @@ class RayPointer(avango.script.Script):
     self.ray_transform = avango.gua.nodes.TransformNode(Name = "ray_transform")
     PARENT_NODE.Children.value.append(self.ray_transform)
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
     
     self.ray_geometry = _loader.create_geometry_from_file("ray_geometry", "data/objects/cylinder.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS)
     self.ray_transform.Children.value.append(self.ray_geometry)
@@ -220,6 +221,8 @@ class RayPointer(avango.script.Script):
       _pick_result = self.mf_pointer_pick_result.value[0] # get first intersection target
       
       _node = _pick_result.Object.value
+      
+      #print "hit", _node, _node.Name.value, _node.has_field
       
       if _node.has_field("InteractiveObject") == True:
         _object = _node.InteractiveObject.value

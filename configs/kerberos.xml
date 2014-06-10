@@ -12,9 +12,9 @@
 
   <device>
 
-    <type>Spacemouse</type>
+    <type>NewSpheron</type>
 
-    <inputsensor>device-spacemouse</inputsensor>
+    <inputsensor>device-new-spheron</inputsensor>
 
     <display>large_powerwall</display>
 
@@ -36,9 +36,9 @@
     </notrackingposition>
 
     <platformpos>
-      <x>-2.0</x>
+      <x>0.0</x>
       <y>0.0</y>
-      <z>12.0</z>
+      <z>0.0</z>
     </platformpos>
 
     <platformrot>
@@ -51,11 +51,11 @@
     </platformsize>
 
     <groundfollowing>
-      <activated>True</activated>
+      <activated>False</activated>
       <raystartheight>0.75</raystartheight>
     </groundfollowing>
 
-    <movementtraces>True</movementtraces>
+    <movementtraces>False</movementtraces>
 
   </device>
 
@@ -71,10 +71,10 @@
 
     <startplatform>0</startplatform>
 
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
-
+  
 
   <!-- Second User -->
   
@@ -82,15 +82,16 @@
 
     <vip>False</vip>
 
-    <glasses>4</glasses>
+    <glasses>2</glasses>
 
     <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
 
     <startplatform>0</startplatform>
 
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
+
 
   <!-- Third User -->
   
@@ -98,31 +99,32 @@
 
     <vip>False</vip>
 
-    <glasses>5</glasses>
+    <glasses>3</glasses>
 
     <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
 
     <startplatform>0</startplatform>
 
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
 
-  <!-- Fourth User -->
+
+  <!-- Forth User -->
   
   <user>
 
     <vip>False</vip>
 
-    <glasses>6</glasses>
+    <glasses>4</glasses>
 
     <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
 
     <startplatform>0</startplatform>
 
-    <warnings>True</warnings>
+    <warnings>False</warnings>
 
   </user>
-  
+    
     
 </setup>

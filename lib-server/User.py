@@ -301,7 +301,7 @@ class User(avango.script.Script):
   # @param SF_AVATAR_BODY_MATRIX Field containing the transformation matrix for the avatar's body on the platform.
   def create_avatar_representation(self, SF_AVATAR_HEAD_MATRIX, SF_AVATAR_BODY_MATRIX):
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
     
     # create avatar head
     ## @var head_avatar
@@ -322,8 +322,8 @@ class User(avango.script.Script):
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
     
-    self.append_to_platform(self.head_avatar)
-    self.append_to_platform(self.body_avatar)
+    #self.append_to_platform(self.head_avatar)
+    #self.append_to_platform(self.body_avatar)
 
     self.head_avatar.Transform.connect_from(SF_AVATAR_HEAD_MATRIX)
     self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX)

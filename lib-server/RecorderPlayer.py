@@ -435,7 +435,7 @@ class RecorderPlayer(avango.script.Script):
     print_message("Start playing")
 
     if self.play_mode == "EQUAL_SPEED":
-      _velocity = 1 # in m/s
+      _velocity = 0.5 # in m/s
 
       self.mod_recording_list = self.unshared_copy(self.recording_list)
 
@@ -559,7 +559,8 @@ class RecorderPlayer(avango.script.Script):
 
     _new_pos = _pos1.lerp_to(_pos2, FACTOR)
     _new_quat = _quat1.slerp_to(_quat2, FACTOR)
-    _new_scale = _scale1.lerp_to(_scale2, FACTOR)
+    #_new_scale = _scale1.lerp_to(_scale2, FACTOR)
+    _new_scale = self.SCENEGRAPH_NODE.Transform.value.get_scale()
 
     _new_mat =  avango.gua.make_trans_mat(_new_pos) * \
                 avango.gua.make_rot_mat(_new_quat.get_angle(), _new_quat.get_axis().x, _new_quat.get_axis().y, _new_quat.get_axis().z) * \

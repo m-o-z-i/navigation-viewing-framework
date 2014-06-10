@@ -225,7 +225,7 @@ class SpacemouseDevice(MultiDofDevice):
   # @param PLATFORM_ID The platform id used for setting the group name correctly.
   def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var avatar_transform
     # Scenegraph transform node for the dekstop user's table.
@@ -281,7 +281,7 @@ class GlobefishDevice(MultiDofDevice):
   # @param PLATFORM_ID The platform id used for setting the group name correctly.
   def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var avatar_transform
     # Scenegraph transform node for the dekstop user's table.
@@ -349,7 +349,7 @@ class KeyboardMouseDevice(MultiDofDevice):
   # @param PLATFORM_ID The platform id used for setting the group name correctly.
   def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var avatar_transform
     # Scenegraph transform node for the dekstop user's table.
@@ -454,7 +454,7 @@ class OldSpheronDevice(MultiDofDevice):
   # @param PLATFORM_ID The platform id used for setting the group name correctly.
   def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var avatar_transform
     # Scenegraph transform node for the dekstop user's table.
@@ -522,7 +522,7 @@ class NewSpheronDevice(MultiDofDevice):
   # @param PLATFORM_ID The platform id used for setting the group name correctly.
   def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var avatar_transform
     # Scenegraph transform node for the dekstop user's table.

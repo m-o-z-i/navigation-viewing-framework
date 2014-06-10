@@ -218,7 +218,7 @@ class Platform(avango.script.Script):
     self.sf_scale.connect_from(INPUT_MAPPING_INSTANCE.sf_scale)
 
     # create four boundary planes
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var left_border
     # Geometry scenegraph node of the platform's left border
@@ -325,7 +325,7 @@ class Platform(avango.script.Script):
   ## Creates a plane in front of the user used for displaying coupling messages.
   def create_coupling_plane(self):
     
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var message_plane_node
     # Transform node combining coupling and decoupling message geometry nodes.
@@ -367,7 +367,7 @@ class Platform(avango.script.Script):
   ## Creates an overview of the user's current couplings in his or her field of view.
   def create_coupling_status_overview(self):
     
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
  
     # create transformation node
     ## @var coupling_status_node
@@ -386,7 +386,7 @@ class Platform(avango.script.Script):
                                                                 'data/materials/' + self.avatar_material + 'Shadeless.gmd',
                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
+    #self.own_color_geometry.GroupNames.value = ["do_not_display_group"]
 
     self.coupling_status_node.Children.value.append(self.own_color_geometry)
 
@@ -463,7 +463,7 @@ class Platform(avango.script.Script):
   # @param COUPLED_NAVIGATION_LIST List of Navigation instances that are now coupled.
   def display_coupling(self, COUPLED_NAVIGATION_LIST):
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     # check for every user that could be updated
     for _nav in COUPLED_NAVIGATION_LIST:
@@ -500,7 +500,7 @@ class Platform(avango.script.Script):
   # @param SHOW_NOTIFICATION Boolean saying if a notification should be displayed to all other platforms involved.
   def remove_from_coupling_display(self, NAVIGATION, SHOW_NOTIFICATION):
 
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
 
     # if the platform has a notifier for being coupled with NAVIGATION, remove this node from the scenegraph
     for _node in self.coupling_status_node.Children.value:

@@ -45,7 +45,7 @@ class Trace:
     PARENT_NODE.Children.value.append(self.transform_node)
 
     # create each line segment node by loading the geometry and appending it to the PARENT_NODE
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
     for i in range(self.num_lines):
       _line = _loader.create_geometry_from_file('line_geometry_' + str(i), 'data/objects/cube.obj', 'data/materials/' + TRACE_MATERIAL + '.gmd', avango.gua.LoaderFlags.DEFAULTS)
       _line.Transform.value = avango.gua.make_scale_mat(0, 0, 0)

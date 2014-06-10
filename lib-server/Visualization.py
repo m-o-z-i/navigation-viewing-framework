@@ -27,14 +27,15 @@ class BoundingBoxVisualization(avango.script.Script):
     self.SCENEGRAPH = SCENEGRAPH
 
     # parameters
-    self.bb_thickness	= 0.035 # in meter
+    #self.bb_thickness	= 0.035 # in meter
+    self.bb_thickness	= 0.01 # in meter    
 
     # variables
     self.lf_node_mat = avango.gua.make_identity_mat()
     self.bb = None
 
     # init nodes    
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
         
     self.edge_group = avango.gua.nodes.TransformNode()
     NET_TRANS_NODE.Children.value.append(self.edge_group)
@@ -98,7 +99,7 @@ class BoundingBoxVisualization(avango.script.Script):
   # callbacks
   @field_has_changed(sf_enable_flag)
   def sf_enable_flag_changed(self):
-  
+    
     if self.sf_enable_flag.value == True: # set geometry visible
       self.edge1.GroupNames.value = []
       self.edge2.GroupNames.value = []      
@@ -112,7 +113,7 @@ class BoundingBoxVisualization(avango.script.Script):
       self.edge10.GroupNames.value = []
       self.edge11.GroupNames.value = []
       self.edge12.GroupNames.value = []
-  
+
     else: # set geometry invisible
       self.edge1.GroupNames.value = ["do_not_display_group"]
       self.edge2.GroupNames.value = ["do_not_display_group"]
@@ -136,8 +137,8 @@ class BoundingBoxVisualization(avango.script.Script):
     _lf_scale = self.lf_node_mat.get_scale()
     _scale = self.sf_node_mat.value.get_scale()
 
-    if _lf_scale != _scale: # scale has changed
-      self.update_bb_scale()
+    #if _lf_scale != _scale: # scale has changed
+    #  self.update_bb_scale()
       
     self.lf_node_mat = self.sf_node_mat.value
     
@@ -164,10 +165,13 @@ class BoundingBoxVisualization(avango.script.Script):
       
  
   def calc_bb(self):
+
+    self.SCENEGRAPH.update_cache()
   
     _node = self.OBJECT.get_node()
 
     self.bb = _node.BoundingBox.value
+    #print _node.Name.value, len(_node.Children.value), self.bb.Min.value, self.bb.Max.value
 
     self.update_bb_scale()
 
@@ -176,8 +180,8 @@ class BoundingBoxVisualization(avango.script.Script):
     
     if self.bb != None:
 
-      _bb_min = self.bb.Min.value
-      _bb_max = self.bb.Max.value
+      _bb_min = avango.gua.make_inverse_mat(self.sf_node_mat.value) * self.bb.Min.value
+      _bb_max = avango.gua.make_inverse_mat(self.sf_node_mat.value) * self.bb.Max.value
 
       _x_min	= _bb_min.x    
       _x_max	= _bb_max.x
@@ -199,7 +203,6 @@ class BoundingBoxVisualization(avango.script.Script):
       _scale = _world_mat.get_scale()
 
       # depth edges
-      #_scale_mat = avango.gua.make_scale_mat(self.bb_thickness, _dist_y + self.bb_thickness, self.bb_thickness)# * avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_world_mat.get_scale()))
       _scale_mat = avango.gua.make_scale_mat(self.bb_thickness/_scale.x, _dist_y + self.bb_thickness/_scale.y, self.bb_thickness/_scale.z)
 
       self.edge1.Transform.value = avango.gua.make_trans_mat(_x_min, _center_y, _z_min) * _scale_mat

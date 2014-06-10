@@ -30,6 +30,7 @@ def start():
 
   # create scenegraph
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
+  #graph.Root.value.GroupNames.value = ["all"]
 
   # get server ip 
   server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
@@ -52,6 +53,7 @@ def start():
       Name = "net"
     , Groupname = "AVSERVER|{0}|7432".format(server_ip)
   )
+  #nettrans.GroupNames.value = ["all"]
 
   nettrans.Children.value = pseudo_nettrans.Children.value
   graph.Root.value.Children.value.remove(pseudo_nettrans)
@@ -62,21 +64,33 @@ def start():
     _nav.platform.update_nettrans_node(nettrans)
 
   # distribute all nodes in the scenegraph
-  distribute_all_nodes(nettrans, nettrans)
+  #distribute_all_nodes(nettrans, nettrans)
 
   # initialize scene
   scene_manager = SceneManager()
   scene_manager.my_constructor(nettrans, graph)
 
+
   # initialize animation manager
-  animation_manager = AnimationManager()
+  #animation_manager = AnimationManager()
   #animation_manager.my_constructor([ graph["/net/platform_0"]]
   #                               , [ application_manager.navigation_list[0]])
-  animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"], graph["/net/SceneVRHyperspace1/ceiling_light5"], graph["/net/SceneVRHyperspace1/ceiling_light6"]]
-                                 , [None, None, None, None, None, None])
+  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"], graph["/net/SceneVRHyperspace1/ceiling_light5"], graph["/net/SceneVRHyperspace1/ceiling_light6"]]
+  #                               , [None, None, None, None, None, None])
+  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"]]
+  #                               , [None])
+  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"]]
+  #                               , [None, None])
+  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"]]
+  #                               , [None, None, None, None])
+  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/steppo"]]
+  #                               , [None])
+  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"], graph["/net/SceneVRHyperspace4/terrain_group"]]
+  #                               , [None, None])
+  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]]
+  #                               , [None])
 
-
-  manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

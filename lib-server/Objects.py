@@ -37,11 +37,26 @@ class SceneObject:
 
 
   # functions
-  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE):
+  def get_scene_manager(self):
+  
+    return self.SCENE_MANAGER
+    
 
-    _loader = avango.gua.nodes.GeometryLoader()
+  def get_scenegraph(self):
+  
+    return self.SCENEGRAPH
 
-    _loader_flags = "avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY"
+
+  def get_net_trans_node(self):
+  
+    return self.NET_TRANS_NODE   
+
+  
+  def init_geometry(self, NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP):
+
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    _loader_flags = "avango.gua.LoaderFlags.OPTIMIZE_GEOMETRY" # default loader flags
 
     if MATERIAL == None: # no material defined --> get materials from file description
       _loader_flags += " | avango.gua.LoaderFlags.LOAD_MATERIALS"
@@ -53,41 +68,155 @@ class SceneObject:
     _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, eval(_loader_flags))
     _node.Transform.value = MATRIX
   
-    self.init_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+    #print "LOADED", _node, _node.Name.value
+  
+    self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
  
+   
+  def init_light(self, 
+                TYPE = 0,
+                NAME = "light",
+                MATRIX = avango.gua.make_identity_mat(),
+                PARENT_NODE = None,
+                RENDER_GROUP = "",
+                MANIPULATION_PICK_FLAG = False,
+                COLOR = avango.gua.Vec3(0.75,0.75,0.75),
+                ENABLE_SHADOW = False,
+                SHADOW_MAP_SIZE = 1024,
+                SHADOW_DIMENSIONS = avango.gua.Vec3(1.0,1.0,1.0),
+                ENABLE_DIFFUSE_SHADING = True,
+                ENABLE_SPECULAR_SHADING = True,
+                ENABLE_GODRAYS = False,
+                SOFTNESS = 1.0,
+                FALLOFF = 1.0
+                ):
 
-  def init_light(self, TYPE, NAME, COLOR, MATRIX, PARENT_NODE):
-
+    # init and parametrize light source
     if TYPE == 0: # sun light
-      _node = avango.gua.nodes.SunLightNode()
-      _node.EnableShadows.value = True
-      _node.ShadowMapSize.value = 2048
-      _node.ShadowOffset.value = 0.001
+      _light_node = avango.gua.nodes.SunLightNode()
+      _light_node.EnableShadows.value = ENABLE_SHADOW
+      _light_node.ShadowMapSize.value = SHADOW_MAP_SIZE
+      _light_node.ShadowOffset.value = 0.001
+
+      MANIPULATION_PICK_FLAG = False # sun light not pickable (infinite position) 
 
     elif TYPE == 1: # point light
-      _node = avango.gua.nodes.PointLightNode()
-      _node.Falloff.value = 1.0 # exponent
+      _light_node = avango.gua.nodes.PointLightNode()
+      _light_node.Falloff.value = FALLOFF # exponent      
 
     elif TYPE == 2: # spot light
-      _node = avango.gua.nodes.SpotLightNode()
-      _node.EnableShadows.value = True
-      _node.ShadowMapSize.value = 2048
-      _node.ShadowOffset.value = 0.001
-      _node.Softness.value = 1.0 # exponent
-      _node.Falloff.value = 1.0 # exponent
+      _light_node = avango.gua.nodes.SpotLightNode()
+      _light_node.EnableShadows.value = ENABLE_SHADOW
+      _light_node.ShadowMapSize.value = SHADOW_MAP_SIZE
+      _light_node.ShadowOffset.value = 0.001
+      _light_node.Softness.value = SOFTNESS # exponent
+      _light_node.Falloff.value = FALLOFF # exponent
 
+    _light_node.Name.value = NAME
+    _light_node.Color.value = COLOR
+    _light_node.EnableDiffuseShading.value = ENABLE_DIFFUSE_SHADING
+    _light_node.EnableSpecularShading.value = ENABLE_SPECULAR_SHADING
+    _light_node.EnableGodrays.value = ENABLE_GODRAYS
+
+
+    # init light object (incl. light source)
+    if TYPE == 0: # sun light
+      _light_node.Transform.value = MATRIX
+    
+      self.init_interactive_objects(_light_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+
+    elif TYPE == 1 or TYPE == 2: # point light or spot light
+
+      if TYPE == 1: # point light
+        _filename = "data/objects/sphere.obj"
+
+      elif TYPE == 2: # spot light
+        _filename = "data/objects/lamp.obj"
+
+      _loader = avango.gua.nodes.TriMeshLoader()
+  
+      _light_geometry = _loader.create_geometry_from_file(_light_node.Name.value + "_geometry", _filename, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
+      _light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
+      _light_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
+      _light_geometry.GroupNames.value.append("man_pick_group") # prepare light geometry for picking
+  
+      _node = avango.gua.nodes.TransformNode(Name = _light_node.Name.value)
+      _node.Children.value = [_light_node, _light_geometry]
+      _node.Transform.value = MATRIX
       
-    _node.Name.value = NAME
-    _node.Color.value = COLOR
+      _light_node.Transform.value = avango.gua.make_scale_mat(SHADOW_DIMENSIONS)
+
+      self.init_interactive_objects(_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+
+      _light_geometry.add_and_init_field(avango.script.SFObject(), "InteractiveObject", _node.InteractiveObject.value) # rework
+      _light_geometry.InteractiveObject.dont_distribute(True)
+
+
+  def init_group(self, NAME, MATRIX, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP):
+ 
+    _node = avango.gua.nodes.TransformNode()
+    _node.Name.value = NAME    
     _node.Transform.value = MATRIX
-    _node.EnableDiffuseShading.value = True
-    _node.EnableSpecularShading.value = True
-    _node.EnableGodrays.value = True
+ 
+    self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+ 
+ 
 
-    self.init_objects(_node, PARENT_NODE, False, True)
+  def init_kinect(self, NAME, FILENAME, MATRIX, PARENT_NODE, RENDER_GROUP):
+ 
+    _loader = avango.gua.nodes.Video3DLoader()
+    _node = _loader.load(NAME, FILENAME)
+    _node.Transform.value = MATRIX
+    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
+ 
+    self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP)    
 
 
-  def init_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG):
+  def init_interactive_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
+
+    print "!!!!!!!", NODE.get_type(), NODE.Name.value, len(NODE.Children.value), NODE.Path.value, RENDER_GROUP
+
+    _object = InteractiveObject()
+    _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+
+    '''
+    if NODE.get_type() == 'av::gua::TransformNode' and len(NODE.Children.value) > 0: # group node with children (hierarchy)
+      
+      _node = avango.gua.nodes.TransformNode()
+      _node.Name.value = NODE.Name.value
+      _node.Transform.value = NODE.Transform.value
+      _node.BoundingBox.value = NODE.BoundingBox.value
+
+      _object = InteractiveObject()
+      _object.base_constructor(self, _node, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+
+      for _child in NODE.Children.value:
+        #_child.Parent.value = None
+        self.init_interactive_objects(_child, _object, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+
+    else:
+      
+      _object = InteractiveObject()
+      _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+    '''
+
+    '''
+    if NODE.get_type() == "av::gua::TriMeshNode":
+    
+      _object = GeometryObject()
+      _object.init(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+
+    elif NODE.get_type() == 'av::gua::SunLightNode' or NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
+
+      _object = LightObject()
+      _object.init(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+    '''
+
+
+  '''
+  def init_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
+
+    print "!!!!!!!", NODE.get_type(), NODE.Name.value, NODE.Path.value, RENDER_GROUP
 
     if NODE.get_type() == 'av::gua::TransformNode' and len(NODE.Children.value) > 0: # group node 
 
@@ -97,20 +226,38 @@ class SceneObject:
       #_node.BoundingBox.value = NODE.BoundingBox.value
 
       _object = InteractiveObject()
-      _object.my_constructor(self.SCENE_MANAGER, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
-      #_object.my_constructor(self.SCENE_MANAGER, _node, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+      #_object.my_constructor(self.SCENE_MANAGER, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+      _object.my_constructor(self.SCENE_MANAGER, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
 
       self.objects.append(_object)
 
       for _child in NODE.Children.value:
-        self.init_objects(_child, _object, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+        self.init_objects(_child, _object, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
         
-    elif NODE.get_type() == 'av::gua::GeometryNode' or NODE.get_type() == 'av::gua::SunLightNode' or NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
+    elif NODE.get_type() == "av::gua::TriMeshNode" or NODE.get_type() == "av::gua::Video3DNode" or NODE.get_type() == 'av::gua::SunLightNode' or NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
 
       _object = InteractiveObject()
-      _object.my_constructor(self.SCENE_MANAGER, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+      #_object.my_constructor(self.SCENE_MANAGER, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG)
+      _object.my_constructor(self.SCENE_MANAGER, NODE, PARENT_OBJECT, self.SCENEGRAPH, self.NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
 
       self.objects.append(_object)
+  '''
+  
+
+  def register_interactive_object(self, INTERACTIVE_OBJECT):
+
+    self.objects.append(INTERACTIVE_OBJECT)
+
+
+  def get_object(self, NAME):
+  
+    _node = self.SCENEGRAPH[self.scene_root.Path.value + "/" + NAME]
+
+    if _node != None:
+      
+      if _node.has_field("InteractiveObject") == True:
+
+        return _node.InteractiveObject.value
 
 
   def enable_scene(self, FLAG):
@@ -128,6 +275,7 @@ class SceneObject:
       _object.reset()
 
 
+
 class InteractiveObject(avango.script.Script):
 
   # internal fields
@@ -137,40 +285,25 @@ class InteractiveObject(avango.script.Script):
   def __init__(self):
     self.super(InteractiveObject).__init__()
 
-
-  def my_constructor(self, SCENE_MANAGER, NODE, PARENT_OBJECT, SCENEGRAPH, NET_TRANS_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG):
-
-    # references
-    self.SCENE_MANAGER = SCENE_MANAGER
-
     # variables    
     self.hierarchy_level = 0
-
-    self.parent_object = PARENT_OBJECT
-
+    self.render_group = ""
+    self.parent_object = None
     self.child_objects = []
-
-
-    if NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
-      _loader = avango.gua.nodes.GeometryLoader()
-
-      self.node = _loader.create_geometry_from_file(NODE.Name.value, "data/objects/sphere.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-      self.node.Children.value = [NODE]
-      self.node.Transform.value = NODE.Transform.value * avango.gua.make_scale_mat(0.2)
-
-      if self.parent_object.get_type() == "Objects::InteractiveObject": # interactive object
-
-        self.parent_object.get_node().Children.value.append(self.node)
-
-      else: # scene root
-        self.parent_object.Children.value.append(self.node)
-
-      NODE.Transform.value = avango.gua.make_scale_mat(15.0)
-      NODE.Name.value += "_lightsource"
-
-    else:
-      self.node = NODE      
     
+
+  def base_constructor(self, SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
+
+    # references
+    self.SCENE = SCENE
+
+    self.SCENE.register_interactive_object(self)
+
+    # update variables    
+    self.parent_object = PARENT_OBJECT
+    self.render_group = RENDER_GROUP
+    self.node = NODE
+        
     self.node.add_and_init_field(avango.script.SFObject(), "InteractiveObject", self)
     self.node.InteractiveObject.dont_distribute(True)
 
@@ -188,11 +321,11 @@ class InteractiveObject(avango.script.Script):
       #print "append to scene root"
       self.parent_object.Children.value.append(self.node)
     
-    #print "new object", self, self.hierarchy_level, self.node, self.node.Name.value, self.node.Transform.value.get_translate(), self.parent_object#, self.parent_object.get_type()
+    print "new object", self, self.hierarchy_level, self.node, self.node.Name.value, self.node.Transform.value.get_translate(), self.parent_object
 
     # init sub classes       
     self.bb_vis = BoundingBoxVisualization()
-    self.bb_vis.my_constructor(self, SCENEGRAPH, NET_TRANS_NODE, self.get_hierarchy_material())
+    self.bb_vis.my_constructor(self, self.SCENE.get_scenegraph(), self.SCENE.get_net_trans_node(), self.get_hierarchy_material())
 
     self.enable_object(True)
 
@@ -206,7 +339,7 @@ class InteractiveObject(avango.script.Script):
   def enable_object(self, FLAG):
   
     if FLAG == True: # enable object
-      self.node.GroupNames.value = [] # set geometry visible
+      self.node.GroupNames.value = [self.render_group] # set geometry visible
 
       if self.gf_pick_flag == True:
         self.node.GroupNames.value.append("gf_pick_group")
@@ -231,7 +364,8 @@ class InteractiveObject(avango.script.Script):
   def enable_highlight(self, FLAG):
       
     self.sf_highlight_flag.value = FLAG
-    
+        
+    # highlight/dehighlight subgraph
     for _child_object in self.child_objects:
       _child_object.enable_highlight(FLAG)
 
@@ -240,7 +374,7 @@ class InteractiveObject(avango.script.Script):
 
     self.child_objects.append(OBJECT)
 
-    #self.get_node().Children.value.append(OBJECT.get_node())
+    self.get_node().Children.value.append(OBJECT.get_node())
 
     OBJECT.hierarchy_level = self.hierarchy_level + 1
 
@@ -294,7 +428,7 @@ class InteractiveObject(avango.script.Script):
 
   def get_hierarchy_material(self):
   
-    return self.SCENE_MANAGER.get_hierarchy_material(self.hierarchy_level)
+    return self.SCENE.get_scene_manager().get_hierarchy_material(self.hierarchy_level)
     
     
   def get_parent_object(self):
@@ -320,5 +454,22 @@ class InteractiveObject(avango.script.Script):
 
       else: # scene root
         return None
+
+
+'''
+class GeometryObject(InteractiveObject):
+
+  def init(self, SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
+
+    self.base_constructor(SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+
+
+
+class LightObject(InteractiveObject):
+
+  def init(self, SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
     
+    self.base_constructor(SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+'''
+
     

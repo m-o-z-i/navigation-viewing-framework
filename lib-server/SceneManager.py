@@ -156,7 +156,7 @@ class SceneManager(avango.script.Script):
     self.super(SceneManager).__init__()
 
     # parameters
-    self.hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
+    self.hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarBlueShadeless.gmd"]
 
     # variables
     self.scenes = []
@@ -167,6 +167,7 @@ class SceneManager(avango.script.Script):
     self.keyboard_sensor.Station.value = "device-keyboard0"
 
     # init field connections
+    #'''
     self.sf_key1.connect_from(self.keyboard_sensor.Button10) # key 1
     self.sf_key2.connect_from(self.keyboard_sensor.Button11) # key 2
     self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3       
@@ -178,21 +179,28 @@ class SceneManager(avango.script.Script):
     self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
     self.sf_key0.connect_from(self.keyboard_sensor.Button9) # key 0
     self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
-
+    #'''
 
   ## Custom constructor
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
   def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH):
 
     # init scenes   
-    #self.scene1 = MedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)    
-
-    self.scene2 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene3 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene4 = SceneVRHyperspace3(self, SCENEGRAPH, NET_TRANS_NODE)    
+    self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
+    
+    #self.scene0 = SceneVRHyperspace0(self, SCENEGRAPH, NET_TRANS_NODE) # default plane
+    #self.scene1 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE) # guiding
+    #self.scene2 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE) # virtual air steward (flight instructions & bar)
+    #self.scene3 = SceneVRHyperspace3(self, SCENEGRAPH, NET_TRANS_NODE) # transparent plane
+    #self.scene4 = SceneVRHyperspace4(self, SCENEGRAPH, NET_TRANS_NODE) # sky window 
+    #self.scene5 = SceneVRHyperspace5(self, SCENEGRAPH, NET_TRANS_NODE) # office meeting
+    #self.scene6 = SceneVRHyperspace6(self, SCENEGRAPH, NET_TRANS_NODE) # office meeting & barchart
+    #self.scene7 = SceneVRHyperspace7(self, SCENEGRAPH, NET_TRANS_NODE) # avatar call
 
     self.activate_scene(0) # activate first scene
-    
+        
 
  # callbacks
   @field_has_changed(sf_key1)
@@ -274,7 +282,7 @@ class SceneManager(avango.script.Script):
 
   # functions
   def activate_scene(self, ID):
-  
+    
     # disable all scenes
     for _scene in self.scenes:
       _scene.enable_scene(False)

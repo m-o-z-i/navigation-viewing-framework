@@ -122,7 +122,7 @@ class Display:
   ## Creates a visualization of the display's screen in the scene (white frame). Returns the scenegraph geometry node.
   def create_screen_visualization(self):
   
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
   
     _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
@@ -137,7 +137,7 @@ class Display:
   # @param SCREEN_ID Number of the screen this display is representing on the platform.
   def create_transformed_proxy_geometry(self, PLATFORM, SCREEN_ID):
   
-    _loader = avango.gua.nodes.GeometryLoader()
+    _loader = avango.gua.nodes.TriMeshLoader()
   
     _node = _loader.create_geometry_from_file("proxy_" + str(PLATFORM.platform_id) + "_" + str(SCREEN_ID)
                                             , "data/objects/plane.obj", "data/materials/AvatarBlue.gmd"

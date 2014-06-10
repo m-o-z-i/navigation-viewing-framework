@@ -31,8 +31,8 @@ def init_lcd_wall_tracking():
   _dtrack.stations[17] = avango.daemon.Station('tracking-oculus-front')    # oculus rift tracking
   _dtrack.stations[16] = avango.daemon.Station('tracking-oculus-stag')     # oculus rift tracking
 
-  _dtrack.stations[4] = avango.daemon.Station('tracking-glasses-1')        # glasses powerwall user one
-  _dtrack.stations[3] = avango.daemon.Station('tracking-glasses-2')        # glasses powerwall user two
+  _dtrack.stations[4] = avango.daemon.Station('tracking-lcd-glasses-1')        # glasses powerwall user one
+  _dtrack.stations[3] = avango.daemon.Station('tracking-lcd-glasses-2')        # glasses powerwall user two
 
   _dtrack.stations[7] = avango.daemon.Station('tracking-old-spheron')      # old spheron device
 
@@ -48,6 +48,7 @@ def init_dlp_wall_tracking():
   
   # glasses
   _dtrack.stations[1] = avango.daemon.Station('tracking-dlp-glasses-1')
+  #_dtrack.stations[9] = avango.daemon.Station('tracking-dlp-glasses-1') # camera shutter
   _dtrack.stations[2] = avango.daemon.Station('tracking-dlp-glasses-2')
   _dtrack.stations[3] = avango.daemon.Station('tracking-dlp-glasses-3')
   _dtrack.stations[4] = avango.daemon.Station('tracking-dlp-glasses-4')
@@ -485,15 +486,15 @@ init_lcd_wall_tracking()
 init_dlp_wall_tracking()
 
 # initialize x-box controllers
-xbox_controller(1)
+#xbox_controller(1)
 #xbox_controller(2)
 #xbox_controller(3)
 #xbox_controller(4)
 
 # init spherons
 #init_old_spheron()
-#init_new_spheron()
-init_new_globefish()
+init_new_spheron()
+#init_new_globefish()
 
 # init pointers
 init_august_pointer(0, "device-pointer1")

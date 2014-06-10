@@ -66,10 +66,55 @@ def start():
 
   timer = avango.nodes.TimeSensor()
 
+  #'''
   water_updater = ClientMaterialUpdaters.TimedMaterialUniformUpdate()
   water_updater.MaterialName.value = "data/materials/Water.gmd"
   water_updater.UniformName.value = "time"
   water_updater.TimeIn.connect_from(timer.Time)
+  #'''
+  '''
+  avango.gua.load_shading_models_from("data/materials/bwb")
+  avango.gua.load_materials_from("data/materials/bwb")
+
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_l", "data/textures/bwb/skymap.png")
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_r", "data/textures/bwb/skymap.png")
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_l", "data/textures/bwb/skymap.png")
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_r", "data/textures/bwb/skymap.png")  
+
+  fog_updater = ClientMaterialUpdaters.TimedMaterialUniformUpdate()
+  fog_updater.MaterialName.value = "data/materials/bwb/Fog.gmd"
+  fog_updater.UniformName.value = "time"
+  fog_updater.TimeIn.connect_from(timer.Time)
+  '''
+  '''
+  avango.gua.set_material_uniform("data/materials/bwb/Clouds.gmd", "background", "data/textures/bwb/skymap.png")
+  avango.gua.set_material_uniform("data/materials/bwb/Clouds.gmd", "background_depth", "data/textures/bwb/skymap.png")
+
+  clouds_updater = ClientMaterialUpdaters.TimedMaterialUniformUpdate()
+  clouds_updater.MaterialName.value = "data/materials/bwb/Clouds.gmd"
+  clouds_updater.UniformName.value = "time"
+  clouds_updater.TimeIn.connect_from(timer.Time)
+  '''
+
+  avango.gua.load_shading_models_from("data/materials/bwb")
+  avango.gua.load_materials_from("data/materials/bwb")
+
+
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_l", "pre_scene2_texture")
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_r", "pre_scene2_texture")
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_l", "pre_scene2_texture_depth")
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_r", "pre_scene2_texture_depth")   
+  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "sun_transform", avango.gua.make_rot_mat(-148, 0, 1, 0) * avango.gua.make_rot_mat(-15.0, 1.0, 0.0, 0.0))
+
+  timer = avango.nodes.TimeSensor()
+
+  fog_updater = ClientMaterialUpdaters.TimedMaterialUniformUpdate()
+  fog_updater.MaterialName.value = "data/materials/bwb/Fog.gmd"
+  fog_updater.UniformName.value = "time"
+  fog_updater.TimeIn.connect_from(timer.Time)
+  
+  avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture", "pre_scene1_texture")
+
 
   # get the display instance
   for _display in displays:

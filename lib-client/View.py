@@ -193,7 +193,7 @@ class View(avango.script.Script):
     '''
 
     # set nice pipeline values
-    ClientPipelineValues.set_pipeline_values(self.pipeline)
+    ClientPipelineValues.set_default_pipeline_values(self.pipeline)
 
     # add tracking reader to avoid latency
     self.init_local_tracking_override(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())

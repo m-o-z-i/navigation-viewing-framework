@@ -50,6 +50,8 @@ class SceneVRHyperspace1(SceneObject):
 
 class Passat(SceneObject):
 
+  # dummy testing scene with just the passat object
+
   # constructor
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "Passat", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
@@ -59,6 +61,8 @@ class Passat(SceneObject):
            avango.gua.make_rot_mat(90.0,0,0,1) * \
            avango.gua.make_scale_mat(0.04)
     self.init_geometry("passat", "data/objects/passat/passat.obj", _mat, None, True, True, self.scene_root) 
+
+    self.background_texture = "data/textures/skymap.png"
 
 
 class SceneVRHyperspace2(SceneObject):
@@ -171,8 +175,6 @@ class MedievalTown(SceneObject):
   # constructor
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "MedievalTown", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
-
-    self.ssao_radius = 100.0
 
     # geometry
     _mat = avango.gua.make_scale_mat(7.5)

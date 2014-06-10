@@ -8,11 +8,10 @@ import avango
 import avango.gua
 
 ## Sets all the pipeline values to obtain a nice appearance.
-def set_pipeline_values(PIPELINE):
+def set_default_pipeline_values(PIPELINE):
   avango.gua.create_texture("data/textures/sky.jpg")
-  #avango.gua.create_texture("data/textures/skymap.png")
+  avango.gua.create_texture("data/textures/skymap.png")
   PIPELINE.BackgroundTexture.value = "data/textures/sky.jpg"
-  #PIPELINE.BackgroundTexture.value = "data/textures/skymap.png"
 
   PIPELINE.EnableBloom.value              = True
   PIPELINE.BloomIntensity.value           = 0.1

@@ -18,6 +18,7 @@ from ConsoleIO   import *
 # import python libraries
 import subprocess
 import os
+import time
 
 
 ## Internal representation of a platform which is controlled by an input device.
@@ -230,6 +231,8 @@ class Platform(avango.script.Script):
             "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
             _display.name + " " + str(self.displays.index(_display))]
           , stderr=subprocess.PIPE)
+        
+        time.sleep(1)
       else:
         print_warning("Start of client on " + _display.hostname + " disabled for debugging reasons.")
 

@@ -141,6 +141,8 @@ class Platform(avango.script.Script):
     self.platform_transform_node.Transform.connect_from(self.sf_abs_mat)
     NET_TRANS_NODE.Children.value.append(self.platform_transform_node)
 
+    ## @var platform_scale_transform_node
+    # Scenegraph node representing this platform's scale. Is below platform_transform_node.
     self.platform_scale_transform_node = avango.gua.nodes.TransformNode(Name = "scale")
     self.platform_transform_node.Children.value = [self.platform_scale_transform_node]
 
@@ -158,12 +160,16 @@ class Platform(avango.script.Script):
     for _display in self.displays:
       # append a screen node to platform
       _screen = _display.create_screen_node("screen_" + str(self.displays.index(_display)))
-      self.platform_scale_transform_node.Children.value.append(_screen)
-      self.screens.append(_screen)
+
+      # only attach non-HMD screens to the platform
+      if _screen != None:
+        self.platform_scale_transform_node.Children.value.append(_screen)
+        self.screens.append(_screen)
       
-      if AVATAR_TYPE != "None":
-        _screen_visualization = _display.create_screen_visualization()
-        self.platform_scale_transform_node.Children.value.append(_screen_visualization)
+        # create screen visualization when desired
+        if AVATAR_TYPE != "None":
+          _screen_visualization = _display.create_screen_visualization()
+          self.platform_scale_transform_node.Children.value.append(_screen_visualization)
 
       # create screen proxy geometry for view ray hit tests
       _proxy_geometry = _display.create_transformed_proxy_geometry(self, self.displays.index(_display))
@@ -173,7 +179,29 @@ class Platform(avango.script.Script):
       # create a slot for each displaystring
       for _displaystring in _display.displaystrings:
         
-        if _display.shutter_timings == []:
+        if _display.stereomode == "HMD":
+          # create hmd slot
+          _slot = SlotHMD(_display,
+                          _string_num,
+                          self.displays.index(_display),
+                          True,
+                          self.platform_scale_transform_node)
+          self.slot_list.append(_slot)
+          SLOT_MANAGER.register_slot(_slot, _display)
+          self.screens.append(_slot.left_screen)
+          self.screens.append(_slot.right_screen)
+
+        if _display.stereo == True:
+          # create stereo slot
+          _slot = Slot(_display,
+                       _string_num,
+                       self.displays.index(_display),
+                       True,
+                       self.platform_scale_transform_node)
+          self.slot_list.append(_slot)
+          SLOT_MANAGER.register_slot(_slot, _display) 
+
+        else:
           # create mono slot
           _slot = Slot(_display,
                        _string_num,
@@ -182,15 +210,7 @@ class Platform(avango.script.Script):
                        self.platform_scale_transform_node)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
-        else:
-          # create stereo slot
-          _slot = Slot(_display,
-                       _string_num,
-                       self.displays.index(_display),
-                       True,
-                       self.platform_scale_transform_node)
-          self.slot_list.append(_slot)
-          SLOT_MANAGER.register_slot(_slot, _display)
+
 
         _string_num += 1
 
@@ -216,6 +236,18 @@ class Platform(avango.script.Script):
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
     self.sf_scale.connect_from(INPUT_MAPPING_INSTANCE.sf_scale)
+
+    # create kinect avatars if desired
+    if AVATAR_TYPE.endswith(".ks"):
+
+      _video_loader = avango.gua.nodes.Video3DLoader()
+
+      ## @var video_geode
+      # Video3D node containing the caputred video geometry.
+      self.video_geode = video_loader.load("kincet", AVATAR_TYPE)
+
+      self.video_geode.Transform.value = self.transmitter_offset
+      self.platform_scale_transform_node.Children.value.append(video_geode)
 
     # create four boundary planes
     _loader = avango.gua.nodes.TriMeshLoader()

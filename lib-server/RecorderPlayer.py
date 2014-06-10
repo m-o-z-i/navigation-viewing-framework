@@ -33,7 +33,7 @@ class RecorderPlayer(avango.script.Script):
   # Boolean field to indicate if the save key was pressed.
   sf_save_key = avango.SFBool()
 
-  ## @var sf_save_key
+  ## @var sf_trigger_key
   # Boolean field to indicate if the keyframe triggering key was pressed.
   sf_trigger_key = avango.SFBool()
 
@@ -55,8 +55,8 @@ class RecorderPlayer(avango.script.Script):
   # @param SF_RECORD_KEY Boolean field containing the record key values.
   # @param SF_SAVE_KEY Boolean field containing the save key values.
   # @param SF_TRIGGER_KEY Boolean field containing the keyframe trigger key values.
-  # @param SF_PLAY_MODE_KEY Boolean field containing the play mode key values.
-  # @param SF_RECORD_MODE_KEY Boolean field containing the record mode key values.
+  # @param SF_PLAY_MODE_CHANGE Boolean field containing the play mode key values.
+  # @param SF_RECORD_MODE_CHANGE Boolean field containing the record mode key values.
   def my_constructor(self
                    , SCENEGRAPH_NODE
                    , NAVIGATION
@@ -76,7 +76,7 @@ class RecorderPlayer(avango.script.Script):
     self.NAVIGATION = NAVIGATION
 
     # variables
-    # @var self.recordings_list
+    ## @var recordings_list
     # List of all the recordings captured or loaded for this scenegraph node.
     self.recordings_list = []
 
@@ -364,7 +364,6 @@ class RecorderPlayer(avango.script.Script):
     self.recording_list = [] # clear list
 
     self.recorder_start_time = time.time()
-    self.last_keyframe_time = time.time()
 
     if self.record_mode == "KEYFRAMES":
       _time_step = time.time() - self.recorder_start_time
@@ -437,6 +436,8 @@ class RecorderPlayer(avango.script.Script):
     if self.play_mode == "EQUAL_SPEED":
       _velocity = 0.5 # in m/s
 
+      ## @var mod_recording_list
+      # Copied recording_list with adapted time stamps for equal speed playing.
       self.mod_recording_list = self.unshared_copy(self.recording_list)
 
       _current_time = 0.0

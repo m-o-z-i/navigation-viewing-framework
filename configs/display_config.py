@@ -119,6 +119,7 @@ class LargePowerwall(Display):
                     , size = (4.16, 2.6)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     , max_viewing_distance = 5.0
+                    , stereo = True
                     , stereomode = "SIDE_BY_SIDE"                    
                     )
 
@@ -168,8 +169,11 @@ class TouchTable3D(Display):
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
                                         ]
                     , size = (1.27, 0.93)
-                    , transformation = avango.gua.make_rot_mat(90.0, -1,0, 0)
+                    , transformation = #avango.gua.make_trans_mat(-1.56, 0.953, 2.28) * \
+                                       #avango.gua.make_rot_mat(90, 0, 1, 0) * \
+                                       avango.gua.make_rot_mat(90.0, -1,0, 0)
                     , max_viewing_distance = 1.0
+                    , stereo = True
                     , stereomode = "SIDE_BY_SIDE"                    
                     )
 
@@ -210,6 +214,7 @@ class SmallPowerwall(Display):
                     , displaystrings = [":0.0", ":0.1"]
                     , size = (3.0, 1.98)
                     , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
+                    , stereo = True
                     , stereomode = "SIDE_BY_SIDE"
                     )
 
@@ -250,6 +255,7 @@ class SamsungStereoTV(Display):
                     , displaystrings = [":0.0"]
                     , size = (1.235, 0.695)
                     , transformation = avango.gua.make_trans_mat(0.0,1.6,0.0) * avango.gua.make_rot_mat(-40.0,1,0,0)
+                    , stereo = True
                     , stereomode = "CHECKERBOARD"
                     )
 
@@ -271,8 +277,36 @@ class MitsubishiStereoTV(Display):
                     , displaystrings = [":0.0"]
                     , size = (1.44, 0.81)
                     , transformation = avango.gua.make_trans_mat(0.0,1.3,0.0)
+                    , stereo = True
                     , stereomode = "CHECKERBOARD"
                     )
+
+class OculusRift(Display):
+
+  ## Custom constructor.
+  # @param hostname The hostname to which this display is connected to.
+  # @param name A name to be associated to that display. Will be used in XML configuration file.
+  # @param resolution The display's resolution to be used.
+  # @param displaystrings A list of strings on which the windows for each user will pop up.
+  # @param size Physical size of the display medium in meters.
+  # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
+  def __init__(self):
+    Display.__init__( self
+                    , hostname = "atalante"
+                    , name = "oculus_rift_atalante"
+                    , resolution = (1280, 800)
+                    , displaystrings = [":0.0"]
+                    , size = (0.16, 0.1)
+                    , stereo = True
+                    , stereomode = "HMD"
+                    )
+
+  ## Creates the screen node of this display to be appended to the Platform transformation node.
+  # @param name The name of the screen scenegraph node.
+  def create_screen_node(self, name = "screen_node"):
+
+    # For a HMD, the screens must be appended to the slot node, not to the platform.
+    return None
 
 
 ##################################################
@@ -284,7 +318,8 @@ displays = [
   #  LargePowerwall()
   #,
   #  SmallPowerwall()
-  #, 
+  #,
+  #, OculusRift()
   #TouchTable3D()
   #,
   #Display(hostname = "atalante"

@@ -153,13 +153,21 @@ class MultiDofDevice(avango.script.Script):
     
     self.mf_dof.value = self.dofs
 
-  ## Filters and sets the x parameter.
-  # @param VALUE The value to be set.
+  ## Sets a specific degree of freedom to a value which is filtered before.
+  # @param ID ID Number of the degree of freedom to be set.
+  # @param VALUE The value to be filtered.
+  # @param OFFSET The offset to be applied to VALUE, MIN and MAX.
+  # @param MIN The minimum value of the old interval.
+  # @param MAX The maximum value of the old interval.
+  # @param NEG_THRESHOLD The negative threshold to be used.
+  # @param POS_THRESHOLD The positive threshold to be used.
   def set_and_filter_dof(self, ID, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD):
 
     self.dofs[ID] += self.filter_channel(VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD)
 
-
+  ## Sets a specific degree of freedom to a value.
+  # @param ID ID Number of the degree of freedom to be set.
+  # @param VALUE The value to be set.
   def set_dof(self, ID, VALUE):
 
     self.dofs[ID] += VALUE
@@ -205,12 +213,12 @@ class SpacemouseDevice(MultiDofDevice):
 
     ## @var translation_factor
     # Factor to modify the device's translation input.
-    self.translation_factor = 0.1
+    self.translation_factor = 0.3
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    self.rotation_factor = 0.75
-    
+    self.rotation_factor = 0.7
+
     self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value, 0.0, -0.76, 0.82, 3, 3)")
     self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, 0.0, -0.7, 0.6, 3, 3)")
     self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value, 0.0, -0.95, 0.8, 3, 3)")
@@ -516,6 +524,7 @@ class NewSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
+
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.

@@ -41,14 +41,14 @@ class Slot:
 
     ## @var shutter_timing
     # A list of opening and closing times of shutter glasses for this slot.
-    if self.stereo:
+    if self.stereo and DISPLAY.stereomode == "SIDE_BY_SIDE":
       self.shutter_timing = DISPLAY.shutter_timings[SLOT_ID]
     else:
       self.shutter_timing = None
 
     ## @var shutter_value
     # A list of hexadecimal commands for shutter glasses associated with the timings for this slot.
-    if self.stereo:
+    if self.stereo and DISPLAY.stereomode == "SIDE_BY_SIDE":
       self.shutter_value = DISPLAY.shutter_values[SLOT_ID]
     else:
       self.shutter_value = None
@@ -87,7 +87,6 @@ class Slot:
       self.right_eye.Transform.value = avango.gua.make_identity_mat()
       self.slot_node.Children.value.append(self.right_eye)
 
-      self.set_eye_distance(0.06)
     else:
       ## create the eye
       # Representation of the slot's user's eye.
@@ -99,8 +98,9 @@ class Slot:
   ## Sets the transformation values of left and right eye.
   # @param VALUE The eye distance to be applied.
   def set_eye_distance(self, VALUE):
-    self.left_eye.Transform.value  = avango.gua.make_trans_mat(VALUE * -0.5, 0.0, 0.0)
-    self.right_eye.Transform.value = avango.gua.make_trans_mat(VALUE * 0.5, 0.0, 0.0)
+    if self.stereo:
+      self.left_eye.Transform.value  = avango.gua.make_trans_mat(VALUE * -0.5, 0.0, 0.0)
+      self.right_eye.Transform.value = avango.gua.make_trans_mat(VALUE * 0.5, 0.0, 0.0)
 
   ## Assigns a user to this slot. Therefore, the slot_node is connected with the user's headtracking matrix.
   # @param USER_INSTANCE An instance of User which is to be assigned.
@@ -108,6 +108,7 @@ class Slot:
     # connect tracking matrix
     self.slot_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
     self.assigned_user = USER_INSTANCE
+    self.set_eye_distance(self.assigned_user.eye_distance)
  
     # set information node
     if USER_INSTANCE.headtracking_target_name == None:
@@ -130,3 +131,38 @@ class Slot:
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()
       self.no_tracking_node.Transform.value = avango.gua.make_identity_mat()
+
+## Internal representation of a display slot on a head mounted display. A Slot is one rendering output that can be handled
+# by a display, for HMDs usually one per device.
+class SlotHMD(Slot):
+
+  ## Custom constructor.
+  # @param DISPLAY Display instance for which this slot is being created.
+  # @param SLOT_ID Identification number of the slot within the display.
+  # @param SCREEN_NUM Number of the screen / display on the platform.
+  # @param STEREO Boolean indicating if the slot to be created is a stereo one.
+  # @param PLATFORM_NODE Scenegraph transformation node of the platform where the slot is to be appended to.
+  def __init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE):
+    Slot.__init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE)
+
+    self.left_screen = avango.gua.nodes.ScreenNode(Name = "screenL")
+    self.left_screen.Width.value = DISPLAY.size[0] / 2
+    self.left_screen.Height.value = DISPLAY.size[1]
+    self.left_screen.Transform.value = avango.gua.make_trans_mat(-0.04, 0.0, -0.05)
+    self.slot_node.Children.value.append(self.left_screen)
+
+    self.right_screen = avango.gua.nodes.ScreenNode(Name = "screenR")
+    self.right_screen.Width.value = DISPLAY.size[0] / 2
+    self.right_screen.Height.value = DISPLAY.size[1]
+    self.right_screen.Transform.value = avango.gua.make_trans_mat(0.04, 0.0, -0.05)
+    self.slot_node.Children.value.append(self.right_screen)
+
+  ## Assigns a user to this slot. Therefore, the slot_node is connected with the user's headtracking matrix.
+  # In the HMD case, the InputMapping's station matrix is overwritten.
+  # @param USER_INSTANCE An instance of User which is to be assigned.
+  def assign_user(self, USER_INSTANCE):
+    Slot.assign_user(self, USER_INSTANCE)
+
+    # connect station mat with headtracking matrix
+    USER_INSTANCE.platform.INPUT_MAPPING_INSTANCE.DEVICE_INSTANCE.sf_station_mat.disconnect()
+    USER_INSTANCE.platform.INPUT_MAPPING_INSTANCE.DEVICE_INSTANCE.sf_station_mat.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)

@@ -34,7 +34,7 @@ class Intersection(avango.script.Script):
   # @param SCENEGRAPH The scenegraph where to look for intersections of the ray.
   # @param SF_PICK_MAT Starting matrix of the ray.
   # @param PICK_LENGTH Length of the ray in meters.
-  # @pararm PICK_MASK Picking mask of the intersection process.
+  # @param PICK_MASK Picking mask of the intersection process.
   def my_constructor(self, SCENEGRAPH, SF_PICK_MAT, PICK_LENGTH, PICK_MASK = ""):
     
     ## @var SCENEGRAPH

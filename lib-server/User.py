@@ -40,6 +40,8 @@ class User(avango.script.Script):
   # @param VIP Boolean indicating if the user to be created is a vip.
   # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
+  # @param HMD_SENSOR_NAME Name of the HMD sensor belonging to the user, if applicable.
+  # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
   def my_constructor(self
@@ -48,8 +50,11 @@ class User(avango.script.Script):
                    , VIP
                    , GLASSES_ID
                    , HEADTRACKING_TARGET_NAME
+                   , HMD_SENSOR_NAME
+                   , EYE_DISTANCE
                    , PLATFORM_ID
-                   , AVATAR_MATERIAL):
+                   , AVATAR_MATERIAL
+                   ):
 
     # flags 
     ## @var is_vip
@@ -59,6 +64,10 @@ class User(avango.script.Script):
     ## @var is_active
     # Boolean indicating if this user is currently active.
     self.is_active = True
+
+    ## @var eye_distance
+    # The eye distance of the user to be applied.
+    self.eye_distance = EYE_DISTANCE
 
     # variables
     ## @var APPLICATION_MANAGER
@@ -103,9 +112,23 @@ class User(avango.script.Script):
 
     ## @var headtracking_reader
     # Instance of a child class of TrackingReader to supply translation input.
-    if HEADTRACKING_TARGET_NAME == None:
+    if self.current_display.stereomode == "HMD":
+
+      # it is assumed that headtracking is present when using a HMD
+      if HEADTRACKING_TARGET_NAME == None:
+        print_error("Error: User " + str(self.id) + " is using a platform with HMD display, but has no headtracking target specified.", True)
+      if HMD_SENSOR_NAME == None:
+        print_error("Error: User " + str(self.id) + " is using a platform with HMD display, but has no HMD sensor name specified.", True)  
+
+      self.headtracking_reader = TrackingHMDReader()
+      self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME, HMD_SENSOR_NAME)
+      self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
+      self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
+
+    elif HEADTRACKING_TARGET_NAME == None:
       self.headtracking_reader = TrackingDefaultReader()
       self.headtracking_reader.set_no_tracking_matrix(self.no_tracking_mat)
+    
     else:
       self.headtracking_reader = TrackingTargetReader()
       self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
@@ -113,7 +136,9 @@ class User(avango.script.Script):
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     # create avatar representation
-    if self.platform.avatar_type == "joseph" or self.platform.avatar_type == "None":
+    if self.platform.avatar_type == "joseph" or \
+       self.platform.avatar_type == "None" or \
+       self.platform.avatar_type.endswith(".ks"):
       self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)  
     else:
       if self.platform.avatar_type == "joseph_table":
@@ -166,10 +191,12 @@ class User(avango.script.Script):
         _hit = _hit.split("_")
 
         _hit_platform = int(_hit[0])
+        _intended_platform = self.APPLICATION_MANAGER.navigation_list[_hit_platform].platform
         _hit_screen = int(_hit[1])
+        _intended_display = _intended_platform.displays[_hit_screen]
 
-        if _hit_platform != self.platform_id:
-          self.set_user_location(_hit_platform, True)
+        if _intended_display != self.current_display:
+          self.set_user_location(_hit_platform, _hit_screen, True)
 
       else:
         pass
@@ -248,11 +275,12 @@ class User(avango.script.Script):
 
   ## Changes the user's current platform.
   # @param PLATFORM_ID The new platform id to be set.
+  # @param SCREEN_ID The new screen id to be set.
   # @param RESEND_CONFIG Boolean indicating if the shutter configuration should be directly resent.
-  def set_user_location(self, PLATFORM_ID, RESEND_CONFIG):
+  def set_user_location(self, PLATFORM_ID, SCREEN_ID, RESEND_CONFIG):
 
     _intended_platform = self.APPLICATION_MANAGER.navigation_list[PLATFORM_ID].platform
-    _intended_display = _intended_platform.displays[0]
+    _intended_display = _intended_platform.displays[SCREEN_ID]
 
     if self.APPLICATION_MANAGER.slot_manager.display_has_free_slot(_intended_display):
 
@@ -274,7 +302,8 @@ class User(avango.script.Script):
       self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
       self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
 
-      if self.platform.avatar_type != "None":
+      if self.platform.avatar_type != "None" and \
+         self.platform.avatar_type.endswith(".ks") == False:
         self.append_to_platform(self.head_avatar)
         self.append_to_platform(self.body_avatar)
 

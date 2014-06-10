@@ -26,6 +26,7 @@ class Display:
   # @param size Physical size of the display medium in meters.
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
   # @param max_viewing_distance Specification of the maximum viewing distance for the shutters to sync in.
+  # @param stereo Boolean indicating if the stereo mode is to be used.
   # @param stereomode A string indicating the stereo mode that is used by this display.
   def __init__( self
               , hostname
@@ -37,6 +38,7 @@ class Display:
               , size = (0.595, 0.335)
               , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
               , max_viewing_distance = 1.0
+              , stereo = False
               , stereomode = "ANAGLYPH_RED_CYAN"
               ):
 
@@ -84,6 +86,10 @@ class Display:
     ## @var num_views
     # Number of views which are already registered with this display.
     self.num_views = 0
+
+    ## @var stereo
+    # Boolean indicating if the stereo mode is to be used.
+    self.stereo = stereo
    
     ## @var stereomode
     # A string indicating the stereo mode that is used by this display.

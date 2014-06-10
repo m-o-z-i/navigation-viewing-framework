@@ -243,18 +243,22 @@ class ApplicationManager():
     self.navigation_list.append(_navigation)
     self.border_observer_list.append(None)
 
-  ## Create a standard (non-HMD) user.
+  ## Creates a user.
   # @param VIP Boolean indicating if the user to be created is a vip.
   # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param PLATFORM_ID The ID of the platform this user belongs to.
-  # @param HEADTRACKING_TARGET_NAME The headtracking target identifier attached to this user
+  # @param HEADTRACKING_TARGET_NAME The headtracking target identifier attached to this user.
+  # @param HMD_SENSOR_NAME Name of the HMD sensor belonging to the user, if applicable.
+  # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param WARNINGS Boolean indicating whether to display warning planes when the user gets close to the platform borders.
-  def create_standard_user(
+  def create_user(
       self
     , VIP
     , GLASSES_ID
     , PLATFORM_ID
     , HEADTRACKING_TARGET_NAME
+    , HMD_SENSOR_NAME
+    , EYE_DISTANCE
     , WARNINGS
     ):
     _user = User()
@@ -263,8 +267,11 @@ class ApplicationManager():
                        , VIP
                        , GLASSES_ID
                        , HEADTRACKING_TARGET_NAME
+                       , HMD_SENSOR_NAME
+                       , EYE_DISTANCE
                        , PLATFORM_ID
-                       , self.navigation_list[PLATFORM_ID].trace_material)
+                       , self.navigation_list[PLATFORM_ID].trace_material
+                       )
     self.user_list.append(_user)
 
     # init border checker to warn user on platform

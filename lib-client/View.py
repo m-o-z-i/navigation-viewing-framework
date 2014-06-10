@@ -7,6 +7,7 @@
 import avango
 import avango.gua
 import avango.script
+import avango.oculus
 from avango.script import field_has_changed
 
 # import framework libraries
@@ -20,6 +21,10 @@ from ConsoleIO import *
 # Creates viewing setup and initializes a tracking sensor in order to avoid latency 
 # due to distribution in the network. Refers to a StandardUser on server side.
 class View(avango.script.Script):
+
+  ## @var sf_pipeline_string
+  # String field containing the concatenated pipeline values.
+  sf_pipeline_string = avango.SFString()
 
   ## Default constructor.
   def __init__(self):
@@ -70,12 +75,6 @@ class View(avango.script.Script):
     # Size of the window in which this View will be rendered.
     self.window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1]) 
 
-    # create window
-    ## @var window
-    # The window in which this View will be rendered to.
-    self.window = avango.gua.nodes.Window()
-    self.window.Display.value = self.display_values[0] # GPU-ID
-
     # create camera
     ## @var camera
     # The camera from which this View will be rendered.
@@ -99,19 +98,47 @@ class View(avango.script.Script):
     self.pipeline = avango.gua.nodes.Pipeline()
     self.pipeline.Enabled.value = True
 
-    #STEREO = True
-    
-    if STEREO:
+    if DISPLAY_INSTANCE.stereomode == "HMD":
+
+      '''
+        HMD View
+      '''
+
+      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/screenL"
+      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/screenR"
+      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeL"
+      self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeR"
+
+      # create window
+      ## @var window
+      # The window in which this View will be rendered to.
+      self.window = avango.oculus.nodes.OculusWindow()
+      self.window.Display.value = self.display_values[0] # GPU-ID
+      self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
+      self.window.LeftResolution.value = avango.gua.Vec2ui(self.window_size.x / 2, self.window_size.y)
+      self.window.RightResolution.value = avango.gua.Vec2ui(self.window_size.x / 2, self.window_size.y)
+
+      self.pipeline.EnableStereo.value = True
+      self.pipeline.LeftResolution.value = self.window.LeftResolution.value
+      self.pipeline.RightResolution.value = self.window.RightResolution.value
+
+
+    elif STEREO:
 
       '''
         Stereo View
       '''
 
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
-      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
+      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(self.screen_num)
+      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(self.screen_num)
       self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeL"
       self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeR"
 
+      # create window
+      ## @var window
+      # The window in which this View will be rendered to.
+      self.window = avango.gua.nodes.Window()
+      self.window.Display.value = self.display_values[0] # GPU-ID
       self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       self.window.LeftResolution.value = self.window_size
       self.window.RightResolution.value = self.window_size
@@ -146,6 +173,11 @@ class View(avango.script.Script):
       self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
       self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eye"
 
+      # create window
+      ## @var window
+      # The window in which this View will be rendered to.
+      self.window = avango.gua.nodes.Window()
+      self.window.Display.value = self.display_values[0] # GPU-ID
       self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       self.window.Size.value = self.window_size
       self.window.LeftResolution.value = self.window_size
@@ -163,91 +195,7 @@ class View(avango.script.Script):
     '''
 
     # set nice pipeline values
-    ClientPipelineValues.set_pipeline_values(self.pipeline)
-
-    '''    
-    # pre render setup
-    self.pre_camera2 = avango.gua.nodes.Camera()
-    self.pre_camera2.SceneGraph.value = SCENEGRAPH.Name.value
-    self.pre_camera2.LeftScreen.value = self.camera.LeftScreen.value
-    self.pre_camera2.RightScreen.value = self.camera.RightScreen.value
-    self.pre_camera2.LeftEye.value = self.camera.LeftEye.value
-    self.pre_camera2.RightEye.value = self.camera.RightEye.value
-    self.pre_camera2.RenderMask.value = "!main_scene && !pre_scene1 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-    #self.pre_camera2.RenderMask.value = "pre_scene2"
-    #self.pre_camera2.RenderMask.value = "all && pre_scene2"
-
-    self.pre_pipeline2 = avango.gua.nodes.Pipeline()
-    self.pre_pipeline2.Camera.value = self.pre_camera2
-    self.pre_pipeline2.Enabled.value = self.pipeline.Enabled.value
-    self.pre_pipeline2.EnableStereo.value = self.pipeline.EnableStereo.value
-    self.pre_pipeline2.LeftResolution.value = self.pipeline.LeftResolution.value   
-    self.pre_pipeline2.RightResolution.value = self.pipeline.RightResolution.value
-    self.pre_pipeline2.OutputTextureName.value = "pre_scene2_texture"
-    self.pre_pipeline2.EnableFrustumCulling.value = True
-    self.pre_pipeline2.EnableBackfaceCulling.value = True
-    self.pre_pipeline2.EnableSsao.value = False
-    self.pre_pipeline2.FogStart.value = 850.0
-    self.pre_pipeline2.FogEnd.value = 1000.0
-    self.pre_pipeline2.EnableFog.value = True
-    self.pre_pipeline2.FogColor.value = avango.gua.Color(1.0, 1.0, 1.0)
-    self.pre_pipeline2.AmbientColor.value = avango.gua.Color(0.2, 0.4, 0.5)    
-
-    #avango.gua.create_texture("data/textures/bwb/skymap.png")
-    #self.pre_pipeline2.BackgroundTexture.value = "data/textures/bwb/skymap.png"
-    avango.gua.create_texture("/opt/guacamole/resources/skymaps/bright_sky.jpg")
-    self.pre_pipeline2.BackgroundTexture.value = "/opt/guacamole/resources/skymaps/bright_sky.jpg"
-    #avango.gua.create_texture("/opt/guacamole/resources/skymaps/DarkWinter.jpg")
-    #self.pre_pipeline2.BackgroundTexture.value = "/opt/guacamole/resources/skymaps/DarkWinter.jpg"
-    self.pre_pipeline2.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
-    '''
-    
-    '''
-    self.pre_camera1 = avango.gua.nodes.Camera()
-    self.pre_camera1.SceneGraph.value = SCENEGRAPH.Name.value
-    self.pre_camera1.LeftScreen.value = self.camera.LeftScreen.value
-    self.pre_camera1.RightScreen.value = self.camera.RightScreen.value    
-    self.pre_camera1.LeftEye.value = self.camera.LeftEye.value
-    self.pre_camera1.RightEye.value = self.camera.RightEye.value
-    #self.pre_camera1.RenderMask.value = "pre_scene1"
-    self.pre_camera1.RenderMask.value = "!main_scene && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-        
-
-    self.pre_pipeline1 = avango.gua.nodes.Pipeline()
-    self.pre_pipeline1.Camera.value = self.pre_camera1
-    self.pre_pipeline1.Enabled.value = self.pipeline.Enabled.value
-    self.pre_pipeline1.EnableStereo.value = self.pipeline.EnableStereo.value
-    self.pre_pipeline1.LeftResolution.value = self.pipeline.LeftResolution.value    
-    self.pre_pipeline1.RightResolution.value = self.pipeline.RightResolution.value
-    self.pre_pipeline1.OutputTextureName.value = "pre_scene1_texture"
-    self.pre_pipeline1.PreRenderPipelines.value = [self.pre_pipeline2]
-    self.pre_pipeline1.EnableFrustumCulling.value = True
-    self.pre_pipeline1.EnableBackfaceCulling.value = True
-    self.pre_pipeline1.EnableSsao.value = False    
-    '''
-
-    #self.pipeline.BackgroundTexture.value = "/opt/guacamole/resources/skymaps/DH211SN.png"
-    #self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
-    
-
-    '''
-    #self.pipeline.PreRenderPipelines.value = [self.pre_pipeline2]
-    #self.pipeline.BackgroundTexture.value = "pre_scene2_texture"
-    #self.pipeline.PreRenderPipelines.value = [self.pre_pipeline1]
-    #self.pipeline.BackgroundTexture.value = "pre_scene1_texture"
-    #self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.QUAD_TEXTURE
-    self.pipeline.EnableFrustumCulling.value = False
-    self.pipeline.EnableBackfaceCulling.value = False
-    self.pipeline.EnableSsao.value = False
-    self.pipeline.EnableBloom.value  = True
-    self.pipeline.BloomIntensity.value = 0.1
-    self.pipeline.BloomThreshold.value = 1.0
-    self.pipeline.BloomRadius.value = 10
-    #self.pipeline.AmbientColor.value = avango.gua.Color(0.25, 0.25, 0.25)
-    self.pipeline.AmbientColor.value = avango.gua.Color(0.35, 0.35, 0.35)    
-    self.pipeline.EnableFXAA.value = True
-    self.pipeline.EnableFPSDisplay.value = False
-    '''    
+    ClientPipelineValues.set_default_pipeline_values(self.pipeline)
 
 
     # add tracking reader to avoid latency
@@ -277,7 +225,7 @@ class View(avango.script.Script):
     self.TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
 
     ## @var NO_TRACKING_MAT
-    # Matrix to be applied if no headtracking of the Oculus Rift is available.
+    # Matrix to be applied if no headtracking is available.
     self.NO_TRACKING_MAT = NO_TRACKING_MAT
 
     ## @var headtracking_reader
@@ -303,10 +251,41 @@ class View(avango.script.Script):
       WINDOW.WarpMatrixGreenLeft.value   = WARPMATRICES[4]
       WINDOW.WarpMatrixBlueLeft.value    = WARPMATRICES[5]
 
+  ## Called whenever sf_pipeline_string changes.
+  @field_has_changed(sf_pipeline_string)
+  def sf_pipeline_string_changed(self):
+      
+    _splitted_string = self.sf_pipeline_string.value.split("#")
+
+    print "set to", _splitted_string
+
+    #avango.gua.create_texture(_splitted_string[0])
+    self.pipeline.BackgroundTexture.value = _splitted_string[0]
+    self.pipeline.FogTexture.value = _splitted_string[0]
+
+    self.pipeline.EnableBloom.value = bool(_splitted_string[1])
+    self.pipeline.BloomIntensity.value = float(_splitted_string[2])
+    self.pipeline.BloomThreshold.value = float(_splitted_string[3])
+    self.pipeline.BloomRadius.value = float(_splitted_string[4])
+    self.pipeline.EnableSsao.value = bool(_splitted_string[5])
+    self.pipeline.SsaoRadius.value = float(_splitted_string[6])
+    self.pipeline.SsaoIntensity.value = float(_splitted_string[7])
+    
   
   ## Evaluated every frame.
   def evaluate(self):
-    pass
+    
+    try:
+      _pipeline_info_node = self.SCENEGRAPH["/net/pipeline_values"].Children.value[0]
+    except:
+      return
+
+    # connect sf_pipeline_string with Name field of info node once
+    if _pipeline_info_node != None and self.sf_pipeline_string.value == "":
+      self.sf_pipeline_string.connect_from(_pipeline_info_node.Name)
+
+
+    # local tracking update code, does not noticeably increase performance
     '''
     _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
 

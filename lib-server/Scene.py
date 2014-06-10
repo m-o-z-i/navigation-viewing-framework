@@ -133,6 +133,23 @@ class SceneVRHyperspace1(SceneObject):
     self.init_light(1, "guiding_light3", avango.gua.Color(0.9, 0.9, 0.1), _mat, self.scene_root, "main_scene") # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
 
+class Passat(SceneObject):
+
+  # dummy testing scene with just the passat object
+
+  # constructor
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+    SceneObject.__init__(self, "Passat", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+
+    _mat = avango.gua.make_trans_mat(-1.99, 0.0, -3) * \
+           avango.gua.make_rot_mat(-90.0,1,0,0) * \
+           avango.gua.make_rot_mat(90.0,0,0,1) * \
+           avango.gua.make_scale_mat(0.04)
+    self.init_geometry("passat", "data/objects/passat/passat.obj", _mat, None, True, True, self.scene_root) 
+
+    self.background_texture = "data/textures/skymap.png"
+
+
 class SceneVRHyperspace2(SceneObject):
 
   # constructor
@@ -674,7 +691,6 @@ class SceneMedievalTown(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "MedievalTown", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-
     # geometry
     _mat = avango.gua.make_scale_mat(7.5)
     self.init_geometry("town", "data/objects/demo_models/medieval_harbour/town.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -708,10 +724,12 @@ class SceneVianden(SceneObject):
 
 
     # geometry
-    _mat = avango.gua.make_trans_mat(-47.0,-28.0,-24.0) * avango.gua.make_rot_mat(90.0,-1,0,0)
-									
+    _mat = avango.gua.make_trans_mat(-47.0,-28.0,-24.0) * avango.gua.make_rot_mat(90.0,-1,0,0)									
     self.init_geometry("Vianden", "/home/kunert/Desktop/guacamole/tabletop/data/objects/Arctron/Vianden/Aussen_gesamt/VIANDEN.obj", _mat, "data/materials/SimplePhongWhite.gmd", True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     
+    #_mat = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
+    #self.init_geometry("steppo", "data/objects/avatars_obj/shot_steppo_animation_010000000001.obj", _mat, None, False, True, self.scene_root) # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+   
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
     self.init_light(0, "sun_light", avango.gua.Color(1.0, 0.7, 0.5), _mat, self.scene_root, "main_scene") # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
@@ -724,7 +742,6 @@ class SceneMonkey(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "Monkey", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-    #'''
     _mat = avango.gua.make_identity_mat()
     self.init_group("group", _mat, False, True, self.scene_root, "main_scene")
 
@@ -738,13 +755,10 @@ class SceneMonkey(SceneObject):
 
     _mat = avango.gua.make_trans_mat(0.25,1.2,0.0) * avango.gua.make_scale_mat(0.05)
     self.init_geometry("monkey3", "data/objects/monkey.obj", _mat, "data/materials/AvatarBlue.gmd", False, True, _parent_object, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    #'''
+
     _mat = avango.gua.make_trans_mat(0.0, 1.0, 0.0) * avango.gua.make_scale_mat(2.0)
     self.init_geometry("plane", "data/objects/plane.obj", _mat, 'data/materials/ComplexPhongTiles.gmd', False, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
   
-    #_mat = avango.gua.make_trans_mat(-0.35, 1.0, 0.0) * avango.gua.make_rot_mat(90.0,-1,0,0) * avango.gua.make_scale_mat(0.004)
-    #self.init_geometry("passat", "data/objects/demo_models/passat/passat.obj", _mat, 'data/materials/SimplePhongWhite.gmd', False, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    
     
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)

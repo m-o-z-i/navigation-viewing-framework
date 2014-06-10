@@ -136,7 +136,9 @@ class User(avango.script.Script):
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     # create avatar representation
-    if self.platform.avatar_type == "joseph" or self.platform.avatar_type == "None":
+    if self.platform.avatar_type == "joseph" or \
+       self.platform.avatar_type == "None" or \
+       self.platform.avatar_type.endswith(".ks"):
       self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)  
     else:
       if self.platform.avatar_type == "joseph_table":
@@ -300,7 +302,8 @@ class User(avango.script.Script):
       self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
       self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
 
-      if self.platform.avatar_type != "None":
+      if self.platform.avatar_type != "None" and \
+         self.platform.avatar_type.endswith(".ks") == False:
         self.append_to_platform(self.head_avatar)
         self.append_to_platform(self.body_avatar)
 

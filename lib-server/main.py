@@ -6,12 +6,14 @@
 # import avango-guacamole libraries
 import avango
 import avango.gua
+import _avango.gua.guajacum
 
 # import framework libraries
 from SceneManager import *
 from ApplicationManager import *
 from RecorderPlayer import *
 from Manipulation import *
+from TUIO import *
 
 # import python libraries
 import sys
@@ -93,6 +95,8 @@ def start():
   #                               , [None])
 
   #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  tuio_manager = TUIOManager()
+
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

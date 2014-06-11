@@ -13,6 +13,8 @@ import avango.daemon
 # import framework libraries
 from Intersection import *
 
+from TUIO import *
+
 ## Class to handle manipulations with a set of RayPointer instances.
 class ManipulationManager:
 
@@ -36,6 +38,8 @@ class ManipulationManager:
     self.ray_pointer1 = RayPointer()
     self.ray_pointer1.my_constructor(self, 1, SCENEGRAPH, NET_TRANS_NODE, _parent_node, _transmitter_offset, "tracking-dlp-pointer1", "device-pointer1")
     self.ray_pointer1.pointer_tracking_sensor.TransmitterOffset.value = avango.gua.make_trans_mat(0.1,1.2,1.6)
+
+    self.tuio_cursor = TUIOManager()
 
 
   ## Returns the material string belonging to this object's hierarchy level.
@@ -79,6 +83,7 @@ class RayPointer(avango.script.Script):
   # @param POINTER_TRACKING_STATION Tracking target name of the pointing device.
   # @param POINTER_DEVICE_STATION Input values name of the pointing device.
   def my_constructor(self, MANIPULATION_MANAGER, ID, SCENEGRAPH, NET_TRANS_NODE, PARENT_NODE, TRACKING_TRANSMITTER_OFFSET, POINTER_TRACKING_STATION, POINTER_DEVICE_STATION):
+    return
     
     # references
     ## @var MANIPULATION_MANAGER

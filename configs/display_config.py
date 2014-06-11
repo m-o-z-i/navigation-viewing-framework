@@ -372,6 +372,17 @@ class OculusRift(Display):
     # For a HMD, the screens must be appended to the slot node, not to the platform.
     return None
 
+class PerseusTouchTable(Display):
+    def __init__(self):
+        Display.__init__(self
+                        , hostname = "perseus"
+                        , name = "touch_table"
+                        , resolution = (1920 * 2, 1080 * 2)
+                        , displaystrings = [":0.0"]
+                        , size = (1.25, .70)
+                        , transformation = avango.gua.make_trans_mat(0.0,1.2,0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+                        )
+
 
 ##################################################
 # STORE ALL DISPLAYS TO BE USED IN THIS LIST
@@ -386,6 +397,7 @@ displays = [
   #OculusRift() ,
   #TouchTable3D() ,
   Display(hostname = "daedalos", stereo = False) ,
+  PerseusTouchTable() ,
 ]
 
 ## @var INTELLIGENT_SHUTTER_SWITCHING

@@ -510,6 +510,6 @@ init_spacemouse()
 #init_oculus()
 
 # init touch input
-#init_tuio_input() # crash ???
+init_tuio_input() # crash ???
 
 avango.daemon.run(device_list)

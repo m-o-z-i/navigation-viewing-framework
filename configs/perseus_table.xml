@@ -10,9 +10,7 @@
 
   <device>
 
-    <type>Spacemouse</type>
-
-    <inputsensor>device-spacemouse</inputsensor>
+    <type>TouchTable2D</type>
 
     <display>touch_table</display>
 

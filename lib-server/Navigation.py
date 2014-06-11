@@ -10,6 +10,7 @@ import avango.script
 
 # import framework libraries
 from Device           import *
+from TUIO             import TUIODevice
 from GroundFollowing  import GroundFollowing
 from InputMapping     import InputMapping
 from Platform         import Platform
@@ -179,6 +180,9 @@ class Navigation(avango.script.Script):
     elif self.input_sensor_type == "Globefish":
       self.device = GlobefishDevice()
       self.device.my_constructor(INPUT_SENSOR_NAME, NO_TRACKING_MAT)
+    elif self.input_sensor_type == "TouchTable2D":
+      self.device = TUIODevice()
+      self.device.my_constructor(NO_TRACKING_MAT)
 
 
     # init field connections
@@ -632,4 +636,4 @@ class Navigation(avango.script.Script):
       if self.in_dofchange_animation == False:
          self.trigger_dofchange()
     
-         
+

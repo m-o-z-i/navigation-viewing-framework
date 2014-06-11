@@ -95,8 +95,6 @@ def start():
   #                               , [None])
 
   #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
-  tuio_manager = TUIOManager()
-
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

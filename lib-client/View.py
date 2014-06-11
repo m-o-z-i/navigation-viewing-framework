@@ -263,14 +263,37 @@ class View(avango.script.Script):
     self.pipeline.BackgroundTexture.value = _splitted_string[0]
     self.pipeline.FogTexture.value = _splitted_string[0]
 
-    self.pipeline.EnableBloom.value = bool(_splitted_string[1])
+    if _splitted_string[1] == "True":
+      self.pipeline.EnableBloom.value = True
+    else:
+      self.pipeline.EnableBloom.value = False
+
     self.pipeline.BloomIntensity.value = float(_splitted_string[2])
     self.pipeline.BloomThreshold.value = float(_splitted_string[3])
     self.pipeline.BloomRadius.value = float(_splitted_string[4])
-    self.pipeline.EnableSsao.value = bool(_splitted_string[5])
+
+    if _splitted_string[5] == "True":
+      self.pipeline.EnableSsao.value = True
+    else:
+      self.pipeline.EnableSsao.value = False
+
     self.pipeline.SsaoRadius.value = float(_splitted_string[6])
     self.pipeline.SsaoIntensity.value = float(_splitted_string[7])
-    
+
+    if _splitted_string[8] == "True":
+      self.pipeline.EnableBackfaceCulling.value = True
+    else:
+      self.pipeline.EnableBackfaceCulling.value = False
+
+    if _splitted_string[9] == "True":
+      self.pipeline.EnableFrustumCulling.value = True
+    else:
+      self.pipeline.EnableFrustumCulling.value = False
+
+    if _splitted_string[10] == "True":
+      self.pipeline.EnableFXAA.value = True
+    else:
+      self.pipeline.EnableFXAA.value = False
   
   ## Evaluated every frame.
   def evaluate(self):

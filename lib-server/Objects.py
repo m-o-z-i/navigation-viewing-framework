@@ -89,6 +89,18 @@ class SceneObject:
     # Mapping of pipeline value SsaoIntensity.
     self.ssao_intensity = 2.0
 
+    ## @var enable_backface_culling
+    # Mapping of pipeline value EnableBackfaceCulling.
+    self.enable_backface_culling = False
+
+    ## @var enable_frustum_culling
+    # Mapping of pipeline value EnableFrustumCulling.
+    self.enable_frustum_culling = False
+
+    ## @var enable_fxaa
+    # Mapping of pipeline value EnableFXAA.
+    self.enable_fxaa = False
+
     '''
       Navigation values
     '''
@@ -126,7 +138,10 @@ class SceneObject:
            str(self.bloom_radius) + "#" + \
            str(self.enable_ssao) + "#" + \
            str(self.ssao_radius) + "#" + \
-           str(self.ssao_intensity)
+           str(self.ssao_intensity) + "#" + \
+           str(self.enable_backface_culling) + "#" + \
+           str(self.enable_frustum_culling) + "#" + \
+           str(self.enable_fxaa)
 
 
   ## Creates and initializes a geometry node in the scene.

@@ -9,6 +9,10 @@ from avango.script import field_has_changed
 import subprocess
 
 class TUIODevice(MultiDofDevice):
+    Cursors = avango.MFContainer()
+    MovementChanged = avango.SFBool()
+    PosChanged = avango.SFFloat()
+
     def __init__(self):
         """
         Initialize driver and touch cursors
@@ -19,14 +23,13 @@ class TUIODevice(MultiDofDevice):
         #_devnull = open('/dev/null', 'w')
         #subprocess.Popen(["sudo", "/usr/sbin/citmuto03drv"], stderr = _devnull, stdout = _devnull)
 
-        self.multi_touch = MultiTouchGesture()
 
         # append 20 touch cursors
         for i in range(0, 20):
             cursor = TUIOCursor(CursorID = i)
-            self.multi_touch.Cursors.value.append(cursor)
-            self.multi_touch.MovementChanged.connect_from(cursor.IsMoving)
-            self.multi_touch.PosChanged.connect_from(cursor.PosX)
+            self.Cursors.value.append(cursor)
+            self.MovementChanged.connect_from(cursor.IsMoving)
+            self.PosChanged.connect_from(cursor.PosX)
 
     def my_constructor(self, no_tracking_mat):
         self.init_station_tracking(None, no_tracking_mat)
@@ -54,13 +57,11 @@ class TUIODevice(MultiDofDevice):
         self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
         self.avatar_transform.Children.value.append(self.device_avatar)
         self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
-
-class MultiTouchGesture(avango.script.Script):
-    Cursors = avango.MFContainer()
-    MovementChanged = avango.SFBool()
-    PosChanged = avango.SFFloat()
+    
 
     def evaluate(self):
+
+
         self.processGesture()
 
 
@@ -68,6 +69,13 @@ class MultiTouchGesture(avango.script.Script):
         """
         Detect and process multi touch gestures.
         """
+
+        for i in self.Cursors.value:
+            if i.IsTouched.value:
+                self.mf_dof.value[0] += (i.SpeedX.value)
+                self.mf_dof.value[2] += -(i.SpeedY.value)
+
+
         taps = []
         # detect taps
         for i in self.Cursors.value:
@@ -88,6 +96,7 @@ class TUIOCursor(avango.script.Script):
     SessionID = avango.SFFloat()
     CursorID = avango.SFInt()
     IsTap = avango.SFBool()
+    IsTouched = avango.SFBool()
     MovementVector = avango.gua.SFVec2()
 
     def __init__(self):
@@ -125,7 +134,9 @@ class TUIOCursor(avango.script.Script):
     def evaluate(self):
         # evaluate simple gestures
         self.IsTap.value = (self.PosX.value != -1 and not self.IsMoving.value)
-        print("Event!")
+        self.IsTouched.value = (self.PosX.value != -1 and self.State.value != 4.0)
+        
+        #print("Event!")
 
         # evaluate movement vector over 10 frames
         if 0 == self.frameCounter:

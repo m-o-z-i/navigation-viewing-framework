@@ -7,6 +7,7 @@ import avango.daemon
 import avango.script
 from avango.script import field_has_changed
 import subprocess
+import math
 
 class TUIODevice(MultiDofDevice):
     Cursors = avango.MFContainer()
@@ -30,6 +31,11 @@ class TUIODevice(MultiDofDevice):
             self.Cursors.value.append(cursor)
             self.MovementChanged.connect_from(cursor.IsMoving)
             self.PosChanged.connect_from(cursor.PosX)
+
+
+        self.activePoints = {}
+        self.DirectionAngle = 0 
+        self.distances=[]
 
     def my_constructor(self, no_tracking_mat):
         self.init_station_tracking(None, no_tracking_mat)
@@ -60,6 +66,16 @@ class TUIODevice(MultiDofDevice):
     
 
     def evaluate(self):
+        for touchPoint in self.Cursors.value:
+            if touchPoint.IsTouched.value:
+                self.activePoints[touchPoint.CursorID.value] = touchPoint
+            elif touchPoint.CursorID.value in self.activePoints:
+                del self.activePoints[touchPoint.CursorID.value]
+
+        #print len(self.activePoints)
+
+
+
 
 
         self.processGesture()
@@ -69,11 +85,46 @@ class TUIODevice(MultiDofDevice):
         """
         Detect and process multi touch gestures.
         """
+        #manipulate mf_dof for navigation : [trans_x, trans_y, trans_z, pitch, head, roll, scale]
 
-        for i in self.Cursors.value:
-            if i.IsTouched.value:
-                self.mf_dof.value[0] += (i.SpeedX.value)
-                self.mf_dof.value[2] += -(i.SpeedY.value)
+        pointList = self.activePoints.values()
+
+        if len(self.activePoints) > 1:
+            pass
+            #sort the list and group points
+        
+        if len(self.activePoints) == 1:
+            self.mf_dof.value[0] += (pointList[0].SpeedX.value)
+            self.mf_dof.value[2] += -(pointList[0].SpeedY.value)
+
+        if len(self.activePoints) == 2:
+            # DirectionAngle = acos (DirectionOld[0] scalar TouchDirection / |1 * 1|)
+            distance = pointList[0].touchPosition - pointList[1].touchPosition
+            print pointList[0].MovementVector.value.dot(pointList[1].MovementVector.value)
+            self.DirectionAngle = math.acos(pointList[0].MovementVector.value.dot(pointList[1].MovementVector.value))
+
+            #save old distance
+            if 2 == len(self.distances):
+                self.distances.append(distance)
+                self.distances.pop(0)
+            else:
+                self.distances.append(distance)
+
+            # from radians to degrees
+            self.DirectionAngle = self.DirectionAngle * (180 / math.pi)
+
+            if 90 < self.DirectionAngle:
+                movement = pointList[0].MotionSpeed.value + pointList[1].MotionSpeed.value
+
+                if abs(self.distances[0].length()) < abs(self.distances[-1].length()):
+                    self.mf_dof.value[1] += -movement
+                else:
+                    self.mf_dof.value[1] += movement
+
+            else:
+                pass
+
+
 
 
         taps = []
@@ -124,6 +175,9 @@ class TUIOCursor(avango.script.Script):
         self.firstPos = avango.gua.Vec2()
         self.MovementVector.value = avango.gua.Vec2(0, 0)
 
+        self.touchPosition = avango.gua.Vec2(0,0)
+
+
     @field_has_changed(CursorID)
     def set_station(self):
         """
@@ -136,6 +190,8 @@ class TUIOCursor(avango.script.Script):
         self.IsTap.value = (self.PosX.value != -1 and not self.IsMoving.value)
         self.IsTouched.value = (self.PosX.value != -1 and self.State.value != 4.0)
         
+        if self.IsTouched:
+            self.touchPosition = avango.gua.Vec2(self.PosX.value, self.PosY.value)
         #print("Event!")
 
         # evaluate movement vector over 10 frames
@@ -144,7 +200,9 @@ class TUIOCursor(avango.script.Script):
             self.firstPos.y = self.PosY.value
             self.frameCounter += 1
         elif 9 == self.frameCounter:
-            self.MovementVector.value = avango.gua.Vec2(self.PosX.value - self.firstPos.x, self.PosY.value - self.firstPos.y)
+            vec = avango.gua.Vec2(self.PosX.value - self.firstPos.x, self.PosY.value - self.firstPos.y)
+            vec.normalize()
+            self.MovementVector.value = vec
             self.firstPos = avango.gua.Vec2(0, 0)
             self.frameCounter = 0
         else:

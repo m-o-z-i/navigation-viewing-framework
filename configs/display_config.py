@@ -90,28 +90,17 @@ class LargePowerwall(Display):
                     , hostname = "kerberos"
                     , name = "large_powerwall"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.0"]
-                    #, displaystrings = [":0.0", ":0.1", ":0.2", ":0.3", ":0.4", "0.5"]
-                    #, shutter_timings = [ [(0,2400), (100,2500)], 
-                    #                      [(3000,4600),(3100,4700)],
-                    #                      [(5700,8175), (5800,8275)],
-                    #                      [(8200,10700), (8300,10800)],
-                    #                      [(11400,12900), (11500,13000)],
-                    #                      [(14000,15800), (14100,15900)]
-                    #                    ]
-                    , shutter_timings = [ [(0,8175), (100,8275)],
+                    , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3", ":0.4", "0.5"]
+                    , shutter_timings = [ [(0,2400), (100,2500)], 
+                                          [(3000,4600),(3100,4700)],
+                                          [(5700,8175), (5800,8275)],
                                           [(8200,10700), (8300,10800)],
                                           [(11400,12900), (11500,13000)],
                                           [(14000,15800), (14100,15900)]
                                         ]
-                    #, shutter_values = [  [(22,44), (88,11)],
-                    #                      [(22,44), (88,11)],
-                    #                      [(22,44), (88,11)],
-                    #                      [(22,44), (88,11)],
-                    #                      [(22,44), (88,11)],
-                    #                      [(22,44), (88,11)]
-                    #                   ]
                     , shutter_values = [  [(22,44), (88,11)],
+                                          [(22,44), (88,11)],
+                                          [(22,44), (88,11)],
                                           [(22,44), (88,11)],
                                           [(22,44), (88,11)],
                                           [(22,44), (88,11)]
@@ -315,25 +304,13 @@ class OculusRift(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  #  LargePowerwall()
-  #,
-  #  SmallPowerwall()
-  #,
+  #, LargePowerwall()
+  #, SmallPowerwall()
   #, OculusRift()
-  #TouchTable3D()
-  #,
-  #Display(hostname = "atalante"
-  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
-  #)
-  #, 
-  #Display(hostname = "daedalos"
-  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
-  #)
-  #,
-  Display(hostname = "agenor")
-  #, Display(hostname = "apollo"
-  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
-  #)
+  #, TouchTable3D()
+  Display(hostname = "atalante"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+  )
 ]
 
 ## @var INTELLIGENT_SHUTTER_SWITCHING

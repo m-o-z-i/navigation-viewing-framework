@@ -89,6 +89,18 @@ class SceneObject:
     # Mapping of pipeline value SsaoIntensity.
     self.ssao_intensity = 2.0
 
+    '''
+      Navigation values
+    '''
+    ## @var starting_matrix
+    # Starting matrix of the first Navigation instance created. None if configuration file values to be taken.
+    self.starting_matrix = None
+
+    ## @var starting_scale
+    # Starting scale factor of the first Navigation instance created. None if configuration file value to be taken.
+    self.starting_scale = None
+
+
 
   # functions
   def get_scene_manager(self):

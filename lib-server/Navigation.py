@@ -151,6 +151,10 @@ class Navigation(avango.script.Script):
     ## @var start_matrix
     # Initial position matrix of the platform.
     self.start_matrix = STARTING_MATRIX
+
+    ## @var start_scale
+    # Initial scaling factor of the platform.
+    self.start_scale = SCALE
     
     # create device
     ## @var device
@@ -269,8 +273,10 @@ class Navigation(avango.script.Script):
   ## Resets the platform's matrix to the initial value.
   def reset(self):
     self.inputmapping.set_abs_mat(self.start_matrix)
-    self.inputmapping.set_scale(1.0)
-    self.trace.clear(self.start_matrix)
+    self.inputmapping.set_scale(self.start_scale)
+
+    if self.movement_traces_activated:
+      self.trace.clear(self.start_matrix)
 
   ## Activates 3-DOF (realistic) navigation mode.
   def activate_realistic_mode(self):

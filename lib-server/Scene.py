@@ -742,6 +742,8 @@ class SceneMonkey(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "Monkey", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
+    self.starting_matrix = avango.gua.make_trans_mat(0, 0, 10)
+
     _mat = avango.gua.make_identity_mat()
     self.init_group("group", _mat, False, True, self.scene_root, "main_scene")
 

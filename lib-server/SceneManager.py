@@ -13,6 +13,7 @@ import avango.daemon
 # import framework libraries
 import Tools
 from Scene import *
+from ConsoleIO import *
 
 # import python libraries
 import math
@@ -224,7 +225,11 @@ class SceneManager(avango.script.Script):
   ## Custom constructor
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
   # @param SCENEGRAPH Reference to the scenegraph to which the nettrans node is appended.
-  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH):
+  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, NAVIGATION_LIST):
+
+    ## @var navigation_list
+    # List of all Navigation instances in the setup.
+    self.navigation_list = NAVIGATION_LIST
 
     # init pipeline value node
     _pipeline_value_node = avango.gua.nodes.TransformNode(Name = "pipeline_values")
@@ -237,7 +242,7 @@ class SceneManager(avango.script.Script):
 
     # init scenes   
     self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
     
     #self.scene0 = SceneVRHyperspace0(self, SCENEGRAPH, NET_TRANS_NODE) # default plane
@@ -345,6 +350,17 @@ class SceneManager(avango.script.Script):
       self.active_scene = self.scenes[ID]
       self.active_scene.enable_scene(True)
       self.pipeline_info_node.Name.value = self.active_scene.get_pipeline_value_string()
+
+      # overwrite first Navigation's starting matrix if described in scene.
+      if self.active_scene.starting_matrix != None:
+        self.navigation_list[0].start_matrix = self.active_scene.starting_matrix
+        self.navigation_list[0].reset()
+        print_warning("Overwrite platform 0's starting matrix by the one given in the scene description.")
+
+      if self.active_scene.starting_scale != None:
+        self.navigation_list[0].start_scale = self.active_scene.starting_scale
+        self.navigation_list[0].reset()
+        print_warning("Overwrite platform 0's starting scale factor by the one given in the scene description.")
   
       print "Switching to Scene: " + self.active_scene.name
   

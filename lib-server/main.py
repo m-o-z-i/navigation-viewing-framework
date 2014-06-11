@@ -68,7 +68,7 @@ def start():
 
   # initialize scene
   scene_manager = SceneManager()
-  scene_manager.my_constructor(nettrans, graph)
+  scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
 
   # initialize animation manager

@@ -101,6 +101,8 @@ class SceneObject:
     # Mapping of pipeline value EnableFXAA.
     self.enable_fxaa = False
 
+    self.ambient_color = avango.gua.Vec3(0.0,0.0,0.0)
+
     '''
       Navigation values
     '''
@@ -183,7 +185,7 @@ class SceneObject:
                 COLOR = avango.gua.Vec3(0.75,0.75,0.75),
                 ENABLE_SHADOW = False,
                 SHADOW_MAP_SIZE = 1024,
-                SHADOW_DIMENSIONS = avango.gua.Vec3(1.0,1.0,1.0),
+                LIGHT_DIMENSIONS = avango.gua.Vec3(1.0,1.0,1.0),
                 ENABLE_DIFFUSE_SHADING = True,
                 ENABLE_SPECULAR_SHADING = True,
                 ENABLE_GODRAYS = False,
@@ -244,7 +246,7 @@ class SceneObject:
       _node.Children.value = [_light_node, _light_geometry]
       _node.Transform.value = MATRIX
       
-      _light_node.Transform.value = avango.gua.make_scale_mat(SHADOW_DIMENSIONS)
+      _light_node.Transform.value = avango.gua.make_scale_mat(LIGHT_DIMENSIONS)
 
       self.init_interactive_objects(_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP)
 
@@ -274,7 +276,7 @@ class SceneObject:
 
   def init_interactive_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
 
-    print "!!!!!!!", NODE.get_type(), NODE.Name.value, len(NODE.Children.value), NODE.Path.value, RENDER_GROUP
+    #print "!!!!!!!", NODE.get_type(), NODE.Name.value, len(NODE.Children.value), NODE.Path.value, RENDER_GROUP
 
     _object = InteractiveObject()
     _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
@@ -407,7 +409,7 @@ class InteractiveObject(avango.script.Script):
       #print "append to scene root"
       self.parent_object.Children.value.append(self.node)
     
-    print "new object", self, self.hierarchy_level, self.node, self.node.Name.value, self.node.Transform.value.get_translate(), self.parent_object
+    #print "new object", self, self.hierarchy_level, self.node, self.node.Name.value, self.node.Transform.value.get_translate(), self.parent_object
 
     # init sub classes
     ## @var bb_vis

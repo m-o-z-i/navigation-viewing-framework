@@ -259,7 +259,10 @@ class View(avango.script.Script):
 
     print "set to", _splitted_string
 
-    #avango.gua.create_texture(_splitted_string[0])
+    # Note: Calling avango.gua.create_texture during runtime causes the application
+    # to crash. All textures have to be preloaded, for example in ClientPipelineValues.py
+    # avango.gua.create_texture(_splitted_string[0])
+    
     self.pipeline.BackgroundTexture.value = _splitted_string[0]
     self.pipeline.FogTexture.value = _splitted_string[0]
 

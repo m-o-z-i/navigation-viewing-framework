@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # kill running python on this machine
-killall python
+if [ "$2" != false ] ; then
+    killall python
+fi
 
 # get directory of script
 DIR="$( cd "$( dirname "$0" )" && pwd )"
@@ -9,10 +11,6 @@ DIR="$( cd "$( dirname "$0" )" && pwd )"
 # assuming a local guacmole version is located properly
 LOCAL_GUACAMOLE="$DIR/../../../guacamole"
 LOCAL_AVANGO="$DIR/../../../avango"
-
-# if not, this path will be used
-#GUACAMOLE=/opt/guacamole/testing/guacamole
-#AVANGO=/opt/guacamole/testing/avango
 
 GUACAMOLE=/opt/guacamole/master
 AVANGO=/opt/avango/master
@@ -34,7 +32,11 @@ export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./
 python ./lib-server/Daemon.py > /dev/null &
 
 # run program
-cd "$DIR" && python ./lib-server/main.py $1
+if [ "$2" != false ] ; then
+    cd "$DIR" && python ./lib-server/main.py $1 True
+else 
+	  cd "$DIR" && python ./lib-server/main.py $1 False
+fi
 
 # kill daemon
 kill %1

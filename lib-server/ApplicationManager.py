@@ -43,11 +43,13 @@ class ApplicationManager():
   # @param NET_TRANS_NODE Reference to the net transformation node.
   # @param SCENEGRAPH Reference to the scenegraph.
   # @param CONFIG_FILE Path to the XML configuration file.
+  # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
   def __init__(
       self
     , NET_TRANS_NODE
     , SCENEGRAPH
     , CONFIG_FILE
+    , START_CLIENTS
     ):
     
     # parameters
@@ -78,12 +80,17 @@ class ApplicationManager():
     # List of all created BorderObserver instances.
     self.border_observer_list = []
 
-    # kill all running python processes on display hosts
-    _own_hostname = open('/etc/hostname', 'r').readline().strip(" \n")
+    ## @var start_clients
+    # Boolean saying if the client processes are to be started automatically.
+    self.start_clients = START_CLIENTS
 
-    for _display in displays:
-      if _display.hostname != _own_hostname:
-        _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
+    # kill all running python processes on display hosts
+    if self.start_clients:
+      _own_hostname = open('/etc/hostname', 'r').readline().strip(" \n")
+
+      for _display in displays:
+        if _display.hostname != _own_hostname:
+          _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
 
     ## @var slot_manager
     # A SlotManager instance in order to handle the shutter timings of users.
@@ -238,6 +245,7 @@ class ApplicationManager():
       , DISPLAYS = _display_instances
       , AVATAR_TYPE = AVATAR_TYPE
       , CONFIG_FILE = CONFIG_FILE
+      , START_CLIENTS = self.start_clients
       , TRACKING_TARGET_NAME = DEVICE_TRACKING_NAME
     )
     self.navigation_list.append(_navigation)

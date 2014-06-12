@@ -100,7 +100,6 @@ class TUIODevice(MultiDofDevice):
         if len(self.activePoints) == 2:
             # DirectionAngle = acos (DirectionOld[0] scalar TouchDirection / |1 * 1|)
             distance = pointList[0].touchPosition - pointList[1].touchPosition
-            print pointList[0].MovementVector.value.dot(pointList[1].MovementVector.value)
             self.DirectionAngle = math.acos(pointList[0].MovementVector.value.dot(pointList[1].MovementVector.value))
 
             #save old distance
@@ -117,9 +116,9 @@ class TUIODevice(MultiDofDevice):
                 movement = pointList[0].MotionSpeed.value + pointList[1].MotionSpeed.value
 
                 if abs(self.distances[0].length()) < abs(self.distances[-1].length()):
-                    self.mf_dof.value[1] += -movement
+                    self.mf_dof.value[6] += -movement * 2
                 else:
-                    self.mf_dof.value[1] += movement
+                    self.mf_dof.value[6] += movement * 2
 
             else:
                 pass

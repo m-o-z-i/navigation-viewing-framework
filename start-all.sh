@@ -2,7 +2,6 @@
 
 # kill running python on this machine
 if [ "$2" != false ] ; then
-    echo 'Be careful not to fall off!'
     killall python
 fi
 
@@ -34,10 +33,8 @@ python ./lib-server/Daemon.py > /dev/null &
 
 # run program
 if [ "$2" != false ] ; then
-    echo 'Be careful not to fall off!'
     cd "$DIR" && python ./lib-server/main.py $1 True
 else 
-	  echo 'Penis'
 	  cd "$DIR" && python ./lib-server/main.py $1 False
 fi
 

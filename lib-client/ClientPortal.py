@@ -86,26 +86,22 @@ class ClientPortal:
 
   def __init__(self, LOCAL_PORTAL_GROUP_NODE, SERVER_PORTAL_NODE):
 
-    print "create client portal for " + SERVER_PORTAL_NODE.Name.value
-
     self.SERVER_PORTAL_NODE = SERVER_PORTAL_NODE
 
     self.portal_node = avango.gua.nodes.TransformNode(Name = SERVER_PORTAL_NODE.Name.value)
     LOCAL_PORTAL_GROUP_NODE.Children.value.append(self.portal_node)
 
     self.portal_matrix_node = avango.gua.nodes.TransformNode(Name = "portal_matrix")
-    self.portal_matrix_node.Transform.value = SERVER_PORTAL_NODE.Children.value[0].Transform.value
-    print "set portal matrix node to " + str(self.portal_matrix_node.Transform.value)
+    self.portal_matrix_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[0].Transform)
     self.portal_node.Children.value.append(self.portal_matrix_node)
 
     self.scene_matrix_node = avango.gua.nodes.TransformNode(Name = "scene_matrix")
-    self.scene_matrix_node.Transform.value = SERVER_PORTAL_NODE.Children.value[1].Transform.value
-    print "set scene matrix node to " + str(self.scene_matrix_node.Transform.value)
+    self.scene_matrix_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Transform)
     self.portal_node.Children.value.append(self.scene_matrix_node)
 
     self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
-    self.portal_screen_node.Width.value = SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Width.value
-    self.portal_screen_node.Height.value = SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Height.value
+    self.portal_screen_node.Width.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Width)
+    self.portal_screen_node.Height.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Height)
     self.scene_matrix_node.Children.value.append(self.portal_screen_node)
 
   def compare_server_portal_node(self, SERVER_PORTAL_NODE):
@@ -147,7 +143,7 @@ class PortalPreView(avango.script.Script):
       self.eye_node = avango.gua.nodes.TransformNode(Name = "eye")
       self.view_node.Children.value.append(self.eye_node)
 
-    self.view_node.Transform.value = avango.gua.make_trans_mat(0, 0.0, 2.0)
+    self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
 
     self.screen_node = self.PORTAL_NODE.Children.value[1].Children.value[0]
 

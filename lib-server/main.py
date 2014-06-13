@@ -12,6 +12,7 @@ from SceneManager import *
 from ApplicationManager import *
 from RecorderPlayer import *
 from Manipulation import *
+from Portal import * 
 
 # import python libraries
 import sys
@@ -74,6 +75,9 @@ def start():
   # initialize scene
   scene_manager = SceneManager()
   scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
+
+  # initialize portal manager
+  portal_manager = PortalManager(graph)
 
 
   # initialize animation manager

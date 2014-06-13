@@ -69,6 +69,10 @@ class View(avango.script.Script):
     # The number of the screen node on the platform.
     self.screen_num = SCREEN_NUM
 
+    ##
+    #
+    self.is_stereo = STEREO
+
     ## @var ONLY_TRANSLATION_UPDATE
     # In case this boolean is true, only the translation values will be locally updated from the tracking system.
     self.ONLY_TRANSLATION_UPDATE = False
@@ -97,7 +101,6 @@ class View(avango.script.Script):
     # set render mask for camera
     _render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
     #_render_mask = "!pre_scene1 && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-
 
     for _i in range(0, 10):
       if _i != self.platform_id:
@@ -136,7 +139,7 @@ class View(avango.script.Script):
       self.pipeline.RightResolution.value = self.window.RightResolution.value
 
 
-    elif STEREO:
+    elif self.is_stereo:
 
       '''
         Stereo View

@@ -13,6 +13,7 @@ from avango.script import field_has_changed
 # import framework libraries
 from ClientTrackingReader import *
 import ClientPipelineValues
+from PortalPreView import *
 from ConsoleIO import *
 
 
@@ -26,9 +27,21 @@ class View(avango.script.Script):
   # String field containing the concatenated pipeline values.
   sf_pipeline_string = avango.SFString()
 
+  ##
+  #
+  mf_portal_group_children = avango.gua.MFNode()
+
   ## Default constructor.
   def __init__(self):
     self.super(View).__init__()
+
+    ##
+    #
+    self.portal_pre_views = []
+
+    ##
+    #
+    self.mf_portal_group_children_connected = False
 
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
@@ -297,6 +310,27 @@ class View(avango.script.Script):
       self.pipeline.EnableFXAA.value = True
     else:
       self.pipeline.EnableFXAA.value = False
+
+  ##
+  @field_has_changed(mf_portal_group_children)
+  def mf_portal_group_children_changed(self):
+
+    for _portal_node in self.mf_portal_group_children.value:
+
+      if self.check_for_portal_pre_view(_portal_node) == False:
+        _new_pre_view = PortalPreView()
+        _new_pre_view.my_constructor(_portal_node, self)
+        self.portal_pre_views.append(_new_pre_view)
+
+
+  ##
+  def check_for_portal_pre_view(self, PORTAL_NODE):
+    for _portal_pre_view in self.portal_pre_views:
+      
+      if _portal_pre_view.compare_portal_node(PORTAL_NODE) == True:
+        return True
+
+    return False
   
   ## Evaluated every frame.
   def evaluate(self):
@@ -309,6 +343,16 @@ class View(avango.script.Script):
     # connect sf_pipeline_string with Name field of info node once
     if _pipeline_info_node != None and self.sf_pipeline_string.value == "":
       self.sf_pipeline_string.connect_from(_pipeline_info_node.Name)
+
+    try:
+      _portal_group_node = self.SCENEGRAPH["/net/portal_group"]
+    except:
+      return
+
+    # connect mf_portal_group_children only once
+    if _portal_group_node != None and self.mf_portal_group_children_connected == False:
+      self.mf_portal_group_children.connect_from(_portal_group_node.Children)
+      self.mf_portal_group_children_connected = True
 
 
     # local tracking update code, does not noticeably increase performance

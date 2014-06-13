@@ -52,10 +52,9 @@ class Portal:
     self.textured_quad = avango.gua.nodes.TexturedQuadNode(Name = "texture",
                                                            Texture = "tobesetbyclient",
                                                            IsStereoTexture = True,
-                                                           Width = 1.6,
-                                                           Height = 0.9)
+                                                           Width = 1.0,
+                                                           Height = 1.0)
 
-    #self.PORTAL_MANAGER.append_textured_quad(self.textured_quad)
     self.append_portal_nodes()
 
   ##
@@ -74,3 +73,8 @@ class Portal:
     self.portal_node.Children.value.append(self.scene_matrix_node)
 
     self.portal_matrix_node.Children.value.append(self.textured_quad)
+
+    self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
+    self.portal_screen_node.Width.value = self.textured_quad.Width.value
+    self.portal_screen_node.Height.value = self.textured_quad.Height.value
+    self.scene_matrix_node.Children.value.append(self.portal_screen_node)

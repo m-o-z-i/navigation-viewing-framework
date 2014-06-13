@@ -26,7 +26,7 @@ class PortalManager:
 
     self.portals = []
 
-    _portal = Portal(self, 0, avango.gua.make_trans_mat(0.0, 0.0, 20.0), avango.gua.make_trans_mat(0.0, 0.0, -2.0))
+    _portal = Portal(self, 0, avango.gua.make_trans_mat(0.0, 1.5, 1.0), avango.gua.make_trans_mat(0.0, 2.0, -2.0))
     self.portals.append(_portal)
 
 
@@ -67,7 +67,7 @@ class Portal:
     self.portal_node.Children.value.append(self.scene_matrix_node)
 
     self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
-    self.portal_screen_node.Width.value = 1.0
+    self.portal_screen_node.Width.value = 1.6
     self.portal_screen_node.Height.value = 1.0
     #self.portal_screen_node.Width.value = self.textured_quad.Width.value
     #self.portal_screen_node.Height.value = self.textured_quad.Height.value

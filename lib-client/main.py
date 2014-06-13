@@ -12,6 +12,7 @@ import avango.oculus
 # import framework libraries
 import ClientMaterialUpdaters
 from View import *
+from ClientPortal import * 
 from display_config import displays
 
 # import python libraries
@@ -58,7 +59,11 @@ def start():
 
   # create a dummy scenegraph to be extended by distribution
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
-  graph.Root.value.Children.value = [nettrans]
+
+  # create node for local portal updates
+  local_portal_node = avango.gua.nodes.TransformNode(Name = "local_portal_group")
+
+  graph.Root.value.Children.value = [nettrans, local_portal_node]
 
   # create material updaters as this cannot be distributed
   avango.gua.load_shading_models_from("data/materials")
@@ -99,6 +104,10 @@ def start():
     _string_num += 1
 
   viewer.SceneGraphs.value = [graph]
+
+  # create client portal manager
+  portal_manager = ClientPortalManager()
+  portal_manager.my_constructor(graph, views)
 
   # start rendering process
   viewer.run()

@@ -122,6 +122,21 @@ class ClientPortal:
 
 class PortalPreView(avango.script.Script):
 
+  ##
+  #
+  sf_platform_mat = avango.gua.SFMatrix4()
+  sf_platform_mat.value = avango.gua.make_identity_mat()
+
+  ##
+  #
+  sf_platform_scale_mat = avango.gua.SFMatrix4()
+  sf_platform_scale_mat.value = avango.gua.make_identity_mat()
+
+  ##
+  #
+  sf_slot_mat = avango.gua.SFMatrix4()
+  sf_slot_mat.value = avango.gua.make_identity_mat()
+
   def __init__(self):
     self.super(PortalPreView).__init__()
 
@@ -160,9 +175,6 @@ class PortalPreView(avango.script.Script):
     self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
 
     self.screen_node = self.PORTAL_NODE.Children.value[1].Children.value[0]
-
-    print "EYE", self.eye_node.WorldTransform.value
-    print "SCREEN", self.screen_node.WorldTransform.value
 
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = VIEW.SCENEGRAPH.Name.value
@@ -210,6 +222,12 @@ class PortalPreView(avango.script.Script):
 
     # TODO: Set proper RenderMask of self.textured_quad
 
+    # init field connections
+    self.sf_platform_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_0"].Transform)
+    self.sf_platform_scale_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_0/scale"].Transform)
+    self.sf_slot_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_0/scale/s0_slot0"].Transform)
+
+
 
   def compare_portal_node(self, PORTAL_NODE):
     if self.PORTAL_NODE == PORTAL_NODE:
@@ -224,4 +242,7 @@ class PortalPreView(avango.script.Script):
     # update view distance
     # update visibility
 
-    pass
+    self.view_node.Transform.value = avango.gua.make_inverse_mat(avango.gua.make_inverse_mat(self.sf_platform_scale_mat.value) * \
+                                     avango.gua.make_inverse_mat(self.sf_platform_mat.value) * \
+                                     self.PORTAL_NODE.Transform.value) * \
+                                     self.sf_slot_mat.value

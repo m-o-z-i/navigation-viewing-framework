@@ -104,6 +104,14 @@ class ClientPortal:
     self.portal_screen_node.Height.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Height)
     self.scene_matrix_node.Children.value.append(self.portal_screen_node)
 
+    # debug screen visualization
+    _loader = avango.gua.nodes.TriMeshLoader()
+    _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
+    _node.Transform.value = avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
+    self.scene_matrix_node.Children.value.append(_node)
+
+
   def compare_server_portal_node(self, SERVER_PORTAL_NODE):
     if self.SERVER_PORTAL_NODE == SERVER_PORTAL_NODE:
       return True
@@ -142,6 +150,12 @@ class PortalPreView(avango.script.Script):
 
       self.eye_node = avango.gua.nodes.TransformNode(Name = "eye")
       self.view_node.Children.value.append(self.eye_node)
+
+      # debug eye visualization
+      _loader = avango.gua.nodes.TriMeshLoader()
+      self.eye_geometry = _loader.create_geometry_from_file("eye_visualization", "data/objects/sphere.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS)
+      self.eye_geometry.Transform.value = avango.gua.make_scale_mat(0.03)
+      self.view_node.Children.value.append(self.eye_geometry)
 
     self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
 

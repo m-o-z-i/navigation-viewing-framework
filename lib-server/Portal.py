@@ -26,13 +26,13 @@ class PortalManager:
 
     self.portals = []
 
-    _portal = Portal(self, 0, avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0), avango.gua.make_trans_mat(0.0, 2.0, -2.0))
+    _portal = Portal(self, 0, avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0), avango.gua.make_trans_mat(0.0, 2.0, -1.5))
     self.portals.append(_portal)
 
-    _portal = Portal(self, 1, avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.0))
+    _portal = Portal(self, 1, avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.5))
     self.portals.append(_portal)
 
-    _portal = Portal(self, 2, avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0), avango.gua.make_trans_mat(1.2, 2.0, -2.0))
+    _portal = Portal(self, 2, avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0), avango.gua.make_trans_mat(1.2, 2.0, -2.5))
     self.portals.append(_portal)
 
 

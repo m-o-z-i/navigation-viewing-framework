@@ -9,8 +9,8 @@ import avango.gua
 import avango.script
 from avango.script import field_has_changed
 
-# import framework libraries
-# ...
+# import python libraries
+import math
 
 class ClientPortalManager(avango.script.Script):
 
@@ -253,7 +253,26 @@ class PortalPreView(avango.script.Script):
                                                                  self.portal_matrix_node.Transform.value) * \
                                      self.sf_slot_mat.value
 
+    # determine angle between vector to portal and portal normal
+    _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \
+                     self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].WorldTransform.value.get_translate()
+
+    _portal_vec = avango.gua.Vec3(self.textured_quad.WorldTransform.value.get_element(2, 0), 
+                                  self.textured_quad.WorldTransform.value.get_element(2, 1),
+                                  -self.textured_quad.WorldTransform.value.get_element(2, 2))
+
+    _angle = math.acos(  (_vec_to_portal.dot(_portal_vec))  /  (_vec_to_portal.length() * _portal_vec.length()) )
+    
+    # disable pipeline when behind portal
+    if math.degrees(_angle) < 90:
+      self.pipeline.Enabled.value = True
+      self.textured_quad.Texture.value = self.PORTAL_NODE.Name.value + "_" + "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)
+    else:
+      self.pipeline.Enabled.value = False
+      self.textured_quad.Texture.value = "data/textures/tiles_diffuse.jpg"
+
+
     # forward vec computation
     #_mat = self.sf_abs_mat.value
-    #_forward_vec = avango.gua.Vec3(_mat.get_element(2, 0), _mat.get_element(2, 1), -_mat.get_element(2,2))
+    #_forward_vec = avango.gua.Vec3(_mat.get_element(2, 0), _mat.get_element(2, 1), -_mat.get_element(2, 2))
     #print _forward_vec

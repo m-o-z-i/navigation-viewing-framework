@@ -223,9 +223,9 @@ class PortalPreView(avango.script.Script):
     # TODO: Set proper RenderMask of self.textured_quad
 
     # init field connections
-    self.sf_platform_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_0"].Transform)
-    self.sf_platform_scale_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_0/scale"].Transform)
-    self.sf_slot_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_0/scale/s0_slot0"].Transform)
+    self.sf_platform_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id)].Transform)
+    self.sf_platform_scale_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale"].Transform)
+    self.sf_slot_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].Transform)
 
 
 

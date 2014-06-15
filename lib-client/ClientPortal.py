@@ -171,10 +171,10 @@ class PortalPreView(avango.script.Script):
       self.view_node.Children.value.append(self.eye_node)
 
       # debug eye visualization
-      _loader = avango.gua.nodes.TriMeshLoader()
-      self.eye_geometry = _loader.create_geometry_from_file("eye_visualization", "data/objects/sphere.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS)
-      self.eye_geometry.Transform.value = avango.gua.make_scale_mat(0.03)
-      self.view_node.Children.value.append(self.eye_geometry)
+      #_loader = avango.gua.nodes.TriMeshLoader()
+      #self.eye_geometry = _loader.create_geometry_from_file("eye_visualization", "data/objects/sphere.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS)
+      #self.eye_geometry.Transform.value = avango.gua.make_scale_mat(0.03)
+      #self.view_node.Children.value.append(self.eye_geometry)
 
     self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
 
@@ -182,8 +182,19 @@ class PortalPreView(avango.script.Script):
 
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = VIEW.SCENEGRAPH.Name.value
-    self.camera.RenderMask.value = "!do_not_display_group"
-    #self.camera.RenderMask.value = VIEW.camera.RenderMask.value
+
+    # set render mask for camera
+    _render_mask = "!do_not_display_group"
+
+    for _i in range(0, 10):
+      if _i != VIEW.platform_id:
+        _render_mask = _render_mask + " && !platform_group_" + str(_i)
+
+    for _screen in range(0, 10):
+      for _slot in range(0, 10):
+          _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
+
+    self.camera.RenderMask.value = _render_mask
 
     if VIEW.is_stereo:
       self.camera.LeftScreen.value = self.screen_node.Path.value
@@ -199,10 +210,16 @@ class PortalPreView(avango.script.Script):
     self.pipeline.Enabled.value = True
     self.pipeline.Camera.value = self.camera
 
-    ###
-    ##############
-    self.pipeline.EnableBackfaceCulling.value = False
-
+    # init pipline value connections
+    self.pipeline.EnableBloom.connect_from(VIEW.pipeline.EnableBloom)
+    self.pipeline.BloomIntensity.connect_from(VIEW.pipeline.BloomIntensity)
+    self.pipeline.BloomRadius.connect_from(VIEW.pipeline.BloomRadius)
+    self.pipeline.EnableSsao.connect_from(VIEW.pipeline.EnableSsao)
+    self.pipeline.SsaoRadius.connect_from(VIEW.pipeline.SsaoRadius)
+    self.pipeline.SsaoIntensity.connect_from(VIEW.pipeline.SsaoIntensity)
+    self.pipeline.EnableBackfaceCulling.connect_from(VIEW.pipeline.EnableBackfaceCulling)
+    self.pipeline.EnableFrustumCulling.connect_from(VIEW.pipeline.EnableFrustumCulling)
+    self.pipeline.EnableFXAA.connect_from(VIEW.pipeline.EnableFXAA)  
 
     if VIEW.is_stereo:
       self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1000, 1000)

@@ -143,6 +143,10 @@ class PortalPreView(avango.script.Script):
   def __init__(self):
     self.super(PortalPreView).__init__()
 
+    ##
+    #
+    self.mode = "3D"
+
   def my_constructor(self, PORTAL_NODE, VIEW):
 
     print "constructor portal pre view for " + PORTAL_NODE.Name.value + " and s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id)
@@ -155,26 +159,15 @@ class PortalPreView(avango.script.Script):
     self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
     self.PORTAL_NODE.Children.value[1].Children.value.append(self.view_node)
 
-    if VIEW.is_stereo:
+    _user_left_eye = VIEW.SCENEGRAPH["/net/platform_" + str(VIEW.platform_id) + "/scale/s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id) + "/eyeL"]
+    self.left_eye_node = avango.gua.nodes.TransformNode(Name = "eyeL")
+    self.left_eye_node.Transform.connect_from(_user_left_eye.Transform)
+    self.view_node.Children.value.append(self.left_eye_node)
 
-      self.left_eye_node = avango.gua.nodes.TransformNode(Name = "eyeL")
-      self.left_eye_node.Transform.value = avango.gua.make_trans_mat(-0.03, 0.0, 0.0)
-      self.view_node.Children.value.append(self.left_eye_node)
-
-      self.right_eye_node = avango.gua.nodes.TransformNode(Name = "eyeR")
-      self.right_eye_node.Transform.value = avango.gua.make_trans_mat(0.03, 0.0, 0.0)
-      self.view_node.Children.value.append(self.right_eye_node)
-
-    else:
-
-      self.eye_node = avango.gua.nodes.TransformNode(Name = "eye")
-      self.view_node.Children.value.append(self.eye_node)
-
-      # debug eye visualization
-      #_loader = avango.gua.nodes.TriMeshLoader()
-      #self.eye_geometry = _loader.create_geometry_from_file("eye_visualization", "data/objects/sphere.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS)
-      #self.eye_geometry.Transform.value = avango.gua.make_scale_mat(0.03)
-      #self.view_node.Children.value.append(self.eye_geometry)
+    _user_right_eye = VIEW.SCENEGRAPH["/net/platform_" + str(VIEW.platform_id) + "/scale/s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id) + "/eyeR"]
+    self.right_eye_node = avango.gua.nodes.TransformNode(Name = "eyeR")
+    self.right_eye_node.Transform.connect_from(_user_right_eye.Transform)
+    self.view_node.Children.value.append(self.right_eye_node)
 
     self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
 
@@ -196,15 +189,10 @@ class PortalPreView(avango.script.Script):
 
     self.camera.RenderMask.value = _render_mask
 
-    if VIEW.is_stereo:
-      self.camera.LeftScreen.value = self.screen_node.Path.value
-      self.camera.RightScreen.value = self.screen_node.Path.value
-      self.camera.LeftEye.value = self.left_eye_node.Path.value
-      self.camera.RightEye.value = self.right_eye_node.Path.value
-    else:
-      self.camera.LeftScreen.value = self.screen_node.Path.value
-      self.camera.LeftEye.value = self.eye_node.Path.value
-
+    self.camera.LeftScreen.value = self.screen_node.Path.value
+    self.camera.RightScreen.value = self.screen_node.Path.value
+    self.camera.LeftEye.value = self.left_eye_node.Path.value
+    self.camera.RightEye.value = self.right_eye_node.Path.value
 
     self.pipeline = avango.gua.nodes.Pipeline()
     self.pipeline.Enabled.value = True
@@ -270,9 +258,10 @@ class PortalPreView(avango.script.Script):
     # update view distance
     # update visibility
 
-    self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
-                                     self.sf_slot_world_mat.value
-    self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
+    if self.mode == "3D":
+      self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
+                                       self.sf_slot_world_mat.value
+      self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
 
     # determine angle between vector to portal and portal normal
     _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \
@@ -291,9 +280,3 @@ class PortalPreView(avango.script.Script):
     else:
       self.pipeline.Enabled.value = False
       self.textured_quad.Texture.value = "data/textures/tiles_diffuse.jpg"
-
-
-    # forward vec computation
-    #_mat = self.sf_abs_mat.value
-    #_forward_vec = avango.gua.Vec3(_mat.get_element(2, 0), _mat.get_element(2, 1), -_mat.get_element(2, 2))
-    #print _forward_vec

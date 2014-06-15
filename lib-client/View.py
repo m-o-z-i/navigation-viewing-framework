@@ -136,10 +136,10 @@ class View(avango.script.Script):
       self.pipeline.RightResolution.value = self.window.RightResolution.value
 
 
-    elif self.is_stereo:
+    else:
 
       '''
-        Stereo View
+        Standard View
       '''
 
       self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(self.screen_num)
@@ -173,30 +173,13 @@ class View(avango.script.Script):
         elif DISPLAY_INSTANCE.stereomode == "CHECKERBOARD":
           self.window.StereoMode.value = avango.gua.StereoMode.CHECKERBOARD
 
-      self.pipeline.EnableStereo.value = True
       self.pipeline.LeftResolution.value = self.window.LeftResolution.value
       self.pipeline.RightResolution.value = self.window.RightResolution.value
 
-    else:
-
-      '''
-        Mono View
-      '''
-
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
-      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eye"
-
-      # create window
-      ## @var window
-      # The window in which this View will be rendered to.
-      self.window = avango.gua.nodes.Window()
-      self.window.Display.value = self.display_values[0] # GPU-ID
-      self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
-      self.window.Size.value = self.window_size
-      self.window.LeftResolution.value = self.window_size
-
-      self.pipeline.EnableStereo.value = False
-      self.pipeline.LeftResolution.value = self.window.LeftResolution.value
+      if self.is_stereo:
+        self.pipeline.EnableStereo.value = True
+      else:
+        self.pipeline.EnableStereo.value = False
 
 
     self.pipeline.Window.value = self.window

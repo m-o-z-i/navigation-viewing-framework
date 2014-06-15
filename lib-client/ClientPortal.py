@@ -149,6 +149,7 @@ class PortalPreView(avango.script.Script):
     self.VIEW = VIEW
 
     self.view_node = avango.gua.nodes.TransformNode(Name = "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id))
+    self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
     self.PORTAL_NODE.Children.value[1].Children.value.append(self.view_node)
 
     if VIEW.is_stereo:
@@ -218,14 +219,20 @@ class PortalPreView(avango.script.Script):
                                                            Width = self.screen_node.Width.value,
                                                            Height = self.screen_node.Height.value)
     self.textured_quad.GroupNames.value = ["s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)]
-    self.PORTAL_NODE.Children.value[0].Children.value.append(self.textured_quad)
+    self.portal_matrix_node.Children.value.append(self.textured_quad)
+
+    # portal border
+    _loader = avango.gua.nodes.TriMeshLoader()
+    self.portal_border = _loader.create_geometry_from_file("texture_s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id), "data/objects/screen.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.portal_border.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.portal_border.GroupNames.value = ["s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)]
+    self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
+    self.portal_matrix_node.Children.value.append(self.portal_border)
 
     # init field connections
     self.sf_platform_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id)].Transform)
     self.sf_platform_scale_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale"].Transform)
     self.sf_slot_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].Transform)
-
-    self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
 
 
   def compare_portal_node(self, PORTAL_NODE):

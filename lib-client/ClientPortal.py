@@ -205,22 +205,20 @@ class PortalPreView(avango.script.Script):
       self.pipeline.EnableStereo.value = False
     
 
-    self.pipeline.OutputTextureName.value = self.PORTAL_NODE.Name.value + "_" + "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id)
+    self.pipeline.OutputTextureName.value = self.PORTAL_NODE.Name.value + "_" + "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)
     
     self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
     self.pipeline.BackgroundTexture.value = "data/textures/sky.jpg"
 
     self.VIEW.pipeline.PreRenderPipelines.value.append(self.pipeline)
 
-    self.textured_quad = avango.gua.nodes.TexturedQuadNode(Name = "texture_s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id),
-                                                           Texture = self.PORTAL_NODE.Name.value + "_" + "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id),
-                                                           IsStereoTexture = VIEW.is_stereo,
+    self.textured_quad = avango.gua.nodes.TexturedQuadNode(Name = "texture_s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id),
+                                                           Texture = self.PORTAL_NODE.Name.value + "_" + "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id),
+                                                           IsStereoTexture = self.VIEW.is_stereo,
                                                            Width = self.screen_node.Width.value,
                                                            Height = self.screen_node.Height.value)
-
+    self.textured_quad.GroupNames.value = ["s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)]
     self.PORTAL_NODE.Children.value[0].Children.value.append(self.textured_quad)
-
-    # TODO: Set proper RenderMask of self.textured_quad
 
     # init field connections
     self.sf_platform_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id)].Transform)
@@ -247,3 +245,8 @@ class PortalPreView(avango.script.Script):
                                                                  avango.gua.make_inverse_mat(self.sf_platform_mat.value) * \
                                                                  self.portal_matrix_node.Transform.value) * \
                                      self.sf_slot_mat.value
+
+    # forward vec computation
+    #_mat = self.sf_abs_mat.value
+    #_forward_vec = avango.gua.Vec3(_mat.get_element(2, 0), _mat.get_element(2, 1), -_mat.get_element(2,2))
+    #print _forward_vec

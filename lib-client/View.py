@@ -98,6 +98,11 @@ class View(avango.script.Script):
       if _i != self.platform_id:
         _render_mask = _render_mask + " && !platform_group_" + str(_i)
 
+    for _screen in range(0, 10):
+      for _slot in range(0, 10):
+        if _screen != self.screen_num or _slot != self.slot_id:
+          _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
+
     self.camera.RenderMask.value = _render_mask
 
     # create pipeline

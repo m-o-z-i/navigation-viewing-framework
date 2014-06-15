@@ -227,6 +227,7 @@ class PortalPreView(avango.script.Script):
     self.sf_platform_scale_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale"].Transform)
     self.sf_slot_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].Transform)
 
+    self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
 
 
   def compare_portal_node(self, PORTAL_NODE):
@@ -243,6 +244,6 @@ class PortalPreView(avango.script.Script):
     # update visibility
 
     self.view_node.Transform.value = avango.gua.make_inverse_mat(avango.gua.make_inverse_mat(self.sf_platform_scale_mat.value) * \
-                                     avango.gua.make_inverse_mat(self.sf_platform_mat.value) * \
-                                     self.PORTAL_NODE.Transform.value) * \
+                                                                 avango.gua.make_inverse_mat(self.sf_platform_mat.value) * \
+                                                                 self.portal_matrix_node.Transform.value) * \
                                      self.sf_slot_mat.value

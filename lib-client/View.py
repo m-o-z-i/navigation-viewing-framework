@@ -311,15 +311,6 @@ class View(avango.script.Script):
       self.pipeline.EnableFXAA.value = True
     else:
       self.pipeline.EnableFXAA.value = False
-
-  ##
-  def check_for_portal_pre_view(self, PORTAL_NODE):
-    for _portal_pre_view in self.portal_pre_views:
-      
-      if _portal_pre_view.compare_portal_node(PORTAL_NODE) == True:
-        return True
-
-    return False
   
   ## Evaluated every frame.
   def evaluate(self):

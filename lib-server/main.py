@@ -40,8 +40,6 @@ def start():
   pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
   graph.Root.value.Children.value = [pseudo_nettrans]
 
-  print sys.argv[2]
-
   if sys.argv[2] == "True":
     start_clients = True 
   else:

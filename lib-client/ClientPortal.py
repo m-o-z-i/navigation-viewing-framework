@@ -261,7 +261,7 @@ class PortalPreView(avango.script.Script):
     if self.mode == "3D":
       self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
                                        self.sf_slot_world_mat.value
-      self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
+      self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
 
     # determine angle between vector to portal and portal normal
     _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \

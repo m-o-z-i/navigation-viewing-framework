@@ -25,14 +25,21 @@ class PortalManager:
     self.SCENEGRAPH["/net"].Children.value.append(self.portal_group_node)
 
     self.portals = []
+    self.counter = 0
 
-    _portal = Portal(self, 0, avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0), avango.gua.make_trans_mat(0.0, 2.0, -1.5))
-    self.portals.append(_portal)
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
+                    avango.gua.make_trans_mat(0.0, 2.0, -1.5))
 
-    _portal = Portal(self, 1, avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.5))
-    self.portals.append(_portal)
+    #self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.5))
+    #portal_manager.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.5))
 
-    _portal = Portal(self, 2, avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0), avango.gua.make_trans_mat(1.2, 2.0, -2.5))
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
+                    avango.gua.make_trans_mat(1.2, 2.0, -2.5))
+
+  ##
+  def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX):
+    _portal = Portal(self, self.counter,  SCENE_MATRIX, PORTAL_MATRIX)
+    self.counter += 1
     self.portals.append(_portal)
 
 

@@ -64,6 +64,9 @@ class ClientPortalManager(avango.script.Script):
   @field_has_changed(mf_portal_group_children)
   def mf_portal_group_children_changed(self):
     
+    print "Field has changed"
+    print len(self.mf_portal_group_children.value)
+
     for _node in self.mf_portal_group_children.value:
 
       _portal_instance_found = False
@@ -134,15 +137,15 @@ class PortalPreView(avango.script.Script):
 
   ##
   #
-  sf_slot_mat = avango.gua.SFMatrix4()
-  sf_slot_mat.value = avango.gua.make_identity_mat()
+  sf_slot_world_mat = avango.gua.SFMatrix4()
+  sf_slot_world_mat.value = avango.gua.make_identity_mat()
 
   def __init__(self):
     self.super(PortalPreView).__init__()
 
   def my_constructor(self, PORTAL_NODE, VIEW):
 
-    print "constructor portal pre view for " + "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id)
+    print "constructor portal pre view for " + PORTAL_NODE.Name.value + " and s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id)
     
     self.PORTAL_NODE = PORTAL_NODE
 
@@ -196,6 +199,10 @@ class PortalPreView(avango.script.Script):
     self.pipeline.Enabled.value = True
     self.pipeline.Camera.value = self.camera
 
+    ###
+    ##############
+    self.pipeline.EnableBackfaceCulling.value = False
+
 
     if VIEW.is_stereo:
       self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1000, 1000)
@@ -230,9 +237,7 @@ class PortalPreView(avango.script.Script):
     self.portal_matrix_node.Children.value.append(self.portal_border)
 
     # init field connections
-    self.sf_platform_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id)].Transform)
-    self.sf_platform_scale_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale"].Transform)
-    self.sf_slot_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].Transform)
+    self.sf_slot_world_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].WorldTransform)
 
 
   def compare_portal_node(self, PORTAL_NODE):
@@ -248,14 +253,13 @@ class PortalPreView(avango.script.Script):
     # update view distance
     # update visibility
 
-    self.view_node.Transform.value = avango.gua.make_inverse_mat(avango.gua.make_inverse_mat(self.sf_platform_scale_mat.value) * \
-                                                                 avango.gua.make_inverse_mat(self.sf_platform_mat.value) * \
-                                                                 self.portal_matrix_node.Transform.value) * \
-                                     self.sf_slot_mat.value
+    self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
+                                     self.sf_slot_world_mat.value
+    self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
 
     # determine angle between vector to portal and portal normal
     _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \
-                     self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].WorldTransform.value.get_translate()
+                     self.sf_slot_world_mat.value.get_translate()
 
     _portal_vec = avango.gua.Vec3(self.textured_quad.WorldTransform.value.get_element(2, 0), 
                                   self.textured_quad.WorldTransform.value.get_element(2, 1),

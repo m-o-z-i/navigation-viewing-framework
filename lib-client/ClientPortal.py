@@ -209,12 +209,12 @@ class PortalPreView(avango.script.Script):
     self.pipeline.EnableFrustumCulling.connect_from(VIEW.pipeline.EnableFrustumCulling)
     self.pipeline.EnableFXAA.connect_from(VIEW.pipeline.EnableFXAA)  
 
-    if VIEW.is_stereo:
-      self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1000, 1000)
-      self.pipeline.RightResolution.value = avango.gua.Vec2ui(1000, 1000)   
+    self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1024, 1024)
+    self.pipeline.RightResolution.value = self.pipeline.LeftResolution.value
+
+    if VIEW.is_stereo:  
       self.pipeline.EnableStereo.value = True
     else:
-      self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1000, 1000)
       self.pipeline.EnableStereo.value = False
     
 
@@ -261,7 +261,7 @@ class PortalPreView(avango.script.Script):
     if self.mode == "3D":
       self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
                                        self.sf_slot_world_mat.value
-      self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
+      #self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
 
     # determine angle between vector to portal and portal normal
     _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \

@@ -53,6 +53,7 @@ class LargePowerwall(Display):
                                           [(22,44), (88,11)]
                                        ]
                     , max_viewing_distance = 5.0
+                    , stereo = True
                     , stereomode = "SIDE_BY_SIDE"
                     )
 
@@ -312,7 +313,7 @@ class OculusRift(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  #, LargePowerwall()
+  #LargePowerwall(),
   #, SmallPowerwall()
   #, OculusRift()
   #, TouchTable3D()

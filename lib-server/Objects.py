@@ -95,11 +95,11 @@ class SceneObject:
 
     ## @var enable_frustum_culling
     # Mapping of pipeline value EnableFrustumCulling.
-    self.enable_frustum_culling = False
+    self.enable_frustum_culling = True
 
     ## @var enable_fxaa
     # Mapping of pipeline value EnableFXAA.
-    self.enable_fxaa = False
+    self.enable_fxaa = True
 
     self.ambient_color = avango.gua.Vec3(0.0,0.0,0.0)
 

@@ -64,6 +64,8 @@
 
     <warnings>False</warnings>
 
+    <eyedist>0.065</eyedist>
+
   </user>
 
 </setup>

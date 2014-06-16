@@ -94,8 +94,8 @@ class TUIODevice(MultiDofDevice):
             #sort the list and group points
         
         if len(self.activePoints) == 1:
-            self.mf_dof.value[0] += (pointList[0].SpeedX.value)
-            self.mf_dof.value[2] += -(pointList[0].SpeedY.value)
+            self.mf_dof.value[0] += (pointList[0].SpeedX.value) * 0.3
+            self.mf_dof.value[2] += -(pointList[0].SpeedY.value) * 0.3
 
         if len(self.activePoints) == 2:
             # DirectionAngle = acos (DirectionOld[0] scalar TouchDirection / |1 * 1|)
@@ -123,7 +123,7 @@ class TUIODevice(MultiDofDevice):
             else:
                 pass
 
-
+        
 
 
         taps = []

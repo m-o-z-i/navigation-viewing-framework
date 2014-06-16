@@ -32,16 +32,16 @@ class PortalManager:
                     1.0,
                     1.0)
 
-    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), 
-                    avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
-                    1.0,
-                    1.0)
+    #self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), 
+    #                avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
+    #                1.0,
+    #                1.0)
     #portal_manager.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.5), 1.0, 1.0)
 
-    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
-                    avango.gua.make_trans_mat(1.2, 2.0, -2.5),
-                    1.0,
-                    1.0)
+    #self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
+    #                avango.gua.make_trans_mat(1.2, 2.0, -2.5),
+    #                1.0,
+    #                1.0)
 
   ##
   def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT):
@@ -85,6 +85,14 @@ class Portal:
     #
     self.viewing_mode = "2D"
 
+    ##
+    #
+    self.camera_mode = "PERSPECTIVE"
+
+    ##
+    #
+    self.negative_parallax = "True"
+
 
     self.append_portal_nodes()
 
@@ -96,15 +104,37 @@ class Portal:
     else:
       self.viewing_mode = "2D"
 
-    self.portal_node.GroupNames.value = [self.viewing_mode]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
+    print self.portal_node.GroupNames.value[0], self.portal_node.GroupNames.value[1], self.portal_node.GroupNames.value[2]
 
+  ##
+  #
+  def switch_camera_mode(self):
+    if self.camera_mode == "PERSPECTIVE":
+      self.camera_mode = "ORTHOGRAPHIC"
+    else:
+      self.camera_mode = "PERSPECTIVE"
+
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
+    print self.portal_node.GroupNames.value[0], self.portal_node.GroupNames.value[1], self.portal_node.GroupNames.value[2]
+
+  ##
+  #
+  def switch_negative_parallax(self):
+    if self.negative_parallax == "True":
+      self.negative_parallax = "False"
+    else:
+      self.negative_parallax = "True"
+
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
+    print self.portal_node.GroupNames.value[0], self.portal_node.GroupNames.value[1], self.portal_node.GroupNames.value[2]
 
   ##
   #
   def append_portal_nodes(self):
 
     self.portal_node = avango.gua.nodes.TransformNode(Name = "portal_" + str(self.id))
-    self.portal_node.GroupNames.value = [self.viewing_mode]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
     self.PORTAL_MANAGER.portal_group_node.Children.value.append(self.portal_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_node)
 

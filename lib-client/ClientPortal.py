@@ -249,7 +249,8 @@ class PortalPreView(avango.script.Script):
     # init field connections
     self.sf_slot_world_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].WorldTransform)
 
-
+  ##
+  #
   def compare_portal_node(self, PORTAL_NODE):
     if self.PORTAL_NODE == PORTAL_NODE:
       return True
@@ -258,18 +259,28 @@ class PortalPreView(avango.script.Script):
 
     
   def evaluate(self):
-    
-    # update view node with transformed head position
-    # update view distance
-    # update visibility
 
-    if self.mf_portal_modes.value[0] == "3D":
+    # check for viewing mode
+    if self.mf_portal_modes.value[0] == "0-3D":
       self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
                                        self.sf_slot_world_mat.value
-      #self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
     else:
       self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
+
+    # check for camera mode
+    if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
+      print "MODE 1"
+      self.camera.Mode.value = 1
+    else:
+      print "MODE 0"
+      self.camera.Mode.value = 0
+
+    # check for negative parallax
+    if self.mf_portal_modes.value[2] == "2-True":
       self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
+    else:
+      self.pipeline.NearClip.value = 0.1
+
 
     # determine angle between vector to portal and portal normal
     _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \

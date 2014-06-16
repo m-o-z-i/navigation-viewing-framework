@@ -252,6 +252,22 @@ class View(avango.script.Script):
     _pre_view.my_constructor(LOCAL_PORTAL_NODE, self)
     self.portal_pre_views.append(_pre_view)
 
+  ##
+  def remove_portal_preview(self, LOCAL_PORTAL_NODE):
+
+    _pre_views_to_remove = []
+
+    for _pre_view in self.portal_pre_views:
+      if _pre_view.compare_portal_node(LOCAL_PORTAL_NODE) == True:
+        _pre_views_to_remove.append(_pre_view)
+        
+    for _pre_view in _pre_views_to_remove:
+      print "Remove a pre view"
+      _pre_view.deactivate()
+      self.portal_pre_views.remove(_pre_view)
+      del _pre_view
+      print "New list of pre views", self.portal_pre_views
+
   ## Called whenever sf_pipeline_string changes.
   @field_has_changed(sf_pipeline_string)
   def sf_pipeline_string_changed(self):

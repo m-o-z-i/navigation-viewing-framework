@@ -48,6 +48,13 @@ class ClientPortalManager(avango.script.Script):
     for _view in self.VIEW_LIST:
       _view.create_portal_preview(LOCAL_PORTAL_NODE)
 
+  ##
+  #
+  def notify_views_on_deleted_portal(self, LOCAL_PORTAL_NODE):
+
+    for _view in self.VIEW_LIST:
+      _view.remove_portal_preview(LOCAL_PORTAL_NODE)
+
 
   def evaluate(self):
 
@@ -64,20 +71,39 @@ class ClientPortalManager(avango.script.Script):
   @field_has_changed(mf_portal_group_children)
   def mf_portal_group_children_changed(self):
 
+    _instances_matched = [False for i in range(len(self.portals))]
+
     for _node in self.mf_portal_group_children.value:
 
       _portal_instance_found = False
 
-      for _portal in self.portals:
+      for _i in range(len(self.portals)):
+
+        _portal = self.portals[_i]
 
         if _portal.compare_server_portal_node(_node) == True:
           _portal_instance_found = True
+          _instances_matched[_i] = True
           break
 
       if _portal_instance_found == False:
         _portal = ClientPortal(self.SCENEGRAPH["/local_portal_group"], _node)
         self.portals.append(_portal)
         self.notify_views_on_added_portal(_portal.portal_node)
+
+    # check for instances that have not been matched (deleted on server side)
+    for _i in range(len(_instances_matched)):
+      _bool = _instances_matched[_i]
+
+      if _bool == False:
+        _portal_to_delete = self.portals[_i]
+        self.notify_views_on_deleted_portal(_portal_to_delete.portal_node)
+        self.SCENEGRAPH["/local_portal_group"].Children.value.remove(_portal_to_delete.portal_node)
+        _portal_to_delete.deactivate()
+        self.portals.remove(_portal_to_delete)
+        del _portal_to_delete.portal_node
+        del _portal_to_delete
+
 
 
 
@@ -115,6 +141,20 @@ class ClientPortal:
     #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
     #_node.Transform.value = avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
     #self.scene_matrix_node.Children.value.append(_node)
+
+  ##
+  def deactivate(self):
+    self.portal_node.GroupNames.disconnect()
+    self.portal_matrix_node.Transform.disconnect()
+    self.scene_matrix_node.Transform.disconnect()
+    self.scale_node.Transform.disconnect()
+    self.portal_screen_node.Width.disconnect()
+    self.portal_screen_node.Height.disconnect()
+
+    del self.portal_screen_node
+    del self.scale_node
+    del self.scene_matrix_node
+    del self.portal_matrix_node
 
 
   def compare_server_portal_node(self, SERVER_PORTAL_NODE):
@@ -156,6 +196,8 @@ class PortalPreView(avango.script.Script):
     self.PORTAL_NODE = PORTAL_NODE
 
     self.VIEW = VIEW
+
+    self.active = True
 
     # set modes
     self.mf_portal_modes.connect_from(PORTAL_NODE.GroupNames)
@@ -258,43 +300,64 @@ class PortalPreView(avango.script.Script):
 
     return False
 
+  ##
+  #
+  def deactivate(self):
+    self.active = False
+    self.pipeline.Enabled.value = False
+
+    self.portal_matrix_node.Children.value.remove(self.portal_border)
+    del self.portal_border
+    
+    self.portal_matrix_node.Children.value.remove(self.textured_quad)
+    del self.textured_quad
+
+    del self.pipeline
+    del self.camera
+
+    self.PORTAL_NODE.Children.value[1].Children.value[0].Children.value.remove(self.view_node)
+    del self.left_eye_node
+    del self.right_eye_node
+    del self.view_node
+
     
   def evaluate(self):
 
-    # check for viewing mode
-    if self.mf_portal_modes.value[0] == "0-3D":
-      self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
-                                       self.sf_slot_world_mat.value
-    else:
-      self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
+    if self.active:
+      # check for viewing mode
+      if self.mf_portal_modes.value[0] == "0-3D":
+        self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
+                                         self.sf_slot_world_mat.value
+      else:
+        self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
 
-    # check for camera mode
-    if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
-      self.camera.Mode.value = 1
-    else:
-      self.camera.Mode.value = 0
+      # check for camera mode
+      if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
+        self.camera.Mode.value = 1
+      else:
+        self.camera.Mode.value = 0
 
-    # check for negative parallax
-    if self.mf_portal_modes.value[2] == "2-True":
-      self.pipeline.NearClip.value = 0.1
-    else:
-      self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
+      # check for negative parallax
+      if self.mf_portal_modes.value[2] == "2-True":
+        self.pipeline.NearClip.value = 0.1
+      else:
+        self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
 
 
-    # determine angle between vector to portal and portal normal
-    _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \
-                     self.sf_slot_world_mat.value.get_translate()
+      # determine angle between vector to portal and portal normal
+      _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \
+                       self.sf_slot_world_mat.value.get_translate()
 
-    _portal_vec = avango.gua.Vec3(self.textured_quad.WorldTransform.value.get_element(2, 0), 
-                                  self.textured_quad.WorldTransform.value.get_element(2, 1),
-                                  -self.textured_quad.WorldTransform.value.get_element(2, 2))
+      _portal_vec = avango.gua.Vec3(self.textured_quad.WorldTransform.value.get_element(2, 0), 
+                                    self.textured_quad.WorldTransform.value.get_element(2, 1),
+                                    -self.textured_quad.WorldTransform.value.get_element(2, 2))
 
-    _angle = math.acos(  (_vec_to_portal.dot(_portal_vec))  /  (_vec_to_portal.length() * _portal_vec.length()) )
-    
-    # disable pipeline when behind portal
-    if math.degrees(_angle) < 90:
-      self.pipeline.Enabled.value = True
-      self.textured_quad.Texture.value = self.PORTAL_NODE.Name.value + "_" + "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)
-    else:
-      self.pipeline.Enabled.value = False
-      self.textured_quad.Texture.value = "data/textures/tiles_diffuse.jpg"
+      _angle = math.acos(  (_vec_to_portal.dot(_portal_vec))  /  (_vec_to_portal.length() * _portal_vec.length()) )
+      
+      # disable pipeline when behind portal
+      if math.degrees(_angle) < 90:
+        self.pipeline.Enabled.value = True
+        self.textured_quad.Texture.value = self.PORTAL_NODE.Name.value + "_" + "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)
+      else:
+        self.pipeline.Enabled.value = False
+        self.textured_quad.Texture.value = "data/textures/tiles_diffuse.jpg"

@@ -10,7 +10,7 @@ import avango.script
 from avango.script import field_has_changed
 
 # import framework libraries
-# ...
+from ConsoleIO import *
 
 ##
 #
@@ -27,15 +27,15 @@ class PortalManager:
     self.portals = []
     self.counter = 0
 
-    self.add_bidirectional_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                     avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
                     1.0,
                     1.0)
 
-    #self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), 
-    #                avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
-    #                1.0,
-    #                1.0)
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), 
+                    avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
+                    1.0,
+                    1.0)
     #portal_manager.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.5), 1.0, 1.0)
 
     #self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
@@ -49,6 +49,22 @@ class PortalManager:
     _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT)
     self.counter += 1
     self.portals.append(_portal)
+
+  def remove_portal(self, ID):
+
+    _portal_to_remove = None
+
+    for _portal in self.portals:
+      if _portal.id == ID:
+        _portal_to_remove = _portal
+
+    if _portal_to_remove == None:
+      print_error("Error: Portal ID could not be matched.", False)
+      return
+
+    _portal_to_remove.deactivate()
+    self.portals.remove(_portal_to_remove)
+    del _portal_to_remove
 
   ##
   #
@@ -175,3 +191,14 @@ class Portal:
     self.portal_screen_node.Height.value = self.height
     self.scale_node.Children.value.append(self.portal_screen_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)
+
+  ##
+  #
+  def deactivate(self):
+    self.PORTAL_MANAGER.portal_group_node.Children.value.remove(self.portal_node)
+
+    del self.portal_screen_node
+    del self.scale_node
+    del self.scene_matrix_node
+    del self.portal_matrix_node
+    del self.portal_node

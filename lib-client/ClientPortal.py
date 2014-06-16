@@ -92,6 +92,7 @@ class ClientPortal:
     self.SERVER_PORTAL_NODE = SERVER_PORTAL_NODE
 
     self.portal_node = avango.gua.nodes.TransformNode(Name = SERVER_PORTAL_NODE.Name.value)
+    self.portal_node.GroupNames.connect_from(SERVER_PORTAL_NODE.GroupNames)
     LOCAL_PORTAL_GROUP_NODE.Children.value.append(self.portal_node)
 
     self.portal_matrix_node = avango.gua.nodes.TransformNode(Name = "portal_matrix")
@@ -140,12 +141,12 @@ class PortalPreView(avango.script.Script):
   sf_slot_world_mat = avango.gua.SFMatrix4()
   sf_slot_world_mat.value = avango.gua.make_identity_mat()
 
+  ##
+  #
+  mf_portal_modes = avango.MFString()
+
   def __init__(self):
     self.super(PortalPreView).__init__()
-
-    ##
-    #
-    self.mode = "3D"
 
   def my_constructor(self, PORTAL_NODE, VIEW):
 
@@ -154,6 +155,9 @@ class PortalPreView(avango.script.Script):
     self.PORTAL_NODE = PORTAL_NODE
 
     self.VIEW = VIEW
+
+    # set modes
+    self.mf_portal_modes.connect_from(PORTAL_NODE.GroupNames)
 
     self.view_node = avango.gua.nodes.TransformNode(Name = "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id))
     self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
@@ -259,10 +263,13 @@ class PortalPreView(avango.script.Script):
     # update view distance
     # update visibility
 
-    if self.mode == "3D":
+    if self.mf_portal_modes.value[0] == "3D":
       self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
                                        self.sf_slot_world_mat.value
       #self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
+    else:
+      self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
+      self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
 
     # determine angle between vector to portal and portal normal
     _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \

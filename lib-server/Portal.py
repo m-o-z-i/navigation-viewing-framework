@@ -81,14 +81,30 @@ class Portal:
     #
     self.NET_TRANS_NODE = PORTAL_MANAGER.SCENEGRAPH["/net"]
 
+    ##
+    #
+    self.viewing_mode = "2D"
+
 
     self.append_portal_nodes()
+
+  ##
+  #
+  def switch_viewing_mode(self):
+    if self.viewing_mode == "2D":
+      self.viewing_mode = "3D"
+    else:
+      self.viewing_mode = "2D"
+
+    self.portal_node.GroupNames.value = [self.viewing_mode]
+
 
   ##
   #
   def append_portal_nodes(self):
 
     self.portal_node = avango.gua.nodes.TransformNode(Name = "portal_" + str(self.id))
+    self.portal_node.GroupNames.value = [self.viewing_mode]
     self.PORTAL_MANAGER.portal_group_node.Children.value.append(self.portal_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_node)
 

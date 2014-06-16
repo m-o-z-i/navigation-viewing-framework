@@ -202,7 +202,8 @@ class PortalPreView(avango.script.Script):
     self.pipeline.EnableBloom.connect_from(VIEW.pipeline.EnableBloom)
     self.pipeline.BloomIntensity.connect_from(VIEW.pipeline.BloomIntensity)
     self.pipeline.BloomRadius.connect_from(VIEW.pipeline.BloomRadius)
-    self.pipeline.EnableSsao.connect_from(VIEW.pipeline.EnableSsao)
+    self.pipeline.EnableSsao.value = False
+    #self.pipeline.EnableSsao.connect_from(VIEW.pipeline.EnableSsao)
     self.pipeline.SsaoRadius.connect_from(VIEW.pipeline.SsaoRadius)
     self.pipeline.SsaoIntensity.connect_from(VIEW.pipeline.SsaoIntensity)
     self.pipeline.EnableBackfaceCulling.connect_from(VIEW.pipeline.EnableBackfaceCulling)

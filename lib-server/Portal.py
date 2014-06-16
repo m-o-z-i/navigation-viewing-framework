@@ -36,7 +36,7 @@ class PortalManager:
                     avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
                     1.0,
                     1.0)
-    #portal_manager.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.5))
+    #portal_manager.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), avango.gua.make_trans_mat(-1.2, 2.0, -2.5), 1.0, 1.0)
 
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
                     avango.gua.make_trans_mat(1.2, 2.0, -2.5),
@@ -77,6 +77,10 @@ class Portal:
     #
     self.height = HEIGHT
 
+    ##
+    #
+    self.NET_TRANS_NODE = PORTAL_MANAGER.SCENEGRAPH["/net"]
+
 
     self.append_portal_nodes()
 
@@ -86,16 +90,20 @@ class Portal:
 
     self.portal_node = avango.gua.nodes.TransformNode(Name = "portal_" + str(self.id))
     self.PORTAL_MANAGER.portal_group_node.Children.value.append(self.portal_node)
+    self.NET_TRANS_NODE.distribute_object(self.portal_node)
 
     self.portal_matrix_node = avango.gua.nodes.TransformNode(Name = "portal_matrix")
     self.portal_matrix_node.Transform.value = self.portal_matrix
     self.portal_node.Children.value.append(self.portal_matrix_node)
+    self.NET_TRANS_NODE.distribute_object(self.portal_matrix_node)
 
     self.scene_matrix_node = avango.gua.nodes.TransformNode(Name = "scene_matrix")
     self.scene_matrix_node.Transform.value = self.scene_matrix
     self.portal_node.Children.value.append(self.scene_matrix_node)
+    self.NET_TRANS_NODE.distribute_object(self.scene_matrix_node)
 
     self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
     self.portal_screen_node.Width.value = self.width
     self.portal_screen_node.Height.value = self.height
     self.scene_matrix_node.Children.value.append(self.portal_screen_node)
+    self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)

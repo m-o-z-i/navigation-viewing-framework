@@ -181,7 +181,6 @@ class View(avango.script.Script):
       else:
         self.pipeline.EnableStereo.value = False
 
-
     self.pipeline.Window.value = self.window
     self.pipeline.Camera.value = self.camera
 

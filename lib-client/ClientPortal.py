@@ -273,10 +273,8 @@ class PortalPreView(avango.script.Script):
 
     # check for camera mode
     if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
-      print "MODE 1"
       self.camera.Mode.value = 1
     else:
-      print "MODE 0"
       self.camera.Mode.value = 0
 
     # check for negative parallax

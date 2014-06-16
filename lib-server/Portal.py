@@ -128,6 +128,11 @@ class Portal:
 
   ##
   #
+  def set_scale(self, SCALE):
+    self.scale_node.Transform.value = avango.gua.make_scale_mat(SCALE)
+
+  ##
+  #
   def append_portal_nodes(self):
 
     self.portal_node = avango.gua.nodes.TransformNode(Name = "portal_" + str(self.id))

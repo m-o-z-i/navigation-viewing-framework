@@ -125,8 +125,8 @@ class ApplicationManager():
     # Screen node representing the server's screen.
     self.screen = avango.gua.nodes.ScreenNode(Name = "server_screen")
     self.screen.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.5)
-    self.screen.Width.value = 160/1.5 * 0.05# * 0.75
-    self.screen.Height.value = 100/1.5 * 0.05# * 0.75
+    self.screen.Width.value = 160/1.5 * 0.1# * 0.75
+    self.screen.Height.value = 100/1.5 * 0.1# * 0.75
     self.server_transform.Children.value.append(self.screen)
 
     ## @var camera

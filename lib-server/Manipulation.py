@@ -35,6 +35,7 @@ class ManipulationManager:
     # First instance of RayPointer to create manipulations.
     self.ray_pointer1 = RayPointer()
     self.ray_pointer1.my_constructor(self, 1, SCENEGRAPH, NET_TRANS_NODE, _parent_node, _transmitter_offset, "tracking-dlp-pointer1", "device-pointer1")
+    self.ray_pointer1.pointer_tracking_sensor.TransmitterOffset.value = avango.gua.make_trans_mat(0.1,1.2,1.6)
 
 
   ## Returns the material string belonging to this object's hierarchy level.

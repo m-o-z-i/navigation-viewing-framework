@@ -251,10 +251,10 @@ class Platform(avango.script.Script):
 
       ## @var video_geode
       # Video3D node containing the caputred video geometry.
-      self.video_geode = video_loader.load("kincet", AVATAR_TYPE)
+      self.video_geode = _video_loader.load("kincet", AVATAR_TYPE)
 
       self.video_geode.Transform.value = self.transmitter_offset
-      self.platform_scale_transform_node.Children.value.append(video_geode)
+      self.platform_scale_transform_node.Children.value.append(self.video_geode)
 
     # create four boundary planes
     _loader = avango.gua.nodes.TriMeshLoader()

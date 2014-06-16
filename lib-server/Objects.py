@@ -170,9 +170,9 @@ class SceneObject:
     _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, eval(_loader_flags))
     _node.Transform.value = MATRIX
   
-    #print "LOADED", _node, _node.Name.value
+    #print "LOADED", _node, _node.Name.value#, _loader_flags
   
-    self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+    self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, True)
 
    
   def init_light(self, 
@@ -190,7 +190,8 @@ class SceneObject:
                 ENABLE_SPECULAR_SHADING = True,
                 ENABLE_GODRAYS = False,
                 SOFTNESS = 1.0,
-                FALLOFF = 1.0
+                FALLOFF = 1.0,
+                ENABLE_LIGHT_GEOMETRY = True
                 ):
 
     # init and parametrize light source
@@ -225,7 +226,7 @@ class SceneObject:
     if TYPE == 0: # sun light
       _light_node.Transform.value = MATRIX
     
-      self.init_interactive_objects(_light_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+      self.init_interactive_objects(_light_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
 
     elif TYPE == 1 or TYPE == 2: # point light or spot light
 
@@ -241,6 +242,9 @@ class SceneObject:
       _light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
       _light_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
       _light_geometry.GroupNames.value.append("man_pick_group") # prepare light geometry for picking
+      
+      if ENABLE_LIGHT_GEOMETRY == False:
+        _light_geometry.GroupNames.value.append("do_not_display_group")
   
       _node = avango.gua.nodes.TransformNode(Name = _light_node.Name.value)
       _node.Children.value = [_light_node, _light_geometry]
@@ -248,9 +252,9 @@ class SceneObject:
       
       _light_node.Transform.value = avango.gua.make_scale_mat(LIGHT_DIMENSIONS)
 
-      self.init_interactive_objects(_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+      self.init_interactive_objects(_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
 
-      _light_geometry.add_and_init_field(avango.script.SFObject(), "InteractiveObject", _node.InteractiveObject.value) # rework
+      _light_geometry.add_and_init_field(avango.script.SFObject(), "InteractiveObject", _node.InteractiveObject.value) # rework ??
       _light_geometry.InteractiveObject.dont_distribute(True)
 
 
@@ -260,7 +264,7 @@ class SceneObject:
     _node.Name.value = NAME    
     _node.Transform.value = MATRIX
  
-    self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+    self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
  
  
 
@@ -271,36 +275,54 @@ class SceneObject:
     _node.Transform.value = MATRIX
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
  
-    self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP)    
+    self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP, False)    
 
 
-  def init_interactive_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
+  def init_point_cloud(self, NAME, FILENAME, MATRIX, PARENT_NODE, RENDER_GROUP):
+ 
+    _loader = avango.gua.nodes.PLODLoader()
+    _loader.UploadBudget.value = 32
+    _loader.RenderBudget.value = 1024
+    _loader.OutOfCoreBudget.value = 4096    
+
+    _node = _loader.create_geometry_from_file(NAME, FILENAME)
+    _node.Transform.value = MATRIX
+    #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
+ 
+    self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP, False)    
+
+
+
+  def init_interactive_objects(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, RECURSIVE_FLAG):
 
     #print "!!!!!!!", NODE.get_type(), NODE.Name.value, len(NODE.Children.value), NODE.Path.value, RENDER_GROUP
 
-    _object = InteractiveObject()
-    _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+    #_object = InteractiveObject()
+    #_object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
 
-    '''
-    if NODE.get_type() == 'av::gua::TransformNode' and len(NODE.Children.value) > 0: # group node with children (hierarchy)
-      
-      _node = avango.gua.nodes.TransformNode()
-      _node.Name.value = NODE.Name.value
-      _node.Transform.value = NODE.Transform.value
-      _node.BoundingBox.value = NODE.BoundingBox.value
+    if RECURSIVE_FLAG == True:
 
-      _object = InteractiveObject()
-      _object.base_constructor(self, _node, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+      if NODE.get_type() == 'av::gua::TransformNode' and len(NODE.Children.value) > 0: # group node with children (hierarchy)
+        _object = InteractiveObject()
+        _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
 
-      for _child in NODE.Children.value:
-        #_child.Parent.value = None
-        self.init_interactive_objects(_child, _object, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+        _childs = []
+        for _child in NODE.Children.value:
+          _childs.append(_child)
 
+        NODE.Children.value = []
+
+        for _child in _childs:
+          self.init_interactive_objects(_child, _object, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, RECURSIVE_FLAG)
+
+      else: # Geometry
+        _object = InteractiveObject()
+        _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
+  
     else:
-      
       _object = InteractiveObject()
       _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
-    '''
+  
 
     '''
     if NODE.get_type() == "av::gua::TriMeshNode":

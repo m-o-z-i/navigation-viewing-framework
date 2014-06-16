@@ -486,7 +486,7 @@ init_lcd_wall_tracking()
 init_dlp_wall_tracking()
 
 # initialize x-box controllers
-#xbox_controller(1)
+xbox_controller(1)
 #xbox_controller(2)
 #xbox_controller(3)
 #xbox_controller(4)

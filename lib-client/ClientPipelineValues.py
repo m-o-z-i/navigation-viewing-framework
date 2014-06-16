@@ -10,9 +10,7 @@ import avango.gua
 ## Sets all the pipeline values to obtain a nice appearance.
 def set_default_pipeline_values(PIPELINE):
 
-  avango.gua.create_texture("data/textures/sky.jpg")
-  PIPELINE.BackgroundTexture.value = "data/textures/sky.jpg"
-
+  PIPELINE.BackgroundTexture.value        = "data/textures/sky.jpg"    
   PIPELINE.EnableBloom.value              = False
   PIPELINE.BloomIntensity.value           = 0.1
   PIPELINE.BloomThreshold.value           = 1.0
@@ -29,5 +27,6 @@ def set_default_pipeline_values(PIPELINE):
   PIPELINE.SsaoRadius.value               = 2.0
   PIPELINE.SsaoIntensity.value            = 2.0
   PIPELINE.EnableFPSDisplay.value         = True
-  PIPELINE.BackgroundMode.value           = avango.gua.BackgroundMode.SKYMAP_TEXTURE
+  #PIPELINE.BackgroundMode.value           = avango.gua.BackgroundMode.SKYMAP_TEXTURE
+  PIPELINE.BackgroundMode.value           = avango.gua.BackgroundMode.QUAD_TEXTURE
   PIPELINE.FogTexture.value               = PIPELINE.BackgroundTexture.value

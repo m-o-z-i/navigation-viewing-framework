@@ -103,10 +103,14 @@ class ClientPortal:
     self.scene_matrix_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Transform)
     self.portal_node.Children.value.append(self.scene_matrix_node)
 
+    self.scale_node = avango.gua.nodes.TransformNode(Name = "scale")
+    self.scale_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Transform)
+    self.scene_matrix_node.Children.value.append(self.scale_node)
+
     self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
-    self.portal_screen_node.Width.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Width)
-    self.portal_screen_node.Height.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Height)
-    self.scene_matrix_node.Children.value.append(self.portal_screen_node)
+    self.portal_screen_node.Width.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Children.value[0].Width)
+    self.portal_screen_node.Height.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Children.value[0].Height)
+    self.scale_node.Children.value.append(self.portal_screen_node)
 
     # debug screen visualization
     _loader = avango.gua.nodes.TriMeshLoader()
@@ -161,7 +165,7 @@ class PortalPreView(avango.script.Script):
 
     self.view_node = avango.gua.nodes.TransformNode(Name = "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id))
     self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
-    self.PORTAL_NODE.Children.value[1].Children.value.append(self.view_node)
+    self.PORTAL_NODE.Children.value[1].Children.value[0].Children.value.append(self.view_node)
 
     _user_left_eye = VIEW.SCENEGRAPH["/net/platform_" + str(VIEW.platform_id) + "/scale/s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id) + "/eyeL"]
     self.left_eye_node = avango.gua.nodes.TransformNode(Name = "eyeL")
@@ -175,7 +179,7 @@ class PortalPreView(avango.script.Script):
 
     self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
 
-    self.screen_node = self.PORTAL_NODE.Children.value[1].Children.value[0]
+    self.screen_node = self.PORTAL_NODE.Children.value[1].Children.value[0].Children.value[0]
 
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = VIEW.SCENEGRAPH.Name.value

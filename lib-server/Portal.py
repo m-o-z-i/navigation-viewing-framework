@@ -105,7 +105,6 @@ class Portal:
       self.viewing_mode = "2D"
 
     self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
-    print self.portal_node.GroupNames.value[0], self.portal_node.GroupNames.value[1], self.portal_node.GroupNames.value[2]
 
   ##
   #
@@ -116,7 +115,6 @@ class Portal:
       self.camera_mode = "PERSPECTIVE"
 
     self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
-    print self.portal_node.GroupNames.value[0], self.portal_node.GroupNames.value[1], self.portal_node.GroupNames.value[2]
 
   ##
   #
@@ -127,7 +125,6 @@ class Portal:
       self.negative_parallax = "True"
 
     self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
-    print self.portal_node.GroupNames.value[0], self.portal_node.GroupNames.value[1], self.portal_node.GroupNames.value[2]
 
   ##
   #
@@ -148,8 +145,12 @@ class Portal:
     self.portal_node.Children.value.append(self.scene_matrix_node)
     self.NET_TRANS_NODE.distribute_object(self.scene_matrix_node)
 
+    self.scale_node = avango.gua.nodes.TransformNode(Name = "scale")
+    self.scene_matrix_node.Children.value.append(self.scale_node)
+    self.NET_TRANS_NODE.distribute_object(self.scale_node)
+
     self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
     self.portal_screen_node.Width.value = self.width
     self.portal_screen_node.Height.value = self.height
-    self.scene_matrix_node.Children.value.append(self.portal_screen_node)
+    self.scale_node.Children.value.append(self.portal_screen_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)

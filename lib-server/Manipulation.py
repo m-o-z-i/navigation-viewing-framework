@@ -31,7 +31,8 @@ class ManipulationManager:
   
     # init first ray
     _parent_node = SCENEGRAPH["/net/platform_0/scale"]
-    _transmitter_offset = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
+    #_transmitter_offset = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
+    _transmitter_offset = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   
     ## @var ray_pointer1
     # First instance of RayPointer to create manipulations.
@@ -83,8 +84,8 @@ class RayPointer(avango.script.Script):
   # @param POINTER_TRACKING_STATION Tracking target name of the pointing device.
   # @param POINTER_DEVICE_STATION Input values name of the pointing device.
   def my_constructor(self, MANIPULATION_MANAGER, ID, SCENEGRAPH, NET_TRANS_NODE, PARENT_NODE, TRACKING_TRANSMITTER_OFFSET, POINTER_TRACKING_STATION, POINTER_DEVICE_STATION):
-    return
-    
+    #return
+    print "in manipulation my_constructor"
     # references
     ## @var MANIPULATION_MANAGER
     # Reference to the ManipulationManager instance to which this RayPointer is associated.
@@ -93,7 +94,7 @@ class RayPointer(avango.script.Script):
     # parameters
     ## @var ray_length
     # Length of the pointer's ray in meters.
-    self.ray_length = 10.0
+    self.ray_length = 1000.0
 
     ## @var ray_thickness
     # Thickness of the pointer's ray in meters.
@@ -183,6 +184,7 @@ class RayPointer(avango.script.Script):
   ## Called whenever mf_pointer_pick_result changes.
   @field_has_changed(mf_pointer_pick_result)
   def mf_pointer_pick_result_mat_changed(self):
+    print len(self.mf_pointer_pick_result.value)
 
     self.update_ray()
     self.update_object_highlight()

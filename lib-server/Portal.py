@@ -27,8 +27,8 @@ class PortalManager:
     self.portals = []
     self.counter = 0
 
-    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
-                    avango.gua.make_trans_mat(0.0, 2.0, -1.5),
+    self.add_bidirectional_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
+                    avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
                     1.0,
                     1.0)
 
@@ -44,10 +44,21 @@ class PortalManager:
     #                1.0)
 
   ##
+  #
   def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT):
-    _portal = Portal(self, self.counter,  SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT)
+    _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT)
     self.counter += 1
     self.portals.append(_portal)
+
+  ##
+  #
+  def add_bidirectional_portal(self, FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT):
+    self.add_portal(FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT)
+
+    _mirrored_scene_matrix = SECOND_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
+    _mirrored_portal_matrix = FIRST_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
+
+    self.add_portal(_mirrored_scene_matrix, _mirrored_portal_matrix, WIDTH, HEIGHT)
 
 
 ##
@@ -83,7 +94,7 @@ class Portal:
 
     ##
     #
-    self.viewing_mode = "2D"
+    self.viewing_mode = "3D"
 
     ##
     #
@@ -92,6 +103,10 @@ class Portal:
     ##
     #
     self.negative_parallax = "True"
+
+    ##
+    #
+    self.scale = 1.0
 
 
     self.append_portal_nodes()
@@ -151,6 +166,7 @@ class Portal:
     self.NET_TRANS_NODE.distribute_object(self.scene_matrix_node)
 
     self.scale_node = avango.gua.nodes.TransformNode(Name = "scale")
+    self.set_scale(self.scale)
     self.scene_matrix_node.Children.value.append(self.scale_node)
     self.NET_TRANS_NODE.distribute_object(self.scale_node)
 

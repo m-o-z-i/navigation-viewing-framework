@@ -63,9 +63,6 @@ class ClientPortalManager(avango.script.Script):
 
   @field_has_changed(mf_portal_group_children)
   def mf_portal_group_children_changed(self):
-    
-    print "Field has changed"
-    print len(self.mf_portal_group_children.value)
 
     for _node in self.mf_portal_group_children.value:
 
@@ -113,11 +110,11 @@ class ClientPortal:
     self.scale_node.Children.value.append(self.portal_screen_node)
 
     # debug screen visualization
-    _loader = avango.gua.nodes.TriMeshLoader()
-    _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
-    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
-    _node.Transform.value = avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
-    self.scene_matrix_node.Children.value.append(_node)
+    #_loader = avango.gua.nodes.TriMeshLoader()
+    #_node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
+    #_node.Transform.value = avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
+    #self.scene_matrix_node.Children.value.append(_node)
 
 
   def compare_server_portal_node(self, SERVER_PORTAL_NODE):
@@ -279,9 +276,9 @@ class PortalPreView(avango.script.Script):
 
     # check for negative parallax
     if self.mf_portal_modes.value[2] == "2-True":
-      self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
-    else:
       self.pipeline.NearClip.value = 0.1
+    else:
+      self.pipeline.NearClip.value = round(self.view_node.Transform.value.get_translate().z, 2)
 
 
     # determine angle between vector to portal and portal normal

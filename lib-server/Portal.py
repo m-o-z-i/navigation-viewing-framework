@@ -11,9 +11,11 @@ from avango.script import field_has_changed
 
 # import framework libraries
 from ConsoleIO import *
+import Tools
 
 # import python libraries
 import time
+import math
 
 ## Class to create, handle and destoy Portal instances.
 class PortalManager(avango.script.Script):
@@ -53,33 +55,36 @@ class PortalManager(avango.script.Script):
     self.counter = 0
 
     # add portal instances
-    #self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
-    #                avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
-    #                1.0,
-    #                1.0,
-    #                "3D",
-    #                "PERSPECTIVE",
-    #                "False",
-    #                "data/materials/ShadelessBlue.gmd")
+    '''
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
+                    avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
+                    1.0,
+                    1.0,
+                    "3D",
+                    "PERSPECTIVE",
+                    "False",
+                    "data/materials/ShadelessBlue.gmd")
+    '''
 
-    #self.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 1.0), 
-    #                avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
-    #                1.0,
-    #                1.0,
-    #                "3D",
-    #                "PERSPECTIVE",
-    #                "False",
-    #                "data/materials/ShadelessBlue.gmd")
-
-    #self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
-    #                avango.gua.make_trans_mat(1.2, 2.0, -2.5),
-    #                1.0,
-    #                1.0,
-    #                "3D",
-    #                "PERSPECTIVE",
-    #                "False",
-    #                "data/materials/ShadelessBlue.gmd")
-
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 1.0), 
+                    avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
+                    1.0,
+                    1.0,
+                    "3D",
+                    "PERSPECTIVE",
+                    "False",
+                    "data/materials/ShadelessBlue.gmd")
+    '''
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
+                    avango.gua.make_trans_mat(1.2, 2.0, -2.5),
+                    1.0,
+                    1.0,
+                    "3D",
+                    "PERSPECTIVE",
+                    "False",
+                    "data/materials/ShadelessBlue.gmd")
+    '''
+    '''
     self.add_bidirectional_portal(avango.gua.make_trans_mat(0.0, 1.55, 3.0),
                                   avango.gua.make_trans_mat(0.0, 1.55, -3.0),
                                   1.0,
@@ -87,7 +92,7 @@ class PortalManager(avango.script.Script):
                                   "3D",
                                   "PERSPECTIVE",
                                   "False")
-
+    '''
     self.always_evaluate(True)
 
   ## Evaluated every frame.
@@ -95,8 +100,10 @@ class PortalManager(avango.script.Script):
 
     for _nav in self.NAVIGATION_LIST:
 
-      _mat = _nav.platform.platform_transform_node.WorldTransform.value * _nav.device.sf_station_mat.value
+      _mat = _nav.platform.platform_scale_transform_node.WorldTransform.value * _nav.device.sf_station_mat.value
       _last_teleport_time = self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)]
+
+      #print "DEVICE POS", _mat.get_translate()
 
       for _portal in self.portals:
 
@@ -105,17 +112,28 @@ class PortalManager(avango.script.Script):
 
         _vec_in_portal_space = _mat_in_portal_space.get_translate()
 
-        if (_vec_in_portal_space.x > -_portal.width/2  and \
-            _vec_in_portal_space.x <  _portal.width/2  and \
-            _vec_in_portal_space.y > -_portal.height/2 and \
-            _vec_in_portal_space.y <  _portal.height/2 and \
-            abs(_vec_in_portal_space.z) < 0.1)         and \
+        _yaw_to_portal = math.degrees(Tools.get_yaw(_mat_in_portal_space))
+
+        print "IN PORTAL SPACE", _vec_in_portal_space
+        #print "IN PORTAL OUT SPACE", (avango.gua.make_inverse_mat(_portal.scene_matrix_node.WorldTransform.value) * _mat).get_translate()
+
+        if (_vec_in_portal_space.x > -_portal.width/2         and \
+            _vec_in_portal_space.x <  _portal.width/2         and \
+            _vec_in_portal_space.y > -_portal.height/2        and \
+            _vec_in_portal_space.y <  _portal.height/2        and \
+            abs(_vec_in_portal_space.z) < 0.1)                and \
+            (_yaw_to_portal > 270.0 or _yaw_to_portal < 90.0) and \
             time.time() - _last_teleport_time > 1.0:
 
           if _portal.viewing_mode == "3D":
-            _nav.inputmapping.set_abs_mat(_portal.scene_matrix * avango.gua.make_trans_mat(_vec_in_portal_space) * avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate()) * avango.gua.make_inverse_mat(_nav.device.sf_station_mat.value) )
+            _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
+                                          avango.gua.make_trans_mat(_vec_in_portal_space) * \
+                                          avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate()) * \
+                                          avango.gua.make_inverse_mat(avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() ) ) ) #* avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_nav.inputmapping.sf_scale.value)) )
           else:
-            _nav.inputmapping.set_abs_mat(_portal.scene_matrix * avango.gua.make_trans_mat(_vec_in_portal_space) * avango.gua.make_inverse_mat(_nav.device.sf_station_mat.value) )
+            _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
+                                          avango.gua.make_trans_mat(_vec_in_portal_space) * \
+                                          avango.gua.make_inverse_mat(avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() ) ) )
 
           self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
       

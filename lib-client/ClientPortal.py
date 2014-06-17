@@ -165,11 +165,11 @@ class ClientPortal:
     self.scale_node.Children.value.append(self.portal_screen_node)
 
     # debug screen visualization
-    #_loader = avango.gua.nodes.TriMeshLoader()
-    #_node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
-    #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
-    #_node.Transform.value = avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
-    #self.scene_matrix_node.Children.value.append(_node)
+    _loader = avango.gua.nodes.TriMeshLoader()
+    _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
+    _node.Transform.value = avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
+    self.scene_matrix_node.Children.value.append(_node)
 
   ## Disconnects all scenegraph node fields and deletes the nodes except portal_node.
   def deactivate(self):
@@ -372,7 +372,7 @@ class PortalPreView(avango.script.Script):
   def evaluate(self):
 
     if self.active:
-      
+
       # check for viewing mode
       if self.mf_portal_modes.value[0] == "0-3D":
         self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \

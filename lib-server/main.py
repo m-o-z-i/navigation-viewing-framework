@@ -75,7 +75,8 @@ def start():
   scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
   # initialize portal manager
-  portal_manager = PortalManager(graph)
+  portal_manager = PortalManager()
+  portal_manager.my_constructor(graph, application_manager.navigation_list)
 
 
   # initialize animation manager

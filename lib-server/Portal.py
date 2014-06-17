@@ -13,15 +13,24 @@ from avango.script import field_has_changed
 from ConsoleIO import *
 
 ## Class to create, handle and destoy Portal instances.
-class PortalManager:
+class PortalManager(avango.script.Script):
+
+  ## Default constructor.
+  def __init__(self):
+    self.super(PortalManager).__init__()
 
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph.
-  def __init__(self, SCENEGRAPH):
+  # @param NAVIGATION_LIST List of all Navigation instances checked for portal updates.
+  def my_constructor(self, SCENEGRAPH, NAVIGATION_LIST):
 
     ## @var SCENEGRAPH
     # Reference to the scenegraph.
     self.SCENEGRAPH = SCENEGRAPH
+
+    ## @var NAVIGATION_LIST
+    # List of all Navigation instances checked for portal updates.
+    self.NAVIGATION_LIST = NAVIGATION_LIST
 
     ## @var portal_group_node
     # Scenegraph grouping node for portals on server side.
@@ -42,15 +51,44 @@ class PortalManager:
                     1.0,
                     1.0)
 
-    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0), 
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 1.0), 
                     avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
                     1.0,
                     1.0)
 
-    #self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
-    #                avango.gua.make_trans_mat(1.2, 2.0, -2.5),
-    #                1.0,
-    #                1.0)
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
+                    avango.gua.make_trans_mat(1.2, 2.0, -2.5),
+                    1.0,
+                    1.0)
+
+    self.always_evaluate(True)
+
+  ## Evaluated every frame.
+  def evaluate(self):
+
+    for _nav in self.NAVIGATION_LIST:
+
+      _mat = _nav.platform.platform_transform_node.WorldTransform.value * _nav.device.sf_station_mat.value
+
+      for _portal in self.portals:
+
+        _mat_in_portal_space = avango.gua.make_inverse_mat(_portal.portal_matrix_node.WorldTransform.value) * \
+                               _mat
+
+        _vec_in_portal_space = _mat_in_portal_space.get_translate()
+
+        if (_vec_in_portal_space.x > -_portal.width/2 and \
+            _vec_in_portal_space.x <  _portal.width/2 and \
+            _vec_in_portal_space.y > -_portal.height/2 and \
+            _vec_in_portal_space.y <  _portal.height/2 and \
+            abs(_vec_in_portal_space.z) < 0.1):
+
+          if _portal.viewing_mode == "3D":
+            _nav.inputmapping.set_abs_mat(_portal.scene_matrix * avango.gua.make_trans_mat(_vec_in_portal_space) * avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate()) * avango.gua.make_inverse_mat(_nav.device.sf_station_mat.value) )
+          else:
+            _nav.inputmapping.set_abs_mat(_portal.scene_matrix * avango.gua.make_trans_mat(_vec_in_portal_space) * avango.gua.make_inverse_mat(_nav.device.sf_station_mat.value) )
+      
+
 
   ## Adds a new Portal instance to the scene.
   # @param SCENE_MATRIX Matrix where the portal looks from (exit).
@@ -147,7 +185,7 @@ class Portal:
 
     ## @var negative_parallax
     # Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
-    self.negative_parallax = "True"
+    self.negative_parallax = "False"
 
     ## @var scale
     # Scaling factor within the portal.

@@ -49,17 +49,37 @@ class PortalManager(avango.script.Script):
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                     avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
                     1.0,
-                    1.0)
+                    1.0,
+                    "3D",
+                    "PERSPECTIVE",
+                    "False",
+                    "data/materials/ShadelessBlue.gmd")
 
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 1.0), 
                     avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
                     1.0,
-                    1.0)
+                    1.0,
+                    "3D",
+                    "PERSPECTIVE",
+                    "False",
+                    "data/materials/ShadelessBlue.gmd")
 
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
                     avango.gua.make_trans_mat(1.2, 2.0, -2.5),
                     1.0,
-                    1.0)
+                    1.0,
+                    "3D",
+                    "PERSPECTIVE",
+                    "False",
+                    "data/materials/ShadelessBlue.gmd")
+
+    #self.add_bidirectional_portal(avango.gua.make_trans_mat(0.0, 1.55, 3.0),
+    #                              avango.gua.make_trans_mat(0.0, 1.55, -3.0),
+    #                              1.0,
+    #                              1.0,
+    #                              "3D",
+    #                              "PERSPECTIVE",
+    #                              "False")
 
     self.always_evaluate(True)
 
@@ -95,8 +115,12 @@ class PortalManager(avango.script.Script):
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
-  def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT):
-    _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT)
+  # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
+  # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
+  # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
+  # @param BORDER_MATERIAL The material string to be used for the portal's border.
+  def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
+    _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
     self.counter += 1
     self.portals.append(_portal)
 
@@ -105,14 +129,17 @@ class PortalManager(avango.script.Script):
   # @param SECOND_MATRIX Second matrix defining the portal.
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
-  def add_bidirectional_portal(self, FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT):
-    self.add_portal(FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT)
+  # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
+  # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
+  # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
+  def add_bidirectional_portal(self, FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX):
+    self.add_portal(FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessBlue.gmd")
 
     # mirror matrices for opposite portal
     _mirrored_scene_matrix = SECOND_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
     _mirrored_portal_matrix = FIRST_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
 
-    self.add_portal(_mirrored_scene_matrix, _mirrored_portal_matrix, WIDTH, HEIGHT)
+    self.add_portal(_mirrored_scene_matrix, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd")
 
   ## Removes a portal from the scene.
   # @param ID The portal ID to be removed.
@@ -145,7 +172,21 @@ class Portal:
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
-  def __init__(self, PORTAL_MANAGER, ID, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT):
+  # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
+  # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
+  # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
+  # @param BORDER_MATERIAL The material string to be used for the portal's border.
+  def __init__(self
+             , PORTAL_MANAGER
+             , ID
+             , SCENE_MATRIX
+             , PORTAL_MATRIX
+             , WIDTH
+             , HEIGHT
+             , VIEWING_MODE
+             , CAMERA_MODE
+             , NEGATIVE_PARALLAX
+             , BORDER_MATRIAL):
 
     ## @var PORTAL_MANAGER
     # Reference to the PortalManager to be used.
@@ -177,15 +218,19 @@ class Portal:
 
     ## @var viewing_mode
     # Viewing mode of the portal, can be either "2D" or "3D".
-    self.viewing_mode = "3D"
+    self.viewing_mode = VIEWING_MODE
 
     ## @var camera_mode
     # Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
-    self.camera_mode = "PERSPECTIVE"
+    self.camera_mode = CAMERA_MODE
 
     ## @var negative_parallax
     # Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
-    self.negative_parallax = "False"
+    self.negative_parallax = NEGATIVE_PARALLAX
+
+    ## @var border_material
+    # The material string to be used for the portal's border.
+    self.border_material = BORDER_MATRIAL
 
     ## @var scale
     # Scaling factor within the portal.
@@ -200,7 +245,7 @@ class Portal:
     else:
       self.viewing_mode = "2D"
 
-    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material]
 
   ## Switches camera_mode to the other state.
   def switch_camera_mode(self):
@@ -209,7 +254,7 @@ class Portal:
     else:
       self.camera_mode = "PERSPECTIVE"
 
-    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material]
 
   ## Switches negative_parallax to the other state.
   def switch_negative_parallax(self):
@@ -218,7 +263,12 @@ class Portal:
     else:
       self.negative_parallax = "True"
 
-    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material]
+
+  ## Sets the border material to be used for the portal.
+  # @param BORDER_MATERIAL The material string to be set.
+  def set_border_material(self, BORDER_MATERIAL):
+    self.border_material = BORDER_MATERIAL
 
   ## Sets a new scaling factor for the portal.
   # @param SCALE The new scaling factor to be set
@@ -231,7 +281,7 @@ class Portal:
     ## @var portal_node
     # Grouping node for this portal below the group node for all portals.
     self.portal_node = avango.gua.nodes.TransformNode(Name = "portal_" + str(self.id))
-    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material]
     self.PORTAL_MANAGER.portal_group_node.Children.value.append(self.portal_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_node)
 

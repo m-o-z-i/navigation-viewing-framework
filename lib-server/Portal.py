@@ -12,6 +12,9 @@ from avango.script import field_has_changed
 # import framework libraries
 from ConsoleIO import *
 
+# import python libraries
+import time
+
 ## Class to create, handle and destoy Portal instances.
 class PortalManager(avango.script.Script):
 
@@ -32,9 +35,9 @@ class PortalManager(avango.script.Script):
     # List of all Navigation instances checked for portal updates.
     self.NAVIGATION_LIST = NAVIGATION_LIST
 
-    ## @var teleportation_frame_list
-    # List containing the frames left until the next teleportation is possible for a Navigation.
-    self.teleportation_frame_list = [0 for i in range(len(self.NAVIGATION_LIST))]
+    ## @var last_teleportation_times
+    # List containing the times when the last teleportation took place for a Navigation
+    self.last_teleportation_times = [0.0 for i in range(len(self.NAVIGATION_LIST))]
 
     ## @var portal_group_node
     # Scenegraph grouping node for portals on server side.
@@ -93,8 +96,7 @@ class PortalManager(avango.script.Script):
     for _nav in self.NAVIGATION_LIST:
 
       _mat = _nav.platform.platform_transform_node.WorldTransform.value * _nav.device.sf_station_mat.value
-      _frame_count = self.teleportation_frame_list[self.NAVIGATION_LIST.index(_nav)]
-      print _frame_count
+      _last_teleport_time = self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)]
 
       for _portal in self.portals:
 
@@ -108,19 +110,14 @@ class PortalManager(avango.script.Script):
             _vec_in_portal_space.y > -_portal.height/2 and \
             _vec_in_portal_space.y <  _portal.height/2 and \
             abs(_vec_in_portal_space.z) < 0.1)         and \
-            _frame_count <= 0:
+            time.time() - _last_teleport_time > 1.0:
 
           if _portal.viewing_mode == "3D":
             _nav.inputmapping.set_abs_mat(_portal.scene_matrix * avango.gua.make_trans_mat(_vec_in_portal_space) * avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate()) * avango.gua.make_inverse_mat(_nav.device.sf_station_mat.value) )
           else:
             _nav.inputmapping.set_abs_mat(_portal.scene_matrix * avango.gua.make_trans_mat(_vec_in_portal_space) * avango.gua.make_inverse_mat(_nav.device.sf_station_mat.value) )
 
-          self.teleportation_frame_list[self.NAVIGATION_LIST.index(_nav)] = 100
-        
-        else:
-          
-          if _frame_count > 0:
-            self.teleportation_frame_list[self.NAVIGATION_LIST.index(_nav)] = _frame_count - 1
+          self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
       
 
 

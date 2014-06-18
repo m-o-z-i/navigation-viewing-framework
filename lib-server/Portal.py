@@ -119,28 +119,23 @@ class PortalManager(avango.script.Script):
         #print "IN PORTAL SPACE", _vec_in_portal_space
         #print "IN PORTAL OUT SPACE", (avango.gua.make_inverse_mat(_portal.scene_matrix_node.WorldTransform.value) * _mat).get_translate()
 
+        # do a teleportation if navigation enters portal
         if (_vec_in_portal_space.x > -_portal.width/2         and \
             _vec_in_portal_space.x <  _portal.width/2         and \
             _vec_in_portal_space.y > -_portal.height/2        and \
             _vec_in_portal_space.y <  _portal.height/2        and \
             abs(_vec_in_portal_space.z) < 0.1)                and \
             (_yaw_to_portal > 270.0 or _yaw_to_portal < 90.0) and \
-            time.time() - _last_teleport_time > 1.0:
+            time.time() - _last_teleport_time > 1.0           and \
+            _portal.viewing_mode == "3D":
 
-          if _portal.viewing_mode == "3D":
-            _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
-                                          avango.gua.make_trans_mat(_vec_in_portal_space * _portal.scale * (_nav.inputmapping.sf_scale.value) ) * \
-                                          avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate()) * \
-                                          avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0 * _portal.scale  ) )
-            _nav.inputmapping.set_scale(_portal.scale)
-            self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
+          _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
+                                        avango.gua.make_trans_mat(_vec_in_portal_space * _portal.scale * (_nav.inputmapping.sf_scale.value) ) * \
+                                        avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate()) * \
+                                        avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0 * _portal.scale  ) )
           
-          else:
-            # do not teleport when in 2D mode
-            pass
-
-
-      
+          _nav.inputmapping.set_scale(_portal.scale)
+          self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
 
 
   ## Adds a new Portal instance to the scene.
@@ -174,16 +169,23 @@ class PortalManager(avango.script.Script):
 
     self.add_portal(_mirrored_scene_matrix, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd")
 
+  ## Gets an active Portal instance by its ID. Returns None when no matching instance was found.
+  # @param The Portal ID to be searched for.
+  def get_portal_by_id(self, ID):
+    _portal_instance = None
+
+    for _portal in self.portals:
+      if _portal.id == ID:
+        _portal_instance = _portal
+
+    return _portal_instance
+
   ## Removes a portal from the scene.
   # @param ID The portal ID to be removed.
   def remove_portal(self, ID):
 
     # find corresponding portal instance
-    _portal_to_remove = None
-
-    for _portal in self.portals:
-      if _portal.id == ID:
-        _portal_to_remove = _portal
+    _portal_to_remove = self.get_portal_by_id(ID)
 
     if _portal_to_remove == None:
       print_error("Error: Portal ID could not be matched.", False)

@@ -55,8 +55,8 @@ class PortalManager(avango.script.Script):
     self.counter = 0
 
     # add portal instances
-    '''
-    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
+    #'''
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, -0.5) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                     avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
                     1.0,
                     1.0,
@@ -64,8 +64,9 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    '''
+    #'''
 
+    #'''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 1.0), 
                     avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
                     1.0,
@@ -74,7 +75,8 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    '''
+    #'''
+    #'''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
                     avango.gua.make_trans_mat(1.2, 2.0, -2.5),
                     1.0,
@@ -83,7 +85,7 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    '''
+    #'''
     '''
     self.add_bidirectional_portal(avango.gua.make_trans_mat(0.0, 1.55, 3.0),
                                   avango.gua.make_trans_mat(0.0, 1.55, -3.0),
@@ -114,7 +116,7 @@ class PortalManager(avango.script.Script):
 
         _yaw_to_portal = math.degrees(Tools.get_yaw(_mat_in_portal_space))
 
-        print "IN PORTAL SPACE", _vec_in_portal_space
+        #print "IN PORTAL SPACE", _vec_in_portal_space
         #print "IN PORTAL OUT SPACE", (avango.gua.make_inverse_mat(_portal.scene_matrix_node.WorldTransform.value) * _mat).get_translate()
 
         if (_vec_in_portal_space.x > -_portal.width/2         and \
@@ -127,15 +129,17 @@ class PortalManager(avango.script.Script):
 
           if _portal.viewing_mode == "3D":
             _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
-                                          avango.gua.make_trans_mat(_vec_in_portal_space) * \
+                                          avango.gua.make_trans_mat(_vec_in_portal_space * _portal.scale * (_nav.inputmapping.sf_scale.value) ) * \
                                           avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate()) * \
-                                          avango.gua.make_inverse_mat(avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() ) ) ) #* avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_nav.inputmapping.sf_scale.value)) )
+                                          avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0 * _portal.scale  ) )
+            _nav.inputmapping.set_scale(_portal.scale)
+            self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
+          
           else:
-            _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
-                                          avango.gua.make_trans_mat(_vec_in_portal_space) * \
-                                          avango.gua.make_inverse_mat(avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() ) ) )
+            # do not teleport when in 2D mode
+            pass
 
-          self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
+
       
 
 

@@ -13,6 +13,7 @@ import avango.daemon
 # import framework libraries
 import Tools
 from Scene import *
+from Scene_Hyperspace import *
 from ConsoleIO import *
 
 # import python libraries
@@ -208,7 +209,6 @@ class SceneManager(avango.script.Script):
     self.keyboard_sensor.Station.value = "device-keyboard0"
 
     # init field connections
-    #'''
     self.sf_key1.connect_from(self.keyboard_sensor.Button10) # key 1
     self.sf_key2.connect_from(self.keyboard_sensor.Button11) # key 2
     self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3       
@@ -220,7 +220,7 @@ class SceneManager(avango.script.Script):
     self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
     self.sf_key0.connect_from(self.keyboard_sensor.Button9)  # key 0
     self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
-    #'''
+
 
   ## Custom constructor
   # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
@@ -242,12 +242,13 @@ class SceneManager(avango.script.Script):
 
     # init scenes   
     self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
     
-    #self.scene0 = SceneVRHyperspace0(self, SCENEGRAPH, NET_TRANS_NODE) # default plane
-    #self.scene1 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE) # guiding
-    #self.scene2 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE) # virtual air steward (flight instructions & bar)
+    #self.scene_hyperspace0 = SceneVRHyperspace0(self, SCENEGRAPH, NET_TRANS_NODE) # default plane
+    #self.scene_hyperspace1 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE) # entering the plane
+    #self.scene_hyperspace2 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE) # virtual air steward (flight instructions & bar)
+
     #self.scene3 = SceneVRHyperspace3(self, SCENEGRAPH, NET_TRANS_NODE) # transparent plane
     #self.scene4 = SceneVRHyperspace4(self, SCENEGRAPH, NET_TRANS_NODE) # sky window 
     #self.scene5 = SceneVRHyperspace5(self, SCENEGRAPH, NET_TRANS_NODE) # office meeting
@@ -352,12 +353,12 @@ class SceneManager(avango.script.Script):
       self.pipeline_info_node.Name.value = self.active_scene.get_pipeline_value_string()
 
       # overwrite first Navigation's starting matrix if described in scene.
-      if self.active_scene.starting_matrix != None:
+      if self.active_scene.starting_matrix != None and len(self.navigation_list) > 0:
         self.navigation_list[0].start_matrix = self.active_scene.starting_matrix
         self.navigation_list[0].reset()
         print_warning("Overwrite platform 0's starting matrix by the one given in the scene description.")
 
-      if self.active_scene.starting_scale != None:
+      if self.active_scene.starting_scale != None and len(self.navigation_list) > 0:
         self.navigation_list[0].start_scale = self.active_scene.starting_scale
         self.navigation_list[0].reset()
         print_warning("Overwrite platform 0's starting scale factor by the one given in the scene description.")
@@ -367,6 +368,11 @@ class SceneManager(avango.script.Script):
   ## Prints all the nodes of the active scene on the console.
   def print_active_scene(self):
   
+    # print navigation nodes
+    for _i, _navigation in enumerate(self.navigation_list):
+      print "platform_" + str(_i), _navigation.platform.sf_abs_mat.value.get_translate(), _navigation.platform.sf_abs_mat.value.get_rotate(), _navigation.platform.sf_scale.value
+  
+    # print interactive objects
     if self.active_scene != None:
       
       for _object in self.active_scene.objects:
@@ -377,6 +383,7 @@ class SceneManager(avango.script.Script):
         print _node.Path.value
         print _object.hierarchy_level
         print _node.Transform.value
+  
   
   ## Returns the hierarchy material string for a given depth.
   # @param INDEX The material index / depth to be returned.

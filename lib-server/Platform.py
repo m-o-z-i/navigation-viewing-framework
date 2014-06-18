@@ -76,6 +76,7 @@ class Platform(avango.script.Script):
   # @param SLOT_MANAGER Reference to the one and only SlotManager instance in the setup.
   # @param CONFIG_FILE The path to the config file that is used.
   # @param AVATAR_MATERIAL String containing the material to be used for avatars of this platform.
+  # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
   def my_constructor(
       self
     , NET_TRANS_NODE
@@ -89,7 +90,8 @@ class Platform(avango.script.Script):
     , AVATAR_TYPE
     , SLOT_MANAGER
     , CONFIG_FILE
-    , AVATAR_MATERIAL):
+    , AVATAR_MATERIAL
+    , START_CLIENTS):
 
     ## @var NET_TRANS_NODE
     # Reference to the net matrix node in the scenegraph for distribution.
@@ -146,6 +148,8 @@ class Platform(avango.script.Script):
     # Scenegraph node representing this platform's scale. Is below platform_transform_node.
     self.platform_scale_transform_node = avango.gua.nodes.TransformNode(Name = "scale")
     self.platform_transform_node.Children.value = [self.platform_scale_transform_node]
+
+    self.start_clients = START_CLIENTS
 
     # get own ip adress
     _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]

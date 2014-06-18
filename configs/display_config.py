@@ -28,7 +28,7 @@ class LargePowerwall(Display):
                     , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
                     , size = (4.16, 2.6)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
-                    #, shutter_timings = [ [(0,2400), (100,2500)], 
+                    #, shutter_timings = [ [(0,2400), (100,2500)],
                     #                      [(3000,4600),(3100,4700)],
                     #                      [(5700,8175), (5800,8275)],
                     #                      [(8200,10700), (8300,10800)],
@@ -53,10 +53,10 @@ class LargePowerwall(Display):
                                           [(22,44), (88,11)]
                                        ]
                     , max_viewing_distance = 5.0
-                    , stereomode = "SIDE_BY_SIDE"                                       
+                    , stereomode = "SIDE_BY_SIDE"
                     )
 
-  ## Registers a new view at this display and returns the display string 
+  ## Registers a new view at this display and returns the display string
   # and the warp matrices assigned to the new view.
   def register_view(self):
     view_num = self.num_views
@@ -91,7 +91,7 @@ class LargePowerwall(Display):
                     , name = "large_powerwall"
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3", ":0.4", "0.5"]
-                    , shutter_timings = [ [(0,2400), (100,2500)], 
+                    , shutter_timings = [ [(0,2400), (100,2500)],
                                           [(3000,4600),(3100,4700)],
                                           [(5700,8175), (5800,8275)],
                                           [(8200,10700), (8300,10800)],
@@ -109,10 +109,10 @@ class LargePowerwall(Display):
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     , max_viewing_distance = 5.0
                     , stereo = True
-                    , stereomode = "SIDE_BY_SIDE"                    
+                    , stereomode = "SIDE_BY_SIDE"
                     )
 
-  ## Registers a new view at this display and returns the display string 
+  ## Registers a new view at this display and returns the display string
   # and the warp matrices assigned to the new view.
   def register_view(self):
     view_num = self.num_views
@@ -147,10 +147,10 @@ class TouchTable3D(Display):
                     , hostname = "medusa"
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
-                    , displaystrings = [":0.0", ":0.1", ":0.2"] 
+                    , displaystrings = [":0.0", ":0.1", ":0.2"]
                     , shutter_timings = [  [(100, 200, 2900, 3000), (8400, 8500, 11400, 11500)],
                                            [(2600, 2700, 5700, 5800), (11000, 11100, 14600, 14700)],
-                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]                                          
+                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]
                                         ]
 
                     , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
@@ -163,10 +163,10 @@ class TouchTable3D(Display):
                                        avango.gua.make_rot_mat(90.0, -1,0, 0)
                     , max_viewing_distance = 1.0
                     , stereo = True
-                    , stereomode = "SIDE_BY_SIDE"                    
+                    , stereomode = "SIDE_BY_SIDE"
                     )
 
-  ## Registers a new view at this display and returns the display string 
+  ## Registers a new view at this display and returns the display string
   # and the warp matrices assigned to the new view.
   def register_view(self):
     view_num = self.num_views
@@ -207,7 +207,7 @@ class SmallPowerwall(Display):
                     , stereomode = "SIDE_BY_SIDE"
                     )
 
-  ## Registers a new view at this display and returns the display string 
+  ## Registers a new view at this display and returns the display string
   # and the warp matrices assigned to the new view.
   def register_view(self):
     view_num = self.num_views
@@ -279,15 +279,23 @@ class OculusRift(Display):
   # @param displaystrings A list of strings on which the windows for each user will pop up.
   # @param size Physical size of the display medium in meters.
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
-  def __init__(self):
+  def __init__( self
+              , hostname = "atalante"
+              , name = "oculus_rift_atalante"
+              , resolution = (1280,  800)
+              , displaystrings = [":0.0"]
+              , size = (0.16, 0.1)
+              , stereo = True
+              , stereomode = "HMD"
+              ):
     Display.__init__( self
-                    , hostname = "atalante"
-                    , name = "oculus_rift_atalante"
-                    , resolution = (1280, 800)
-                    , displaystrings = [":0.0"]
-                    , size = (0.16, 0.1)
-                    , stereo = True
-                    , stereomode = "HMD"
+                    , hostname = hostname
+                    , name = name
+                    , resolution = resolution
+                    , displaystrings = displaystrings
+                    , size = size
+                    , stereo = stereo
+                    , stereomode = stereomode
                     )
 
   ## Creates the screen node of this display to be appended to the Platform transformation node.

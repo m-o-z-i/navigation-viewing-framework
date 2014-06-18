@@ -18,15 +18,12 @@ import sys
 import subprocess
 
 # Command line parameters:
-# main.py CONFIG_FILE SERVER_IP
+# main.py CONFIG_FILE
 # @param CONFIG_FILE The filname of the configuration file to parse.
+# @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
 
 ## Main method for the server application
 def start():
-
-  # initialize materials
-  #avango.gua.load_shading_models_from("data/materials")
-  #avango.gua.load_materials_from("data/materials")
 
   # create scenegraph
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
@@ -42,11 +39,19 @@ def start():
   pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
   graph.Root.value.Children.value = [pseudo_nettrans]
 
+  print sys.argv[2]
+
+  if sys.argv[2] == "True":
+    start_clients = True 
+  else:
+    start_clients = False
+
   # initialize application manager
   application_manager = ApplicationManager(
       NET_TRANS_NODE = pseudo_nettrans
     , SCENEGRAPH = graph
-    , CONFIG_FILE = sys.argv[1])
+    , CONFIG_FILE = sys.argv[1]
+    , START_CLIENTS = start_clients)
 
   # create distribution node and sync children from pseudo nettrans
   nettrans = avango.gua.nodes.NetTransform(

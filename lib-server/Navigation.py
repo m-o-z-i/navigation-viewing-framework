@@ -101,6 +101,7 @@ class Navigation(avango.script.Script):
   # @param DISPLAYS The names of the displays that belong to this navigation.
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
   # @param CONFIG_FILE The path to the config file that is used.
+  # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
   def my_constructor(
       self
@@ -122,6 +123,7 @@ class Navigation(avango.script.Script):
     , DISPLAYS
     , AVATAR_TYPE
     , CONFIG_FILE
+    , START_CLIENTS
     , TRACKING_TARGET_NAME = None
     ):
     
@@ -221,6 +223,7 @@ class Navigation(avango.script.Script):
       , SLOT_MANAGER = SLOT_MANAGER
       , CONFIG_FILE = CONFIG_FILE
       , AVATAR_MATERIAL = self.trace_material
+      , START_CLIENTS = START_CLIENTS
       )
 
     # create device avatar

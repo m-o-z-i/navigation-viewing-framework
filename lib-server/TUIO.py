@@ -48,6 +48,7 @@ class TUIODevice(MultiDofDevice):
         # TODO: do this somewhere else
         self.registerGesture(DragGesture())
         self.registerGesture(PinchGesture())
+        self.registerGesture(RotationGesture())
 
     def my_constructor(self, no_tracking_mat):
         self.init_station_tracking(None, no_tracking_mat)
@@ -106,59 +107,6 @@ class TUIODevice(MultiDofDevice):
         """
         if gesture in self.gestures:
             self.gestures.remove(gesture)
-
-
-    def processGesture(self):
-        """
-        Detect and process multi touch gestures.
-        """
-        #manipulate mf_dof for navigation : [trans_x, trans_y, trans_z, pitch, head, roll, scale]
-
-        pointList = self.activePoints.values()
-
-        if len(self.activePoints) > 1:
-            pass
-            #sort the list and group points
-        
-        if len(self.activePoints) == 1:
-            self.mf_dof.value[0] += (pointList[0].SpeedX.value) * 0.3
-            self.mf_dof.value[2] += -(pointList[0].SpeedY.value) * 0.3
-
-        if len(self.activePoints) == 2:
-            # DirectionAngle = acos (DirectionOld[0] scalar TouchDirection / |1 * 1|)
-            distance = pointList[0].touchPosition - pointList[1].touchPosition
-            self.DirectionAngle = math.acos(pointList[0].MovementVector.value.dot(pointList[1].MovementVector.value))
-
-            #save old distance
-            if 5 == len(self.distances):
-                self.distances.append(distance)
-                self.distances.pop(0)
-            else:
-                self.distances.append(distance)
-
-            # from radians to degrees
-            self.DirectionAngle = self.DirectionAngle * (180 / math.pi)
-
-            if 90 < self.DirectionAngle:
-                movement = pointList[0].MotionSpeed.value + pointList[1].MotionSpeed.value
-
-                if abs(self.distances[0].length()) < abs(self.distances[-1].length()):
-                    self.mf_dof.value[6] += -movement * 2
-                else:
-                    self.mf_dof.value[6] += movement * 2
-
-            else:
-                pass
-
-        
-
-
-        taps = []
-        # detect taps
-        for i in self.Cursors.value:
-            if i.IsTap.value:
-                taps.append(i)
-
 
 
 class MultiTouchGesture(object):
@@ -245,33 +193,103 @@ class PinchGesture(MultiTouchGesture):
         if len(activePoints) != 2:
             self.distances = []
             return False
+        elif not activePoints[0].IsMoving.value and not activePoints[0].IsMoving:
+            return False
 
         # DirectionAngle = acos (DirectionOld[0] scalar TouchDirection / |1 * 1|)
         vec1 = avango.gua.Vec2(activePoints[0].PosX.value, activePoints[0].PosY.value)
         vec2 = avango.gua.Vec2(activePoints[1].PosX.value, activePoints[1].PosY.value)
         distance = vec1 - vec2
-        self.DirectionAngle = math.acos(activePoints[0].MovementVector.value.dot(activePoints[1].MovementVector.value))
+        #self.DirectionAngle = math.acos(activePoints[0].MovementVector.value.dot(activePoints[1].MovementVector.value))
+
+        #if len(self.distances) > 1 and abs(self.distances[-1].length() - distance.length()) < .005:
+        #    self.distances = []
+        #    return False
 
         #save old distance
-        if 5 == len(self.distances):
+        if 2 == len(self.distances):
             self.distances.append(distance)
             self.distances.pop(0)
         else:
             self.distances.append(distance)
 
         # from radians to degrees
-        self.DirectionAngle = self.DirectionAngle * (180 / math.pi)
+        #self.DirectionAngle = self.DirectionAngle * (180 / math.pi)
 
-        if 90 < self.DirectionAngle:
-            movement = activePoints[0].MotionSpeed.value + activePoints[1].MotionSpeed.value
+        #if 90 < self.DirectionAngle:
+        #    movement = activePoints[0].MotionSpeed.value + activePoints[1].MotionSpeed.value
+#
+        #    if abs(self.distances[0].length()) < abs(self.distances[-1].length()):
+        #        mfDof.value[6] += -movement * 2
+        #    else:
+        #        mfDof.value[6] += movement * 2
+        
+        movement = activePoints[0].MotionSpeed.value + activePoints[1].MotionSpeed.value
 
-            if abs(self.distances[0].length()) < abs(self.distances[-1].length()):
-                mfDof.value[6] += -movement * 2
-            else:
-                mfDof.value[6] += movement * 2
+        zoom  = self.distances[0].length() > self.distances[-1].length()
+        pinch = self.distances[0].length() < self.distances[-1].length()
+
+        if zoom:
+            mfDof.value[6] = distance.length() * 3
+        elif pinch:
+            mfDof.value[6] = -distance.length() * 3
 
         return True
 
+
+class RotationGesture(MultiTouchGesture):
+    def __init__(self):
+        self.distances = []
+
+
+    def processGesture(self, activePoints, mfDof):
+        if len(activePoints) != 2:
+            self.distances = []
+            return False
+        elif not activePoints[0].IsMoving.value and not activePoints[0].IsMoving:
+            return False
+
+        # DirectionAngle = acos (DirectionOld[0] scalar TouchDirection / |1 * 1|)
+        vec1 = avango.gua.Vec2(activePoints[0].PosX.value, activePoints[0].PosY.value)
+        vec2 = avango.gua.Vec2(activePoints[1].PosX.value, activePoints[1].PosY.value)
+        distance = vec1 - vec2
+        #self.DirectionAngle = math.acos(activePoints[0].MovementVector.value.dot(activePoints[1].MovementVector.value))
+
+        #if len(self.distances) > 1 and abs(self.distances[-1].length() - distance.length()) < .005:
+        #    self.distances = []
+        #    return False
+
+        #save old distance
+        if 2 == len(self.distances):
+            self.distances.append(distance)
+            self.distances.pop(0)
+        else:
+            self.distances.append(distance)
+
+        # from radians to degrees
+        #self.DirectionAngle = self.DirectionAngle * (180 / math.pi)
+
+        #if 90 < self.DirectionAngle:
+        #    movement = activePoints[0].MotionSpeed.value + activePoints[1].MotionSpeed.value
+#
+        #    if abs(self.distances[0].length()) < abs(self.distances[-1].length()):
+        #        mfDof.value[6] += -movement * 2
+        #    else:
+        #        mfDof.value[6] += movement * 2
+        
+        #movement = activePoints[0].MotionSpeed.value + activePoints[1].MotionSpeed.value
+
+        #zoom  = self.distances[0].length() > self.distances[-1].length()
+        #pinch = self.distances[0].length() < self.distances[-1].length()
+
+        #if zoom:
+        #    mfDof.value[6] = distance.length() * 3
+        #elif pinch:
+        #    mfDof.value[6] = -distance.length() * 3
+
+        #mfDof[5] = math.atan2(self.distances[0].y - self.distances[-1].y, 
+
+        return True
 
 class TUIOCursor(avango.script.Script):
     PosX = avango.SFFloat()

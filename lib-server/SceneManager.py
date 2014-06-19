@@ -13,7 +13,6 @@ import avango.daemon
 # import framework libraries
 import Tools
 from Scene import *
-from Scene_Hyperspace import *
 from ConsoleIO import *
 
 # import python libraries
@@ -243,20 +242,12 @@ class SceneManager(avango.script.Script):
     # init scenes   
     self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
-    
-    #self.scene_hyperspace0 = SceneVRHyperspace0(self, SCENEGRAPH, NET_TRANS_NODE) # default plane
-    #self.scene_hyperspace1 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE) # entering the plane
-    #self.scene_hyperspace2 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE) # virtual air steward (flight instructions & bar)
-
-    #self.scene3 = SceneVRHyperspace3(self, SCENEGRAPH, NET_TRANS_NODE) # transparent plane
-    #self.scene4 = SceneVRHyperspace4(self, SCENEGRAPH, NET_TRANS_NODE) # sky window 
-    #self.scene5 = SceneVRHyperspace5(self, SCENEGRAPH, NET_TRANS_NODE) # office meeting
-    #self.scene6 = SceneVRHyperspace6(self, SCENEGRAPH, NET_TRANS_NODE) # office meeting & barchart
-    #self.scene7 = SceneVRHyperspace7(self, SCENEGRAPH, NET_TRANS_NODE) # avatar call
-
+    #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)       
 
     self.activate_scene(0) # activate first scene
+
+    SCENEGRAPH.update_cache()
         
 
   # callbacks

@@ -56,7 +56,7 @@ class PortalManager(avango.script.Script):
 
     # add portal instances
     #'''
-    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, -0.5) * avango.gua.make_rot_mat(-90, 0, 1, 0),
+    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                     avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
                     1.0,
                     1.0,

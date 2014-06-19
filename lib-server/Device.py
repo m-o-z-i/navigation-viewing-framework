@@ -172,7 +172,6 @@ class MultiDofDevice(avango.script.Script):
 
     self.dofs[ID] += VALUE
 
-
   ## Sets the reset trigger.
   # @param VALUE The value to be set.
   def set_reset_trigger(self, VALUE):
@@ -441,17 +440,18 @@ class OldSpheronDevice(MultiDofDevice):
     
     ## @var translation_factor
     # Factor to modify the device's translation input.
-    self.translation_factor = 0.5
+    self.translation_factor = 0.1
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    self.rotation_factor = 0.0
+    self.rotation_factor = 2.5
 
     self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value, -0.00787377543747, -0.0134, 0.003, 5, 5)")
     self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, -0.00787377543747, -0.0115, -0.003, 20, 20)")
     self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value, -0.00787377543747, -0.015, 0.0, 5, 5)")    
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value*-1.0, 0.00787377543747, 0.00622577592731, 0.00912503432482, 0, 0)")
+    #self.add_input_binding("if self.device_sensor.Value4.value != 0.0:\n\tself.set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")    
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
     self.add_input_binding("self.set_reset_trigger(self.button_sensor.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.button_sensor.Button0.value*-1.0)")              # left button
@@ -504,27 +504,42 @@ class NewSpheronDevice(MultiDofDevice):
     
     ## @var translation_factor
     # Factor to modify the device's translation input.
-    self.translation_factor = 0.25
+    self.translation_factor = 0.1
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    self.rotation_factor = 25.0
+    self.rotation_factor = 1.0
 
+    '''
     self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_right.Value0.value*-1.0, 0.0, -0.98, 1.0, 0, 0)")
-    self.add_input_binding("self.set_dof(0, self.device_sensor_left.Value0.value)")
     self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_right.Value1.value, 0.0, -0.44, 0.24, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_right.Value2.value, 0.0, -1.0, 0.94, 0, 0)")    
-    self.add_input_binding("self.set_dof(2, self.device_sensor_left.Value1.value)")
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor_right.Value3.value*-1.0, 0.0, -2048, 2048, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value4.value*-1.0, 0.0, -2048, 2048, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, 0.05 * self.device_sensor_right.Value6.value, 0.0, -0.6, 0.37, 0, 0)")
-    self.add_input_binding("self.set_dof(4, -0.05 * self.device_sensor_left.Value2.value)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value6.value, 0.0, -0.6, 0.37, 10, 10)")
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor_right.Value5.value, 0.0, -2048, 2048, 0, 0)")
+
+    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_left.Value0.value, 0.0, -1.0, 1.0, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_left.Value1.value, 0.0, -1.0, 1.0, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_left.Value2.value * -1.0, 0.0, -1.0, 1.0, 0, 0)")
     
     self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
+    '''
 
+    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_left.Value0.value, 0.0, -1.0, 1.0, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_left.Value1.value, 0.0, -1.0, 1.0, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_left.Value2.value*-1.0, 0.0, -0.1, 0.22, 0, 0)")            
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_left.Value3.value*-1.0, 0.0, -1.0, 1.0, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor_right.Value3.value*-1.0, 0.0, -150, 150, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value4.value*-1.0, 0.0, -150, 150, 0, 0)")
+    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor_right.Value5.value*-1.0, 0.0, -150, 150, 0, 0)")    
+    
+    self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
+    self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
+    self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
+    
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.

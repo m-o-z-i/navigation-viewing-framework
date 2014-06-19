@@ -220,25 +220,27 @@ def init_new_spheron():
 
     print "New Spheron (right) found at:", _string1
 
+    #'''
+    if len(_string) > 1:
+      
+      _string2 = _string[1]
 
-  if len(_string) > 1:
-    
-    _string2 = _string[1]
+      # create a station to propagate the input events
+      _spheron2 = avango.daemon.HIDInput()
+      _spheron2.station = avango.daemon.Station("device-new-spheron-left")
+      _spheron2.device = _string2
+      _spheron2.timeout = '30'
+      
+      # map incoming events to station values
+      _spheron2.values[0] = "EV_ABS::ABS_X"            # joystick trans x
+      _spheron2.values[1] = "EV_ABS::ABS_Y"            # joystick trans z
+      _spheron2.values[2] = "EV_ABS::ABS_Z"            # joystick trans y
+      _spheron2.values[3] = "EV_ABS::ABS_THROTTLE"     # joystick rot y      
+          
+      device_list.append(_spheron2)
 
-    # create a station to propagate the input events
-    _spheron2 = avango.daemon.HIDInput()
-    _spheron2.station = avango.daemon.Station("device-new-spheron-left")
-    _spheron2.device = _string2
-    _spheron2.timeout = '30'
-    
-    # map incoming events to station values
-    _spheron2.values[0] = "EV_ABS::ABS_X"            # joystick trans x
-    _spheron2.values[1] = "EV_ABS::ABS_Y"            # joystick trans y
-    _spheron2.values[2] = "EV_ABS::ABS_Z"            # joystick rot y
-        
-    device_list.append(_spheron2)
-
-    print "New Spheron (left) found at:", _string2
+      print "New Spheron (left) found at:", _string2
+    #'''
 
   else:
     print "New Spheron NOT found !"
@@ -486,13 +488,13 @@ init_lcd_wall_tracking()
 init_dlp_wall_tracking()
 
 # initialize x-box controllers
-#xbox_controller(1)
+xbox_controller(1)
 #xbox_controller(2)
 #xbox_controller(3)
 #xbox_controller(4)
 
 # init spherons
-#init_old_spheron()
+init_old_spheron()
 init_new_spheron()
 #init_new_globefish()
 
@@ -505,7 +507,7 @@ init_mouse()
 init_spacemouse()
 
 # init oculus rift sensors
-init_oculus()
+#init_oculus()
 
 # init touch input
 #init_tuio_input() # crash ???

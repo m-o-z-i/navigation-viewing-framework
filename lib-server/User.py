@@ -137,8 +137,8 @@ class User(avango.script.Script):
 
     # create avatar representation
     if self.platform.avatar_type == "joseph" or \
-       self.platform.avatar_type == "None" or \
-       self.platform.avatar_type.endswith(".ks"):
+      self.platform.avatar_type == "None" or \
+      self.platform.avatar_type.endswith(".ks"):
       self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)  
     else:
       if self.platform.avatar_type == "joseph_table":
@@ -350,9 +350,12 @@ class User(avango.script.Script):
                                                           'data/materials/' + self.avatar_material + '.gmd',
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-    
-    self.append_to_platform(self.head_avatar)
-    self.append_to_platform(self.body_avatar)
+
+    if self.platform.avatar_type != "None" and \
+      self.platform.avatar_type.endswith(".ks") == False:
+      self.append_to_platform(self.head_avatar)
+      self.append_to_platform(self.body_avatar)    
 
     self.head_avatar.Transform.connect_from(SF_AVATAR_HEAD_MATRIX)
     self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX)
+

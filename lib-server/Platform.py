@@ -255,6 +255,7 @@ class Platform(avango.script.Script):
 
       self.video_geode.Transform.value = self.transmitter_offset
       self.platform_scale_transform_node.Children.value.append(self.video_geode)
+      self.video_geode.GroupNames.value = ['avatar_group_' + str(self.platform_id)] # own group avatars not visible (only for WALL setups)
 
     # create four boundary planes
     _loader = avango.gua.nodes.TriMeshLoader()

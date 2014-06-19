@@ -199,63 +199,6 @@ class View(avango.script.Script):
     # set nice pipeline values
     ClientPipelineValues.set_default_pipeline_values(self.pipeline)
 
-    '''
-    # pre render setup
-    self.pre_camera2 = avango.gua.nodes.Camera()
-    self.pre_camera2.SceneGraph.value = SCENEGRAPH.Name.value
-    self.pre_camera2.LeftScreen.value = self.camera.LeftScreen.value
-    self.pre_camera2.RightScreen.value = self.camera.RightScreen.value
-    self.pre_camera2.LeftEye.value = self.camera.LeftEye.value
-    self.pre_camera2.RightEye.value = self.camera.RightEye.value
-    self.pre_camera2.RenderMask.value = "!main_scene && !pre_scene1 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-
-    self.pre_pipeline2 = avango.gua.nodes.Pipeline()
-    self.pre_pipeline2.Camera.value = self.pre_camera2
-    self.pre_pipeline2.Enabled.value = self.pipeline.Enabled.value
-    self.pre_pipeline2.EnableStereo.value = self.pipeline.EnableStereo.value
-    self.pre_pipeline2.LeftResolution.value = self.pipeline.LeftResolution.value   
-    self.pre_pipeline2.RightResolution.value = self.pipeline.RightResolution.value
-    self.pre_pipeline2.OutputTextureName.value = "pre_scene2_texture"
-    self.pre_pipeline2.EnableFrustumCulling.value = True
-    self.pre_pipeline2.EnableBackfaceCulling.value = True
-    self.pre_pipeline2.EnableSsao.value = False
-    self.pre_pipeline2.FogStart.value = 850.0
-    self.pre_pipeline2.FogEnd.value = 1000.0
-    self.pre_pipeline2.EnableFog.value = True
-    self.pre_pipeline2.FogColor.value = avango.gua.Color(1.0, 1.0, 1.0)
-    self.pre_pipeline2.AmbientColor.value = avango.gua.Color(0.2, 0.4, 0.5)
-    self.pre_pipeline2.BackgroundTexture.value = "/opt/guacamole/resources/skymaps/bright_sky.jpg"
-    self.pre_pipeline2.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
-
-
-    self.pre_camera1 = avango.gua.nodes.Camera()
-    self.pre_camera1.SceneGraph.value = SCENEGRAPH.Name.value
-    self.pre_camera1.LeftScreen.value = self.camera.LeftScreen.value
-    self.pre_camera1.RightScreen.value = self.camera.RightScreen.value    
-    self.pre_camera1.LeftEye.value = self.camera.LeftEye.value
-    self.pre_camera1.RightEye.value = self.camera.RightEye.value
-    self.pre_camera1.RenderMask.value = "!main_scene && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-        
-
-    self.pre_pipeline1 = avango.gua.nodes.Pipeline()
-    self.pre_pipeline1.Camera.value = self.pre_camera1
-    self.pre_pipeline1.Enabled.value = self.pipeline.Enabled.value
-    self.pre_pipeline1.EnableStereo.value = self.pipeline.EnableStereo.value
-    self.pre_pipeline1.LeftResolution.value = self.pipeline.LeftResolution.value    
-    self.pre_pipeline1.RightResolution.value = self.pipeline.RightResolution.value
-    self.pre_pipeline1.OutputTextureName.value = "pre_scene1_texture"
-    self.pre_pipeline1.PreRenderPipelines.value = [self.pre_pipeline2]
-    self.pre_pipeline1.EnableFrustumCulling.value = True
-    self.pre_pipeline1.EnableBackfaceCulling.value = True
-    self.pre_pipeline1.EnableSsao.value = False   
-    self.pre_pipeline1.BackgroundTexture.value = "pre_scene2_texture"
-    self.pre_pipeline1.BackgroundMode.value = avango.gua.BackgroundMode.QUAD_TEXTURE
-
-    
-    self.pipeline.PreRenderPipelines.value = [self.pre_pipeline1]
-    '''
-
-
     # add tracking reader to avoid latency
     self.init_local_tracking_override(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())
 
@@ -355,6 +298,8 @@ class View(avango.script.Script):
       self.pipeline.EnableFXAA.value = True
     else:
       self.pipeline.EnableFXAA.value = False
+  
+    #avango.gua.reload_materials()
   
   ## Evaluated every frame.
   def evaluate(self):

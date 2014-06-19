@@ -63,7 +63,7 @@ class SceneObject:
 
     ## @var enable_bloom
     # Mapping of pipeline value EnableBloom.
-    self.enable_bloom = True
+    self.enable_bloom = False
 
     ## @var bloom_intensity
     # Mapping of pipeline value BloomIntensity.
@@ -79,7 +79,7 @@ class SceneObject:
 
     ## @var enable_ssao
     # Mapping of pipeline value EnableSsao.
-    self.enable_ssao = True
+    self.enable_ssao = False
 
     ## @var ssao_radius
     # Mapping of pipeline value SsaoRadius.
@@ -199,7 +199,8 @@ class SceneObject:
       _light_node = avango.gua.nodes.SunLightNode()
       _light_node.EnableShadows.value = ENABLE_SHADOW
       _light_node.ShadowMapSize.value = SHADOW_MAP_SIZE
-      _light_node.ShadowOffset.value = 0.001
+      _light_node.ShadowOffset.value = 0.002
+      #_light_node.ShadowCascadedSplits.value = [0.2, 3, 10, 100, 150],
 
       MANIPULATION_PICK_FLAG = False # sun light not pickable (infinite position) 
 

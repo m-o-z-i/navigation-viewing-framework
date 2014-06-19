@@ -152,8 +152,8 @@ class ApplicationManager():
     # Window displaying the server control view.
     self.window = avango.gua.nodes.Window()
     self.window.Title.value = "Server Control Monitor"
-    self.window.Size.value = avango.gua.Vec2ui(1920, 1080)
-    self.window.LeftResolution.value = avango.gua.Vec2ui(1920, 1080)
+    self.window.Size.value = avango.gua.Vec2ui(1280, 1024)
+    self.window.LeftResolution.value = avango.gua.Vec2ui(1280, 1024)
 
     ## @var pipeline
     # Pipeline repsonsible for rendering the server control monitor.

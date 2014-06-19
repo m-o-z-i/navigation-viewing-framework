@@ -478,6 +478,46 @@ def init_august_pointer(ID, DEVICE_STATION_STRING):
 	else:
 		print "August Pointer NOT found !"
 
+## Initializes a portal camera for portal features.
+def init_portal_camera():
+
+  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"portalCam 3.2\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+
+  _string = _string.split()
+
+  if len(_string) > 0:  
+
+    _string = _string[0]
+  
+    # create a station to propagate the input events
+    _portal_camera = avango.daemon.HIDInput()
+    _portal_camera.station = avango.daemon.Station('device-portal-camera')
+    _portal_camera.device = _string
+
+    # map incoming portal camera buttons to station
+    _portal_camera.buttons[0] = "EV_KEY::BTN_START"  # trigger button half step
+    _portal_camera.buttons[1] = "EV_KEY::BTN_MODE"   # trigger button full step
+    _portal_camera.buttons[2] = "EV_KEY::BTN_X"      # top left of trigger
+    _portal_camera.buttons[3] = "EV_KEY::BTN_C"      # top right of trigger
+    _portal_camera.buttons[4] = "EV_KEY::BTN_TL"     # top left button left
+    _portal_camera.buttons[5] = "EV_KEY::BTN_Y"      # top left button right
+    _portal_camera.buttons[6] = "EV_KEY::BTN_Z"      # top left button center
+    _portal_camera.buttons[7] = "EV_KEY::BTN_TR2"    # left thumb left button
+    _portal_camera.buttons[8] = "EV_KEY::BTN_SELECT" # left thumb right button
+    _portal_camera.buttons[9] = "EV_KEY::BTN_B"      # top right button top
+    _portal_camera.buttons[11] = "EV_KEY::BTN_A"     # top right button center
+    _portal_camera.buttons[12] = "EV_KEY::BTN_THUMBR"# right thumb left button
+    _portal_camera.buttons[13] = "EV_KEY::BTN_THUMBL"# right thumb right button
+    _portal_camera.buttons[14] = "EV_KEY::BTN_TL2"   # left and right head button
+    _portal_camera.buttons[15] = "EV_KEY::BTN_TR"    # center head button
+
+
+    device_list.append(_portal_camera)
+    print "Portal Cam 3.2 started at:", _string
+
+  else:
+    print "Portal Cam 3.2 NOT found !"
+
 
 ## @var device_list
 # List of devices to be handled by daemon.
@@ -505,6 +545,9 @@ init_august_pointer(0, "device-pointer1")
 init_keyboard()
 init_mouse()
 init_spacemouse()
+
+# init portal camera
+init_portal_camera()
 
 # init oculus rift sensors
 #init_oculus()

@@ -12,7 +12,8 @@ from SceneManager import *
 from ApplicationManager import *
 from RecorderPlayer import *
 from Manipulation import *
-from Portal import * 
+from Portal import *
+from PortalCamera import *
 
 # import python libraries
 import sys
@@ -74,6 +75,9 @@ def start():
   # initialize portal manager
   portal_manager = PortalManager()
   portal_manager.my_constructor(graph, application_manager.navigation_list)
+
+  portal_camera = PortalCamera()
+  portal_camera.my_constructor(graph["/net/platform_0/scale"], "device-portal-camera", "tracking-portal-camera")
 
 
   # initialize animation manager

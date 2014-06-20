@@ -91,7 +91,7 @@ class PortalCamera(avango.script.Script):
 
     ## @var device_sensor
     # Device sensor for the PortalCamera's button inputs.
-    self.device_sensor = avango.daemon_nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
+    self.device_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.device_sensor.Station.value = CAMERA_INPUT_NAME
 
     # init field connections
@@ -117,64 +117,64 @@ class PortalCamera(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
-    pass
+    pass#print self.device_sensor.Button0.value
 
   ## Called whenever sf_focus_button changes.
   @field_has_changed(sf_focus_button)
   def sf_focus_button_changed(self):
     if self.sf_focus_button.value == True:
-      pass
+      print "sf_focus_button pressed"
 
   ## Called whenever sf_capture_button changes.
   @field_has_changed(sf_capture_button)
   def sf_capture_button_changed(self):
     if self.sf_capture_button.value == True:
-      pass
+      print "sf_capture_button pressed"
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)
   def sf_next_rec_button_changed(self):
     if self.sf_next_rec_button.value == True:
-      pass
+      print "sf_next_rec_button pressed"
 
   ## Called whenever sf_prior_rec_button changes.
   @field_has_changed(sf_prior_rec_button)
   def sf_prior_rec_button_changed(self):
     if self.sf_prior_rec_button.value == True:
-      pass
+      print "sf_prior_rec_button pressed"
 
   ## Called whenever sf_scale_up_button changes.
   @field_has_changed(sf_scale_up_button)
   def sf_scale_up_button_changed(self):
     if self.sf_scale_up_button.value == True:
-      pass
+      print "sf_scale_up_button pressed"
 
   ## Called whenever sf_scale_down_button changes.
   @field_has_changed(sf_scale_down_button)
   def sf_scale_down_button_changed(self):
     if self.sf_scale_down_button.value == True:
-      pass
+      print "sf_scale_down_button pressed"
 
   ## Called whenever sf_2D_mode_button changes.
   @field_has_changed(sf_2D_mode_button)
   def sf_2D_mode_button_changed(self):
     if self.sf_2D_mode_button.value == True:
-      pass
+      print "sf_2D_mode_button pressed"
 
   ## Called whenever sf_3D_mode_button changes.
   @field_has_changed(sf_3D_mode_button)
   def sf_3D_mode_button_changed(self):
     if self.sf_3D_mode_button.value == True:
-      pass
+      print "sf_3D_mode_button pressed"
 
   ## Called whenever sf_negative_parallax_on_button changes.
   @field_has_changed(sf_negative_parallax_on_button)
   def sf_negative_parallax_on_button_changed(self):
     if self.sf_negative_parallax_on_button.value == True:
-      pass
+      print "sf_negative_parallax_on_button pressed"
 
   ## Called whenever sf_negative_parallax_off_button changes.
   @field_has_changed(sf_negative_parallax_off_button)
   def sf_negative_parallax_off_button_changed(self):
     if self.sf_negative_parallax_off_button.value == True:
-      pass
+      print "sf_negative_parallax_off_button pressed"

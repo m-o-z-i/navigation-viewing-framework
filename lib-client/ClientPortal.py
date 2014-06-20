@@ -372,6 +372,16 @@ class PortalPreView(avango.script.Script):
   ## Called whenever an input field changes.
   def evaluate(self):
 
+    # check for visibility
+    if self.mf_portal_modes.value[4] == "4-False":
+      self.textured_quad.GroupNames.value.append("do_not_display_group")
+      self.portal_border.GroupNames.value.append("do_not_display_group")
+      self.active = False
+    else:
+      self.textured_quad.GroupNames.value.remove("do_not_display_group")
+      self.portal_border.GroupNames.value.remove("do_not_display_group")
+      self.active = True
+
     if self.active:
 
       # check for viewing mode

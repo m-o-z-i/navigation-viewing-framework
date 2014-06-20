@@ -276,6 +276,10 @@ class Portal:
     # Scaling factor within the portal.
     self.scale = 1.0
 
+    ## @var visible
+    # Boolean string variable indicating if the portal is currently visible.
+    self.visible = "True"
+
     self.append_portal_nodes()
 
   ## Switches viewing_mode to the other state.
@@ -285,7 +289,7 @@ class Portal:
     else:
       self.viewing_mode = "2D"
 
-    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
   ## Switches camera_mode to the other state.
   def switch_camera_mode(self):
@@ -294,7 +298,7 @@ class Portal:
     else:
       self.camera_mode = "PERSPECTIVE"
 
-    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
   ## Switches negative_parallax to the other state.
   def switch_negative_parallax(self):
@@ -303,12 +307,23 @@ class Portal:
     else:
       self.negative_parallax = "True"
 
-    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
   ## Sets the border material to be used for the portal.
   # @param BORDER_MATERIAL The material string to be set.
   def set_border_material(self, BORDER_MATERIAL):
     self.border_material = BORDER_MATERIAL
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
+
+  ## Sets the visiblity of this portal.
+  # @param VISIBLE Boolean describing the visibility to be set.
+  def set_visibility(self, VISIBLE):
+    if VISIBLE:
+      self.visible = "True"
+    else:
+      self.visible = "False"
+
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
   ## Sets a new scaling factor for the portal.
   # @param SCALE The new scaling factor to be set
@@ -321,7 +336,7 @@ class Portal:
     ## @var portal_node
     # Grouping node for this portal below the group node for all portals.
     self.portal_node = avango.gua.nodes.TransformNode(Name = "portal_" + str(self.id))
-    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material]
+    self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
     self.PORTAL_MANAGER.portal_group_node.Children.value.append(self.portal_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_node)
 

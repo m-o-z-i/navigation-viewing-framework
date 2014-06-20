@@ -174,6 +174,7 @@ class Platform(avango.script.Script):
         # create screen visualization when desired
         if AVATAR_TYPE != "None":
           _screen_visualization = _display.create_screen_visualization()
+          _screen_visualization.GroupNames.value = ["avatar_group_" + str(self.platform_id)]
           self.platform_scale_transform_node.Children.value.append(_screen_visualization)
 
       # create screen proxy geometry for view ray hit tests

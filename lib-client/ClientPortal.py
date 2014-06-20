@@ -269,6 +269,8 @@ class PortalPreView(avango.script.Script):
     _render_mask = "!do_not_display_group"
 
     for _i in range(0, 10):
+      _render_mask = _render_mask + " && !avatar_group_" + str(_i)
+
       if _i != VIEW.platform_id:
         _render_mask = _render_mask + " && !platform_group_" + str(_i)
 
@@ -376,10 +378,12 @@ class PortalPreView(avango.script.Script):
     if self.mf_portal_modes.value[4] == "4-False":
       self.textured_quad.GroupNames.value.append("do_not_display_group")
       self.portal_border.GroupNames.value.append("do_not_display_group")
+      self.pipeline.Enabled.value = False
       self.active = False
     else:
       self.textured_quad.GroupNames.value.remove("do_not_display_group")
       self.portal_border.GroupNames.value.remove("do_not_display_group")
+      self.pipeline.Enabled.value = True
       self.active = True
 
     if self.active:

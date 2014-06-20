@@ -31,8 +31,8 @@ def init_lcd_wall_tracking():
   _dtrack.stations[17] = avango.daemon.Station('tracking-oculus-front')    # oculus rift tracking
   _dtrack.stations[16] = avango.daemon.Station('tracking-oculus-stag')     # oculus rift tracking
 
-  _dtrack.stations[4] = avango.daemon.Station('tracking-lcd-glasses-1')        # glasses powerwall user one
-  _dtrack.stations[3] = avango.daemon.Station('tracking-lcd-glasses-2')        # glasses powerwall user two
+  _dtrack.stations[4] = avango.daemon.Station('tracking-lcd-glasses-1')    # glasses powerwall user one
+  _dtrack.stations[3] = avango.daemon.Station('tracking-lcd-glasses-2')    # glasses powerwall user two
 
   _dtrack.stations[7] = avango.daemon.Station('tracking-old-spheron')      # old spheron device
 
@@ -48,7 +48,7 @@ def init_dlp_wall_tracking():
   
   # glasses
   _dtrack.stations[1] = avango.daemon.Station('tracking-dlp-glasses-1')
-  #_dtrack.stations[9] = avango.daemon.Station('tracking-dlp-glasses-1') # camera shutter
+  #_dtrack.stations[9] = avango.daemon.Station('tracking-dlp-glasses-1')   # camera shutter
   _dtrack.stations[2] = avango.daemon.Station('tracking-dlp-glasses-2')
   _dtrack.stations[3] = avango.daemon.Station('tracking-dlp-glasses-3')
   _dtrack.stations[4] = avango.daemon.Station('tracking-dlp-glasses-4')
@@ -56,9 +56,10 @@ def init_dlp_wall_tracking():
   _dtrack.stations[6] = avango.daemon.Station('tracking-dlp-glasses-6')
 
   # devices
-  _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron') # new spheron device
+  _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron')     # new spheron device
 
-  _dtrack.stations[23] = avango.daemon.Station('tracking-dlp-pointer1') # AUGUST1 pointer
+  _dtrack.stations[23] = avango.daemon.Station('tracking-dlp-pointer1')    # AUGUST1 pointer
+  _dtrack.stations[26] = avango.daemon.Station('tracking-portal-camera')   # portal camera 3.2
 
 
   device_list.append(_dtrack)

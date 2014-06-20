@@ -78,6 +78,14 @@ class PortalCamera(avango.script.Script):
     # Portal instance which is currently displayed above the PortalCamera.
     self.current_portal = None
 
+    ## @var portal_width
+    # Width of the portals displayed in this PortalCamera.
+    self.portal_width = 0.5
+
+    ## @var portal_height
+    # Height of the portals displayed in this PortalCamera.
+    self.portal_height = 0.5
+
 
   ## Custom constructor.
   # @param PLATFORM_NODE Platform scenegraph node to which this PortalCamera should be appended to.
@@ -100,7 +108,7 @@ class PortalCamera(avango.script.Script):
     self.sf_next_rec_button.connect_from(self.device_sensor.Button5)
     self.sf_prior_rec_button.connect_from(self.device_sensor.Button4)
     self.sf_scale_up_button.connect_from(self.device_sensor.Button9)
-    self.sf_scale_down_button.connect_from(self.device_sensor.Button11)
+    self.sf_scale_down_button.connect_from(self.device_sensor.Button10)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
     self.sf_3D_mode_button.connect_from(self.device_sensor.Button8)
     self.sf_negative_parallax_on_button.connect_from(self.device_sensor.Button12)
@@ -112,12 +120,22 @@ class PortalCamera(avango.script.Script):
     self.tracking_reader.my_constructor(CAMERA_TRACKING_NAME)
     self.sf_tracking_mat.connect_from(self.tracking_reader.sf_abs_mat)
 
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    ## @var camera_frame
+    # Geometry node containing the PortalCamera's portal frame.
+    self.camera_frame = _loader.create_geometry_from_file("portal_camera", "data/objects/screen.obj", "data/materials/ShadelessRed.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.camera_frame.GroupNames.value = []
+    PLATFORM_NODE.Children.value.append(self.camera_frame)
+
     # set evaluation policy
     self.always_evaluate(True)
 
   ## Evaluated every frame.
   def evaluate(self):
-    pass#print self.device_sensor.Button0.value
+    self.camera_frame.Transform.value = self.tracking_reader.sf_abs_mat.value * \
+                                        avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
 
   ## Called whenever sf_focus_button changes.
   @field_has_changed(sf_focus_button)

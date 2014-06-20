@@ -505,6 +505,7 @@ def init_portal_camera():
     _portal_camera.buttons[7] = "EV_KEY::BTN_TR2"    # left thumb left button
     _portal_camera.buttons[8] = "EV_KEY::BTN_SELECT" # left thumb right button
     _portal_camera.buttons[9] = "EV_KEY::BTN_B"      # top right button top
+    _portal_camera.buttons[10] = "EV_KEY::BTN_DEAD"  # top right button bottom
     _portal_camera.buttons[11] = "EV_KEY::BTN_A"     # top right button center
     _portal_camera.buttons[12] = "EV_KEY::BTN_THUMBR"# right thumb left button
     _portal_camera.buttons[13] = "EV_KEY::BTN_THUMBL"# right thumb right button

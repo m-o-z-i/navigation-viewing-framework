@@ -55,7 +55,7 @@ class PortalManager(avango.script.Script):
     self.counter = 0
 
     # add portal instances
-    #'''
+    '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                     avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
                     1.0,
@@ -66,7 +66,7 @@ class PortalManager(avango.script.Script):
                     "data/materials/ShadelessBlue.gmd")
     #'''
 
-    #'''
+    '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 1.0), 
                     avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
                     1.0,
@@ -75,8 +75,8 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    #'''
-    #'''
+    '''
+    '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
                     avango.gua.make_trans_mat(1.2, 2.0, -2.5),
                     1.0,
@@ -85,7 +85,7 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    #'''
+    '''
     '''
     self.add_bidirectional_portal(avango.gua.make_trans_mat(0.0, 1.55, 3.0),
                                   avango.gua.make_trans_mat(0.0, 1.55, -3.0),
@@ -129,6 +129,7 @@ class PortalManager(avango.script.Script):
             _portal.viewing_mode == "3D":
 
           print _mat_in_portal_space.get_rotate(), _mat_in_portal_space.get_scale()
+          print_warning("Portal teleportation deactivated for debugging.")
           
           _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
                                         avango.gua.make_trans_mat(_vec_in_portal_space * _portal.scale ) * \
@@ -154,6 +155,7 @@ class PortalManager(avango.script.Script):
     _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
     self.counter += 1
     self.portals.append(_portal)
+    return _portal
 
   ## Add a new bidirectional portal to the scene.
   # @param FIRST_MATRIX First matrix defining the portal.

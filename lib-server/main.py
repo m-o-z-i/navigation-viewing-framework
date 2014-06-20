@@ -77,7 +77,7 @@ def start():
   portal_manager.my_constructor(graph, application_manager.navigation_list)
 
   portal_camera = PortalCamera()
-  portal_camera.my_constructor(graph["/net/platform_0/scale"], "device-portal-camera", "tracking-portal-camera")
+  portal_camera.my_constructor(portal_manager, graph["/net/platform_0/scale"], "device-portal-camera", "tracking-portal-camera")
 
 
   # initialize animation manager

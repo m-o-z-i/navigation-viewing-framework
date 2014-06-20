@@ -24,6 +24,10 @@ class PortalCamera(avango.script.Script):
   # Tracking matrix of the PortalCamera within the platform coordinate system.
   sf_tracking_mat = avango.gua.SFMatrix4()
 
+  ##
+  #
+  sf_border_mat = avango.gua.SFMatrix4()
+
   # button fields
   ## @var sf_focus_button
   # Boolean field to check if the focus button was pressed.
@@ -80,19 +84,24 @@ class PortalCamera(avango.script.Script):
 
     ## @var portal_width
     # Width of the portals displayed in this PortalCamera.
-    self.portal_width = 0.5
+    self.portal_width = 0.2
 
     ## @var portal_height
     # Height of the portals displayed in this PortalCamera.
-    self.portal_height = 0.5
+    self.portal_height = 0.2
 
 
   ## Custom constructor.
+  # @param PORTAL_MANAGER Reference to the PortalManager used for Portal creation and management.
   # @param PLATFORM_NODE Platform scenegraph node to which this PortalCamera should be appended to.
   # @param CAMERA_INPUT_NAME Name of the PortalCamera's input sensor as registered in daemon.
   # @param CAMERA_TRACKING_NAME Name of the PortalCamera's tracking target as registered in daemon.
-  def my_constructor(self, PLATFORM_NODE, CAMERA_INPUT_NAME, CAMERA_TRACKING_NAME):
+  def my_constructor(self, PORTAL_MANAGER, PLATFORM_NODE, CAMERA_INPUT_NAME, CAMERA_TRACKING_NAME):
     
+    ## @var PORTAL_MANAGER
+    # Reference to the PortalManager used for Portal creation and management.
+    self.PORTAL_MANAGER = PORTAL_MANAGER
+
     ## @var PLATFORM_NODE
     # Platform scenegraph node to which this PortalCamera should be appended to.
     self.PLATFORM_NODE = PLATFORM_NODE
@@ -126,28 +135,59 @@ class PortalCamera(avango.script.Script):
     # Geometry node containing the PortalCamera's portal frame.
     self.camera_frame = _loader.create_geometry_from_file("portal_camera", "data/objects/screen.obj", "data/materials/ShadelessRed.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.camera_frame.GroupNames.value = []
+    self.camera_frame.GroupNames.value = ["do_not_display_group"]
     PLATFORM_NODE.Children.value.append(self.camera_frame)
+
+    self.camera_frame.Transform.connect_from(self.sf_border_mat)
 
     # set evaluation policy
     self.always_evaluate(True)
 
   ## Evaluated every frame.
   def evaluate(self):
-    self.camera_frame.Transform.value = self.tracking_reader.sf_abs_mat.value * \
-                                        avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
+
+    self.sf_border_mat.value  = avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
+                                self.tracking_reader.sf_abs_mat.value * \
+                                avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
+
+    if self.current_portal != None:
+      self.camera_frame.GroupNames.value = ["do_not_display_group"]
+    
 
   ## Called whenever sf_focus_button changes.
   @field_has_changed(sf_focus_button)
   def sf_focus_button_changed(self):
+
     if self.sf_focus_button.value == True:
-      print "sf_focus_button pressed"
+
+      try:
+        self.camera_frame.GroupNames.value = []
+      except:
+        pass
+
+    else:
+
+      try:
+        self.camera_frame.GroupNames.value = ["do_not_display_group"]
+      except:
+        pass
 
   ## Called whenever sf_capture_button changes.
   @field_has_changed(sf_capture_button)
   def sf_capture_button_changed(self):
     if self.sf_capture_button.value == True:
-      print "sf_capture_button pressed"
+
+      if self.current_portal == None:
+        _portal = self.PORTAL_MANAGER.add_portal(self.camera_frame.WorldTransform.value, 
+                                                 self.camera_frame.WorldTransform.value,
+                                                 1.0,
+                                                 1.0,
+                                                 "3D",
+                                                 "PERSPECTIVE",
+                                                 "False",
+                                                 "data/materials/ShadelessBlue.gmd")
+        _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+        self.current_portal = _portal
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)

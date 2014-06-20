@@ -403,7 +403,14 @@ class PortalPreView(avango.script.Script):
 
       # set correct border material
       if self.portal_border.Material.value != self.mf_portal_modes.value[3].replace("3-", ""):
-        self.portal_border.Material.value = self.mf_portal_modes.value[3].replace("3-", "")
+        
+        _material = self.mf_portal_modes.value[3].replace("3-", "")
+
+        if _material != "None":
+          self.portal_border.Material.value = _material
+          self.portal_border.GroupNames.value = []
+        else:
+          self.portal_border.GroupNames.value = ["do_not_display_group"]
 
 
       # determine angle between vector to portal and portal normal

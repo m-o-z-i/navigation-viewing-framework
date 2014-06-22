@@ -393,7 +393,7 @@ class PortalPreView(avango.script.Script):
         self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
                                          self.sf_slot_world_mat.value
       else:
-        self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
+        self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.3)
 
       # check for camera mode
       if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":

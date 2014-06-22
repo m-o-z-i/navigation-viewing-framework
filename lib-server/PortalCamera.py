@@ -160,12 +160,25 @@ class PortalCamera(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
-    self.sf_border_mat.value  = avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
-                                self.tracking_reader.sf_abs_mat.value * \
+    # update portal and camera frame matrix
+    self.sf_border_mat.value  = self.tracking_reader.sf_abs_mat.value * \
+                                avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
                                 avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
 
+    # always hide red camera frame when a portal is displayed
     if self.current_portal != None:
       self.camera_frame.GroupNames.value = ["do_not_display_group"]
+
+    # apply scale changes 
+    if self.sf_scale_up_button.value == True and \
+       self.current_portal != None:
+      
+      self.current_portal.set_scale(self.current_portal.scale * 1.015)
+      
+    if self.sf_scale_down_button.value == True and \
+       self.current_portal != None:
+
+      self.current_portal.set_scale(self.current_portal.scale * 0.985)
     
 
   ## Called whenever sf_focus_button changes.
@@ -209,17 +222,15 @@ class PortalCamera(avango.script.Script):
   def sf_next_rec_button_changed(self):
     if self.sf_next_rec_button.value == True:
       
-      self.current_portal.set_visibility(False)
+      if self.current_portal != None:
+        self.current_portal.set_visibility(False)
 
-      _current_index = self.captured_portals.index(self.current_portal)
-      #print "_current_index", _current_index
-      _current_index += 1
-      #print "_current_index+1", _current_index
-      _current_index = _current_index % len(self.captured_portals)
-      #print "modulo", 
+        _current_index = self.captured_portals.index(self.current_portal)
+        _current_index += 1
+        _current_index = _current_index % len(self.captured_portals)
 
-      self.current_portal = self.captured_portals[_current_index]
-      self.current_portal.set_visibility(True)
+        self.current_portal = self.captured_portals[_current_index]
+        self.current_portal.set_visibility(True)
 
 
   ## Called whenever sf_prior_rec_button changes.
@@ -227,26 +238,15 @@ class PortalCamera(avango.script.Script):
   def sf_prior_rec_button_changed(self):
     if self.sf_prior_rec_button.value == True:
       
-      self.current_portal.set_visibility(False)
+      if self.current_portal != None:
+        self.current_portal.set_visibility(False)
 
-      _current_index = self.captured_portals.index(self.current_portal)
-      _current_index -= 1
-      _current_index = _current_index % len(self.captured_portals)
+        _current_index = self.captured_portals.index(self.current_portal)
+        _current_index -= 1
+        _current_index = _current_index % len(self.captured_portals)
 
-      self.current_portal = self.captured_portals[_current_index]
-      self.current_portal.set_visibility(True)
-
-  ## Called whenever sf_scale_up_button changes.
-  @field_has_changed(sf_scale_up_button)
-  def sf_scale_up_button_changed(self):
-    if self.sf_scale_up_button.value == True:
-      print "sf_scale_up_button pressed"
-
-  ## Called whenever sf_scale_down_button changes.
-  @field_has_changed(sf_scale_down_button)
-  def sf_scale_down_button_changed(self):
-    if self.sf_scale_down_button.value == True:
-      print "sf_scale_down_button pressed"
+        self.current_portal = self.captured_portals[_current_index]
+        self.current_portal.set_visibility(True)
 
   ## Called whenever sf_close_button changes.
   @field_has_changed(sf_close_button)
@@ -272,22 +272,34 @@ class PortalCamera(avango.script.Script):
   @field_has_changed(sf_2D_mode_button)
   def sf_2D_mode_button_changed(self):
     if self.sf_2D_mode_button.value == True:
-      print "sf_2D_mode_button pressed"
+      
+      if self.current_portal != None:
+        if self.current_portal.viewing_mode == "3D":
+          self.current_portal.switch_viewing_mode()
 
   ## Called whenever sf_3D_mode_button changes.
   @field_has_changed(sf_3D_mode_button)
   def sf_3D_mode_button_changed(self):
     if self.sf_3D_mode_button.value == True:
-      print "sf_3D_mode_button pressed"
+      
+      if self.current_portal != None:
+        if self.current_portal.viewing_mode == "2D":
+          self.current_portal.switch_viewing_mode()
 
   ## Called whenever sf_negative_parallax_on_button changes.
   @field_has_changed(sf_negative_parallax_on_button)
   def sf_negative_parallax_on_button_changed(self):
     if self.sf_negative_parallax_on_button.value == True:
-      print "sf_negative_parallax_on_button pressed"
+      
+      if self.current_portal != None:
+        if self.current_portal.negative_parallax == "False":
+          self.current_portal.switch_negative_parallax()
 
   ## Called whenever sf_negative_parallax_off_button changes.
   @field_has_changed(sf_negative_parallax_off_button)
   def sf_negative_parallax_off_button_changed(self):
     if self.sf_negative_parallax_off_button.value == True:
-      print "sf_negative_parallax_off_button pressed"
+      
+      if self.current_portal != None:
+        if self.current_portal.negative_parallax == "True":
+          self.current_portal.switch_negative_parallax()

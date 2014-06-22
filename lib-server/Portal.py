@@ -329,6 +329,7 @@ class Portal:
   # @param SCALE The new scaling factor to be set
   def set_scale(self, SCALE):
     self.scale_node.Transform.value = avango.gua.make_scale_mat(SCALE)
+    self.scale = SCALE
 
   ## Appends the necessary portal scenegraph nodes on server side.
   def append_portal_nodes(self):

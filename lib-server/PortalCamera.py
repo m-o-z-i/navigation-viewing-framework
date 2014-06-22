@@ -154,6 +154,14 @@ class PortalCamera(avango.script.Script):
     #
     self.last_open_portal_index = None
 
+    ##
+    #
+    self.start_drag_portal_mat = None
+
+    ##
+    #
+    self.start_drag_scene_mat = None
+
     # set evaluation policy
     self.always_evaluate(True)
 
@@ -179,6 +187,15 @@ class PortalCamera(avango.script.Script):
        self.current_portal != None:
 
       self.current_portal.set_scale(self.current_portal.scale * 0.985)
+
+
+    # update matrices in drag mode
+    if self.start_drag_portal_mat != None and self.start_drag_scene_mat != None:
+
+      _current_portal_mat = self.tracking_reader.sf_abs_mat.value
+      _diff_mat = _current_portal_mat * avango.gua.make_inverse_mat(self.start_drag_portal_mat)
+      _diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate())
+      self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
     
 
   ## Called whenever sf_focus_button changes.
@@ -216,6 +233,17 @@ class PortalCamera(avango.script.Script):
         self.captured_portals.append(_portal)
         _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
         self.current_portal = _portal
+
+      else:
+
+        self.start_drag_portal_mat = self.tracking_reader.sf_abs_mat.value
+        self.start_drag_scene_mat = self.current_portal.scene_matrix_node.Transform.value
+
+    # capture button released
+    else:
+
+      self.start_drag_portal_mat = None
+      self.start_drag_scene_mat = None
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)

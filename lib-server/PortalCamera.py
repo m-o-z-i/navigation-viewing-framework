@@ -122,6 +122,10 @@ class PortalCamera(avango.script.Script):
     #
     self.gallery_focus_portal_index = 0
 
+    ##
+    #
+    self.gallery_magnification_factor = 1.5
+
 
   ## Custom constructor.
   # @param PORTAL_MANAGER Reference to the PortalManager used for Portal creation and management.
@@ -252,19 +256,47 @@ class PortalCamera(avango.script.Script):
       self.current_portal = self.captured_portals[self.gallery_focus_portal_index]
 
       for _portal in self.captured_portals:
-        _station_vec = self.NAVIGATION.device.sf_station_mat.value.get_translate()
-        _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + 1.5 * (self.portal_width + 0.05) * _i, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
+        _station_mat = self.NAVIGATION.device.sf_station_mat.value
+        _station_vec = _station_mat.get_translate()
+
+        _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.gallery_magnification_factor * (self.portal_width + 0.05) * _i, _station_vec.y + self.gallery_magnification_factor * self.portal_height, _station_vec.z)
 
         _matrix = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
                   _modified_station_mat * \
-                  avango.gua.make_scale_mat(1.5 * self.portal_width, 1.5 * self.portal_height, 1.0)
+                  avango.gua.make_scale_mat(self.gallery_magnification_factor * self.portal_width, self.gallery_magnification_factor * self.portal_height, 1.0)
 
         _portal.portal_matrix_node.Transform.disconnect()
         _portal.portal_matrix_node.Transform.value = _matrix
         _portal.set_visibility(True)
         _i += 1
 
-    
+      # check for camera hitting portal
+
+      _camera_vec = self.camera_frame.WorldTransform.value.get_translate()
+
+      for _portal in self.captured_portals:
+
+        _portal_vec = _portal.portal_matrix_node.WorldTransform.value.get_translate()
+
+        if _camera_vec.x > _portal_vec.x - (self.portal_width/2) and \
+           _camera_vec.x < _portal_vec.x + (self.portal_width/2) and \
+           _camera_vec.y > _portal_vec.y - 0.1 and \
+           _camera_vec.y < _portal_vec.y + 0.1 and \
+           _camera_vec.z > _portal_vec.z - 0.05 and \
+           _camera_vec.z < _portal_vec.z + 0.05:
+
+          for _portal_2 in self.captured_portals:
+            
+            if _portal_2 != _portal:
+              _portal_2.set_visibility(False)
+            
+            _portal_2.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+
+          _grabbed_portal_index = self.captured_portals.index(_portal)
+          self.last_open_portal_index = _grabbed_portal_index
+          self.gallery_activated = False
+          self.current_portal = _portal
+          return
 
   ## Called whenever sf_focus_button changes.
   @field_has_changed(sf_focus_button)

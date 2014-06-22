@@ -92,11 +92,11 @@ class PortalCamera(avango.script.Script):
 
     ## @var portal_width
     # Width of the portals displayed in this PortalCamera.
-    self.portal_width = 0.2
+    self.portal_width = 0.3
 
     ## @var portal_height
     # Height of the portals displayed in this PortalCamera.
-    self.portal_height = 0.2
+    self.portal_height = 0.3
 
 
   ## Custom constructor.
@@ -194,7 +194,7 @@ class PortalCamera(avango.script.Script):
 
       _current_portal_mat = self.tracking_reader.sf_abs_mat.value
       _diff_mat = _current_portal_mat * avango.gua.make_inverse_mat(self.start_drag_portal_mat)
-      _diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate())
+      #_diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate()) * avango.gua.make_rot_mat(_diff_mat.get_rotate())
       self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
     
 

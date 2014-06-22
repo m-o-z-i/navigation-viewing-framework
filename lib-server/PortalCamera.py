@@ -164,6 +164,20 @@ class PortalCamera(avango.script.Script):
 
     ##
     #
+    self.viewing_mode_indicator = _loader.create_geometry_from_file('viewing_mode_indicator',
+                                                                    'data/objects/plane.obj',
+                                                                    'data/materials/CameraMode' + self.capture_viewing_mode + '.gmd',
+                                                                    avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width * 1.5, self.portal_height * 1.5, 0.0) * \
+                                                  avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                                  avango.gua.make_scale_mat(self.portal_height * 0.3, 1.0, self.portal_height * 0.3)
+    self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
+
+    self.camera_frame.Children.value.append(self.viewing_mode_indicator)
+    #self.own_color_geometry.GroupNames.value = 
+
+    ##
+    #
     self.last_open_portal_index = None
 
     ##
@@ -319,6 +333,7 @@ class PortalCamera(avango.script.Script):
           self.current_portal.switch_viewing_mode()
       else:
         self.capture_viewing_mode = "2D"
+        self.viewing_mode_indicator.Material.value = 'data/materials/CameraMode2D.gmd'
 
   ## Called whenever sf_3D_mode_button changes.
   @field_has_changed(sf_3D_mode_button)
@@ -330,6 +345,7 @@ class PortalCamera(avango.script.Script):
           self.current_portal.switch_viewing_mode()
       else:
         self.capture_viewing_mode = "3D"
+        self.viewing_mode_indicator.Material.value = 'data/materials/CameraMode3D.gmd'
 
 
   ## Called whenever sf_negative_parallax_on_button changes.

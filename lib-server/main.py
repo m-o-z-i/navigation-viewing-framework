@@ -27,6 +27,9 @@ import subprocess
 ## Main method for the server application
 def start():
 
+  # disable logger warningss
+  logger = avango.gua.nodes.Logger(EnableWarning = False)
+
   # create scenegraph
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
   #graph.Root.value.GroupNames.value = ["all"]

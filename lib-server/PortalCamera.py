@@ -244,7 +244,12 @@ class PortalCamera(avango.script.Script):
     # update matrices in gallery mode
     if self.gallery_activated:
 
+      if len(self.captured_portals) == 0:
+        self.gallery_activated = False
+        return
+
       _i = -self.gallery_focus_portal_index
+      self.current_portal = self.captured_portals[self.gallery_focus_portal_index]
 
       for _portal in self.captured_portals:
         _station_vec = self.NAVIGATION.device.sf_station_mat.value.get_translate()
@@ -373,10 +378,11 @@ class PortalCamera(avango.script.Script):
 
       if self.current_portal != None:
         _portal_to_delete = self.current_portal
+        self.gallery_focus_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
+        self.last_open_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
 
         self.captured_portals.remove(_portal_to_delete)
         self.PORTAL_MANAGER.remove_portal(_portal_to_delete.id)
-        self.last_open_portal_index = 0
         self.current_portal = None
 
   ## Called whenever sf_gallery_button changes.
@@ -390,13 +396,13 @@ class PortalCamera(avango.script.Script):
       else:
         self.gallery_activated = False
         self.last_open_portal_index = self.gallery_focus_portal_index
+        self.current_portal = None
 
         for _portal in self.captured_portals:
           _portal.set_visibility(False)
           _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
 
       
-
   ## Called whenever sf_2D_mode_button changes.
   @field_has_changed(sf_2D_mode_button)
   def sf_2D_mode_button_changed(self):

@@ -28,6 +28,18 @@ class PortalCamera(avango.script.Script):
   #
   sf_border_mat = avango.gua.SFMatrix4()
 
+  ##
+  #
+  sf_gallery_left_mat = avango.gua.SFMatrix4()
+
+  ##
+  #
+  sf_gallery_center_mat = avango.gua.SFMatrix4()
+
+  ##
+  #
+  sf_gallery_right_mat = avango.gua.SFMatrix4()
+
   # button fields
   ## @var sf_focus_button
   # Boolean field to check if the focus button was pressed.
@@ -64,6 +76,10 @@ class PortalCamera(avango.script.Script):
   ## @var sf_delete_button
   # Boolean field to check if the delete button was pressed.
   sf_delete_button = avango.SFBool()
+
+  ## @var sf_gallery_button
+  # Boolean field to check if the gallery button was pressed.
+  sf_gallery_button = avango.SFBool()
 
   ## @var sf_2D_mode_button
   # Boolean field to check if the 2D mode button was pressed.
@@ -145,6 +161,7 @@ class PortalCamera(avango.script.Script):
     self.sf_close_button.connect_from(self.device_sensor.Button2)
     self.sf_open_button.connect_from(self.device_sensor.Button3)
     self.sf_delete_button.connect_from(self.device_sensor.Button15)
+    self.sf_gallery_button.connect_from(self.device_sensor.Button6)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
     self.sf_3D_mode_button.connect_from(self.device_sensor.Button8)
     self.sf_negative_parallax_on_button.connect_from(self.device_sensor.Button12)
@@ -228,6 +245,24 @@ class PortalCamera(avango.script.Script):
       _diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate() * self.current_portal.scale) * \
                   avango.gua.make_rot_mat(_diff_mat.get_rotate())
       self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
+
+    # update gallery matrices
+    _station_vec = self.NAVIGATION.device.sf_station_mat.value.get_translate()
+
+    _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x - self.portal_width*2 - 0.1, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
+    self.sf_gallery_left_mat.value    = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
+                                        _modified_station_mat * \
+                                        avango.gua.make_scale_mat(2 * self.portal_width, 2 * self.portal_height, 1.0)
+
+    _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
+    self.sf_gallery_center_mat.value  = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
+                                        _modified_station_mat * \
+                                        avango.gua.make_scale_mat(2 * self.portal_width, 2 * self.portal_height, 1.0)
+    
+    _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.portal_width*2 + 0.1, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
+    self.sf_gallery_right_mat.value   = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
+                                        _modified_station_mat * \
+                                        avango.gua.make_scale_mat(2 * self.portal_width, 2 * self.portal_height, 1.0)
     
 
   ## Called whenever sf_focus_button changes.
@@ -339,6 +374,24 @@ class PortalCamera(avango.script.Script):
         self.PORTAL_MANAGER.remove_portal(_portal_to_delete.id)
         self.last_open_portal_index = 0
         self.current_portal = None
+
+  ## Called whenever sf_gallery_button changes.
+  @field_has_changed(sf_gallery_button)
+  def sf_gallery_button_changed(self):
+    if self.sf_gallery_button.value == True:
+
+      self.captured_portals[0].portal_matrix_node.Transform.disconnect()
+      self.captured_portals[0].portal_matrix_node.Transform.connect_from(self.sf_gallery_left_mat)
+      self.captured_portals[0].set_visibility(True)
+
+      self.captured_portals[1].portal_matrix_node.Transform.disconnect()
+      self.captured_portals[1].portal_matrix_node.Transform.connect_from(self.sf_gallery_center_mat)
+      self.captured_portals[1].set_visibility(True)
+
+      self.captured_portals[2].portal_matrix_node.Transform.disconnect()
+      self.captured_portals[2].portal_matrix_node.Transform.connect_from(self.sf_gallery_right_mat)
+      self.captured_portals[2].set_visibility(True)
+
       
 
   ## Called whenever sf_2D_mode_button changes.

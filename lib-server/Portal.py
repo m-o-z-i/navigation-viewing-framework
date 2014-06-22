@@ -130,6 +130,7 @@ class PortalManager(avango.script.Script):
 
           print _mat_in_portal_space.get_rotate(), _mat_in_portal_space.get_scale()
           print_warning("Portal teleportation deactivated for debugging.")
+          return
           
           _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
                                         avango.gua.make_trans_mat(_vec_in_portal_space * _portal.scale ) * \

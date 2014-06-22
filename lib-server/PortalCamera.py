@@ -28,18 +28,6 @@ class PortalCamera(avango.script.Script):
   #
   sf_border_mat = avango.gua.SFMatrix4()
 
-  ##
-  #
-  sf_gallery_left_mat = avango.gua.SFMatrix4()
-
-  ##
-  #
-  sf_gallery_center_mat = avango.gua.SFMatrix4()
-
-  ##
-  #
-  sf_gallery_right_mat = avango.gua.SFMatrix4()
-
   # button fields
   ## @var sf_focus_button
   # Boolean field to check if the focus button was pressed.
@@ -126,6 +114,14 @@ class PortalCamera(avango.script.Script):
     #
     self.capture_parallax_mode = "True"
 
+    ##
+    #
+    self.gallery_activated = False
+
+    ##
+    #
+    self.gallery_focus_portal_index = 0
+
 
   ## Custom constructor.
   # @param PORTAL_MANAGER Reference to the PortalManager used for Portal creation and management.
@@ -196,7 +192,6 @@ class PortalCamera(avango.script.Script):
     self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     self.camera_frame.Children.value.append(self.viewing_mode_indicator)
-    #self.own_color_geometry.GroupNames.value = 
 
     ##
     #
@@ -246,23 +241,24 @@ class PortalCamera(avango.script.Script):
                   avango.gua.make_rot_mat(_diff_mat.get_rotate())
       self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
 
-    # update gallery matrices
-    _station_vec = self.NAVIGATION.device.sf_station_mat.value.get_translate()
+    # update matrices in gallery mode
+    if self.gallery_activated:
 
-    _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x - self.portal_width*2 - 0.1, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
-    self.sf_gallery_left_mat.value    = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
-                                        _modified_station_mat * \
-                                        avango.gua.make_scale_mat(2 * self.portal_width, 2 * self.portal_height, 1.0)
+      _i = -self.gallery_focus_portal_index
 
-    _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
-    self.sf_gallery_center_mat.value  = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
-                                        _modified_station_mat * \
-                                        avango.gua.make_scale_mat(2 * self.portal_width, 2 * self.portal_height, 1.0)
-    
-    _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.portal_width*2 + 0.1, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
-    self.sf_gallery_right_mat.value   = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
-                                        _modified_station_mat * \
-                                        avango.gua.make_scale_mat(2 * self.portal_width, 2 * self.portal_height, 1.0)
+      for _portal in self.captured_portals:
+        _station_vec = self.NAVIGATION.device.sf_station_mat.value.get_translate()
+        _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + 1.5 * (self.portal_width + 0.05) * _i, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
+
+        _matrix = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
+                  _modified_station_mat * \
+                  avango.gua.make_scale_mat(1.5 * self.portal_width, 1.5 * self.portal_height, 1.0)
+
+        _portal.portal_matrix_node.Transform.disconnect()
+        _portal.portal_matrix_node.Transform.value = _matrix
+        _portal.set_visibility(True)
+        _i += 1
+
     
 
   ## Called whenever sf_focus_button changes.
@@ -316,6 +312,10 @@ class PortalCamera(avango.script.Script):
   @field_has_changed(sf_next_rec_button)
   def sf_next_rec_button_changed(self):
     if self.sf_next_rec_button.value == True:
+
+      if self.gallery_activated:
+        self.gallery_focus_portal_index = min(self.gallery_focus_portal_index + 1, len(self.captured_portals) - 1)
+        return
       
       if self.current_portal != None:
         self.current_portal.set_visibility(False)
@@ -332,6 +332,10 @@ class PortalCamera(avango.script.Script):
   @field_has_changed(sf_prior_rec_button)
   def sf_prior_rec_button_changed(self):
     if self.sf_prior_rec_button.value == True:
+
+      if self.gallery_activated:
+        self.gallery_focus_portal_index = max(self.gallery_focus_portal_index - 1, 0)
+        return
       
       if self.current_portal != None:
         self.current_portal.set_visibility(False)
@@ -380,17 +384,16 @@ class PortalCamera(avango.script.Script):
   def sf_gallery_button_changed(self):
     if self.sf_gallery_button.value == True:
 
-      self.captured_portals[0].portal_matrix_node.Transform.disconnect()
-      self.captured_portals[0].portal_matrix_node.Transform.connect_from(self.sf_gallery_left_mat)
-      self.captured_portals[0].set_visibility(True)
+      if self.gallery_activated == False:
+        self.gallery_activated = True
+      
+      else:
+        self.gallery_activated = False
+        self.last_open_portal_index = self.gallery_focus_portal_index
 
-      self.captured_portals[1].portal_matrix_node.Transform.disconnect()
-      self.captured_portals[1].portal_matrix_node.Transform.connect_from(self.sf_gallery_center_mat)
-      self.captured_portals[1].set_visibility(True)
-
-      self.captured_portals[2].portal_matrix_node.Transform.disconnect()
-      self.captured_portals[2].portal_matrix_node.Transform.connect_from(self.sf_gallery_right_mat)
-      self.captured_portals[2].set_visibility(True)
+        for _portal in self.captured_portals:
+          _portal.set_visibility(False)
+          _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
 
       
 

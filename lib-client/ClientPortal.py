@@ -269,7 +269,7 @@ class PortalPreView(avango.script.Script):
     _render_mask = "!do_not_display_group"
 
     for _i in range(0, 10):
-      _render_mask = _render_mask + " && !avatar_group_" + str(_i)
+      _render_mask = _render_mask + " && !avatar_group_" + str(_i) + " && !status_group_" + str(_i)
 
       if _i != VIEW.platform_id:
         _render_mask = _render_mask + " && !platform_group_" + str(_i)

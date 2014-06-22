@@ -98,21 +98,33 @@ class PortalCamera(avango.script.Script):
     # Height of the portals displayed in this PortalCamera.
     self.portal_height = 0.3
 
+    ##
+    #
+    self.capture_viewing_mode = "3D"
+
+    ##
+    #
+    self.capture_parallax_mode = "True"
+
 
   ## Custom constructor.
   # @param PORTAL_MANAGER Reference to the PortalManager used for Portal creation and management.
-  # @param PLATFORM_NODE Platform scenegraph node to which this PortalCamera should be appended to.
+  # @param NAVIGATION Navigation instance to which this PortalCamera belongs to.
   # @param CAMERA_INPUT_NAME Name of the PortalCamera's input sensor as registered in daemon.
   # @param CAMERA_TRACKING_NAME Name of the PortalCamera's tracking target as registered in daemon.
-  def my_constructor(self, PORTAL_MANAGER, PLATFORM_NODE, CAMERA_INPUT_NAME, CAMERA_TRACKING_NAME):
+  def my_constructor(self, PORTAL_MANAGER, NAVIGATION, CAMERA_INPUT_NAME, CAMERA_TRACKING_NAME):
     
     ## @var PORTAL_MANAGER
     # Reference to the PortalManager used for Portal creation and management.
     self.PORTAL_MANAGER = PORTAL_MANAGER
 
+    ## @var NAVIGATION
+    # Navigation instance to which this PortalCamera belongs to.
+    self.NAVIGATION = NAVIGATION
+
     ## @var PLATFORM_NODE
     # Platform scenegraph node to which this PortalCamera should be appended to.
-    self.PLATFORM_NODE = PLATFORM_NODE
+    self.PLATFORM_NODE = self.NAVIGATION.platform.platform_scale_transform_node
 
     ## @var device_sensor
     # Device sensor for the PortalCamera's button inputs.
@@ -146,7 +158,7 @@ class PortalCamera(avango.script.Script):
     self.camera_frame = _loader.create_geometry_from_file("portal_camera", "data/objects/screen.obj", "data/materials/ShadelessRed.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.camera_frame.GroupNames.value = ["do_not_display_group"]
-    PLATFORM_NODE.Children.value.append(self.camera_frame)
+    self.PLATFORM_NODE.Children.value.append(self.camera_frame)
 
     self.camera_frame.Transform.connect_from(self.sf_border_mat)
 
@@ -181,12 +193,12 @@ class PortalCamera(avango.script.Script):
     if self.sf_scale_up_button.value == True and \
        self.current_portal != None:
       
-      self.current_portal.set_scale(self.current_portal.scale * 1.015)
+      self.current_portal.set_scale(self.current_portal.scale * 0.985)
       
     if self.sf_scale_down_button.value == True and \
        self.current_portal != None:
 
-      self.current_portal.set_scale(self.current_portal.scale * 0.985)
+      self.current_portal.set_scale(self.current_portal.scale * 1.015)
 
 
     # update matrices in drag mode
@@ -194,7 +206,8 @@ class PortalCamera(avango.script.Script):
 
       _current_portal_mat = self.tracking_reader.sf_abs_mat.value
       _diff_mat = _current_portal_mat * avango.gua.make_inverse_mat(self.start_drag_portal_mat)
-      #_diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate()) * avango.gua.make_rot_mat(_diff_mat.get_rotate())
+      _diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate() * self.current_portal.scale) * \
+                  avango.gua.make_rot_mat(_diff_mat.get_rotate())
       self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
     
 
@@ -226,9 +239,9 @@ class PortalCamera(avango.script.Script):
                                                  self.camera_frame.WorldTransform.value,
                                                  1.0,
                                                  1.0,
-                                                 "3D",
+                                                 self.capture_viewing_mode,
                                                  "PERSPECTIVE",
-                                                 "True",
+                                                 self.capture_parallax_mode,
                                                  "data/materials/ShadelessBlue.gmd")
         self.captured_portals.append(_portal)
         _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
@@ -304,6 +317,8 @@ class PortalCamera(avango.script.Script):
       if self.current_portal != None:
         if self.current_portal.viewing_mode == "3D":
           self.current_portal.switch_viewing_mode()
+      else:
+        self.capture_viewing_mode = "2D"
 
   ## Called whenever sf_3D_mode_button changes.
   @field_has_changed(sf_3D_mode_button)
@@ -313,6 +328,9 @@ class PortalCamera(avango.script.Script):
       if self.current_portal != None:
         if self.current_portal.viewing_mode == "2D":
           self.current_portal.switch_viewing_mode()
+      else:
+        self.capture_viewing_mode = "3D"
+
 
   ## Called whenever sf_negative_parallax_on_button changes.
   @field_has_changed(sf_negative_parallax_on_button)
@@ -322,6 +340,9 @@ class PortalCamera(avango.script.Script):
       if self.current_portal != None:
         if self.current_portal.negative_parallax == "False":
           self.current_portal.switch_negative_parallax()
+      else:
+        self.capture_parallax_mode = "True"
+
 
   ## Called whenever sf_negative_parallax_off_button changes.
   @field_has_changed(sf_negative_parallax_off_button)
@@ -331,3 +352,5 @@ class PortalCamera(avango.script.Script):
       if self.current_portal != None:
         if self.current_portal.negative_parallax == "True":
           self.current_portal.switch_negative_parallax()
+      else:
+        self.capture_parallax_mode = "False"

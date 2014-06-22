@@ -61,6 +61,10 @@ class PortalCamera(avango.script.Script):
   # Boolean field to check if the open button was pressed.
   sf_open_button = avango.SFBool() 
 
+  ## @var sf_delete_button
+  # Boolean field to check if the delete button was pressed.
+  sf_delete_button = avango.SFBool()
+
   ## @var sf_2D_mode_button
   # Boolean field to check if the 2D mode button was pressed.
   sf_2D_mode_button = avango.SFBool()
@@ -140,6 +144,7 @@ class PortalCamera(avango.script.Script):
     self.sf_scale_down_button.connect_from(self.device_sensor.Button10)
     self.sf_close_button.connect_from(self.device_sensor.Button2)
     self.sf_open_button.connect_from(self.device_sensor.Button3)
+    self.sf_delete_button.connect_from(self.device_sensor.Button15)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
     self.sf_3D_mode_button.connect_from(self.device_sensor.Button8)
     self.sf_negative_parallax_on_button.connect_from(self.device_sensor.Button12)
@@ -321,6 +326,19 @@ class PortalCamera(avango.script.Script):
       if self.current_portal == None and len(self.captured_portals) > 0:
        self.current_portal = self.captured_portals[self.last_open_portal_index]
        self.current_portal.set_visibility(True)
+
+  ## Called whenever sf_delete_button changes.
+  @field_has_changed(sf_delete_button)
+  def sf_delete_button_changed(self):
+    if self.sf_delete_button.value == True:
+
+      if self.current_portal != None:
+        _portal_to_delete = self.current_portal
+
+        self.captured_portals.remove(_portal_to_delete)
+        self.PORTAL_MANAGER.remove_portal(_portal_to_delete.id)
+        self.last_open_portal_index = 0
+        self.current_portal = None
       
 
   ## Called whenever sf_2D_mode_button changes.

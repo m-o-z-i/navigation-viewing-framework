@@ -376,17 +376,22 @@ class PortalPreView(avango.script.Script):
 
     # check for visibility
     if self.mf_portal_modes.value[4] == "4-False":
-      self.textured_quad.GroupNames.value.append("do_not_display_group")
-      self.portal_border.GroupNames.value.append("do_not_display_group")
-      self.pipeline.Enabled.value = False
       self.active = False
     else:
+      self.active = True
+
+    # check for deletion
+    try:
+      self.textured_quad
+    except:
+      return
+
+    if self.active:
+
+      # remove inactivity status if necessary
       self.textured_quad.GroupNames.value.remove("do_not_display_group")
       self.portal_border.GroupNames.value.remove("do_not_display_group")
       self.pipeline.Enabled.value = True
-      self.active = True
-
-    if self.active:
 
       # check for viewing mode
       if self.mf_portal_modes.value[0] == "0-3D":
@@ -444,3 +449,11 @@ class PortalPreView(avango.script.Script):
       else:
         self.pipeline.Enabled.value = False
         self.textured_quad.Texture.value = "data/textures/tiles_diffuse.jpg"
+
+    # self.active == False
+    else:
+
+      # trigger inactivity status if necessary
+      self.textured_quad.GroupNames.value.append("do_not_display_group")
+      self.portal_border.GroupNames.value.append("do_not_display_group")
+      self.pipeline.Enabled.value = False

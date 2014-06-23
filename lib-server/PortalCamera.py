@@ -94,6 +94,10 @@ class PortalCamera(avango.script.Script):
     # List of Portal instances belonging to this PortalCamera.
     self.captured_portals = []
 
+    ##
+    #
+    self.free_portals = []
+
     ## @var current_portal
     # Portal instance which is currently displayed above the PortalCamera.
     self.current_portal = None
@@ -245,6 +249,29 @@ class PortalCamera(avango.script.Script):
                   avango.gua.make_rot_mat(_diff_mat.get_rotate())
       self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
 
+    # check for camera hitting free portals
+    _camera_vec = self.camera_frame.WorldTransform.value.get_translate()
+
+    if self.current_portal == None:
+
+      for _free_portal in self.free_portals:
+
+        _portal_vec = _free_portal.portal_matrix_node.WorldTransform.value.get_translate()
+
+        if _camera_vec.x > _portal_vec.x - (self.portal_width/2) and \
+           _camera_vec.x < _portal_vec.x + (self.portal_width/2) and \
+           _camera_vec.y > _portal_vec.y - 0.1 and \
+           _camera_vec.y < _portal_vec.y + 0.1 and \
+           _camera_vec.z > _portal_vec.z - 0.05 and \
+           _camera_vec.z < _portal_vec.z + 0.05:
+
+          _free_portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+          self.free_portals.remove(_free_portal)
+          self.captured_portals.append(_free_portal)
+          self.current_portal = _free_portal
+          return
+
+
     # update matrices in gallery mode
     if self.gallery_activated:
 
@@ -275,7 +302,7 @@ class PortalCamera(avango.script.Script):
 
       # check for camera hitting portal
 
-      _camera_vec = self.camera_frame.WorldTransform.value.get_translate()
+      #_camera_vec = self.camera_frame.WorldTransform.value.get_translate()
 
       for _portal in self.captured_portals:
 
@@ -300,6 +327,7 @@ class PortalCamera(avango.script.Script):
           self.gallery_activated = False
           self.current_portal = _portal
           return
+
 
   ## Called whenever sf_focus_button changes.
   @field_has_changed(sf_focus_button)
@@ -449,7 +477,8 @@ class PortalCamera(avango.script.Script):
                                                  self.current_portal.camera_mode,
                                                  self.current_portal.negative_parallax,
                                                  self.current_portal.border_material)
-        
+        self.free_portals.append(_portal)
+
       
   ## Called whenever sf_2D_mode_button changes.
   @field_has_changed(sf_2D_mode_button)

@@ -262,6 +262,9 @@ class PortalCamera(avango.script.Script):
         _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.gallery_magnification_factor * (self.portal_width + 0.05) * _i, _station_vec.y + self.gallery_magnification_factor * self.portal_height, _station_vec.z)
 
         _matrix = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
+                  avango.gua.make_trans_mat(_station_vec) * \
+                  avango.gua.make_rot_mat(_station_mat.get_rotate()) * \
+                  avango.gua.make_trans_mat(_station_vec * -1) * \
                   _modified_station_mat * \
                   avango.gua.make_scale_mat(self.gallery_magnification_factor * self.portal_width, self.gallery_magnification_factor * self.portal_height, 1.0)
 

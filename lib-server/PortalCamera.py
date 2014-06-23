@@ -126,6 +126,10 @@ class PortalCamera(avango.script.Script):
     # Index within self.captured_portals saying which of the Portals is currently in the gallery's focus.
     self.gallery_focus_portal_index = 0
 
+    ##
+    #
+    self.next_focus_portal_index = 0
+
     ## @var gallery_magification_factor
     # Factor with which the size of the portals will be multiplied when in gallery mode.
     self.gallery_magnification_factor = 1.5
@@ -281,8 +285,24 @@ class PortalCamera(avango.script.Script):
         self.gallery_activated = False
         return
 
-      _i = -self.gallery_focus_portal_index
-      self.current_portal = self.captured_portals[self.gallery_focus_portal_index]
+      # if current index equals next index, no animation is needed
+      if self.gallery_focus_portal_index == self.next_focus_portal_index:
+        _i = -self.gallery_focus_portal_index
+        self.current_portal = self.captured_portals[self.gallery_focus_portal_index]
+
+      # animation is needed
+      else:
+        
+        # snap to next integer value if close enough
+        if (self.gallery_focus_portal_index < self.next_focus_portal_index and self.gallery_focus_portal_index > self.next_focus_portal_index - 0.01) or \
+           (self.gallery_focus_portal_index > self.next_focus_portal_index and self.gallery_focus_portal_index < self.next_focus_portal_index + 0.01):
+          _i = -self.next_focus_portal_index
+
+        # determine animation coefficient
+        else:
+          _i = -(self.gallery_focus_portal_index + (self.next_focus_portal_index-self.gallery_focus_portal_index) * 0.1)
+
+        self.gallery_focus_portal_index = -_i
 
       # place gallery correctly over device
       for _portal in self.captured_portals:
@@ -387,8 +407,9 @@ class PortalCamera(avango.script.Script):
 
       # update focus in gallery mode
       if self.gallery_activated:
-        self.gallery_focus_portal_index = min(self.gallery_focus_portal_index + 1, len(self.captured_portals) - 1)
-        return
+        if (self.gallery_focus_portal_index == self.next_focus_portal_index):
+          self.next_focus_portal_index = min(self.gallery_focus_portal_index + 1, len(self.captured_portals) - 1)
+          return
       
       # move to next recording in open mode
       if self.current_portal != None:
@@ -409,8 +430,9 @@ class PortalCamera(avango.script.Script):
 
       # update focus in gallery mode
       if self.gallery_activated:
-        self.gallery_focus_portal_index = max(self.gallery_focus_portal_index - 1, 0)
-        return
+        if (self.gallery_focus_portal_index == self.next_focus_portal_index):
+          self.next_focus_portal_index = max(self.gallery_focus_portal_index - 1, 0)
+          return
       
       # move to prior recording in open mode
       if self.current_portal != None:
@@ -447,9 +469,10 @@ class PortalCamera(avango.script.Script):
     if self.sf_delete_button.value == True:
 
       # delete current portal
-      if self.current_portal != None:
+      if self.current_portal != None and self.gallery_focus_portal_index == self.next_focus_portal_index:
         _portal_to_delete = self.current_portal
         self.gallery_focus_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
+        self.next_focus_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
         self.last_open_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
 
         self.captured_portals.remove(_portal_to_delete)
@@ -467,6 +490,10 @@ class PortalCamera(avango.script.Script):
       
       # close gallery when opened, trigger correct portal visibilities
       else:
+        
+        if self.gallery_focus_portal_index != self.next_focus_portal_index:
+          self.gallery_focus_portal_index = self.next_focus_portal_index
+
         self.gallery_activated = False
         self.last_open_portal_index = self.gallery_focus_portal_index
         self.current_portal = None

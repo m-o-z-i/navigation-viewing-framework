@@ -12,6 +12,7 @@ from avango.script import field_has_changed
 # import framework libraries
 from Portal import *
 from TrackingReader import *
+import Tools
 
 # import python libraries
 # ...
@@ -126,13 +127,18 @@ class PortalCamera(avango.script.Script):
     # Index within self.captured_portals saying which of the Portals is currently in the gallery's focus.
     self.gallery_focus_portal_index = 0
 
-    ##
-    #
+    ## @var next_focus_portal_index
+    # Index within self.captured_portals to indicate which Portal is the next one to be set in focus.
+    # Used for animation purposed.
     self.next_focus_portal_index = 0
 
     ## @var gallery_magification_factor
     # Factor with which the size of the portals will be multiplied when in gallery mode.
     self.gallery_magnification_factor = 1.5
+
+    ##
+    #
+    self.interaction_spaces = []
 
 
   ## Custom constructor.
@@ -276,6 +282,37 @@ class PortalCamera(avango.script.Script):
           self.current_portal = _free_portal
           return
 
+    # check for interaction spaces and corresponding scene matrix updates
+    for _interaction_space in self.interaction_spaces:
+
+      if _interaction_space.is_inside(self.tracking_reader.sf_abs_mat.value.get_translate()) and \
+         self.current_portal != None and \
+         self.gallery_activated == False:
+        
+        _device_values = _interaction_space.get_values()
+        _x = _device_values[0]
+        _y = _device_values[1]
+        _z = _device_values[2]
+        _rx = _device_values[3]
+        _ry = _device_values[4]
+        _rz = _device_values[5]
+        _w = _device_values[6]
+
+        _scene_transform = self.current_portal.scene_matrix_node.Transform.value
+        _scene_translate = _scene_transform.get_translate()
+        _scene_rotate    = _scene_transform.get_rotate()
+
+        _scene_transform = avango.gua.make_trans_mat(0.1 * _x, 0.1 * _y, 0.1 * _z) * \
+                           _scene_transform * \
+                           avango.gua.make_trans_mat(self.tracking_reader.sf_abs_mat.value.get_translate()) * \
+                           avango.gua.make_rot_mat( _ry, 0, 1, 0) * \
+                           avango.gua.make_rot_mat( _rx, 1, 0, 0) * \
+                           avango.gua.make_rot_mat( _rz, 0, 0, 1) * \
+                           avango.gua.make_trans_mat(self.tracking_reader.sf_abs_mat.value.get_translate() * -1.0)
+
+        self.current_portal.scene_matrix_node.Transform.value = _scene_transform
+
+
 
     # update matrices in gallery mode
     if self.gallery_activated:
@@ -348,6 +385,11 @@ class PortalCamera(avango.script.Script):
           self.gallery_activated = False
           self.current_portal = _portal
           return
+
+  ##
+  def add_interaction_space(self, INTERACTION_SPACE):
+
+    self.interaction_spaces.append(INTERACTION_SPACE)
 
 
   ## Called whenever sf_focus_button changes.

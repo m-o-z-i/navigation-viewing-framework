@@ -14,6 +14,8 @@ from RecorderPlayer import *
 from Manipulation import *
 from Portal import *
 from PortalCamera import *
+from PortalInteractionSpace import *
+from Device import *
 
 # import python libraries
 import sys
@@ -81,6 +83,15 @@ def start():
 
   portal_camera = PortalCamera()
   portal_camera.my_constructor(portal_manager, application_manager.navigation_list[0], "device-portal-camera", "tracking-portal-camera")
+
+  table_device = SpacemouseDevice()
+  table_device.my_constructor("device-spacemouse", avango.gua.make_identity_mat())
+
+  table_interaction_space = PortalInteractionSpace()
+  table_interaction_space.my_constructor(table_device
+                                       , avango.gua.Vec3(-2.05, 0.85, 1.62)
+                                       , avango.gua.Vec3(-1.09, 1.15, 2.88))
+  portal_camera.add_interaction_space(table_interaction_space)
 
 
   # initialize animation manager

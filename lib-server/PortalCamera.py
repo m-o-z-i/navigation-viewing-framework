@@ -24,8 +24,8 @@ class PortalCamera(avango.script.Script):
   # Tracking matrix of the PortalCamera within the platform coordinate system.
   sf_tracking_mat = avango.gua.SFMatrix4()
 
-  ##
-  #
+  ## @var sf_border_mat
+  # Matrix with which binded portals must be connected.
   sf_border_mat = avango.gua.SFMatrix4()
 
   # button fields
@@ -94,8 +94,8 @@ class PortalCamera(avango.script.Script):
     # List of Portal instances belonging to this PortalCamera.
     self.captured_portals = []
 
-    ##
-    #
+    ## @var free_portals
+    # List of Portal instances that were placed in the scene by this PortalCamera.
     self.free_portals = []
 
     ## @var current_portal
@@ -110,24 +110,24 @@ class PortalCamera(avango.script.Script):
     # Height of the portals displayed in this PortalCamera.
     self.portal_height = 0.3
 
-    ##
-    #
+    ## @var capture_viewing_mode
+    # Viewing mode with which new portals will be created.
     self.capture_viewing_mode = "3D"
 
-    ##
-    #
+    ## @var capture_parallax_mode
+    # Negative parallax mode with which new portals will be created.
     self.capture_parallax_mode = "True"
 
-    ##
-    #
+    ## @var gallery_activated
+    # Boolean indicating if the gallery is currently visible for this PortalCamera.
     self.gallery_activated = False
 
-    ##
-    #
+    ## @var gallery_focus_portal_index
+    # Index within self.captured_portals saying which of the Portals is currently in the gallery's focus.
     self.gallery_focus_portal_index = 0
 
-    ##
-    #
+    ## @var gallery_magification_factor
+    # Factor with which the size of the portals will be multiplied when in gallery mode.
     self.gallery_magnification_factor = 1.5
 
 
@@ -188,8 +188,8 @@ class PortalCamera(avango.script.Script):
 
     self.camera_frame.Transform.connect_from(self.sf_border_mat)
 
-    ##
-    #
+    ## @var viewing_mode_indicator
+    # Tiny geometry in the border of the camera frame to illustrate the current state of self.capture_viewing_mode.
     self.viewing_mode_indicator = _loader.create_geometry_from_file('viewing_mode_indicator',
                                                                     'data/objects/plane.obj',
                                                                     'data/materials/CameraMode' + self.capture_viewing_mode + '.gmd',
@@ -201,16 +201,16 @@ class PortalCamera(avango.script.Script):
 
     self.camera_frame.Children.value.append(self.viewing_mode_indicator)
 
-    ##
-    #
+    ## @var last_open_portal_index
+    # Index within self.captured_portals saying which of the Portals was lastly opened by the PortalCamera.
     self.last_open_portal_index = None
 
-    ##
-    #
+    ## @var start_drag_portal_mat
+    # Portal matrix at the beginning of a dragging process. None if no dragging is in progress.
     self.start_drag_portal_mat = None
 
-    ##
-    #
+    ## @var start_drag_scene_mat
+    # Scene matrix at the beginning of a dragging process. None if no dragging is in progress.
     self.start_drag_scene_mat = None
 
     # set evaluation policy
@@ -249,6 +249,7 @@ class PortalCamera(avango.script.Script):
                   avango.gua.make_rot_mat(_diff_mat.get_rotate())
       self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
 
+
     # check for camera hitting free portals
     _camera_vec = self.camera_frame.WorldTransform.value.get_translate()
 
@@ -275,6 +276,7 @@ class PortalCamera(avango.script.Script):
     # update matrices in gallery mode
     if self.gallery_activated:
 
+      # disable gallery when no captured portals are present (anymore)
       if len(self.captured_portals) == 0:
         self.gallery_activated = False
         return
@@ -282,6 +284,7 @@ class PortalCamera(avango.script.Script):
       _i = -self.gallery_focus_portal_index
       self.current_portal = self.captured_portals[self.gallery_focus_portal_index]
 
+      # place gallery correctly over device
       for _portal in self.captured_portals:
         _station_mat = self.NAVIGATION.device.sf_station_mat.value
         _station_vec = _station_mat.get_translate()
@@ -300,10 +303,8 @@ class PortalCamera(avango.script.Script):
         _portal.set_visibility(True)
         _i += 1
 
-      # check for camera hitting portal
 
-      #_camera_vec = self.camera_frame.WorldTransform.value.get_translate()
-
+      # check for camera hitting portal in gallery mode
       for _portal in self.captured_portals:
 
         _portal_vec = _portal.portal_matrix_node.WorldTransform.value.get_translate()
@@ -333,6 +334,7 @@ class PortalCamera(avango.script.Script):
   @field_has_changed(sf_focus_button)
   def sf_focus_button_changed(self):
 
+    # show and hide camera frame
     if self.sf_focus_button.value == True:
 
       try:
@@ -352,6 +354,7 @@ class PortalCamera(avango.script.Script):
   def sf_capture_button_changed(self):
     if self.sf_capture_button.value == True:
 
+      # capture a new portal
       if self.current_portal == None:
         _portal = self.PORTAL_MANAGER.add_portal(self.camera_frame.WorldTransform.value, 
                                                  self.camera_frame.WorldTransform.value,
@@ -365,6 +368,7 @@ class PortalCamera(avango.script.Script):
         _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
         self.current_portal = _portal
 
+      # initiate dragging
       else:
 
         self.start_drag_portal_mat = self.tracking_reader.sf_abs_mat.value
@@ -381,10 +385,12 @@ class PortalCamera(avango.script.Script):
   def sf_next_rec_button_changed(self):
     if self.sf_next_rec_button.value == True:
 
+      # update focus in gallery mode
       if self.gallery_activated:
         self.gallery_focus_portal_index = min(self.gallery_focus_portal_index + 1, len(self.captured_portals) - 1)
         return
       
+      # move to next recording in open mode
       if self.current_portal != None:
         self.current_portal.set_visibility(False)
 
@@ -401,10 +407,12 @@ class PortalCamera(avango.script.Script):
   def sf_prior_rec_button_changed(self):
     if self.sf_prior_rec_button.value == True:
 
+      # update focus in gallery mode
       if self.gallery_activated:
         self.gallery_focus_portal_index = max(self.gallery_focus_portal_index - 1, 0)
         return
       
+      # move to prior recording in open mode
       if self.current_portal != None:
         self.current_portal.set_visibility(False)
 
@@ -421,10 +429,12 @@ class PortalCamera(avango.script.Script):
   def sf_open_button_changed(self):
     if self.sf_open_close_button.value == True:
 
+      # open lastly opened portal when no portal is opened
       if self.current_portal == None and len(self.captured_portals) > 0:
         self.current_portal = self.captured_portals[self.last_open_portal_index]
         self.current_portal.set_visibility(True)
 
+      # close currently opened portal
       elif self.current_portal != None:
         self.current_portal.set_visibility(False)
         self.last_open_portal_index = self.captured_portals.index(self.current_portal)
@@ -436,6 +446,7 @@ class PortalCamera(avango.script.Script):
   def sf_delete_button_changed(self):
     if self.sf_delete_button.value == True:
 
+      # delete current portal
       if self.current_portal != None:
         _portal_to_delete = self.current_portal
         self.gallery_focus_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
@@ -450,9 +461,11 @@ class PortalCamera(avango.script.Script):
   def sf_gallery_button_changed(self):
     if self.sf_gallery_button.value == True:
 
+      # open gallery when not opened
       if self.gallery_activated == False:
         self.gallery_activated = True
       
+      # close gallery when opened, trigger correct portal visibilities
       else:
         self.gallery_activated = False
         self.last_open_portal_index = self.gallery_focus_portal_index
@@ -467,6 +480,7 @@ class PortalCamera(avango.script.Script):
   def sf_scene_copy_button_changed(self):
     if self.sf_scene_copy_button.value == True:
       
+      # create a free copy of the opened portal in the scene
       if self.current_portal != None and self.gallery_activated == False:
 
         _portal = self.PORTAL_MANAGER.add_portal(self.current_portal.scene_matrix_node.Transform.value, 
@@ -485,9 +499,12 @@ class PortalCamera(avango.script.Script):
   def sf_2D_mode_button_changed(self):
     if self.sf_2D_mode_button.value == True:
       
+      # switch mode of currently opened portal
       if self.current_portal != None:
         if self.current_portal.viewing_mode == "3D":
           self.current_portal.switch_viewing_mode()
+
+      # switch capture_viewing_mode
       else:
         self.capture_viewing_mode = "2D"
         self.viewing_mode_indicator.Material.value = 'data/materials/CameraMode2D.gmd'
@@ -497,9 +514,12 @@ class PortalCamera(avango.script.Script):
   def sf_3D_mode_button_changed(self):
     if self.sf_3D_mode_button.value == True:
       
+      # switch mode of currently opened portal
       if self.current_portal != None:
         if self.current_portal.viewing_mode == "2D":
           self.current_portal.switch_viewing_mode()
+      
+      # switch capture_viewing_mode
       else:
         self.capture_viewing_mode = "3D"
         self.viewing_mode_indicator.Material.value = 'data/materials/CameraMode3D.gmd'
@@ -510,9 +530,12 @@ class PortalCamera(avango.script.Script):
   def sf_negative_parallax_on_button_changed(self):
     if self.sf_negative_parallax_on_button.value == True:
       
+      # switch mode of currently opened portal
       if self.current_portal != None:
         if self.current_portal.negative_parallax == "False":
           self.current_portal.switch_negative_parallax()
+
+      # switch capture_parallax_mode
       else:
         self.capture_parallax_mode = "True"
 
@@ -522,8 +545,11 @@ class PortalCamera(avango.script.Script):
   def sf_negative_parallax_off_button_changed(self):
     if self.sf_negative_parallax_off_button.value == True:
       
+      # switch mode of currently opened portal portal
       if self.current_portal != None:
         if self.current_portal.negative_parallax == "True":
           self.current_portal.switch_negative_parallax()
+
+      # switch capture_parallax_mode
       else:
         self.capture_parallax_mode = "False"

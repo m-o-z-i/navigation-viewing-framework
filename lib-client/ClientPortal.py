@@ -334,7 +334,7 @@ class PortalPreView(avango.script.Script):
 
     ## @var back_geometry
     # Geometry being displayed when portal pre view is seen from behind.
-    self.back_geometry = _loader.create_geometry_from_file("back_s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id), "data/objects/plane.obj", "data/materials/ShadelessWhite.gmd", avango.gua.LoaderFlags.DEFAULTS)
+    self.back_geometry = _loader.create_geometry_from_file("back_s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id), "data/objects/plane.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS)
     self.back_geometry.Transform.value = avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
     self.back_geometry.GroupNames.value = ["do_not_display_group", "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)]
     self.portal_matrix_node.Children.value.append(self.back_geometry)
@@ -435,9 +435,12 @@ class PortalPreView(avango.script.Script):
 
         if _material != "None":
           self.portal_border.Material.value = _material
-          self.portal_border.GroupNames.value = []
+          self.back_geometry.Material.value = _material
+          self.portal_border.GroupNames.value.remove("do_not_display_group")
+          self.back_geometry.GroupNames.value.remove("do_not_display_group")
         else:
-          self.portal_border.GroupNames.value = ["do_not_display_group"]
+          self.portal_border.GroupNames.value.append("do_not_display_group")
+          self.back_geometry.GroupNames.value.append("do_not_display_group")
 
 
       # determine view in portal space and decide if renering is necessary
@@ -459,4 +462,5 @@ class PortalPreView(avango.script.Script):
       # trigger inactivity status if necessary
       self.textured_quad.GroupNames.value.append("do_not_display_group")
       self.portal_border.GroupNames.value.append("do_not_display_group")
+      self.back_geometry.GroupNames.value.append("do_not_display_group")
       self.pipeline.Enabled.value = False

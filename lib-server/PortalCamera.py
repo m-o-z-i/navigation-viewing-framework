@@ -302,13 +302,18 @@ class PortalCamera(avango.script.Script):
         _scene_translate = _scene_transform.get_translate()
         _scene_rotate    = _scene_transform.get_rotate()
 
-        _scene_transform = avango.gua.make_trans_mat(0.1 * _x, 0.1 * _y, 0.1 * _z) * \
+        _device_forward_yaw = Tools.get_yaw(_interaction_space.DEVICE.sf_station_mat.value)
+        _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
+        _combined_rot_mat = avango.gua.make_rot_mat(_scene_rotate) * _device_rot_mat
+        _transformed_trans_vec = _combined_rot_mat * avango.gua.Vec3(_x, _y, _z)
+        _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
+        _rot_vec = avango.gua.Vec3(_rx,_ry,_rz)
+        _rot_center = _interaction_space.DEVICE.sf_station_mat.value.get_translate() * self.NAVIGATION.inputmapping.sf_scale.value
+
+        _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
                            _scene_transform * \
-                           avango.gua.make_trans_mat(self.tracking_reader.sf_abs_mat.value.get_translate()) * \
-                           avango.gua.make_rot_mat( _ry, 0, 1, 0) * \
-                           avango.gua.make_rot_mat( _rx, 1, 0, 0) * \
-                           avango.gua.make_rot_mat( _rz, 0, 0, 1) * \
-                           avango.gua.make_trans_mat(self.tracking_reader.sf_abs_mat.value.get_translate() * -1.0)
+                           avango.gua.make_trans_mat(_rot_center) * \
+                           avango.gua.make_trans_mat(_rot_center * -1)
 
         self.current_portal.scene_matrix_node.Transform.value = _scene_transform
 

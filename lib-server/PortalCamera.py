@@ -53,13 +53,9 @@ class PortalCamera(avango.script.Script):
   # Boolean field to check if the scale down button was pressed.
   sf_scale_down_button = avango.SFBool()
 
-  ## @var sf_close_button
-  # Boolean field to check if the close button was pressed.
-  sf_close_button = avango.SFBool()
-
-  ## @var sf_open_button
-  # Boolean field to check if the open button was pressed.
-  sf_open_button = avango.SFBool() 
+  ## @var sf_open_close_button
+  # Boolean field to check if the open and close button was pressed.
+  sf_open_close_button = avango.SFBool()
 
   ## @var sf_delete_button
   # Boolean field to check if the delete button was pressed.
@@ -158,8 +154,7 @@ class PortalCamera(avango.script.Script):
     self.sf_prior_rec_button.connect_from(self.device_sensor.Button4)
     self.sf_scale_up_button.connect_from(self.device_sensor.Button9)
     self.sf_scale_down_button.connect_from(self.device_sensor.Button10)
-    self.sf_close_button.connect_from(self.device_sensor.Button2)
-    self.sf_open_button.connect_from(self.device_sensor.Button3)
+    self.sf_open_close_button.connect_from(self.device_sensor.Button2)
     self.sf_delete_button.connect_from(self.device_sensor.Button15)
     self.sf_gallery_button.connect_from(self.device_sensor.Button6)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
@@ -387,24 +382,21 @@ class PortalCamera(avango.script.Script):
         self.current_portal = self.captured_portals[_current_index]
         self.current_portal.set_visibility(True)
 
-  ## Called whenever sf_close_button changes.
-  @field_has_changed(sf_close_button)
-  def sf_close_button_changed(self):
-    if self.sf_close_button.value == True:
 
-      if self.current_portal != None:
+  ## Called whenever sf_open_button changes.
+  @field_has_changed(sf_open_close_button)
+  def sf_open_button_changed(self):
+    if self.sf_open_close_button.value == True:
+
+      if self.current_portal == None and len(self.captured_portals) > 0:
+        self.current_portal = self.captured_portals[self.last_open_portal_index]
+        self.current_portal.set_visibility(True)
+
+      elif self.current_portal != None:
         self.current_portal.set_visibility(False)
         self.last_open_portal_index = self.captured_portals.index(self.current_portal)
         self.current_portal = None
 
-  ## Called whenever sf_open_button changes.
-  @field_has_changed(sf_open_button)
-  def sf_open_button_changed(self):
-    if self.sf_open_button.value == True:
-
-      if self.current_portal == None and len(self.captured_portals) > 0:
-       self.current_portal = self.captured_portals[self.last_open_portal_index]
-       self.current_portal.set_visibility(True)
 
   ## Called whenever sf_delete_button changes.
   @field_has_changed(sf_delete_button)

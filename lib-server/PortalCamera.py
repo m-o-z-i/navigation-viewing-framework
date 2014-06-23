@@ -65,6 +65,10 @@ class PortalCamera(avango.script.Script):
   # Boolean field to check if the gallery button was pressed.
   sf_gallery_button = avango.SFBool()
 
+  ## @var sf_scene_copy_button
+  # Boolean field to check if the scene copy button was pressed.
+  sf_scene_copy_button = avango.SFBool()
+
   ## @var sf_2D_mode_button
   # Boolean field to check if the 2D mode button was pressed.
   sf_2D_mode_button = avango.SFBool()
@@ -157,6 +161,7 @@ class PortalCamera(avango.script.Script):
     self.sf_open_close_button.connect_from(self.device_sensor.Button2)
     self.sf_delete_button.connect_from(self.device_sensor.Button15)
     self.sf_gallery_button.connect_from(self.device_sensor.Button6)
+    self.sf_scene_copy_button.connect_from(self.device_sensor.Button3)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
     self.sf_3D_mode_button.connect_from(self.device_sensor.Button8)
     self.sf_negative_parallax_on_button.connect_from(self.device_sensor.Button12)
@@ -429,6 +434,22 @@ class PortalCamera(avango.script.Script):
           _portal.set_visibility(False)
           _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
 
+  ## Called whenever sf_scene_copy_button_changes.
+  @field_has_changed(sf_scene_copy_button)
+  def sf_scene_copy_button_changed(self):
+    if self.sf_scene_copy_button.value == True:
+      
+      if self.current_portal != None and self.gallery_activated == False:
+
+        _portal = self.PORTAL_MANAGER.add_portal(self.current_portal.scene_matrix_node.Transform.value, 
+                                                 self.current_portal.portal_matrix_node.Transform.value,
+                                                 1.0,
+                                                 1.0,
+                                                 self.current_portal.viewing_mode,
+                                                 self.current_portal.camera_mode,
+                                                 self.current_portal.negative_parallax,
+                                                 self.current_portal.border_material)
+        
       
   ## Called whenever sf_2D_mode_button changes.
   @field_has_changed(sf_2D_mode_button)

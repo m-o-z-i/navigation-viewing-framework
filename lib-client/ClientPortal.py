@@ -329,7 +329,15 @@ class PortalPreView(avango.script.Script):
     self.textured_quad.GroupNames.value = ["s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)]
     self.portal_matrix_node.Children.value.append(self.textured_quad)
 
+
     _loader = avango.gua.nodes.TriMeshLoader()
+
+    ## @var back_geometry
+    # Geometry being displayed when portal pre view is seen from behind.
+    self.back_geometry = _loader.create_geometry_from_file("back_s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id), "data/objects/plane.obj", "data/materials/ShadelessWhite.gmd", avango.gua.LoaderFlags.DEFAULTS)
+    self.back_geometry.Transform.value = avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    self.back_geometry.GroupNames.value = ["do_not_display_group", "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)]
+    self.portal_matrix_node.Children.value.append(self.back_geometry)
 
     ## @var portal_border
     # Geometry node containing the portal's frame.
@@ -432,23 +440,18 @@ class PortalPreView(avango.script.Script):
           self.portal_border.GroupNames.value = ["do_not_display_group"]
 
 
-      # determine angle between vector to portal and portal normal
-      _vec_to_portal = self.textured_quad.WorldTransform.value.get_translate() - \
-                       self.sf_slot_world_mat.value.get_translate()
+      # determine view in portal space and decide if renering is necessary
+      _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
+                              self.sf_slot_world_mat.value
 
-      _portal_vec = avango.gua.Vec3(self.textured_quad.WorldTransform.value.get_element(2, 0), 
-                                    self.textured_quad.WorldTransform.value.get_element(2, 1),
-                                    -self.textured_quad.WorldTransform.value.get_element(2, 2))
-
-      _angle = math.acos(  (_vec_to_portal.dot(_portal_vec))  /  (_vec_to_portal.length() * _portal_vec.length()) )
-      
-      # disable pipeline when behind portal
-      if math.degrees(_angle) < 90:
-        self.pipeline.Enabled.value = True
-        self.textured_quad.Texture.value = self.PORTAL_NODE.Name.value + "_" + "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)
-      else:
+      if _view_in_portal_space.get_translate().z < 0:
         self.pipeline.Enabled.value = False
-        self.textured_quad.Texture.value = "data/textures/tiles_diffuse.jpg"
+        self.textured_quad.GroupNames.value.append("do_not_display_group")
+        self.back_geometry.GroupNames.value.remove("do_not_display_group")
+      else:
+        self.pipeline.Enabled.value = True
+        self.textured_quad.GroupNames.value.remove("do_not_display_group")
+        self.back_geometry.GroupNames.value.append("do_not_display_group")
 
     # self.active == False
     else:

@@ -157,16 +157,30 @@ class PinchGesture(MultiTouchGesture):
     def __init__(self, display):
         super(PinchGesture, self).__init__(display)
         self.distances = []
+        self.scaleCenter = None
+        self.centerDirection = None
+
+    def _calculateScaleCenter(self, vec1, vec2):
+        vec1Trans = vec1 * 2 - 1
+        vec2Trans = vec2 * 2 - 1
+        distanceTrans = vec2Trans - vec1Trans
+        self.scaleCenter = vec1Trans + distanceTrans / 2.0
+        self.centerDirection = self.scaleCenter
+        self.centerDirection.normalize()
 
 
     def processGesture(self, activePoints, mfDof):
         if len(activePoints) != 2:
             self.distances = []
+            self.scaleCenter = None
+            self.centerDirection = None
             return False
 
         vec1 = avango.gua.Vec2(activePoints[0].PosX.value, activePoints[0].PosY.value)
         vec2 = avango.gua.Vec2(activePoints[1].PosX.value, activePoints[1].PosY.value)
-        distance = vec1 - vec2
+        distance = vec2 - vec1
+        if None == self.scaleCenter:
+            self._calculateScaleCenter(vec1, vec2)
 
         # save old distance
         if 3 == len(self.distances):
@@ -176,19 +190,15 @@ class PinchGesture(MultiTouchGesture):
             self.distances.append(distance)
             return False
 
-        # return if no significant movement happened
-        if abs(self.distances[0].length() - self.distances[-1].length()) < .001:
-            return False
+        relDistance = (self.distances[0].length() - self.distances[-1].length()) / 2
 
-        zoom  = self.distances[0].length() < self.distances[-1].length()
-        pinch = self.distances[0].length() > self.distances[-1].length()
+        # return if no significant movement occurred
+        #if abs(relDistance) < .0005:
+        #    return False
 
-        if zoom:
-            mfDof.value[6] -= distance.length() * .27
-        elif pinch:
-            mfDof.value[6] += distance.length() * .27
-        else:
-            return False
+        mfDof.value[6] += relDistance * 16.3
+        mfDof.value[0] -= self.centerDirection.x * relDistance * 15 * self.display.size[0]
+        mfDof.value[2] -= self.centerDirection.y * relDistance * 15 * self.display.size[1]
 
         return True
 

@@ -82,6 +82,7 @@ class View(avango.script.Script):
     # The camera from which this View will be rendered.
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = SCENEGRAPH.Name.value
+    
     self.camera.Mode.value = 1
 
     # set render mask for camera

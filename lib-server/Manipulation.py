@@ -184,7 +184,7 @@ class RayPointer(avango.script.Script):
   ## Called whenever mf_pointer_pick_result changes.
   @field_has_changed(mf_pointer_pick_result)
   def mf_pointer_pick_result_mat_changed(self):
-    print len(self.mf_pointer_pick_result.value)
+    #print len(self.mf_pointer_pick_result.value)
 
     self.update_ray()
     self.update_object_highlight()

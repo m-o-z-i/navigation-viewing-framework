@@ -312,24 +312,33 @@ class PortalCamera(avango.script.Script):
         _rz = _device_values[5]
         _w = _device_values[6]
 
-        _scene_transform = self.current_portal.scene_matrix_node.Transform.value
-        _scene_translate = _scene_transform.get_translate()
-        _scene_rotate    = _scene_transform.get_rotate()
+        if _w == -1:
+          self.current_portal.set_scale(self.current_portal.scale * 0.985)
+        elif _w == 1:
+          self.current_portal.set_scale(self.current_portal.scale * 1.015)
 
-        _device_forward_yaw = Tools.get_yaw(_interaction_space.DEVICE.sf_station_mat.value)
-        _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
-        _combined_rot_mat = avango.gua.make_rot_mat(_scene_rotate) * _device_rot_mat
-        _transformed_trans_vec = _combined_rot_mat * avango.gua.Vec3(_x, _y, _z)
-        _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
-        _rot_vec = avango.gua.Vec3(_rx,_ry,_rz)
+        _trans_vec = avango.gua.Vec3(_x, _y, _z)
+        _rot_vec = avango.gua.Vec3(_rx, _ry, _rz)
 
-        _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
-                           _scene_transform * \
-                           avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
-                           avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
-                           avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0)
+        if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
 
-        self.current_portal.scene_matrix_node.Transform.value = _scene_transform
+          _scene_transform = self.current_portal.scene_matrix_node.Transform.value
+          _scene_translate = _scene_transform.get_translate()
+          _scene_rotate    = _scene_transform.get_rotate()
+
+          _device_forward_yaw = Tools.get_yaw(_interaction_space.DEVICE.sf_station_mat.value)
+          _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
+          _combined_rot_mat = avango.gua.make_rot_mat(_scene_rotate) * _device_rot_mat
+          _transformed_trans_vec = _combined_rot_mat * avango.gua.Vec3(_x, _y, _z)
+          _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
+
+          _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
+                             _scene_transform * \
+                             avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
+                             avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
+                             avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0)
+
+          self.current_portal.scene_matrix_node.Transform.value = _scene_transform
 
 
 

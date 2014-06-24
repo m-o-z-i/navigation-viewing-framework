@@ -243,7 +243,7 @@ class PortalCamera(avango.script.Script):
     self.always_evaluate(True)
 
     ######## Debugging setup
-    _portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 0.0), 
+    self.debug_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 0.0), 
                                              avango.gua.make_trans_mat(0.0, 1.2, 0.0),
                                              1.0,
                                              1.0,
@@ -251,9 +251,9 @@ class PortalCamera(avango.script.Script):
                                              "PERSPECTIVE",
                                              self.capture_parallax_mode,
                                              "data/materials/ShadelessBlue.gmd")
-    self.captured_portals.append(_portal)
-    _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
-    self.current_portal = _portal
+    self.captured_portals.append(self.debug_portal)
+    self.debug_portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+    self.current_portal = self.debug_portal
 
 
   ## Evaluated every frame.
@@ -283,8 +283,9 @@ class PortalCamera(avango.script.Script):
 
       _current_portal_mat = self.tracking_reader.sf_abs_mat.value
       _diff_mat = _current_portal_mat * avango.gua.make_inverse_mat(self.start_drag_portal_mat)
-      _diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate() * self.current_portal.scale) * \
-                  avango.gua.make_rot_mat(_diff_mat.get_rotate())
+      #_mapped_translation = avango.gua.make_rot_mat(self.start_drag_portal_mat.get_rotate()) * _diff_mat.get_translate()
+      #_mapped_translation = avango.gua.Vec3(_mapped_translation.x, _mapped_translation.y, _mapped_translation.z)
+      _diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate() * self.current_portal.scale)
       self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
 
 
@@ -432,6 +433,8 @@ class PortalCamera(avango.script.Script):
   def add_interaction_space(self, INTERACTION_SPACE):
 
     self.interaction_spaces.append(INTERACTION_SPACE)
+    #self.debug_portal.Transform.disconnect()
+    #self.debug_portal.portal_matrix_node.Transform.value = self.interaction_spaces[0].get_min_y_plane_transform()
 
   ##
   #

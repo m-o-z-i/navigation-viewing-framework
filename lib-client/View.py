@@ -157,7 +157,7 @@ class View(avango.script.Script):
       self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       self.window.LeftResolution.value = self.window_size
       self.window.RightResolution.value = self.window_size
-      self.window.EnableVsync.value = True
+      #self.window.EnableVsync.value = True
 
       if DISPLAY_INSTANCE.stereomode == "SIDE_BY_SIDE":
         self.window.Size.value = avango.gua.Vec2ui(self.window_size.x * 2, self.window_size.y)

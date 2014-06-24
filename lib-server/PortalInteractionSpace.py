@@ -20,7 +20,7 @@ from Device import *
 
 class PortalInteractionSpace(avango.script.Script):
 
-	## Default constructor.
+  ## Default constructor.
   def __init__(self):
     self.super(PortalInteractionSpace).__init__()
 
@@ -28,11 +28,11 @@ class PortalInteractionSpace(avango.script.Script):
   #
   def my_constructor(self, DEVICE, MIN_POINT, MAX_POINT):
 
-  	self.DEVICE = DEVICE
+    self.DEVICE = DEVICE
 
-  	self.MIN_POINT = MIN_POINT
+    self.MIN_POINT = MIN_POINT
 
-  	self.MAX_POINT = MAX_POINT
+    self.MAX_POINT = MAX_POINT
 
   ##
   #
@@ -53,13 +53,13 @@ class PortalInteractionSpace(avango.script.Script):
   ##
   def get_values(self):
 
-  	_values = self.DEVICE.mf_dof.value
+    _values = self.DEVICE.mf_dof.value
 
-  	_values[0] *= self.DEVICE.translation_factor
-  	_values[1] *= self.DEVICE.translation_factor
-  	_values[2] *= self.DEVICE.translation_factor
-  	_values[3] *= self.DEVICE.rotation_factor
-  	_values[4] *= self.DEVICE.rotation_factor
-  	_values[5] *= self.DEVICE.rotation_factor
+    _values[0] *= self.DEVICE.translation_factor
+    _values[1] *= self.DEVICE.translation_factor
+    _values[2] *= self.DEVICE.translation_factor
+    _values[3] *= self.DEVICE.rotation_factor
+    _values[4] *= self.DEVICE.rotation_factor
+    _values[5] *= self.DEVICE.rotation_factor
 
-  	return _values
+    return _values

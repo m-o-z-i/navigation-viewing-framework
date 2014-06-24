@@ -38,7 +38,7 @@ class TUIODevice(MultiDofDevice):
             self.Cursors.value.append(cursor)
             self.MovementChanged.connect_from(cursor.IsMoving)
             self.PosChanged.connect_from(cursor.PosX)
-
+            self.PosChanged.connect_from(cursor.PosY)
 
 
     def my_constructor(self, no_tracking_mat, display):
@@ -175,20 +175,21 @@ class PinchGesture(MultiTouchGesture):
             self.distances.pop(0)
         else:
             self.distances.append(distance)
+            self.distances.append(distance)
 
         # return if no significant movement happened
-        if abs(self.distances[0].length() - self.distances[-1].length()) < .0001:
+        if abs(self.distances[0].length() - self.distances[-1].length()) < .001:
             return False
-
-        movement = activePoints[0].MotionSpeed.value + activePoints[1].MotionSpeed.value
 
         zoom  = self.distances[0].length() > self.distances[-1].length()
         pinch = self.distances[0].length() < self.distances[-1].length()
 
         if zoom:
-            mfDof.value[6] = distance.length() * 2.5
+            mfDof.value[6] += distance.length()
         elif pinch:
-            mfDof.value[6] = -distance.length() * 2.5
+            mfDof.value[6] += -distance.length()
+        else:
+            return False
 
         return True
 
@@ -216,7 +217,7 @@ class RotationGesture(MultiTouchGesture):
             self.distances.pop(0)
         else:
             self.distances.append(distance)
-#
+
         dotProduct   = self.distances[0].dot(self.distances[-1])
         crossProduct = self.distances[0].cross(self.distances[-1])
 
@@ -268,7 +269,7 @@ class TUIOCursor(avango.script.Script):
         """
         Call whenever some touch input data has changed. This method will update self.IsTouched accordingly.
         """
-        self.IsTouched.value = (self.PosX.value != -1.0 and self.PosY.value != -1.0 and self.State.value != 4.0)
+        self.IsTouched.value = (self.PosX.value != -1.0 and self.PosY.value != -1.0)
 
     @field_has_changed(CursorID)
     def set_station(self):
@@ -285,7 +286,7 @@ class TUIOCursor(avango.script.Script):
     def updatePosY(self):
         self.updateTouched()
 
-    @field_has_changed(State)
-    def updateState(self):
-        self.updateTouched()
+    #@field_has_changed(State)
+    #def updateState(self):
+    #    self.updateTouched()
 

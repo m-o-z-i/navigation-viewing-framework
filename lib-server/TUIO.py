@@ -210,9 +210,6 @@ class RotationGesture(MultiTouchGesture):
         distance = avango.gua.Vec3(distance.x * self.display.size[0], distance.y * self.display.size[1], 0)
         distance.normalize()
 
-        #if -1.0 == distance.x and -1.0 == distance.y:
-        #    return False
-
         # save old distance
         if 2 == len(self.distances):
             self.distances.append(distance)
@@ -220,15 +217,15 @@ class RotationGesture(MultiTouchGesture):
         else:
             self.distances.append(distance)
 #
-        dotProduct = self.distances[0].dot(self.distances[-1])
+        dotProduct   = self.distances[0].dot(self.distances[-1])
         crossProduct = self.distances[0].cross(self.distances[-1])
+
         # just take care we have no overflows
         if 1.0 < dotProduct:
             dotProduct = 1.0
 
         angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, crossProduct.z)
         mfDof.value[4] += angle
-        print(activePoints[0].IsTouched.value, activePoints[0].PosX.value, activePoints[0].PosY.value, activePoints[1].PosX.value, activePoints[1].PosY.value, vec1, vec2, mfDof.value[4])
 
         return True
 

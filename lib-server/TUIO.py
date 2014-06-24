@@ -34,7 +34,7 @@ class TUIODevice(MultiDofDevice):
         
         # append 20 touch cursors
         for i in range(0, 20):
-            cursor = TUIOCursor(CursorID = i)
+            cursor = TUIOCursor(CursorID = i) 
             self.Cursors.value.append(cursor)
             self.MovementChanged.connect_from(cursor.IsMoving)
             self.PosChanged.connect_from(cursor.PosX)
@@ -43,7 +43,7 @@ class TUIODevice(MultiDofDevice):
 
     def my_constructor(self, no_tracking_mat, display):
         self.init_station_tracking(None, no_tracking_mat)
-        
+
         # register gestures
         # TODO: do this somewhere else
         self.registerGesture(DragGesture(display))
@@ -167,27 +167,26 @@ class PinchGesture(MultiTouchGesture):
         vec1 = avango.gua.Vec2(activePoints[0].PosX.value, activePoints[0].PosY.value)
         vec2 = avango.gua.Vec2(activePoints[1].PosX.value, activePoints[1].PosY.value)
         distance = vec1 - vec2
-        distance = avango.gua.Vec2(distance.x * self.display.size[0], distance.y * self.display.size[1])
 
         # save old distance
-        if 2 == len(self.distances):
+        if 3 == len(self.distances):
             self.distances.append(distance)
             self.distances.pop(0)
         else:
             self.distances.append(distance)
-            self.distances.append(distance)
+            return False
 
         # return if no significant movement happened
         if abs(self.distances[0].length() - self.distances[-1].length()) < .001:
             return False
 
-        zoom  = self.distances[0].length() > self.distances[-1].length()
-        pinch = self.distances[0].length() < self.distances[-1].length()
+        zoom  = self.distances[0].length() < self.distances[-1].length()
+        pinch = self.distances[0].length() > self.distances[-1].length()
 
         if zoom:
-            mfDof.value[6] += distance.length()
+            mfDof.value[6] -= distance.length() * .27
         elif pinch:
-            mfDof.value[6] += -distance.length()
+            mfDof.value[6] += distance.length() * .27
         else:
             return False
 
@@ -264,6 +263,7 @@ class TUIOCursor(avango.script.Script):
         self.IsMoving.connect_from(self.device_sensor.Value6)
         self.State.connect_from(self.device_sensor.Value7)
         self.SessionID.connect_from(self.device_sensor.Value8)
+        
 
     def updateTouched(self):
         """

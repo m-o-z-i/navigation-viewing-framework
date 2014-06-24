@@ -77,7 +77,7 @@ class InputMapping(avango.script.Script):
 
     ## @var min_scale
     # The minimum scaling factor that can be applied.
-    self.min_scale = 0.001
+    self.min_scale = 0.0001
 
     ## @var max_scale
     # The maximum scaling factor that can be applied.
@@ -89,7 +89,7 @@ class InputMapping(avango.script.Script):
 
     ## @var scale_stop_duration
     # Time how long a scaling process is stopped at a fixed step in seconds.
-    self.scale_stop_duration = 1.0
+    self.scale_stop_duration = 0.0
 
   ## Custom constructor.
   # @param NAVIGATION The navigation instance from which this input mapping is created.

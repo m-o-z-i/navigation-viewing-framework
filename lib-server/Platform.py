@@ -236,7 +236,7 @@ class Platform(avango.script.Script):
             _display.name + " " + str(self.displays.index(_display))]
           , stderr=subprocess.PIPE)
         
-        time.sleep(1)
+        #time.sleep(1)
       else:
         print_warning("Start of client on " + _display.hostname + " disabled for debugging reasons.")
 
@@ -251,10 +251,11 @@ class Platform(avango.script.Script):
 
       ## @var video_geode
       # Video3D node containing the caputred video geometry.
-      self.video_geode = video_loader.load("kincet", AVATAR_TYPE)
+      self.video_geode = _video_loader.load("kincet", AVATAR_TYPE)
 
       self.video_geode.Transform.value = self.transmitter_offset
-      self.platform_scale_transform_node.Children.value.append(video_geode)
+      self.platform_scale_transform_node.Children.value.append(self.video_geode)
+      self.video_geode.GroupNames.value = ['avatar_group_' + str(self.platform_id)] # own group avatars not visible (only for WALL setups)
 
     # create four boundary planes
     _loader = avango.gua.nodes.TriMeshLoader()

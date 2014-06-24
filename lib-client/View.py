@@ -15,6 +15,8 @@ from ClientTrackingReader import *
 import ClientPipelineValues
 from ConsoleIO import *
 
+import time
+
 
 ## Internal representation of a standard view on client side.
 #
@@ -82,8 +84,8 @@ class View(avango.script.Script):
     self.camera.SceneGraph.value = SCENEGRAPH.Name.value
 
     # set render mask for camera
-    _render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-    #_render_mask = "!pre_scene1 && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+    #_render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+    _render_mask = "!pre_scene1 && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
 
 
     for _i in range(0, 10):
@@ -197,7 +199,6 @@ class View(avango.script.Script):
     # set nice pipeline values
     ClientPipelineValues.set_default_pipeline_values(self.pipeline)
 
-
     # add tracking reader to avoid latency
     self.init_local_tracking_override(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())
 
@@ -264,7 +265,7 @@ class View(avango.script.Script):
     # avango.gua.create_texture(_splitted_string[0])
     
     self.pipeline.BackgroundTexture.value = _splitted_string[0]
-    self.pipeline.FogTexture.value = _splitted_string[0]
+    #self.pipeline.FogTexture.value = _splitted_string[0]
 
     if _splitted_string[1] == "True":
       self.pipeline.EnableBloom.value = True
@@ -297,6 +298,8 @@ class View(avango.script.Script):
       self.pipeline.EnableFXAA.value = True
     else:
       self.pipeline.EnableFXAA.value = False
+  
+    #avango.gua.reload_materials()
   
   ## Evaluated every frame.
   def evaluate(self):

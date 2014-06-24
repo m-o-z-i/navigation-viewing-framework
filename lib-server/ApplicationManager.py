@@ -125,8 +125,10 @@ class ApplicationManager():
     # Screen node representing the server's screen.
     self.screen = avango.gua.nodes.ScreenNode(Name = "server_screen")
     self.screen.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.5)
-    self.screen.Width.value = 160/1.5 * 0.05# * 0.75
-    self.screen.Height.value = 100/1.5 * 0.05# * 0.75
+    #self.screen.Width.value = 160/1.5 * 0.1
+    #self.screen.Height.value = 100/1.5 * 0.1
+    self.screen.Width.value = 160/1.5 * 0.85
+    self.screen.Height.value = 100/1.5 * 0.85    
     self.server_transform.Children.value.append(self.screen)
 
     ## @var camera
@@ -150,8 +152,8 @@ class ApplicationManager():
     # Window displaying the server control view.
     self.window = avango.gua.nodes.Window()
     self.window.Title.value = "Server Control Monitor"
-    self.window.Size.value = avango.gua.Vec2ui(1920, 1080)
-    self.window.LeftResolution.value = avango.gua.Vec2ui(1920, 1080)
+    self.window.Size.value = avango.gua.Vec2ui(1280, 1024)
+    self.window.LeftResolution.value = avango.gua.Vec2ui(1280, 1024)
 
     ## @var pipeline
     # Pipeline repsonsible for rendering the server control monitor.
@@ -162,6 +164,7 @@ class ApplicationManager():
     self.pipeline.EnableStereo.value = False
     self.pipeline.Camera.value = self.camera
     self.pipeline.EnableFrustumCulling.value = True
+    self.pipeline.EnableSsao.value = False
     self.pipeline.EnableFPSDisplay.value = True
     #self.pipeline.Enabled.value = False
     

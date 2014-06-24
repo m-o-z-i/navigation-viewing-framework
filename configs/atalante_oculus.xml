@@ -54,7 +54,7 @@
       <raystartheight>0.75</raystartheight>
     </groundfollowing>
 
-    <movementtraces>True</movementtraces>
+    <movementtraces>False</movementtraces>
 
   </device>
         

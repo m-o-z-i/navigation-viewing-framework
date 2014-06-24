@@ -68,9 +68,6 @@ def start():
   for _nav in application_manager.navigation_list:
     _nav.platform.update_nettrans_node(nettrans)
 
-  # distribute all nodes in the scenegraph
-  #distribute_all_nodes(nettrans, nettrans)
-
   # initialize scene
   scene_manager = SceneManager()
   scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)

@@ -181,8 +181,15 @@ class Navigation(avango.script.Script):
       self.device = GlobefishDevice()
       self.device.my_constructor(INPUT_SENSOR_NAME, NO_TRACKING_MAT)
     elif self.input_sensor_type == "TouchTable2D":
-      self.device = TUIODevice()
-      self.device.my_constructor(NO_TRACKING_MAT)
+      touch_found = False
+      for i in DISPLAYS:
+        if "TUIO" in i.get_touch_protocols():
+          self.device = TUIODevice()
+          self.device.my_constructor(NO_TRACKING_MAT, i)
+          touch_found = True
+          break
+      if not touch_found:
+        raise Exception("Device 'TouchTable2D' does not provide TUIO touch input")
 
 
     # init field connections

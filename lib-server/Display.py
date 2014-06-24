@@ -163,3 +163,10 @@ class Display:
     _node.Transform.value =  avango.gua.make_inverse_mat(PLATFORM.transmitter_offset) * _node.Transform.value
     
     return _node
+
+  ## Returns a list of possible touch input protocols (e.g. TUIO).
+  # If no touch input is possible, an empty list is returned.
+  # Needs to be overridden in subclasses
+  # @return list of touch protocols
+  def get_touch_protocols(self):
+    return []

@@ -235,10 +235,6 @@ class PortalCamera(avango.script.Script):
     # Portal matrix at the beginning of a dragging process. None if no dragging is in progress.
     self.start_drag_portal_mat = None
 
-    ## @var start_drag_scene_mat
-    # Scene matrix at the beginning of a dragging process. None if no dragging is in progress.
-    self.start_drag_scene_mat = None
-
     # set evaluation policy
     self.always_evaluate(True)
 
@@ -279,14 +275,15 @@ class PortalCamera(avango.script.Script):
 
 
     # update matrices in drag mode
-    if self.start_drag_portal_mat != None and self.start_drag_scene_mat != None:
+    if self.start_drag_portal_mat != None:
 
       _current_portal_mat = self.tracking_reader.sf_abs_mat.value
       _diff_mat = _current_portal_mat * avango.gua.make_inverse_mat(self.start_drag_portal_mat)
       #_mapped_translation = avango.gua.make_rot_mat(self.start_drag_portal_mat.get_rotate()) * _diff_mat.get_translate()
       #_mapped_translation = avango.gua.Vec3(_mapped_translation.x, _mapped_translation.y, _mapped_translation.z)
       _diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate() * self.current_portal.scale)
-      self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.start_drag_scene_mat
+      self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.current_portal.scene_matrix_node.Transform.value
+      self.start_drag_portal_mat = _current_portal_mat
 
 
     # check for camera hitting free portals
@@ -339,7 +336,7 @@ class PortalCamera(avango.script.Script):
 
           _scene_transform = self.current_portal.scene_matrix_node.Transform.value
           _scene_translate = _scene_transform.get_translate()
-          _scene_rotate    = _scene_transform.get_rotate()
+          _scene_rotate    = _scene_transform.get_rotate_scale_corrected()
 
           _device_forward_yaw = Tools.get_yaw(_interaction_space.DEVICE.sf_station_mat.value)
           _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
@@ -528,13 +525,11 @@ class PortalCamera(avango.script.Script):
       else:
 
         self.start_drag_portal_mat = self.tracking_reader.sf_abs_mat.value
-        self.start_drag_scene_mat = self.current_portal.scene_matrix_node.Transform.value
 
     # capture button released
     else:
 
       self.start_drag_portal_mat = None
-      self.start_drag_scene_mat = None
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)

@@ -140,6 +140,22 @@ class PortalCamera(avango.script.Script):
     #
     self.interaction_spaces = []
 
+    ## @var min_scale
+    # The minimum scaling factor that can be applied.
+    self.min_scale = 0.001
+
+    ## @var max_scale
+    # The maximum scaling factor that can be applied.
+    self.max_scale = 1000.0
+
+    ## @var scale_stop_time
+    # Time at which a scaling process stopped at a fixed step.
+    self.scale_stop_time = None
+
+    ## @var scale_stop_duration
+    # Time how long a scaling process is stopped at a fixed step in seconds.
+    self.scale_stop_duration = 1.0
+
 
   ## Custom constructor.
   # @param PORTAL_MANAGER Reference to the PortalManager used for Portal creation and management.
@@ -253,15 +269,13 @@ class PortalCamera(avango.script.Script):
       self.camera_frame.GroupNames.value = ["do_not_display_group"]
 
     # apply scale changes 
-    if self.sf_scale_up_button.value == True and \
-       self.current_portal != None:
+    if self.sf_scale_up_button.value == True:
       
-      self.current_portal.set_scale(self.current_portal.scale * 0.985)
+      self.set_current_portal_scale(self.current_portal.scale * 0.985)
       
-    if self.sf_scale_down_button.value == True and \
-       self.current_portal != None:
+    if self.sf_scale_down_button.value == True:
 
-      self.current_portal.set_scale(self.current_portal.scale * 1.015)
+      self.set_current_portal_scale(self.current_portal.scale * 1.015)
 
 
     # update matrices in drag mode
@@ -313,9 +327,9 @@ class PortalCamera(avango.script.Script):
         _w = _device_values[6]
 
         if _w == -1:
-          self.current_portal.set_scale(self.current_portal.scale * 0.985)
+          self.set_current_portal_scale(self.current_portal.scale * 0.985)
         elif _w == 1:
-          self.current_portal.set_scale(self.current_portal.scale * 1.015)
+          self.set_current_portal_scale(self.current_portal.scale * 1.015)
 
         _trans_vec = avango.gua.Vec3(_x, _y, _z)
         _rot_vec = avango.gua.Vec3(_rx, _ry, _rz)
@@ -418,6 +432,55 @@ class PortalCamera(avango.script.Script):
   def add_interaction_space(self, INTERACTION_SPACE):
 
     self.interaction_spaces.append(INTERACTION_SPACE)
+
+  ##
+  #
+  def set_current_portal_scale(self, SCALE):
+
+    if self.current_portal == None:
+      return
+ 
+    if self.scale_stop_time == None:
+  
+      _old_scale = self.current_portal.scale
+      _old_scale = round(_old_scale,6)
+      
+      _new_scale = max(min(SCALE, self.max_scale), self.min_scale)
+      _new_scale = round(_new_scale,6)
+            
+      # stop at certain scale levels
+      if (_old_scale < 100.0 and _new_scale > 100.0) or (_new_scale < 100.0 and _old_scale > 100.0):
+        #print "snap 100:1"
+        _new_scale = 100.0
+        self.scale_stop_time = time.time()
+              
+      elif (_old_scale < 10.0 and _new_scale > 10.0) or (_new_scale < 10.0 and _old_scale > 10.0):
+        #print "snap 10:1"
+        _new_scale = 10.0
+        self.scale_stop_time = time.time()
+      
+      elif (_old_scale < 1.0 and _new_scale > 1.0) or (_new_scale < 1.0 and _old_scale > 1.0):
+        #print "snap 1:1"
+        _new_scale = 1.0
+        self.scale_stop_time = time.time()
+
+      elif (_old_scale < 0.1 and _new_scale > 0.1) or (_new_scale < 0.1 and _old_scale > 0.1):
+        #print "snap 1:10"
+        _new_scale = 0.1
+        self.scale_stop_time = time.time()
+
+
+      elif (_old_scale < 0.01 and _new_scale > 0.01) or (_new_scale < 0.01 and _old_scale > 0.01):
+        #print "snap 1:100"
+        _new_scale = 0.01
+        self.scale_stop_time = time.time()
+
+      self.current_portal.set_scale(_new_scale)
+
+    else:
+
+      if (time.time() - self.scale_stop_time) > self.scale_stop_duration:
+        self.scale_stop_time = None
 
 
   ## Called whenever sf_focus_button changes.

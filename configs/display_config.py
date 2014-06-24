@@ -404,11 +404,15 @@ displays = [
   PerseusTouchTable() ,
 
   Display(hostname = "apollo"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
   )
   ,
   Display(hostname = "atalante"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+  )
+  ,
+  Display(hostname = "agenor"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
   )
 ]
 

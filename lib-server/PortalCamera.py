@@ -226,6 +226,20 @@ class PortalCamera(avango.script.Script):
     # set evaluation policy
     self.always_evaluate(True)
 
+    ######## Debugging setup
+    _portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 0.0), 
+                                             avango.gua.make_trans_mat(0.0, 1.2, 0.0),
+                                             1.0,
+                                             1.0,
+                                             "2D",
+                                             "PERSPECTIVE",
+                                             self.capture_parallax_mode,
+                                             "data/materials/ShadelessBlue.gmd")
+    self.captured_portals.append(_portal)
+    _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+    self.current_portal = _portal
+
+
   ## Evaluated every frame.
   def evaluate(self):
 
@@ -308,12 +322,12 @@ class PortalCamera(avango.script.Script):
         _transformed_trans_vec = _combined_rot_mat * avango.gua.Vec3(_x, _y, _z)
         _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
         _rot_vec = avango.gua.Vec3(_rx,_ry,_rz)
-        _rot_center = _interaction_space.DEVICE.sf_station_mat.value.get_translate() * self.NAVIGATION.inputmapping.sf_scale.value
 
         _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
                            _scene_transform * \
-                           avango.gua.make_trans_mat(_rot_center) * \
-                           avango.gua.make_trans_mat(_rot_center * -1)
+                           avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
+                           avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
+                           avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0)
 
         self.current_portal.scene_matrix_node.Transform.value = _scene_transform
 

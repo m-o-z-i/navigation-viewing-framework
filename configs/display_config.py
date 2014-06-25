@@ -88,7 +88,7 @@ class LargePowerwall2(Display):
   def __init__(self):
     Display.__init__( self
                     , hostname = "kerberos"
-                    , name = "large_powerwall2"
+                    , name = "large_powerwall"
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.0"]
                     , size = (4.16, 2.6)
@@ -257,9 +257,9 @@ class TouchTable3D(Display):
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
                     , displaystrings = [":0.0", ":0.1", ":0.2"] 
-                    , shutter_timings = [  [(100, 200, 2900, 3000), (8400, 8500, 11400, 11500)],
-                                           [(2600, 2700, 5700, 5800), (11000, 11100, 14600, 14700)],
-                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]                                          
+                    , shutter_timings = [  [(100, 200, 2900, 3000), (8330, 8430, 11230, 11330)],
+                                           [(2600, 2700, 5700, 5800), (11030, 11130, 14630, 14730)],
+                                           [(6000, 6100, 8700, 8800), (14330, 14430, 15900, 16000)]                                          
                                         ]
 
                     , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
@@ -267,8 +267,8 @@ class TouchTable3D(Display):
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
                                         ]
                     , size = (1.27, 0.93)
-                    , transformation = #avango.gua.make_trans_mat(-1.56, 0.953, 2.28) * \
-                                       #avango.gua.make_rot_mat(90, 0, 1, 0) * \
+                    , transformation = avango.gua.make_trans_mat(-1.56, 0.953, 2.28) * \
+                                       avango.gua.make_rot_mat(90, 0, 1, 0) * \
                                        avango.gua.make_rot_mat(90.0, -1,0, 0)
                     , max_viewing_distance = 1.0
                     , stereo = True
@@ -379,11 +379,11 @@ class OculusRift(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  #LargePowerwall(),
+  LargePowerwall(),
   #, SmallPowerwall()
   #, OculusRift()
-  #, TouchTable3D()
-  Display(hostname = "atalante"
+  TouchTable3D(), 
+  Display(hostname = "daedalos"
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0)
   )
 ]
@@ -391,4 +391,4 @@ displays = [
 ## @var INTELLIGENT_SHUTTER_SWITCHING
 # If true, free display slots will be assigned to users, vip and active flags
 # of users are considered and the users' shutter timings are updated.
-INTELLIGENT_SHUTTER_SWITCHING = False
+INTELLIGENT_SHUTTER_SWITCHING = True

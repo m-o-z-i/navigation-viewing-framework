@@ -12,10 +12,10 @@ from avango.script import field_has_changed
 
 # import framework libraries
 from ClientTrackingReader import *
-import ClientPipelineValues
 from ClientPortal import *
 from ConsoleIO import *
 
+# import python libraries
 import time
 
 
@@ -91,6 +91,7 @@ class View(avango.script.Script):
     # The camera from which this View will be rendered.
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = SCENEGRAPH.Name.value
+    self.camera.Mode.value = DISPLAY_INSTANCE.cameramode
 
     # set render mask for camera
     #_render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
@@ -186,14 +187,12 @@ class View(avango.script.Script):
 
     self.pipeline.Window.value = self.window
     self.pipeline.Camera.value = self.camera
+    self.pipeline.EnableFPSDisplay.value = True
 
 
     '''
       General user settings
     '''
-
-    # set nice pipeline values
-    ClientPipelineValues.set_default_pipeline_values(self.pipeline)
 
     # add tracking reader to avoid latency
     self.init_local_tracking_override(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())
@@ -282,8 +281,9 @@ class View(avango.script.Script):
     # to crash. All textures have to be preloaded, for example in ClientPipelineValues.py
     # avango.gua.create_texture(_splitted_string[0])
     
+    self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
     self.pipeline.BackgroundTexture.value = _splitted_string[0]
-    #self.pipeline.FogTexture.value = _splitted_string[0]
+    self.pipeline.FogTexture.value = _splitted_string[0]
 
     if _splitted_string[1] == "True":
       self.pipeline.EnableBloom.value = True
@@ -316,6 +316,18 @@ class View(avango.script.Script):
       self.pipeline.EnableFXAA.value = True
     else:
       self.pipeline.EnableFXAA.value = False
+
+    _ambient_color_values = _splitted_string[11].split(",")
+    _ambient_color = avango.gua.Color(float(_ambient_color_values[0]), float(_ambient_color_values[1]), float(_ambient_color_values[2]))
+    self.pipeline.AmbientColor.value = _ambient_color
+
+    if _splitted_string[12] == "True":
+      self.pipeline.EnableFog.value = True
+    else:
+      self.pipeline.EnableFog.value = False
+
+    self.pipeline.FogStart.value = float(_splitted_string[13])
+    self.pipeline.FogStart.value = float(_splitted_string[14])
   
     #avango.gua.reload_materials()
   

@@ -101,7 +101,22 @@ class SceneObject:
     # Mapping of pipeline value EnableFXAA.
     self.enable_fxaa = True
 
-    self.ambient_color = avango.gua.Vec3(0.0,0.0,0.0)
+    ## @var ambient_color
+    # Mapping of pipeline value AmbientColor.
+    self.ambient_color = avango.gua.Color(0.4, 0.4, 0.4)
+
+    ## @var enable_fog
+    # Mapping of pipeline value EnableFog.
+    self.enable_fog = True
+
+    ## @var fog_start
+    # Mapping of pipeline value FogStart.
+    self.fog_start = 300.0
+
+    ## @var fog_end
+    # Mapping of pipeline value FogEnd.
+    self.fog_end = 500.0
+
 
     '''
       Navigation values
@@ -143,7 +158,11 @@ class SceneObject:
            str(self.ssao_intensity) + "#" + \
            str(self.enable_backface_culling) + "#" + \
            str(self.enable_frustum_culling) + "#" + \
-           str(self.enable_fxaa)
+           str(self.enable_fxaa) + "#" + \
+           str(round(self.ambient_color.r,3)) + "," + str(round(self.ambient_color.g,3)) + "," + str(round(self.ambient_color.b,3)) + "#" + \
+           str(self.enable_fog) + "#" + \
+           str(self.fog_start) + "#" + \
+           str(self.fog_end)
 
 
   ## Creates and initializes a geometry node in the scene.

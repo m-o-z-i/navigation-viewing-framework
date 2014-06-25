@@ -103,7 +103,7 @@ class SceneObject:
 
     ## @var ambient_color
     # Mapping of pipeline value AmbientColor.
-    self.ambient_color = avango.gua.Vec3(0.4, 0.4, 0.4)
+    self.ambient_color = avango.gua.Color(0.4, 0.4, 0.4)
 
     ## @var enable_fog
     # Mapping of pipeline value EnableFog.
@@ -159,7 +159,7 @@ class SceneObject:
            str(self.enable_backface_culling) + "#" + \
            str(self.enable_frustum_culling) + "#" + \
            str(self.enable_fxaa) + "#" + \
-           str(self.ambient_color.x) + "," + str(self.ambient_color.y) + "," + str(self.ambient_color.z) + "#" + \
+           str(round(self.ambient_color.r,3)) + "," + str(round(self.ambient_color.g,3)) + "," + str(round(self.ambient_color.b,3)) + "#" + \
            str(self.enable_fog) + "#" + \
            str(self.fog_start) + "#" + \
            str(self.fog_end)

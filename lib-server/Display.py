@@ -28,6 +28,7 @@ class Display:
   # @param max_viewing_distance Specification of the maximum viewing distance for the shutters to sync in.
   # @param stereo Boolean indicating if the stereo mode is to be used.
   # @param stereomode A string indicating the stereo mode that is used by this display.
+  # @param cameramode An integer indicating the Mode field value to be set on the rendering camera.
   def __init__( self
               , hostname
               , name = None
@@ -40,6 +41,7 @@ class Display:
               , max_viewing_distance = 1.0
               , stereo = False
               , stereomode = "ANAGLYPH_RED_CYAN"
+              , cameramode = 0
               ):
 
     # save values in members
@@ -94,6 +96,11 @@ class Display:
     ## @var stereomode
     # A string indicating the stereo mode that is used by this display.
     self.stereomode = stereomode
+
+    ## @var cameramode
+    # An integer indicating the Mode field value to be set on the rendering camera.
+    self.cameramode = cameramode
+
 
   ## Registers a new view at this display and returns the display string assigned to the new view.
   def register_view(self):

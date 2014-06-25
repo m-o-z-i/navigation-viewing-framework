@@ -123,7 +123,7 @@ class Slot:
   def clear_user(self):
     if self.assigned_user != None:
       self.slot_node.Transform.disconnect()
-      self.slot_node.Transform.value = avango.gua.make_trans_mat(10, 10, 10)
+      self.slot_node.Transform.value = avango.gua.make_identity_mat()
       self.assigned_user = None
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()

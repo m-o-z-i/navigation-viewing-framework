@@ -29,6 +29,8 @@ class PortalCamera(avango.script.Script):
   # Matrix with which binded portals must be connected.
   sf_border_mat = avango.gua.SFMatrix4()
 
+  sf_world_border_mat_no_scale = avango.gua.SFMatrix4()
+
   # button fields
   ## @var sf_focus_button
   # Boolean field to check if the focus button was pressed.
@@ -247,6 +249,10 @@ class PortalCamera(avango.script.Script):
                                 avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
                                 avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
 
+    self.sf_world_border_mat_no_scale.value = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
+                                              self.tracking_reader.sf_abs_mat.value * \
+                                              avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
+
     # always hide red camera frame when a portal is displayed
     if self.current_portal != None:
       self.camera_frame.GroupNames.value = ["do_not_display_group"]
@@ -289,7 +295,7 @@ class PortalCamera(avango.script.Script):
            _camera_vec.z > _portal_vec.z - 0.05 and \
            _camera_vec.z < _portal_vec.z + 0.05:
 
-          _free_portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+          _free_portal.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
           self.free_portals.remove(_free_portal)
           self.captured_portals.append(_free_portal)
           self.current_portal = _free_portal
@@ -378,7 +384,8 @@ class PortalCamera(avango.script.Script):
                   avango.gua.make_rot_mat(_station_mat.get_rotate()) * \
                   avango.gua.make_trans_mat(_station_vec * -1) * \
                   _modified_station_mat * \
-                  avango.gua.make_scale_mat(self.gallery_magnification_factor * self.portal_width, self.gallery_magnification_factor * self.portal_height, 1.0)
+                  avango.gua.make_scale_mat(self.gallery_magnification_factor, self.gallery_magnification_factor, 1.0)         
+        #avango.gua.make_scale_mat(self.gallery_magnification_factor * self.portal_width, self.gallery_magnification_factor * self.portal_height, 1.0)
 
         _portal.portal_matrix_node.Transform.disconnect()
         _portal.portal_matrix_node.Transform.value = _matrix
@@ -403,7 +410,7 @@ class PortalCamera(avango.script.Script):
             if _portal_2 != _portal:
               _portal_2.set_visibility(False)
             
-            _portal_2.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+            _portal_2.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
 
           _grabbed_portal_index = self.captured_portals.index(_portal)
           self.last_open_portal_index = _grabbed_portal_index
@@ -494,16 +501,16 @@ class PortalCamera(avango.script.Script):
 
       # capture a new portal
       if self.current_portal == None:
-        _portal = self.PORTAL_MANAGER.add_portal(self.camera_frame.WorldTransform.value, 
-                                                 self.camera_frame.WorldTransform.value,
-                                                 1.0,
-                                                 1.0,
+        _portal = self.PORTAL_MANAGER.add_portal(self.sf_world_border_mat_no_scale.value, 
+                                                 avango.gua.make_identity_mat(),
+                                                 self.portal_width,
+                                                 self.portal_height,
                                                  self.capture_viewing_mode,
                                                  "PERSPECTIVE",
                                                  self.capture_parallax_mode,
                                                  "data/materials/ShadelessBlue.gmd")
         self.captured_portals.append(_portal)
-        _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+        _portal.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
         self.current_portal = _portal
 
       # initiate dragging
@@ -616,7 +623,7 @@ class PortalCamera(avango.script.Script):
 
         for _portal in self.captured_portals:
           _portal.set_visibility(False)
-          _portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
+          _portal.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
 
   ## Called whenever sf_scene_copy_button_changes.
   @field_has_changed(sf_scene_copy_button)

@@ -333,8 +333,6 @@ class PortalCamera(avango.script.Script):
           _transformed_trans_vec = avango.gua.make_rot_mat(_scene_transform.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
           _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
 
-          print "SCALE SCENE TRANSFORM", _scene_transform.get_scale()
-
           _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
                              _scene_transform * \
                              avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \

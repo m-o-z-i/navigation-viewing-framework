@@ -238,7 +238,6 @@ class PortalPreView(avango.script.Script):
     ## @var view_node
     # Scenegraph node representing the slot (head) position in the portal's exit space.
     self.view_node = avango.gua.nodes.TransformNode(Name = "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id))
-    self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
     self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
     self.PORTAL_NODE.Children.value[1].Children.value[0].Children.value.append(self.view_node)
 
@@ -406,7 +405,7 @@ class PortalPreView(avango.script.Script):
         self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
                                          self.sf_slot_world_mat.value
       else:
-        self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.5)
+        self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
 
       # check for camera mode
       if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":

@@ -238,19 +238,6 @@ class PortalCamera(avango.script.Script):
     # set evaluation policy
     self.always_evaluate(True)
 
-    ######## Debugging setup
-    self.debug_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_trans_mat(0.0, 1.2, 0.0), 
-                                             avango.gua.make_trans_mat(0.0, 1.2, 0.0),
-                                             1.0,
-                                             1.0,
-                                             "2D",
-                                             "PERSPECTIVE",
-                                             self.capture_parallax_mode,
-                                             "data/materials/ShadelessBlue.gmd")
-    self.captured_portals.append(self.debug_portal)
-    self.debug_portal.portal_matrix_node.Transform.connect_from(self.camera_frame.WorldTransform)
-    self.current_portal = self.debug_portal
-
 
   ## Evaluated every frame.
   def evaluate(self):
@@ -336,13 +323,11 @@ class PortalCamera(avango.script.Script):
 
           _scene_transform = self.current_portal.scene_matrix_node.Transform.value
           _scene_translate = _scene_transform.get_translate()
-          _scene_rotate    = _scene_transform.get_rotate_scale_corrected()
 
-          _device_forward_yaw = Tools.get_yaw(_interaction_space.DEVICE.sf_station_mat.value)
-          _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
-          _combined_rot_mat = avango.gua.make_rot_mat(_scene_rotate) * _device_rot_mat
-          _transformed_trans_vec = _combined_rot_mat * avango.gua.Vec3(_x, _y, _z)
+          _transformed_trans_vec = avango.gua.make_rot_mat(_scene_transform.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
           _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
+
+          print "SCALE SCENE TRANSFORM", _scene_transform.get_scale()
 
           _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
                              _scene_transform * \

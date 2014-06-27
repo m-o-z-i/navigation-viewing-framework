@@ -272,10 +272,23 @@ class PortalCamera(avango.script.Script):
 
       _current_portal_mat = self.tracking_reader.sf_abs_mat.value
       _diff_mat = _current_portal_mat * avango.gua.make_inverse_mat(self.start_drag_portal_mat)
-      #_mapped_translation = avango.gua.make_rot_mat(self.start_drag_portal_mat.get_rotate()) * _diff_mat.get_translate()
-      #_mapped_translation = avango.gua.Vec3(_mapped_translation.x, _mapped_translation.y, _mapped_translation.z)
-      _diff_mat = avango.gua.make_trans_mat(_diff_mat.get_translate() * self.current_portal.scale)
-      self.current_portal.scene_matrix_node.Transform.value = _diff_mat * self.current_portal.scene_matrix_node.Transform.value
+
+      _scene_transform = self.current_portal.scene_matrix_node.Transform.value
+      _scene_translate = _scene_transform.get_translate()
+
+      _device_forward_yaw = Tools.get_yaw(_current_portal_mat)
+      _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
+
+      _combined_rot_mat = avango.gua.make_rot_mat(_scene_transform.get_rotate()) * _device_rot_mat
+      _transformed_trans_vec = _combined_rot_mat * _diff_mat.get_translate() * 0.5
+      _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
+
+      _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
+                         _scene_transform * \
+                         avango.gua.make_rot_mat(_diff_mat.get_rotate())
+
+      self.current_portal.scene_matrix_node.Transform.value = _scene_transform
+
       self.start_drag_portal_mat = _current_portal_mat
 
 

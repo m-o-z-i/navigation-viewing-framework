@@ -233,9 +233,9 @@ class PortalCamera(avango.script.Script):
     # Index within self.captured_portals saying which of the Portals was lastly opened by the PortalCamera.
     self.last_open_portal_index = None
 
-    ## @var start_drag_portal_mat
-    # Portal matrix at the beginning of a dragging process. None if no dragging is in progress.
-    self.start_drag_portal_mat = None
+    ## @var
+    # 
+    self.drag_relation_portal_scene = None
 
     # set evaluation policy
     self.always_evaluate(True)
@@ -268,28 +268,13 @@ class PortalCamera(avango.script.Script):
 
 
     # update matrices in drag mode
-    if self.start_drag_portal_mat != None:
+    if self.drag_relation_portal_scene != None:
 
-      _current_portal_mat = self.tracking_reader.sf_abs_mat.value
-      _diff_mat = _current_portal_mat * avango.gua.make_inverse_mat(self.start_drag_portal_mat)
-
-      _scene_transform = self.current_portal.scene_matrix_node.Transform.value
-      _scene_translate = _scene_transform.get_translate()
-
-      _device_forward_yaw = Tools.get_yaw(_current_portal_mat)
-      _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
-
-      _combined_rot_mat = avango.gua.make_rot_mat(_scene_transform.get_rotate()) * _device_rot_mat
-      _transformed_trans_vec = _combined_rot_mat * _diff_mat.get_translate() * 0.5
-      _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
-
-      _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
-                         _scene_transform * \
-                         avango.gua.make_rot_mat(_diff_mat.get_rotate())
-
-      self.current_portal.scene_matrix_node.Transform.value = _scene_transform
-
-      self.start_drag_portal_mat = _current_portal_mat
+      _current_portal_matrix = self.current_portal.portal_matrix_node.Transform.value
+      self.current_portal.scene_matrix_node.Transform.value = avango.gua.make_inverse_mat(
+                                                                avango.gua.make_inverse_mat(_current_portal_matrix) * \
+                                                                self.drag_relation_portal_scene
+                                                              )
 
 
     # check for camera hitting free portals
@@ -526,12 +511,13 @@ class PortalCamera(avango.script.Script):
       # initiate dragging
       else:
 
-        self.start_drag_portal_mat = self.tracking_reader.sf_abs_mat.value
+        self.drag_relation_portal_scene = self.current_portal.portal_matrix_node.Transform.value * \
+                                          avango.gua.make_inverse_mat(self.current_portal.scene_matrix_node.Transform.value)
 
     # capture button released
     else:
 
-      self.start_drag_portal_mat = None
+      self.drag_relation_portal_scene = None
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)

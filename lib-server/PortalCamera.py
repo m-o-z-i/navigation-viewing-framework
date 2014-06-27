@@ -26,9 +26,11 @@ class PortalCamera(avango.script.Script):
   sf_tracking_mat = avango.gua.SFMatrix4()
 
   ## @var sf_border_mat
-  # Matrix with which binded portals must be connected.
+  # Matrix with which the camera frame will be connected.
   sf_border_mat = avango.gua.SFMatrix4()
 
+  ## @var sf_world_border_mat_no_scale
+  # World transformation of the camera frame without scaling. Used for Portal instantiation.
   sf_world_border_mat_no_scale = avango.gua.SFMatrix4()
 
   # button fields
@@ -138,8 +140,8 @@ class PortalCamera(avango.script.Script):
     # Factor with which the size of the portals will be multiplied when in gallery mode.
     self.gallery_magnification_factor = 1.5
 
-    ##
-    #
+    ## @var interaction_spaces
+    # List of PortalInteractionSpace instances currently associated with this PortalCamera.
     self.interaction_spaces = []
 
     ## @var min_scale
@@ -233,8 +235,9 @@ class PortalCamera(avango.script.Script):
     # Index within self.captured_portals saying which of the Portals was lastly opened by the PortalCamera.
     self.last_open_portal_index = None
 
-    ## @var
-    # 
+    ## @var drag_relation_portal_scene
+    # Expression of the portal matrix in the scene matrix coordinate system of the current Portal to be
+    # dragged. Must remain constant during dragging. None if no dragging is in progress.
     self.drag_relation_portal_scene = None
 
     # set evaluation policy
@@ -413,15 +416,14 @@ class PortalCamera(avango.script.Script):
           self.current_portal = _portal
           return
 
-  ##
+  ## Associates a PortalInteractionSpace with this PortalCamera instance.
+  # @param INTERACTION_SPACE The PortalInteractionSpace to be added.
   def add_interaction_space(self, INTERACTION_SPACE):
 
     self.interaction_spaces.append(INTERACTION_SPACE)
-    #self.debug_portal.Transform.disconnect()
-    #self.debug_portal.portal_matrix_node.Transform.value = self.interaction_spaces[0].get_min_y_plane_transform()
 
-  ##
-  #
+  ## Set the scaling factor of the currently active portal.
+  # @param SCALE The new scaling to be set.
   def set_current_portal_scale(self, SCALE):
 
     if self.current_portal == None:
@@ -514,7 +516,7 @@ class PortalCamera(avango.script.Script):
         self.drag_relation_portal_scene = self.current_portal.portal_matrix_node.Transform.value * \
                                           avango.gua.make_inverse_mat(self.current_portal.scene_matrix_node.Transform.value)
 
-    # capture button released
+    # capture button released, stop dragging
     else:
 
       self.drag_relation_portal_scene = None

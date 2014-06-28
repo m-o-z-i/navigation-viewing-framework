@@ -165,11 +165,11 @@ class ClientPortal:
     self.scale_node.Children.value.append(self.portal_screen_node)
 
     # debug screen visualization
-    #_loader = avango.gua.nodes.TriMeshLoader()
-    #_node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
-    #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
-    #_node.Transform.value = avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
-    #self.scene_matrix_node.Children.value.append(_node)
+    _loader = avango.gua.nodes.TriMeshLoader()
+    _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
+    _node.Transform.value = avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
+    self.scene_matrix_node.Children.value.append(_node)
 
   ## Disconnects all scenegraph node fields and deletes the nodes except portal_node.
   def deactivate(self):
@@ -292,16 +292,23 @@ class PortalPreView(avango.script.Script):
     self.pipeline.Camera.value = self.camera
 
     # init pipline value connections
+    self.pipeline.BackgroundMode.connect_from(VIEW.pipeline.BackgroundMode)
+    self.pipeline.BackgroundTexture.connect_from(VIEW.pipeline.BackgroundTexture)
+    self.pipeline.FogTexture.connect_from(VIEW.pipeline.FogTexture)
     self.pipeline.EnableBloom.connect_from(VIEW.pipeline.EnableBloom)
     self.pipeline.BloomIntensity.connect_from(VIEW.pipeline.BloomIntensity)
+    self.pipeline.BloomThreshold.connect_from(VIEW.pipeline.BloomThreshold)
     self.pipeline.BloomRadius.connect_from(VIEW.pipeline.BloomRadius)
     self.pipeline.EnableSsao.value = False
-    #self.pipeline.EnableSsao.connect_from(VIEW.pipeline.EnableSsao)
     self.pipeline.SsaoRadius.connect_from(VIEW.pipeline.SsaoRadius)
     self.pipeline.SsaoIntensity.connect_from(VIEW.pipeline.SsaoIntensity)
     self.pipeline.EnableBackfaceCulling.connect_from(VIEW.pipeline.EnableBackfaceCulling)
     self.pipeline.EnableFrustumCulling.connect_from(VIEW.pipeline.EnableFrustumCulling)
     self.pipeline.EnableFXAA.connect_from(VIEW.pipeline.EnableFXAA)  
+    self.pipeline.AmbientColor.connect_from(VIEW.pipeline.AmbientColor)
+    self.pipeline.EnableFog.connect_from(VIEW.pipeline.EnableFog)
+    self.pipeline.FogStart.connect_from(VIEW.pipeline.FogStart)
+    self.pipeline.FogEnd.connect_from(VIEW.pipeline.FogEnd)
 
     self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1024, 1024)
     self.pipeline.RightResolution.value = self.pipeline.LeftResolution.value

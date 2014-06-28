@@ -291,12 +291,7 @@ class PortalCamera(avango.script.Script):
 
         _portal_vec = _free_portal.portal_matrix_node.WorldTransform.value.get_translate()
 
-        if _camera_vec.x > _portal_vec.x - (self.portal_width/2) and \
-           _camera_vec.x < _portal_vec.x + (self.portal_width/2) and \
-           _camera_vec.y > _portal_vec.y - 0.1 and \
-           _camera_vec.y < _portal_vec.y + 0.1 and \
-           _camera_vec.z > _portal_vec.z - 0.05 and \
-           _camera_vec.z < _portal_vec.z + 0.05:
+        if self.check_for_hit(_camera_vec, _portal_vec):
 
           _free_portal.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
           self.free_portals.remove(_free_portal)
@@ -397,13 +392,8 @@ class PortalCamera(avango.script.Script):
       for _portal in self.captured_portals:
 
         _portal_vec = _portal.portal_matrix_node.WorldTransform.value.get_translate()
-
-        if _camera_vec.x > _portal_vec.x - (self.portal_width/2) and \
-           _camera_vec.x < _portal_vec.x + (self.portal_width/2) and \
-           _camera_vec.y > _portal_vec.y - 0.1 and \
-           _camera_vec.y < _portal_vec.y + 0.1 and \
-           _camera_vec.z > _portal_vec.z - 0.05 and \
-           _camera_vec.z < _portal_vec.z + 0.05:
+        
+        if self.check_for_hit(_camera_vec, _portal_vec):
 
           for _portal_2 in self.captured_portals:
             
@@ -417,6 +407,25 @@ class PortalCamera(avango.script.Script):
           self.gallery_activated = False
           self.current_portal = _portal
           return
+
+  ## Checks if the position of a camera is close to the position of a portal.
+  # @param CAMERA_VEC The camera's vector to be used for incidence computation.
+  # @param PORTAL_VEC The portal's vector to be used for incidence computation.
+  def check_for_hit(self, CAMERA_VEC, PORTAL_VEC):
+
+    _nav_scale = self.NAVIGATION.inputmapping.sf_scale.value
+
+    if CAMERA_VEC.x > PORTAL_VEC.x - (self.portal_width/2) * _nav_scale and \
+       CAMERA_VEC.x < PORTAL_VEC.x + (self.portal_width/2) * _nav_scale and \
+       CAMERA_VEC.y > PORTAL_VEC.y - 0.1 * _nav_scale and \
+       CAMERA_VEC.y < PORTAL_VEC.y + 0.1 * _nav_scale and \
+       CAMERA_VEC.z > PORTAL_VEC.z - 0.05 * _nav_scale and \
+       CAMERA_VEC.z < PORTAL_VEC.z + 0.05 * _nav_scale:
+
+      return True
+
+    return False
+
 
   ## Associates a PortalInteractionSpace with this PortalCamera instance.
   # @param INTERACTION_SPACE The PortalInteractionSpace to be added.
@@ -647,8 +656,9 @@ class PortalCamera(avango.script.Script):
 
         _portal = self.PORTAL_MANAGER.add_portal(self.current_portal.scene_matrix_node.Transform.value, 
                                                  self.current_portal.portal_matrix_node.Transform.value,
-                                                 1.0,
-                                                 1.0,
+                                                 self.current_portal.scale,
+                                                 self.current_portal.width,
+                                                 self.current_portal.height,
                                                  self.current_portal.viewing_mode,
                                                  self.current_portal.camera_mode,
                                                  self.current_portal.negative_parallax,

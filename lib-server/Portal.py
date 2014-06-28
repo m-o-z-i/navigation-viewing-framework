@@ -146,14 +146,15 @@ class PortalManager(avango.script.Script):
   ## Adds a new Portal instance to the scene.
   # @param SCENE_MATRIX Matrix where the portal looks from (exit).
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
+  # @param SCALE
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
   # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   # @param BORDER_MATERIAL The material string to be used for the portal's border.
-  def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
-    _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
+  def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, SCALE, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
+    _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, SCALE, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
     self.counter += 1
     self.portals.append(_portal)
     return _portal
@@ -211,6 +212,7 @@ class Portal:
   # @param ID The portal ID to be assigned to the new portal.
   # @param SCENE_MATRIX Matrix where the portal looks from (exit).
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
+  # 
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
   # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
@@ -222,6 +224,7 @@ class Portal:
              , ID
              , SCENE_MATRIX
              , PORTAL_MATRIX
+             , SCALE
              , WIDTH
              , HEIGHT
              , VIEWING_MODE
@@ -275,7 +278,7 @@ class Portal:
 
     ## @var scale
     # Scaling factor within the portal.
-    self.scale = 1.0
+    self.scale = SCALE
 
     ## @var visible
     # Boolean string variable indicating if the portal is currently visible.
@@ -370,6 +373,17 @@ class Portal:
     self.portal_screen_node.Height.value = self.height
     self.scale_node.Children.value.append(self.portal_screen_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)
+
+    print "CREATED PORTAL"
+    print "SCENE_MAT"
+    print self.scene_matrix_node.Transform.value
+    print "SCENE SCALE", self.scene_matrix_node.Transform.value.get_scale()
+    print "SCALE MAT"
+    print self.scale_node.Transform.value
+    print "SCREEN"
+    print self.portal_screen_node.Transform.value
+    print self.portal_screen_node.Width.value
+    print self.portal_screen_node.Height.value
 
   ## Removes this portal from the portal group and destroys all the scenegraph nodes.
   def deactivate(self):

@@ -374,16 +374,6 @@ class Portal:
     self.scale_node.Children.value.append(self.portal_screen_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)
 
-    print "CREATED PORTAL"
-    print "SCENE_MAT"
-    print self.scene_matrix_node.Transform.value
-    print "SCENE SCALE", self.scene_matrix_node.Transform.value.get_scale()
-    print "SCALE MAT"
-    print self.scale_node.Transform.value
-    print "SCREEN"
-    print self.portal_screen_node.Transform.value
-    print self.portal_screen_node.Width.value
-    print self.portal_screen_node.Height.value
 
   ## Removes this portal from the portal group and destroys all the scenegraph nodes.
   def deactivate(self):

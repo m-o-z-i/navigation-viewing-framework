@@ -523,11 +523,7 @@ class PortalCamera(avango.script.Script):
                                                  self.capture_parallax_mode,
                                                  "data/materials/ShadelessBlue.gmd")
 
-        print "NEW PORTAL"
-        print "SCENE MAT"
-        print _no_platform_scale_border_mat
-        print "SCALE MAT"
-        print avango.gua.make_scale_mat(self.NAVIGATION.inputmapping.sf_scale.value)
+        print "NEW PORTAL SCENE SCALE", _portal.scene_matrix_node.Transform.value.get_scale()
 
         self.captured_portals.append(_portal)
         _portal.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)

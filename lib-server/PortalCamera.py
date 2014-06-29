@@ -307,48 +307,7 @@ class PortalCamera(avango.script.Script):
          self.gallery_activated == False:
         
         _device_values = _interaction_space.get_values()
-        _x = _device_values[0]
-        _y = _device_values[1]
-        _z = _device_values[2]
-        _rx = _device_values[3]
-        _ry = _device_values[4]
-        _rz = _device_values[5]
-        _w = _device_values[6]
-
-        if _w == -1:
-          self.set_current_portal_scale(self.current_portal.scale * 0.985)
-        elif _w == 1:
-          self.set_current_portal_scale(self.current_portal.scale * 1.015)
-
-        _trans_vec = avango.gua.Vec3(_x, _y, _z)
-        _rot_vec = avango.gua.Vec3(_rx, _ry, _rz)
-
-        if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
-
-          _portal_platform_transform = self.current_portal.platform_transform
-          _portal_platform_scale = self.current_portal.platform_scale
-          _portal_platform_offset = self.current_portal.platform_offset
-          _portal_platform_translate = _portal_platform_transform.get_translate()
-
-          _transformed_trans_vec = avango.gua.make_rot_mat(_portal_platform_transform.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
-          _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
-
-          _new_platform_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
-                                    _portal_platform_transform * \
-                                    avango.gua.make_trans_mat(_portal_platform_offset.get_translate() * _portal_platform_scale ) * \
-                                    avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
-                                    avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
-                                    avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0) * \
-                                    avango.gua.make_trans_mat(_portal_platform_offset.get_translate() * _portal_platform_scale * -1)
-
-          _scene_transform = _new_platform_transform * \
-                             avango.gua.make_scale_mat(self.current_portal.platform_scale) * \
-                             self.current_portal.platform_offset
-
-          self.current_portal.platform_transform = _new_platform_transform
-          self.current_portal.scene_matrix_node.Transform.value = _scene_transform
-
-
+        self.current_portal.modify_scene_matrix(_device_values)
 
     # update matrices in gallery mode
     if self.gallery_activated:
@@ -451,7 +410,7 @@ class PortalCamera(avango.script.Script):
  
     if self.scale_stop_time == None:
   
-      _old_scale = self.current_portal.scale
+      _old_scale = self.current_portal.platform_scale
       _old_scale = round(_old_scale,6)
       
       _new_scale = max(min(SCALE, self.max_scale), self.min_scale)
@@ -484,7 +443,7 @@ class PortalCamera(avango.script.Script):
         _new_scale = 0.01
         self.scale_stop_time = time.time()
 
-      self.current_portal.set_scale(_new_scale)
+      self.current_portal.set_platform_scale(_new_scale)
 
     else:
 

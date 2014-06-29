@@ -324,9 +324,11 @@ class Portal:
   #
   def set_platform_scale(self, SCALE):
     self.platform_scale = SCALE
-    #self.
+    self.scene_matrix_node.Transform.value = self.platform_transform * \
+                                             avango.gua.make_scale_mat(self.platform_scale) * \
+                                             self.platform_offset
 
-  def modify_scene_matrix(self, DEVICE_INPUT_VALUES):
+  def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0]):
 
     _x = DEVICE_INPUT_VALUES[0]
     _y = DEVICE_INPUT_VALUES[1]

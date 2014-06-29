@@ -263,11 +263,11 @@ class PortalCamera(avango.script.Script):
     # apply scale changes 
     if self.sf_scale_up_button.value == True:
       
-      self.set_current_portal_scale(self.current_portal.scale * 0.985)
+      self.set_current_portal_scale(self.current_portal.platform_scale * 0.985)
       
     if self.sf_scale_down_button.value == True:
 
-      self.set_current_portal_scale(self.current_portal.scale * 1.015)
+      self.set_current_portal_scale(self.current_portal.platform_scale * 1.015)
 
 
     # update matrices in drag mode

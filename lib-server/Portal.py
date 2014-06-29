@@ -146,9 +146,9 @@ class PortalManager(avango.script.Script):
   ## Adds a new Portal instance to the scene.
   # @param SCENE_MATRIX Matrix where the portal looks from (exit).
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
-  # 
-  #
-  #
+  # @param PLATOFORM_TRANSFORM Transformation matrix of the portal platform.
+  # @param PLATFORM_SCALE Scaling factor of the portal platform.
+  # @param PLATFORM_OFFSET Offset matrix of the portal on the platform.
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
   # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
@@ -214,9 +214,9 @@ class Portal:
   # @param ID The portal ID to be assigned to the new portal.
   # @param SCENE_MATRIX Matrix where the portal looks from (exit).
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
-  # 
-  #
-  #
+  # @param PLATOFORM_TRANSFORM Transformation matrix of the portal platform.
+  # @param PLATFORM_SCALE Scaling factor of the portal platform.
+  # @param PLATFORM_OFFSET Offset matrix of the portal on the platform.
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
   # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
@@ -286,9 +286,18 @@ class Portal:
     # Boolean string variable indicating if the portal is currently visible.
     self.visible = "True"
 
-    # metinformation for modification of scene_matrix #
+    # metainformation for modification of scene_matrix #
+
+    ## @var platform_transform
+    # Transformation matrix of the portal platform.
     self.platform_transform = PLATFORM_TRANSFORM
+
+    ## @var platform_scale
+    # Scaling factor of the portal platform.
     self.platform_scale = PLATFORM_SCALE 
+
+    ## @var platform_offset
+    # Offset matrix of the portal on the platform.
     self.platform_offset = PLATFORM_OFFSET 
 
     self.append_portal_nodes()

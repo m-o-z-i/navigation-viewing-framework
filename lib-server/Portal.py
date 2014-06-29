@@ -146,15 +146,17 @@ class PortalManager(avango.script.Script):
   ## Adds a new Portal instance to the scene.
   # @param SCENE_MATRIX Matrix where the portal looks from (exit).
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
-  # @param SCALE
+  # 
+  #
+  #
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
   # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   # @param BORDER_MATERIAL The material string to be used for the portal's border.
-  def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, SCALE, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
-    _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, SCALE, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
+  def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, PLATFORM_TRANSFORM, PLATFORM_SCALE, PLATFORM_OFFSET, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
+    _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, PLATFORM_TRANSFORM, PLATFORM_SCALE, PLATFORM_OFFSET, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
     self.counter += 1
     self.portals.append(_portal)
     return _portal
@@ -213,6 +215,8 @@ class Portal:
   # @param SCENE_MATRIX Matrix where the portal looks from (exit).
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
   # 
+  #
+  #
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
   # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
@@ -224,7 +228,9 @@ class Portal:
              , ID
              , SCENE_MATRIX
              , PORTAL_MATRIX
-             , SCALE
+             , PLATFORM_TRANSFORM
+             , PLATFORM_SCALE
+             , PLATFORM_OFFSET
              , WIDTH
              , HEIGHT
              , VIEWING_MODE
@@ -276,13 +282,14 @@ class Portal:
     # The material string to be used for the portal's border.
     self.border_material = BORDER_MATRIAL
 
-    ## @var scale
-    # Scaling factor within the portal.
-    self.scale = SCALE
-
     ## @var visible
     # Boolean string variable indicating if the portal is currently visible.
     self.visible = "True"
+
+    # metinformation for modification of scene_matrix #
+    self.platform_transform = PLATFORM_TRANSFORM
+    self.platform_scale = PLATFORM_SCALE 
+    self.platform_offset = PLATFORM_OFFSET 
 
     self.append_portal_nodes()
 
@@ -329,12 +336,6 @@ class Portal:
 
     self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
-  ## Sets a new scaling factor for the portal.
-  # @param SCALE The new scaling factor to be set
-  def set_scale(self, SCALE):
-    self.scale_node.Transform.value = avango.gua.make_scale_mat(SCALE)
-    self.scale = SCALE
-
   ## Appends the necessary portal scenegraph nodes on server side.
   def append_portal_nodes(self):
 
@@ -362,7 +363,6 @@ class Portal:
     ## @var scale_node
     # Scenegraph node representing the portal's scaling factor.
     self.scale_node = avango.gua.nodes.TransformNode(Name = "scale")
-    self.set_scale(self.scale)
     self.scene_matrix_node.Children.value.append(self.scale_node)
     self.NET_TRANS_NODE.distribute_object(self.scale_node)
 

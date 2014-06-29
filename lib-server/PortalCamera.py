@@ -325,18 +325,27 @@ class PortalCamera(avango.script.Script):
 
         if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
 
-          _scene_transform = self.current_portal.scene_matrix_node.Transform.value
-          _scene_translate = _scene_transform.get_translate()
+          _portal_platform_transform = self.current_portal.platform_transform
+          _portal_platform_scale = self.current_portal.platform_scale
+          _portal_platform_offset = self.current_portal.platform_offset
+          _portal_platform_translate = _portal_platform_transform.get_translate()
 
-          _transformed_trans_vec = avango.gua.make_rot_mat(_scene_transform.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
+          _transformed_trans_vec = avango.gua.make_rot_mat(_portal_platform_transform.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
           _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
 
-          _scene_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
-                             _scene_transform * \
-                             avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
-                             avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
-                             avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0)
+          _new_platform_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
+                                    _portal_platform_transform * \
+                                    avango.gua.make_trans_mat(_portal_platform_offset.get_translate() * _portal_platform_scale ) * \
+                                    avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
+                                    avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
+                                    avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0) * \
+                                    avango.gua.make_trans_mat(_portal_platform_offset.get_translate() * _portal_platform_scale * -1)
 
+          _scene_transform = _new_platform_transform * \
+                             avango.gua.make_scale_mat(self.current_portal.platform_scale) * \
+                             self.current_portal.platform_offset
+
+          self.current_portal.platform_transform = _new_platform_transform
           self.current_portal.scene_matrix_node.Transform.value = _scene_transform
 
 
@@ -509,19 +518,27 @@ class PortalCamera(avango.script.Script):
 
       # capture a new portal
       if self.current_portal == None:
-        _no_platform_scale_border_mat = self.NAVIGATION.platform.platform_transform_node.WorldTransform.value * \
-                                        self.tracking_reader.sf_abs_mat.value * \
-                                        avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
+        #_no_platform_scale_border_mat = self.NAVIGATION.platform.platform_transform_node.WorldTransform.value * \
+        #                                self.tracking_reader.sf_abs_mat.value * \
+        #                                avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
 
-        _portal = self.PORTAL_MANAGER.add_portal(_no_platform_scale_border_mat, 
+        #self.sf_world_border_mat_no_scale.value = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
+        #                                          self.tracking_reader.sf_abs_mat.value * \
+        #                                          avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
+
+        _portal = self.PORTAL_MANAGER.add_portal(self.sf_world_border_mat_no_scale.value, 
                                                  avango.gua.make_identity_mat(),
-                                                 self.NAVIGATION.inputmapping.sf_scale.value,
+                                                 1.0,
                                                  self.portal_width,
                                                  self.portal_height,
                                                  self.capture_viewing_mode,
                                                  "PERSPECTIVE",
                                                  self.capture_parallax_mode,
                                                  "data/materials/ShadelessBlue.gmd")
+        
+        _portal.platform_transform = self.NAVIGATION.platform.platform_transform_node.Transform.value
+        _portal.platform_scale = self.NAVIGATION.inputmapping.sf_scale.value
+        _portal.platform_offset = self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
 
         print "NEW PORTAL SCENE SCALE", _portal.scene_matrix_node.Transform.value.get_scale()
 

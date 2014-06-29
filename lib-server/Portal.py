@@ -407,18 +407,12 @@ class Portal:
     self.portal_node.Children.value.append(self.scene_matrix_node)
     self.NET_TRANS_NODE.distribute_object(self.scene_matrix_node)
 
-    ## @var scale_node
-    # Scenegraph node representing the portal's scaling factor.
-    self.scale_node = avango.gua.nodes.TransformNode(Name = "scale")
-    self.scene_matrix_node.Children.value.append(self.scale_node)
-    self.NET_TRANS_NODE.distribute_object(self.scale_node)
-
     ## @var portal_screen_node
     # Screen node representing the portal's screen in the scene.
     self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
     self.portal_screen_node.Width.value = self.width
     self.portal_screen_node.Height.value = self.height
-    self.scale_node.Children.value.append(self.portal_screen_node)
+    self.scene_matrix_node.Children.value.append(self.portal_screen_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)
 
 
@@ -427,7 +421,6 @@ class Portal:
     self.PORTAL_MANAGER.portal_group_node.Children.value.remove(self.portal_node)
 
     del self.portal_screen_node
-    del self.scale_node
     del self.scene_matrix_node
     del self.portal_matrix_node
     del self.portal_node

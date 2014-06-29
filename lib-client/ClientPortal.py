@@ -151,19 +151,13 @@ class ClientPortal:
     self.scene_matrix_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Transform)
     self.portal_node.Children.value.append(self.scene_matrix_node)
 
-    ## @var scale_node
-    # Scenegraph node representing the portal's scaling factor.
-    self.scale_node = avango.gua.nodes.TransformNode(Name = "scale")
-    self.scale_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Transform)
-    self.scene_matrix_node.Children.value.append(self.scale_node)
-
     ## @var portal_screen_node
     # Screen node representing the portal's screen in the scene.
     self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
-    self.portal_screen_node.Width.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Children.value[0].Width)
-    self.portal_screen_node.Height.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Children.value[0].Height)
-    self.portal_screen_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Children.value[0].Transform)
-    self.scale_node.Children.value.append(self.portal_screen_node)
+    self.portal_screen_node.Width.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Width)
+    self.portal_screen_node.Height.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Height)
+    self.portal_screen_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Children.value[0].Transform)
+    self.scene_matrix_node.Children.value.append(self.portal_screen_node)
 
     # debug screen visualization
     _loader = avango.gua.nodes.TriMeshLoader()
@@ -171,7 +165,7 @@ class ClientPortal:
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
     _node.Transform.value = self.portal_screen_node.Transform.value * \
                             avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
-    self.scale_node.Children.value.append(_node)
+    self.scene_matrix_node.Children.value.append(_node)
 
   ## Disconnects all scenegraph node fields and deletes the nodes except portal_node.
   def deactivate(self):
@@ -179,13 +173,11 @@ class ClientPortal:
     self.portal_node.GroupNames.disconnect()
     self.portal_matrix_node.Transform.disconnect()
     self.scene_matrix_node.Transform.disconnect()
-    self.scale_node.Transform.disconnect()
     self.portal_screen_node.Width.disconnect()
     self.portal_screen_node.Height.disconnect()
 
     # object destruction
     del self.portal_screen_node
-    del self.scale_node
     del self.scene_matrix_node
     del self.portal_matrix_node
 
@@ -259,7 +251,7 @@ class PortalPreView(avango.script.Script):
 
     ## @var screen_node
     # Screen node representing the screen position in the portal's exit space.
-    self.screen_node = self.PORTAL_NODE.Children.value[1].Children.value[0].Children.value[0]
+    self.screen_node = self.PORTAL_NODE.Children.value[1].Children.value[0]
 
     ## @var camera
     # The camera from which this PortalPreView will be rendered.

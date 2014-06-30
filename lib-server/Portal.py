@@ -56,7 +56,7 @@ class PortalManager(avango.script.Script):
 
     # add portal instances
 
-    #'''
+    '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                     1.0,
                     avango.gua.make_identity_mat(),
@@ -67,9 +67,9 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    #'''
+    '''
     
-    #'''   
+    '''   
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 2.0),
                     0.2,
                     avango.gua.make_identity_mat(),
@@ -80,9 +80,9 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    #'''
+    '''
     
-    #'''
+    '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
                     1.0,
                     avango.gua.make_identity_mat(),
@@ -93,7 +93,7 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    #'''
+    '''
 
     '''
     self.add_bidirectional_portal(avango.gua.make_trans_mat(0.0, 1.55, 3.0),
@@ -111,14 +111,12 @@ class PortalManager(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
+    # check every navigation instance for portal intersections
     for _nav in self.NAVIGATION_LIST:
 
       _mat = _nav.platform.platform_scale_transform_node.WorldTransform.value * _nav.device.sf_station_mat.value
       _scale = _nav.inputmapping.sf_scale.value
       _last_teleport_time = self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)]
-
-      #print "DEVICE POS", _mat.get_translate()
-      #print "SCALE", _scale
 
       for _portal in self.portals:
 
@@ -126,9 +124,6 @@ class PortalManager(avango.script.Script):
                                _mat
 
         _vec_in_portal_space = _mat_in_portal_space.get_translate()
-
-        #print "IN PORTAL SPACE", _vec_in_portal_space
-        #print "IN PORTAL OUT SPACE", (avango.gua.make_inverse_mat(_portal.scene_matrix_node.WorldTransform.value) * _mat).get_translate()
 
         # do a teleportation if navigation enters portal
         if (_vec_in_portal_space.x > -_portal.width/2              and \

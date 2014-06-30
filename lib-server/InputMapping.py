@@ -289,6 +289,7 @@ class InputMapping(avango.script.Script):
 
   ## Applies a new scaling to this input mapping.
   # @param SCALE The new scaling factor to be applied.
+  # @param CONSIDER_SNAPPING Boolean saying if the scaling should snap at powers of ten.
   def set_scale(self, SCALE, CONSIDER_SNAPPING = True):
 
     if CONSIDER_SNAPPING == False:

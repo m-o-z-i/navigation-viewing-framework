@@ -278,10 +278,10 @@ class PortalCamera(avango.script.Script):
                                                       avango.gua.make_inverse_mat(_current_portal_matrix) * \
                                                       self.drag_relation_portal_scene
                                                      )
-      self.current_portal.set_platform_transform(
+      self.current_portal.set_platform_matrix(
                                                       _new_scene_matrix * \
                                                       avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.current_portal.platform_scale))
-                                                )
+                                             )
 
 
     # check for camera hitting free portals

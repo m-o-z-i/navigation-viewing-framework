@@ -280,7 +280,6 @@ class PortalCamera(avango.script.Script):
                                                      )
       self.current_portal.set_platform_transform(
                                                       _new_scene_matrix * \
-                                                      avango.gua.make_inverse_mat(self.current_portal.platform_offset) * \
                                                       avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.current_portal.platform_scale))
                                                 )
 
@@ -481,9 +480,11 @@ class PortalCamera(avango.script.Script):
       # capture a new portal
       if self.current_portal == None:
 
-        _portal = self.PORTAL_MANAGER.add_portal(self.NAVIGATION.platform.platform_transform_node.Transform.value,
+        _portal_platform_matrix = self.sf_world_border_mat_no_scale.value * \
+                                  avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.NAVIGATION.inputmapping.sf_scale.value))
+
+        _portal = self.PORTAL_MANAGER.add_portal(_portal_platform_matrix,
                                                  self.NAVIGATION.inputmapping.sf_scale.value,
-                                                 self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0), 
                                                  self.sf_world_border_mat_no_scale.value,
                                                  self.portal_width,
                                                  self.portal_height,
@@ -617,9 +618,8 @@ class PortalCamera(avango.script.Script):
       # create a free copy of the opened portal in the scene
       if self.current_portal != None and self.gallery_activated == False:
 
-        _portal = self.PORTAL_MANAGER.add_portal(self.current_portal.platform_transform,
+        _portal = self.PORTAL_MANAGER.add_portal(self.current_portal.platform_matrix,
                                                  self.current_portal.platform_scale,
-                                                 self.current_portal.platform_offset,
                                                  self.current_portal.portal_matrix_node.Transform.value,
                                                  self.current_portal.width,
                                                  self.current_portal.height,

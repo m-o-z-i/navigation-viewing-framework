@@ -138,9 +138,8 @@ class PortalManager(avango.script.Script):
           print_warning("Portal teleportation deactivated for debugging.")
           return
 
-          _nav.inputmapping.set_abs_mat(_portal.platform_transform * \
+          _nav.inputmapping.set_abs_mat(_portal.platform_matrix * \
                                         avango.gua.make_scale_mat(_portal.platform_scale) * \
-                                        _portal.platform_offset * \
                                         avango.gua.make_trans_mat(_vec_in_portal_space) * \
                                         avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate_scale_corrected()) * \
                                         avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0) * \
@@ -152,9 +151,8 @@ class PortalManager(avango.script.Script):
 
 
   ## Adds a new Portal instance to the scene.
-  # @param PLATFORM_TRANSFORM Transformation matrix of the portal platform.
+  # @param PLATFORM_MATRIX Transformation matrix of the portal platform.
   # @param PLATFORM_SCALE Scaling factor of the portal platform.
-  # @param PLATFORM_OFFSET Offset matrix of the portal on the platform.
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
@@ -162,8 +160,8 @@ class PortalManager(avango.script.Script):
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   # @param BORDER_MATERIAL The material string to be used for the portal's border.
-  def add_portal(self, PLATFORM_TRANSFORM, PLATFORM_SCALE, PLATFORM_OFFSET, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
-    _portal = Portal(self, self.counter, PLATFORM_TRANSFORM, PLATFORM_SCALE, PLATFORM_OFFSET, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
+  def add_portal(self, PLATFORM_MATRIX, PLATFORM_SCALE, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
+    _portal = Portal(self, self.counter, PLATFORM_MATRIX, PLATFORM_SCALE, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
     self.counter += 1
     self.portals.append(_portal)
     return _portal
@@ -177,13 +175,13 @@ class PortalManager(avango.script.Script):
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   def add_bidirectional_portal(self, FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX):
-    self.add_portal(FIRST_MATRIX, 1.0, avango.gua.make_identity_mat(), SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessBlue.gmd")
+    self.add_portal(FIRST_MATRIX, 1.0, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessBlue.gmd")
 
     # mirror matrices for opposite portal
     _mirrored_scene_matrix = SECOND_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
     _mirrored_portal_matrix = FIRST_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
 
-    self.add_portal(_mirrored_scene_matrix, 1.0, avango.gua.make_identity_mat(), _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd")
+    self.add_portal(_mirrored_scene_matrix, 1.0, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd")
 
   ## Gets an active Portal instance by its ID. Returns None when no matching instance was found.
   # @param The Portal ID to be searched for.
@@ -221,7 +219,9 @@ class Portal:
   # @param ID The portal ID to be assigned to the new portal.
   # @param PLATFORM_TRANSFORM Transformation matrix of the portal exit's platform.
   # @param PLATFORM_SCALE Scaling factor of the portal exit's platform.
-  # @param PLATFORM_OFFSET Offset matrix of the portal on the exit platform.
+
+
+
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
@@ -232,9 +232,8 @@ class Portal:
   def __init__(self
              , PORTAL_MANAGER
              , ID
-             , PLATFORM_TRANSFORM
+             , PLATFORM_MATRIX
              , PLATFORM_SCALE
-             , PLATFORM_OFFSET
              , PORTAL_MATRIX
              , WIDTH
              , HEIGHT
@@ -253,9 +252,8 @@ class Portal:
 
     ## @var scene_matrix
     # Matrix where the portal looks from (exit).
-    self.scene_matrix = PLATFORM_TRANSFORM * \
-                        avango.gua.make_scale_mat(PLATFORM_SCALE) * \
-                        PLATFORM_OFFSET
+    self.scene_matrix = PLATFORM_MATRIX * \
+                        avango.gua.make_scale_mat(PLATFORM_SCALE)
 
     ## @var portal_matrix
     # Matrix where the portal display is located (entry).
@@ -297,15 +295,11 @@ class Portal:
 
     ## @var platform_transform
     # Transformation matrix of the portal platform.
-    self.platform_transform = PLATFORM_TRANSFORM
+    self.platform_matrix = PLATFORM_MATRIX
 
     ## @var platform_scale
     # Scaling factor of the portal platform.
     self.platform_scale = PLATFORM_SCALE 
-
-    ## @var platform_offset
-    # Offset matrix of the portal on the platform.
-    self.platform_offset = PLATFORM_OFFSET 
 
     self.append_portal_nodes()
 
@@ -338,27 +332,17 @@ class Portal:
 
   ## Sets a new value for platform_transform and updates scene_matrix.
   # @param PLATFORM_TRANSFORM The new platform transformation matrix to be set.
-  def set_platform_transform(self, PLATFORM_TRANSFORM):
-    self.platform_transform = PLATFORM_TRANSFORM
-    self.scene_matrix_node.Transform.value = self.platform_transform * \
-                                             avango.gua.make_scale_mat(self.platform_scale) * \
-                                             self.platform_offset
+  def set_platform_transform(self, PLATFORM_MATRIX):
+    self.platform_matrix = PLATFORM_MATRIX
+    self.scene_matrix_node.Transform.value = self.platform_matrix * \
+                                             avango.gua.make_scale_mat(self.platform_scale)
 
   ## Sets a new value for platform_scale and updates scene_matrix.
   # @param SCALE The new platform scale factor to be set.
   def set_platform_scale(self, SCALE):
     self.platform_scale = SCALE
-    self.scene_matrix_node.Transform.value = self.platform_transform * \
-                                             avango.gua.make_scale_mat(self.platform_scale) * \
-                                             self.platform_offset
-
-  ## Sets a new value for platform_offset and updates scene_matrix.
-  # @param PLATFORM_OFFSET The new platform offset matrix to be set.
-  def set_platform_offset(self, PLATFORM_OFFSET):
-    self.platform_offset = PLATFORM_OFFSET
-    self.scene_matrix_node.Transform.value = self.platform_transform * \
-                                             avango.gua.make_scale_mat(self.platform_scale) * \
-                                             self.platform_offset
+    self.scene_matrix_node.Transform.value = self.platform_matrix * \
+                                             avango.gua.make_scale_mat(self.platform_scale)
 
   ## Connects the portal matrix node to a field or disconnects it if None is given.
   # @param SF_PORTAL_MATRIX The field to connect the portal matrix node with. None if disconnection is required.
@@ -390,22 +374,19 @@ class Portal:
 
     if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
 
-      _transformed_trans_vec = avango.gua.make_rot_mat(self.platform_transform.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
+      _transformed_trans_vec = avango.gua.make_rot_mat(self.platform_matrix.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
       _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
 
-      _new_platform_transform = avango.gua.make_trans_mat(_transformed_trans_vec) * \
-                                self.platform_transform * \
-                                avango.gua.make_trans_mat(self.platform_offset.get_translate() * self.platform_scale ) * \
-                                avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
-                                avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
-                                avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0) * \
-                                avango.gua.make_trans_mat(self.platform_offset.get_translate() * self.platform_scale * -1)
+      _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
+                             self.platform_matrix * \
+                             avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
+                             avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
+                             avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0)
 
-      _scene_transform = _new_platform_transform * \
-                         avango.gua.make_scale_mat(self.platform_scale) * \
-                         self.platform_offset
+      _scene_transform = _new_platform_matrix * \
+                         avango.gua.make_scale_mat(self.platform_scale)
 
-      self.platform_transform = _new_platform_transform
+      self.platform_matrix = _new_platform_matrix
       self.scene_matrix_node.Transform.value = _scene_transform
 
 

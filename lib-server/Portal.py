@@ -341,39 +341,40 @@ class Portal:
 
     self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
-  ##
-  #
+  ## Sets a new value for platform_transform and updates scene_matrix.
+  # @param PLATFORM_TRANSFORM The new platform transformation matrix to be set.
   def set_platform_transform(self, PLATFORM_TRANSFORM):
     self.platform_transform = PLATFORM_TRANSFORM
     self.scene_matrix_node.Transform.value = self.platform_transform * \
                                              avango.gua.make_scale_mat(self.platform_scale) * \
                                              self.platform_offset
 
-  ##
-  #
+  ## Sets a new value for platform_scale and updates scene_matrix.
+  # @param SCALE The new platform scale factor to be set.
   def set_platform_scale(self, SCALE):
     self.platform_scale = SCALE
     self.scene_matrix_node.Transform.value = self.platform_transform * \
                                              avango.gua.make_scale_mat(self.platform_scale) * \
                                              self.platform_offset
 
-  ##
-  #
+  ## Sets a new value for platform_offset and updates scene_matrix.
+  # @param PLATFORM_OFFSET The new platform offset matrix to be set.
   def set_platform_offset(self, PLATFORM_OFFSET):
     self.platform_offset = PLATFORM_OFFSET
     self.scene_matrix_node.Transform.value = self.platform_transform * \
                                              avango.gua.make_scale_mat(self.platform_scale) * \
                                              self.platform_offset
 
-  ##
-  #
+  ## Connects the portal matrix node to a field or disconnects it if None is given.
+  # @param SF_PORTAL_MATRIX The field to connect the portal matrix node with. None if disconnection is required.
   def connect_portal_matrix(self, SF_PORTAL_MATRIX):
     if SF_PORTAL_MATRIX == None:
       self.portal_matrix_node.Transform.disconnect()
     else:
       self.portal_matrix_node.Transform.connect_from(SF_PORTAL_MATRIX)
 
-
+  ## Modifies the scene matrix by the input values given from a device.
+  # @param DEVICE_INPUT_VALUES List of input values from a device.
   def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0]):
 
     _x = DEVICE_INPUT_VALUES[0]

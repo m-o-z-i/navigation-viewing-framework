@@ -365,6 +365,14 @@ class Portal:
                                              avango.gua.make_scale_mat(self.platform_scale) * \
                                              self.platform_offset
 
+  ##
+  #
+  def connect_portal_matrix(self, SF_PORTAL_MATRIX):
+    if SF_PORTAL_MATRIX == None:
+      self.portal_matrix_node.Transform.disconnect()
+    else:
+      self.portal_matrix_node.Transform.connect_from(SF_PORTAL_MATRIX)
+
 
   def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0]):
 

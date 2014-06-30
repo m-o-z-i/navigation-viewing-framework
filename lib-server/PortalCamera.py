@@ -292,7 +292,7 @@ class PortalCamera(avango.script.Script):
 
         if self.check_for_hit(_camera_vec, _portal_vec):
 
-          _free_portal.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
+          _free_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
           self.free_portals.remove(_free_portal)
           self.captured_portals.append(_free_portal)
           self.current_portal = _free_portal
@@ -349,7 +349,7 @@ class PortalCamera(avango.script.Script):
                   _modified_station_mat * \
                   avango.gua.make_scale_mat(self.gallery_magnification_factor, self.gallery_magnification_factor, 1.0)         
 
-        _portal.portal_matrix_node.Transform.disconnect()
+        _portal.connect_portal_matrix(None)
         _portal.portal_matrix_node.Transform.value = _matrix
         _portal.set_visibility(True)
         _i += 1
@@ -367,7 +367,7 @@ class PortalCamera(avango.script.Script):
             if _portal_2 != _portal:
               _portal_2.set_visibility(False)
             
-            _portal_2.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
+            _portal_2.connect_portal_matrix(self.sf_world_border_mat_no_scale)
 
           _grabbed_portal_index = self.captured_portals.index(_portal)
           self.last_open_portal_index = _grabbed_portal_index
@@ -489,7 +489,7 @@ class PortalCamera(avango.script.Script):
                                                  "data/materials/ShadelessBlue.gmd")
 
         self.captured_portals.append(_portal)
-        _portal.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
+        _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
         self.current_portal = _portal
 
       # initiate dragging
@@ -603,7 +603,7 @@ class PortalCamera(avango.script.Script):
 
         for _portal in self.captured_portals:
           _portal.set_visibility(False)
-          _portal.portal_matrix_node.Transform.connect_from(self.sf_world_border_mat_no_scale)
+          _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
 
   ## Called whenever sf_scene_copy_button_changes.
   @field_has_changed(sf_scene_copy_button)

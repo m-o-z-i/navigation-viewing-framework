@@ -15,9 +15,8 @@ from Device import *
 # import python libraries
 # ...
 
-##
-#
-
+## Space on a platform in which an additional device can be used for
+# modifying the scene matrices of portals.
 class PortalInteractionSpace(avango.script.Script):
 
   ## Default constructor.
@@ -25,17 +24,25 @@ class PortalInteractionSpace(avango.script.Script):
     self.super(PortalInteractionSpace).__init__()
 
   ## Custom constructor.
-  #
+  # @param DEVICE Instance of Device to be used for portal navigation.
+  # @param MIN_POINT Minimum coordinates of the point spanning up the space.
+  # @param MAX_POINT Maximum coordinates of the point spanning up the space.
   def my_constructor(self, DEVICE, MIN_POINT, MAX_POINT):
 
+    ## @var DEVICE
+    # Instance of Device to be used for portal navigation.
     self.DEVICE = DEVICE
 
+    ## @var MIN_POINT
+    # Minimum coordinates of the point spanning up the space.
     self.MIN_POINT = MIN_POINT
 
+    ## @var MAX_POINT
+    # Maximum coordinates of the point spanning up the space.
     self.MAX_POINT = MAX_POINT
 
-  ##
-  #
+  ## Returns a boolean saying if a point lies within the interaction space.
+  # @param POINT The point to be checked for.
   def is_inside(self, POINT):
      
      _x = POINT.x
@@ -50,7 +57,7 @@ class PortalInteractionSpace(avango.script.Script):
 
      return False
 
-  ##
+  ## Returns the current input values of the associated device.
   def get_values(self):
 
     _values = self.DEVICE.mf_dof.value

@@ -105,7 +105,7 @@ class PortalManager(avango.script.Script):
                                   "False")
  
     '''
-    
+
     self.always_evaluate(True)
 
   ## Evaluated every frame.

@@ -56,7 +56,7 @@ class PortalManager(avango.script.Script):
 
     # add portal instances
 
-    '''
+    #'''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                     1.0,
                     avango.gua.make_identity_mat(),
@@ -67,11 +67,11 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    '''
+    #'''
     
-    '''   
+    #'''   
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 2.0),
-                    1.0,
+                    0.2,
                     avango.gua.make_identity_mat(),
                     avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
                     1.0,
@@ -80,9 +80,9 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    '''
+    #'''
     
-    '''
+    #'''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
                     1.0,
                     avango.gua.make_identity_mat(),
@@ -93,7 +93,7 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    '''
+    #'''
 
     '''
     self.add_bidirectional_portal(avango.gua.make_trans_mat(0.0, 1.55, 3.0),
@@ -142,15 +142,17 @@ class PortalManager(avango.script.Script):
           print _mat_in_portal_space.get_rotate(), _mat_in_portal_space.get_scale()
           print_warning("Portal teleportation deactivated for debugging.")
           return
-          
-          _nav.inputmapping.set_abs_mat(_portal.scene_matrix * \
+
+          _nav.inputmapping.set_abs_mat(_portal.platform_transform * \
+                                        avango.gua.make_scale_mat(_portal.platform_scale) * \
+                                        _portal.platform_offset * \
                                         avango.gua.make_trans_mat(_vec_in_portal_space) * \
                                         avango.gua.make_rot_mat(_mat_in_portal_space.get_rotate_scale_corrected()) * \
-                                        avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0) )
-          
+                                        avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0) * \
+                                        avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_portal.platform_scale)))
 
-          #_nav.inputmapping.scale_stop_time = None
-          #_nav.inputmapping.set_scale(_portal.scale)
+          _nav.inputmapping.scale_stop_time = None
+          _nav.inputmapping.set_scale(_portal.platform_scale, False)
           self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
 
 

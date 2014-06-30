@@ -289,7 +289,11 @@ class InputMapping(avango.script.Script):
 
   ## Applies a new scaling to this input mapping.
   # @param SCALE The new scaling factor to be applied.
-  def set_scale(self, SCALE):
+  def set_scale(self, SCALE, CONSIDER_SNAPPING = True):
+
+    if CONSIDER_SNAPPING == False:
+      self.sf_scale.value = SCALE
+      return
   
     if self.scale_stop_time == None:
   
@@ -319,7 +323,6 @@ class InputMapping(avango.script.Script):
         #print "snap 1:10"
         _new_scale = 0.1
         self.scale_stop_time = time.time()
-
 
       elif (_old_scale < 0.01 and _new_scale > 0.01) or (_new_scale < 0.01 and _old_scale > 0.01):
         #print "snap 1:100"

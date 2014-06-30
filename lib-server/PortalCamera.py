@@ -278,6 +278,7 @@ class PortalCamera(avango.script.Script):
                                                                 avango.gua.make_inverse_mat(_current_portal_matrix) * \
                                                                 self.drag_relation_portal_scene
                                                               )
+      # update platform node
 
 
     # check for camera hitting free portals
@@ -476,11 +477,10 @@ class PortalCamera(avango.script.Script):
       # capture a new portal
       if self.current_portal == None:
 
-        _portal = self.PORTAL_MANAGER.add_portal(self.sf_world_border_mat_no_scale.value, 
-                                                 avango.gua.make_identity_mat(),
-                                                 self.NAVIGATION.platform.platform_transform_node.Transform.value,
+        _portal = self.PORTAL_MANAGER.add_portal(self.NAVIGATION.platform.platform_transform_node.Transform.value,
                                                  self.NAVIGATION.inputmapping.sf_scale.value,
-                                                 self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0),
+                                                 self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0), 
+                                                 avango.gua.make_identity_mat(),
                                                  self.portal_width,
                                                  self.portal_height,
                                                  self.capture_viewing_mode,
@@ -613,11 +613,10 @@ class PortalCamera(avango.script.Script):
       # create a free copy of the opened portal in the scene
       if self.current_portal != None and self.gallery_activated == False:
 
-        _portal = self.PORTAL_MANAGER.add_portal(self.current_portal.scene_matrix_node.Transform.value, 
-                                                 self.current_portal.portal_matrix_node.Transform.value,
-                                                 self.current_portal.platform_transform,
+        _portal = self.PORTAL_MANAGER.add_portal(self.current_portal.platform_transform,
                                                  self.current_portal.platform_scale,
                                                  self.current_portal.platform_offset,
+                                                 self.current_portal.portal_matrix_node.Transform.value,
                                                  self.current_portal.width,
                                                  self.current_portal.height,
                                                  self.current_portal.viewing_mode,

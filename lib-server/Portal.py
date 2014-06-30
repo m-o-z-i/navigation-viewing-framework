@@ -157,19 +157,18 @@ class PortalManager(avango.script.Script):
 
 
   ## Adds a new Portal instance to the scene.
-  # @param SCENE_MATRIX Matrix where the portal looks from (exit).
-  # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
-  # @param PLATOFORM_TRANSFORM Transformation matrix of the portal platform.
+  # @param PLATFORM_TRANSFORM Transformation matrix of the portal platform.
   # @param PLATFORM_SCALE Scaling factor of the portal platform.
   # @param PLATFORM_OFFSET Offset matrix of the portal on the platform.
+  # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
   # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   # @param BORDER_MATERIAL The material string to be used for the portal's border.
-  def add_portal(self, SCENE_MATRIX, PORTAL_MATRIX, PLATFORM_TRANSFORM, PLATFORM_SCALE, PLATFORM_OFFSET, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
-    _portal = Portal(self, self.counter, SCENE_MATRIX, PORTAL_MATRIX, PLATFORM_TRANSFORM, PLATFORM_SCALE, PLATFORM_OFFSET, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
+  def add_portal(self, PLATFORM_TRANSFORM, PLATFORM_SCALE, PLATFORM_OFFSET, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
+    _portal = Portal(self, self.counter, PLATFORM_TRANSFORM, PLATFORM_SCALE, PLATFORM_OFFSET, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
     self.counter += 1
     self.portals.append(_portal)
     return _portal
@@ -225,11 +224,10 @@ class Portal:
   ## Custom constructor.
   # @param PORTAL_MANAGER Reference to the PortalManager to be used.
   # @param ID The portal ID to be assigned to the new portal.
-  # @param SCENE_MATRIX Matrix where the portal looks from (exit).
+  # @param PLATFORM_TRANSFORM Transformation matrix of the portal exit's platform.
+  # @param PLATFORM_SCALE Scaling factor of the portal exit's platform.
+  # @param PLATFORM_OFFSET Offset matrix of the portal on the exit platform.
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
-  # @param PLATOFORM_TRANSFORM Transformation matrix of the portal platform.
-  # @param PLATFORM_SCALE Scaling factor of the portal platform.
-  # @param PLATFORM_OFFSET Offset matrix of the portal on the platform.
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
   # @param VIEWING_MODE Viewing mode of the portal, can be either "2D" or "3D".
@@ -239,11 +237,10 @@ class Portal:
   def __init__(self
              , PORTAL_MANAGER
              , ID
-             , SCENE_MATRIX
-             , PORTAL_MATRIX
              , PLATFORM_TRANSFORM
              , PLATFORM_SCALE
              , PLATFORM_OFFSET
+             , PORTAL_MATRIX
              , WIDTH
              , HEIGHT
              , VIEWING_MODE
@@ -261,7 +258,9 @@ class Portal:
 
     ## @var scene_matrix
     # Matrix where the portal looks from (exit).
-    self.scene_matrix = SCENE_MATRIX
+    self.scene_matrix = PLATFORM_TRANSFORM * \
+                        avango.gua.make_scale_mat(PLATFORM_SCALE) * \
+                        PLATFORM_OFFSET
 
     ## @var portal_matrix
     # Matrix where the portal display is located (entry).

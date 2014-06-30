@@ -43,6 +43,7 @@ class TUIODevice(MultiDofDevice):
 
     def my_constructor(self, no_tracking_mat, display):
         self.init_station_tracking(None, no_tracking_mat)
+        self.no_tracking_mat = no_tracking_mat
 
         # register gestures
         # TODO: do this somewhere else
@@ -66,7 +67,7 @@ class TUIODevice(MultiDofDevice):
                 del self.activePoints[touchPoint.CursorID.value]
 
         for gesture in self.gestures:
-            gesture.processGesture(self.activePoints.values(), self.mf_dof)
+            gesture.processGesture(self.activePoints.values(), self)
 
 
     def registerGesture(self, gesture):
@@ -96,13 +97,13 @@ class MultiTouchGesture(object):
     def __init__(self, display):
         self.display = display
 
-    def processGesture(self, activePoints, mfDof):
+    def processGesture(self, activePoints, mDofDevice):
         """
         Process gesture. This method needs to be implemented in subclasses.
 
         @abstract
         @param activePoints: a list of currently active points
-        @param mfDof: reference to multi-DoF field for navigation : [trans_x, trans_y, trans_z, pitch, head, roll, scale]
+        @param mDofDevice: reference to multi-DoF device
         @return True if gesture was executed, otherwise False
         """
         pass
@@ -115,7 +116,7 @@ class DragGesture(MultiTouchGesture):
         self.lastPos = None
         self.posSumY = 0
 
-    def processGesture(self, activePoints, mfDof):
+    def processGesture(self, activePoints, mDofDevice):
         if 1 != len(activePoints):
             self.lastPos = None
             return False
@@ -145,11 +146,12 @@ class DragGesture(MultiTouchGesture):
         if .27 < abs(newPosY):
             newPosY = math.copysign(.27, newPosY)
 
-        mfDof.value[0] += newPosX
-        mfDof.value[2] += newPosY
+        mDofDevice.mf_dof.value[0] += newPosX
+        mDofDevice.mf_dof.value[2] += newPosY
         self.posSumY += newPosY
 
         self.lastPos = (point.PosX.value, point.PosY.value)
+
 
         return True
 
@@ -169,15 +171,15 @@ class PinchGesture(MultiTouchGesture):
         self.centerDirection.normalize()
 
 
-    def processGesture(self, activePoints, mfDof):
+    def processGesture(self, activePoints, mDofDevice):
         if len(activePoints) != 2:
             self.distances = []
             self.scaleCenter = None
             self.centerDirection = None
             return False
 
-        vec1 = avango.gua.Vec2(activePoints[0].PosX.value, activePoints[0].PosY.value)
-        vec2 = avango.gua.Vec2(activePoints[1].PosX.value, activePoints[1].PosY.value)
+        vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
+        vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
         distance = vec2 - vec1
         if None == self.scaleCenter:
             self._calculateScaleCenter(vec1, vec2)
@@ -196,9 +198,13 @@ class PinchGesture(MultiTouchGesture):
         #if abs(relDistance) < .0005:
         #    return False
 
-        mfDof.value[6] += relDistance * 16.3
-        mfDof.value[0] -= self.centerDirection.x * relDistance * 15 * self.display.size[0]
-        mfDof.value[2] -= self.centerDirection.y * relDistance * 15 * self.display.size[1]
+        center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
+        rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
+        mDofDevice.tracking_reader.set_no_tracking_matrix(rotMat)
+
+        mDofDevice.mf_dof.value[6] += relDistance * 16.3
+        mDofDevice.mf_dof.value[0] -= self.centerDirection.x * relDistance * 15 * self.display.size[0]
+        mDofDevice.mf_dof.value[2] -= self.centerDirection.y * relDistance * 15 * self.display.size[1]
 
         return True
 
@@ -209,14 +215,14 @@ class RotationGesture(MultiTouchGesture):
         self.distances = []
 
 
-    def processGesture(self, activePoints, mfDof):
+    def processGesture(self, activePoints, mDofDevice):
         if len(activePoints) != 2:
             self.distances = []
             return False
 
         vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
         vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
-        distance = vec1 - vec2
+        distance = vec2 - vec1
         distance = avango.gua.Vec3(distance.x * self.display.size[0], distance.y * self.display.size[1], 0)
         distance.normalize()
 
@@ -234,8 +240,11 @@ class RotationGesture(MultiTouchGesture):
         if 1.0 < dotProduct:
             dotProduct = 1.0
 
+        center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
+        rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
+        mDofDevice.tracking_reader.set_no_tracking_matrix(rotMat)
         angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, crossProduct.z)
-        mfDof.value[4] += angle
+        mDofDevice.mf_dof.value[4] += angle
 
         return True
 

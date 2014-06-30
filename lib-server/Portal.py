@@ -59,7 +59,6 @@ class PortalManager(avango.script.Script):
     '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                     1.0,
-                    avango.gua.make_identity_mat(),
                     avango.gua.make_trans_mat(0.0, 2.0, -1.5) * avango.gua.make_rot_mat(45, 1, 0, 0),
                     1.0,
                     1.0,
@@ -69,10 +68,9 @@ class PortalManager(avango.script.Script):
                     "data/materials/ShadelessBlue.gmd")
     '''
     
-    '''   
+    '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 2.0),
                     0.2,
-                    avango.gua.make_identity_mat(),
                     avango.gua.make_trans_mat(-1.2, 2.0, -2.5),
                     1.0,
                     1.0,
@@ -85,7 +83,6 @@ class PortalManager(avango.script.Script):
     '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
                     1.0,
-                    avango.gua.make_identity_mat(),
                     avango.gua.make_trans_mat(1.2, 2.0, -2.5),
                     1.0,
                     1.0,
@@ -103,7 +100,6 @@ class PortalManager(avango.script.Script):
                                   "3D",
                                   "PERSPECTIVE",
                                   "False")
- 
     '''
 
     self.always_evaluate(True)
@@ -134,7 +130,6 @@ class PortalManager(avango.script.Script):
             time.time() - _last_teleport_time > 1.0                and \
             _portal.viewing_mode == "3D":
 
-          print _mat_in_portal_space.get_rotate(), _mat_in_portal_space.get_scale()
           print_warning("Portal teleportation deactivated for debugging.")
           return
 

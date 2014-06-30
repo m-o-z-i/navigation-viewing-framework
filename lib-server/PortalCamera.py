@@ -274,10 +274,16 @@ class PortalCamera(avango.script.Script):
     if self.drag_relation_portal_scene != None:
 
       _current_portal_matrix = self.current_portal.portal_matrix_node.Transform.value
-      self.current_portal.scene_matrix_node.Transform.value = avango.gua.make_inverse_mat(
-                                                                avango.gua.make_inverse_mat(_current_portal_matrix) * \
-                                                                self.drag_relation_portal_scene
-                                                              )
+      _new_scene_matrix = avango.gua.make_inverse_mat(
+                                                      avango.gua.make_inverse_mat(_current_portal_matrix) * \
+                                                      self.drag_relation_portal_scene
+                                                     )
+      self.current_portal.set_platform_transform(_new_scene_matrix * \
+                                                 avango.gua.make_inverse_mat(self.current_portal.platform_offset) * \
+                                                 avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.current_portal.platform_scale))
+                                                )
+
+      #self.current_portal.scene_matrix_node.Transform.value = 
       # update platform node
 
 

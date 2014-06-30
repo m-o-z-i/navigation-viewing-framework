@@ -343,11 +343,28 @@ class Portal:
 
   ##
   #
+  def set_platform_transform(self, PLATFORM_TRANSFORM):
+    self.platform_transform = PLATFORM_TRANSFORM
+    self.scene_matrix_node.Transform.value = self.platform_transform * \
+                                             avango.gua.make_scale_mat(self.platform_scale) * \
+                                             self.platform_offset
+
+  ##
+  #
   def set_platform_scale(self, SCALE):
     self.platform_scale = SCALE
     self.scene_matrix_node.Transform.value = self.platform_transform * \
                                              avango.gua.make_scale_mat(self.platform_scale) * \
                                              self.platform_offset
+
+  ##
+  #
+  def set_platform_offset(self, PLATFORM_OFFSET):
+    self.platform_offset = PLATFORM_OFFSET
+    self.scene_matrix_node.Transform.value = self.platform_transform * \
+                                             avango.gua.make_scale_mat(self.platform_scale) * \
+                                             self.platform_offset
+
 
   def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0]):
 

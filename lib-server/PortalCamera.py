@@ -484,7 +484,7 @@ class PortalCamera(avango.script.Script):
         _portal = self.PORTAL_MANAGER.add_portal(self.NAVIGATION.platform.platform_transform_node.Transform.value,
                                                  self.NAVIGATION.inputmapping.sf_scale.value,
                                                  self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0), 
-                                                 avango.gua.make_identity_mat(),
+                                                 self.sf_world_border_mat_no_scale.value,
                                                  self.portal_width,
                                                  self.portal_height,
                                                  self.capture_viewing_mode,

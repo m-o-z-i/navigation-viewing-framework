@@ -237,7 +237,7 @@ class Platform(avango.script.Script):
             _display.name + " " + str(self.displays.index(_display))]
           , stderr=subprocess.PIPE)
         
-        #time.sleep(1)
+        time.sleep(1)
       else:
         print_warning("Start of client on " + _display.hostname + " disabled for debugging reasons.")
 

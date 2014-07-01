@@ -212,8 +212,8 @@ class Portal:
   ## Custom constructor.
   # @param PORTAL_MANAGER Reference to the PortalManager to be used.
   # @param ID The portal ID to be assigned to the new portal.
-  # @param PLATFORM_MATRIX Transformation matrix of the portal exit's platform.
-  # @param PLATFORM_SCALE Scaling factor of the portal exit's platform.
+  # @param SCENE_MATRIX Transformation matrix of the portal exit's platform.
+  # @param SCENE_SCALE Scaling factor of the portal exit's platform.
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
@@ -224,8 +224,8 @@ class Portal:
   def __init__(self
              , PORTAL_MANAGER
              , ID
-             , PLATFORM_MATRIX
-             , PLATFORM_SCALE
+             , SCENE_MATRIX
+             , SCENE_SCALE
              , PORTAL_MATRIX
              , WIDTH
              , HEIGHT
@@ -244,8 +244,8 @@ class Portal:
 
     ## @var scene_matrix
     # Matrix where the portal looks from (exit).
-    self.scene_matrix = PLATFORM_MATRIX * \
-                        avango.gua.make_scale_mat(PLATFORM_SCALE)
+    self.scene_matrix = SCENE_MATRIX * \
+                        avango.gua.make_scale_mat(SCENE_SCALE)
 
     ## @var portal_matrix
     # Matrix where the portal display is located (entry).

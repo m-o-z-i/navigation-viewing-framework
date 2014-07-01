@@ -212,8 +212,8 @@ class Portal:
   ## Custom constructor.
   # @param PORTAL_MANAGER Reference to the PortalManager to be used.
   # @param ID The portal ID to be assigned to the new portal.
-  # @param SCENE_MATRIX Transformation matrix of the portal exit's platform.
-  # @param SCENE_SCALE Scaling factor of the portal exit's platform.
+  # @param PLATFORM_MATRIX Transformation matrix of the portal exit's platform.
+  # @param PLATFORM_SCALE Scaling factor of the portal exit's platform.
   # @param PORTAL_MATRIX Matrix where the portal display is located (entry).
   # @param WIDTH Width of the portal in meters.
   # @param HEIGHT Height of the portal in meters.
@@ -224,8 +224,8 @@ class Portal:
   def __init__(self
              , PORTAL_MANAGER
              , ID
-             , SCENE_MATRIX
-             , SCENE_SCALE
+             , PLATFORM_MATRIX
+             , PLATFORM_SCALE
              , PORTAL_MATRIX
              , WIDTH
              , HEIGHT
@@ -244,8 +244,8 @@ class Portal:
 
     ## @var scene_matrix
     # Matrix where the portal looks from (exit).
-    self.scene_matrix = SCENE_MATRIX * \
-                        avango.gua.make_scale_mat(SCENE_SCALE)
+    self.scene_matrix = PLATFORM_MATRIX * \
+                        avango.gua.make_scale_mat(PLATFORM_SCALE)
 
     ## @var portal_matrix
     # Matrix where the portal display is located (entry).
@@ -339,9 +339,10 @@ class Portal:
   ## Connects the portal matrix node to a field or disconnects it if None is given.
   # @param SF_PORTAL_MATRIX The field to connect the portal matrix node with. None if disconnection is required.
   def connect_portal_matrix(self, SF_PORTAL_MATRIX):
-    if SF_PORTAL_MATRIX == None:
-      self.portal_matrix_node.Transform.disconnect()
-    else:
+
+    self.portal_matrix_node.Transform.disconnect()
+    
+    if SF_PORTAL_MATRIX != None:
       self.portal_matrix_node.Transform.connect_from(SF_PORTAL_MATRIX)
 
   ## Modifies the scene matrix by the input values given from a device.

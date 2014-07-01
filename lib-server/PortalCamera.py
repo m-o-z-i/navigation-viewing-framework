@@ -74,6 +74,10 @@ class PortalCamera(avango.script.Script):
   # Boolean field to check if the scene copy button was pressed.
   sf_scene_copy_button = avango.SFBool()
 
+  ## @var sf_maximize_button
+  # Boolean field to check if the maximize button was pressed.
+  sf_maximize_button = avango.SFBool()
+
   ## @var sf_2D_mode_button
   # Boolean field to check if the 2D mode button was pressed.
   sf_2D_mode_button = avango.SFBool()
@@ -196,6 +200,7 @@ class PortalCamera(avango.script.Script):
     self.sf_delete_button.connect_from(self.device_sensor.Button15)
     self.sf_gallery_button.connect_from(self.device_sensor.Button6)
     self.sf_scene_copy_button.connect_from(self.device_sensor.Button3)
+    self.sf_maximize_button.connect_from(self.device_sensor.Button14)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
     self.sf_3D_mode_button.connect_from(self.device_sensor.Button8)
     self.sf_negative_parallax_on_button.connect_from(self.device_sensor.Button12)
@@ -308,7 +313,7 @@ class PortalCamera(avango.script.Script):
          self.current_portal != None and \
          self.gallery_activated == False:
         
-        _device_values = _interaction_space.get_values()
+        _device_values = _interaction_space.mf_device_transformed_values.value
         self.current_portal.modify_scene_matrix(_device_values)
 
     # update matrices in gallery mode
@@ -610,7 +615,7 @@ class PortalCamera(avango.script.Script):
           _portal.set_visibility(False)
           _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
 
-  ## Called whenever sf_scene_copy_button_changes.
+  ## Called whenever sf_scene_copy_button changes.
   @field_has_changed(sf_scene_copy_button)
   def sf_scene_copy_button_changed(self):
     if self.sf_scene_copy_button.value == True:
@@ -629,7 +634,36 @@ class PortalCamera(avango.script.Script):
                                                  self.current_portal.border_material)
         self.free_portals.append(_portal)
 
-      
+  ## Called whenever sf_maximize_button changes.
+  @field_has_changed(sf_maximize_button)
+  def sf_maximize_button_changed(self):
+    if self.sf_maximize_button.value == True:
+
+      for _interaction_space in self.interaction_spaces:
+
+        if _interaction_space.is_inside(self.tracking_reader.sf_abs_mat.value.get_translate()) and \
+           self.gallery_activated == False:
+          
+          if _interaction_space.maximized_portal == None:
+
+            if self.current_portal == None:
+              return
+
+            self.current_portal.connect_portal_matrix(_interaction_space.sf_min_y_plane_transform)
+            _interaction_space.maximized_portal = self.current_portal
+            self.current_portal = None
+
+          else:
+
+            if self.current_portal != None:
+              return
+
+            _interaction_space.maximized_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+            self.current_portal = _interaction_space.maximized_portal
+            _interaction_space.maximized_portal = None
+
+          return
+
   ## Called whenever sf_2D_mode_button changes.
   @field_has_changed(sf_2D_mode_button)
   def sf_2D_mode_button_changed(self):

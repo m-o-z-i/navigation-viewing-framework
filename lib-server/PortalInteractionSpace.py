@@ -19,19 +19,36 @@ from Device import *
 # modifying the scene matrices of portals.
 class PortalInteractionSpace(avango.script.Script):
 
+  ## @var mf_device_values
+  # Multi field containing the device's input values.
+  mf_device_values = avango.MFFloat()
+
+  ## @var mf_device_transformed_values
+  # Multi field containing the scaled device input values.
+  mf_device_transformed_values = avango.MFFloat()
+
+  ## @var sf_min_y_plane_transform
+  # Transformation matrix of the min y plane.
+  sf_min_y_plane_transform = avango.gua.SFMatrix4()
+
   ## Default constructor.
   def __init__(self):
     self.super(PortalInteractionSpace).__init__()
 
   ## Custom constructor.
   # @param DEVICE Instance of Device to be used for portal navigation.
+  # @param PLATFORM Platform instance to which this PortalInteractionSpace is belonging to.
   # @param MIN_POINT Minimum coordinates of the point spanning up the space.
   # @param MAX_POINT Maximum coordinates of the point spanning up the space.
-  def my_constructor(self, DEVICE, MIN_POINT, MAX_POINT):
+  def my_constructor(self, DEVICE, PLATFORM, MIN_POINT, MAX_POINT):
 
     ## @var DEVICE
     # Instance of Device to be used for portal navigation.
     self.DEVICE = DEVICE
+
+    ## @var PLATFORM
+    # Platform instance to which this PortalInteractionSpace is belonging to.
+    self.PLATFORM = PLATFORM
 
     ## @var MIN_POINT
     # Minimum coordinates of the point spanning up the space.
@@ -40,6 +57,29 @@ class PortalInteractionSpace(avango.script.Script):
     ## @var MAX_POINT
     # Maximum coordinates of the point spanning up the space.
     self.MAX_POINT = MAX_POINT
+
+    ## @var maximized_portal
+    # Portal instance which is currently maximized in this interaction space.
+    self.maximized_portal = None
+
+    self.mf_device_values.connect_from(self.DEVICE.mf_dof)
+
+    # set evaluation policy
+    self.always_evaluate(True)
+
+  ## Evaluated every frame.
+  def evaluate(self):
+    
+    _avg_point = (self.MIN_POINT + self.MAX_POINT) / 2
+    _plane_transform = avango.gua.make_trans_mat(_avg_point.x, self.MIN_POINT.y, _avg_point.z) * \
+                       avango.gua.make_rot_mat(90, 0, 1, 0) * \
+                       avango.gua.make_rot_mat(-90, 1, 0, 0) * \
+                       avango.gua.make_scale_mat(3)
+    
+    #avango.gua.make_scale_mat( (self.MAX_POINT.x-self.MIN_POINT.x)/2, 1.0, (self.MAX_POINT.z-self.MIN_POINT.z)/2 )
+
+    self.sf_min_y_plane_transform.value = self.PLATFORM.platform_scale_transform_node.WorldTransform.value * \
+                                          _plane_transform
 
   ## Returns a boolean saying if a point lies within the interaction space.
   # @param POINT The point to be checked for.
@@ -57,16 +97,16 @@ class PortalInteractionSpace(avango.script.Script):
 
      return False
 
-  ## Returns the current input values of the associated device.
-  def get_values(self):
+  ## Called whenever mf_device_values changes.
+  @field_has_changed(mf_device_values)
+  def mf_device_values_changed(self):
 
-    _values = self.DEVICE.mf_dof.value
+    self.mf_device_transformed_values.value = self.mf_device_values.value
 
-    _values[0] *= self.DEVICE.translation_factor
-    _values[1] *= self.DEVICE.translation_factor
-    _values[2] *= self.DEVICE.translation_factor
-    _values[3] *= self.DEVICE.rotation_factor
-    _values[4] *= self.DEVICE.rotation_factor
-    _values[5] *= self.DEVICE.rotation_factor
+    self.mf_device_transformed_values.value[0] *= self.DEVICE.translation_factor
+    self.mf_device_transformed_values.value[1] *= self.DEVICE.translation_factor
+    self.mf_device_transformed_values.value[2] *= self.DEVICE.translation_factor
+    self.mf_device_transformed_values.value[3] *= self.DEVICE.rotation_factor
+    self.mf_device_transformed_values.value[4] *= self.DEVICE.rotation_factor
+    self.mf_device_transformed_values.value[5] *= self.DEVICE.rotation_factor
 
-    return _values

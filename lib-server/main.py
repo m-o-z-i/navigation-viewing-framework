@@ -26,6 +26,16 @@ import subprocess
 # @param CONFIG_FILE The filname of the configuration file to parse.
 # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
 
+class TimedRotate(avango.script.Script):
+  TimeIn = avango.SFFloat()
+  MatrixOut = avango.gua.SFMatrix4()
+
+  @field_has_changed(TimeIn)
+  def update(self):
+    self.MatrixOut.value = avango.gua.make_trans_mat(0.0,1.2,0.0) * \
+                           avango.gua.make_rot_mat(self.TimeIn.value*15.0, 0.0, 1.0, 0.0) * \
+                           avango.gua.make_scale_mat(0.1)
+
 ## Main method for the server application
 def start():
 
@@ -77,6 +87,21 @@ def start():
   scene_manager = SceneManager()
   scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
+  ######## TEST
+  #videoloader = avango.gua.nodes.Video3DLoader()
+  #video_geode = videoloader.load("kinect", "/opt/kinect-resources/kinect_surfaceLCD.ks")
+  #nettrans.Children.value.append(video_geode)
+  #nettrans.distribute_object(video_geode)
+
+  #plodloader = avango.gua.nodes.PLODLoader()
+  #plodloader.UploadBudget.value = 32
+  #plodloader.RenderBudget.value = 2048
+  #plodloader.OutOfCoreBudget.value = 4096
+  #plod_geode = plodloader.create_geometry_from_file("point_cloud", "/mnt/pitoti/KDN_LOD/PITOTI_KDN_LOD/Spacemonkey_new.kdn")
+  #nettrans.Children.value.append(plod_geode)
+  #nettrans.distribute_object(plod_geode)
+  ######## END TEST
+
   # initialize portal manager
   portal_manager = PortalManager()
   portal_manager.my_constructor(graph, application_manager.navigation_list)
@@ -90,10 +115,16 @@ def start():
 
   table_interaction_space = PortalInteractionSpace()
   table_interaction_space.my_constructor(table_device
-                                       , avango.gua.Vec3(-2.05, 0.85, 1.62)
-                                       , avango.gua.Vec3(-1.09, 1.15, 2.88))
+                                       , application_manager.navigation_list[0].platform
+                                       , avango.gua.Vec3(-2.016, 0.956, 1.651)
+                                       , avango.gua.Vec3(-1.152, 1.021, 2.904))
   portal_camera.add_interaction_space(table_interaction_space)
 
+  monkey_updater = TimedRotate()
+
+  timer = avango.nodes.TimeSensor()
+  monkey_updater.TimeIn.connect_from(timer.Time)
+  graph["/net/Monkey/group/monkey1"].Transform.connect_from(monkey_updater.MatrixOut)
 
   # initialize animation manager
   #animation_manager = AnimationManager()

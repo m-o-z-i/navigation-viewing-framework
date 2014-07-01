@@ -78,6 +78,9 @@ class PortalInteractionSpace(avango.script.Script):
     self.sf_min_y_plane_transform.value = self.PLATFORM.platform_scale_transform_node.WorldTransform.value * \
                                           _plane_transform
 
+    if self.maximized_portal != None:
+      self.maximized_portal.modify_scene_matrix(self.mf_device_transformed_values.value)
+
   ## Returns a boolean saying if a point lies within the interaction space.
   # @param POINT The point to be checked for.
   def is_inside(self, POINT):

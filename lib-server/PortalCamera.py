@@ -311,7 +311,8 @@ class PortalCamera(avango.script.Script):
 
       if _interaction_space.is_inside(self.tracking_reader.sf_abs_mat.value.get_translate()) and \
          self.current_portal != None and \
-         self.gallery_activated == False:
+         self.gallery_activated == False and \
+         _interaction_space.maximized_portal == None:
         
         _device_values = _interaction_space.mf_device_transformed_values.value
         self.current_portal.modify_scene_matrix(_device_values)

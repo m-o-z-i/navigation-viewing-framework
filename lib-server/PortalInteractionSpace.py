@@ -75,8 +75,6 @@ class PortalInteractionSpace(avango.script.Script):
                        avango.gua.make_rot_mat(90, 0, 1, 0) * \
                        avango.gua.make_rot_mat(-90, 1, 0, 0) * \
                        avango.gua.make_scale_mat(3)
-    
-    #avango.gua.make_scale_mat( (self.MAX_POINT.x-self.MIN_POINT.x)/2, 1.0, (self.MAX_POINT.z-self.MIN_POINT.z)/2 )
 
     self.sf_min_y_plane_transform.value = self.PLATFORM.platform_scale_transform_node.WorldTransform.value * \
                                           _plane_transform

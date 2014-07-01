@@ -375,13 +375,14 @@ class Portal:
                              avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
                              avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
                              avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0) * \
-                             avango.gua.make_rot_mat(self.platform_matrix.get_rotate())
+                             avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected())
 
       _scene_transform = _new_platform_matrix * \
                          avango.gua.make_scale_mat(self.platform_scale)
 
       self.platform_matrix = _new_platform_matrix
       self.scene_matrix_node.Transform.value = _scene_transform
+      print self.scene_matrix_node.Transform.value.get_scale()
 
 
   ## Sets the border material to be used for the portal.

@@ -102,6 +102,27 @@ class PortalInteractionSpace(avango.script.Script):
   def get_height(self):
     return self.MAX_POINT.x - self.MIN_POINT.x
 
+  ## Adds a portal instance to this interaction space and maximizes it.
+  # @param PORTAL_INSTANCE The Portal instance to be added.
+  def add_maximized_portal(self, PORTAL_INSTANCE):
+
+    if self.maximized_portal == None:
+
+      PORTAL_INSTANCE.connect_portal_matrix(self.sf_min_y_plane_transform)
+      PORTAL_INSTANCE.set_size(self.get_width(), self.get_height())
+      self.maximized_portal = PORTAL_INSTANCE
+ 
+  ## Removes and returns the currently maximized portal.
+  def remove_maximized_portal(self):
+
+    if self.maximized_portal != None:
+
+      _portal = self.maximized_portal
+      self.maximized_portal = None
+      return _portal 
+
+
+
   ## Called whenever mf_device_values changes.
   @field_has_changed(mf_device_values)
   def mf_device_values_changed(self):

@@ -639,33 +639,36 @@ class PortalCamera(avango.script.Script):
   def sf_maximize_button_changed(self):
     if self.sf_maximize_button.value == True:
 
+      # check in which interaction space the PortalCamera is
       for _interaction_space in self.interaction_spaces:
 
         if _interaction_space.is_inside(self.tracking_reader.sf_abs_mat.value.get_translate()) and \
            self.gallery_activated == False:
           
+          # push current portal to interaction space and maximize it
           if _interaction_space.maximized_portal == None:
 
-            if self.current_portal == None:
+            if self.current_portal == None: # no portal to maximize
               return
 
-            self.current_portal.connect_portal_matrix(_interaction_space.sf_min_y_plane_transform)
-            self.current_portal.set_size(_interaction_space.get_width(), _interaction_space.get_height())
-            _interaction_space.maximized_portal = self.current_portal
+            _portal = self.current_portal
             self.last_open_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
+            self.gallery_focus_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
             self.captured_portals.remove(self.current_portal)
             self.current_portal = None
+            _interaction_space.add_maximized_portal(_portal)
 
+          # grab portal from interaction space and resize it
           else:
 
             if self.current_portal != None:
-              return
+              self.current_portal.set_visibility(False)
 
-            _interaction_space.maximized_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-            self.current_portal = _interaction_space.maximized_portal
+            _portal = _interaction_space.remove_maximized_portal()
+            _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+            self.current_portal = _portal
             self.current_portal.set_size(self.portal_width, self.portal_height)
             self.captured_portals.append(self.current_portal)
-            _interaction_space.maximized_portal = None
 
           return
 

@@ -199,6 +199,14 @@ class PortalPreView(avango.script.Script):
   sf_slot_world_mat = avango.gua.SFMatrix4()
   sf_slot_world_mat.value = avango.gua.make_identity_mat()
 
+  ## @var sf_screen_width
+  # Field containing the current width of the portal screen.
+  sf_screen_width = avango.SFFloat()
+
+  ## @var sf_screen_height
+  # Field containing the current height of the portal screen.
+  sf_screen_height = avango.SFFloat()
+
   ## @var mf_portal_modes
   # Field containing the GroupNames of the associated portal node. Used for transferring portal mode settings.
   mf_portal_modes = avango.MFString()
@@ -349,6 +357,8 @@ class PortalPreView(avango.script.Script):
 
     # init field connections
     self.sf_slot_world_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].WorldTransform)
+    self.sf_screen_width.connect_from(self.screen_node.Width)
+    self.sf_screen_height.connect_from(self.screen_node.Height)
 
   ## Compares a given portal node with the portal node associated with this instance.
   # @param PORTAL_NODE The portal node to be compared with.
@@ -357,6 +367,13 @@ class PortalPreView(avango.script.Script):
       return True
 
     return False
+
+  ## Updates the size of the portal according to the screen node.
+  def update_size(self):
+    self.textured_quad.Width.value = self.screen_node.Width.value
+    self.textured_quad.Height.value = self.screen_node.Height.value
+    self.back_geometry.Transform.value = avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    self.portal_border.Transform.value = self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
 
   ## Removes this portal from the local portal group and destroys all the scenegraph nodes.
   def deactivate(self):
@@ -464,3 +481,13 @@ class PortalPreView(avango.script.Script):
       self.portal_border.GroupNames.value.append("do_not_display_group")
       self.back_geometry.GroupNames.value.append("do_not_display_group")
       self.pipeline.Enabled.value = False
+
+  ## Called whenever sf_screen_width changes.
+  @field_has_changed(sf_screen_width)
+  def sf_screen_width_changed(self):
+    self.update_size()
+
+  ## Called whenever sf_screen_height changes.
+  @field_has_changed(sf_screen_height)
+  def sf_screen_height_changed(self):
+    self.update_size()

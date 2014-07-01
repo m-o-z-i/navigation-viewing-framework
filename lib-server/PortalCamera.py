@@ -650,6 +650,7 @@ class PortalCamera(avango.script.Script):
               return
 
             self.current_portal.connect_portal_matrix(_interaction_space.sf_min_y_plane_transform)
+            self.current_portal.set_size(_interaction_space.get_width(), _interaction_space.get_height())
             _interaction_space.maximized_portal = self.current_portal
             self.last_open_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
             self.captured_portals.remove(self.current_portal)
@@ -662,6 +663,7 @@ class PortalCamera(avango.script.Script):
 
             _interaction_space.maximized_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
             self.current_portal = _interaction_space.maximized_portal
+            self.current_portal.set_size(self.portal_width, self.portal_height)
             self.captured_portals.append(self.current_portal)
             _interaction_space.maximized_portal = None
 

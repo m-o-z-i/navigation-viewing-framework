@@ -73,8 +73,7 @@ class PortalInteractionSpace(avango.script.Script):
     _avg_point = (self.MIN_POINT + self.MAX_POINT) / 2
     _plane_transform = avango.gua.make_trans_mat(_avg_point.x, self.MIN_POINT.y, _avg_point.z) * \
                        avango.gua.make_rot_mat(90, 0, 1, 0) * \
-                       avango.gua.make_rot_mat(-90, 1, 0, 0) * \
-                       avango.gua.make_scale_mat(3)
+                       avango.gua.make_rot_mat(-90, 1, 0, 0)
 
     self.sf_min_y_plane_transform.value = self.PLATFORM.platform_scale_transform_node.WorldTransform.value * \
                                           _plane_transform
@@ -94,6 +93,14 @@ class PortalInteractionSpace(avango.script.Script):
        return True
 
      return False
+
+  ## Gets the width of the interaction space.
+  def get_width(self):
+    return self.MAX_POINT.z - self.MIN_POINT.z
+
+  ## Gets the height of the interaction space.
+  def get_height(self):
+    return self.MAX_POINT.x - self.MIN_POINT.x
 
   ## Called whenever mf_device_values changes.
   @field_has_changed(mf_device_values)

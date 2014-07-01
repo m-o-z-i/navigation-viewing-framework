@@ -400,6 +400,15 @@ class Portal:
 
     self.portal_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
+  ## Sets width and height of the portal.
+  # @param WIDTH The new portal width to be set.
+  # @param HEIGHT The new portal height to be set.
+  def set_size(self, WIDTH, HEIGHT):
+    self.width = WIDTH
+    self.height = HEIGHT
+    self.portal_screen_node.Width.value = self.width
+    self.portal_screen_node.Height.value = self.height
+
   ## Appends the necessary portal scenegraph nodes on server side.
   def append_portal_nodes(self):
 

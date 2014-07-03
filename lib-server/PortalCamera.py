@@ -25,10 +25,6 @@ class PortalCamera(avango.script.Script):
   # Tracking matrix of the PortalCamera within the platform coordinate system.
   sf_tracking_mat = avango.gua.SFMatrix4()
 
-  ## @var sf_border_mat
-  # Matrix with which the camera frame will be connected.
-  sf_border_mat = avango.gua.SFMatrix4()
-
   ## @var sf_world_border_mat_no_scale
   # World transformation of the camera frame without scaling. Used for Portal instantiation.
   sf_world_border_mat_no_scale = avango.gua.SFMatrix4()
@@ -166,11 +162,12 @@ class PortalCamera(avango.script.Script):
 
 
   ## Custom constructor.
+  # @param ID Identification number of the PortalCamera. Used for scenegraph node naming.
   # @param PORTAL_MANAGER Reference to the PortalManager used for Portal creation and management.
   # @param NAVIGATION Navigation instance to which this PortalCamera belongs to.
   # @param CAMERA_INPUT_NAME Name of the PortalCamera's input sensor as registered in daemon.
   # @param CAMERA_TRACKING_NAME Name of the PortalCamera's tracking target as registered in daemon.
-  def my_constructor(self, PORTAL_MANAGER, NAVIGATION, CAMERA_INPUT_NAME, CAMERA_TRACKING_NAME):
+  def my_constructor(self, ID, PORTAL_MANAGER, NAVIGATION, CAMERA_INPUT_NAME, CAMERA_TRACKING_NAME):
     
     ## @var PORTAL_MANAGER
     # Reference to the PortalManager used for Portal creation and management.
@@ -214,9 +211,9 @@ class PortalCamera(avango.script.Script):
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
-    ##
-    #
-    self.portal_camera_node = avango.gua.nodes.TransformNode(Name = "portal_cam_0")
+    ## @var portal_camera_node
+    # Scenegraph node below the platform node to represent this PortalCamera.
+    self.portal_camera_node = avango.gua.nodes.TransformNode(Name = "portal_cam_" + str(ID))
     self.portal_camera_node.Transform.connect_from(self.tracking_reader.sf_abs_mat)
     self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
     self.PLATFORM_NODE.Children.value.append(self.portal_camera_node)
@@ -257,11 +254,6 @@ class PortalCamera(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
-
-    # update portal and camera frame matrix
-    self.sf_border_mat.value  = self.tracking_reader.sf_abs_mat.value * \
-                                avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
-                                avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
 
     self.sf_world_border_mat_no_scale.value = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
                                               self.tracking_reader.sf_abs_mat.value * \

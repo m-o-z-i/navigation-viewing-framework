@@ -214,14 +214,20 @@ class PortalCamera(avango.script.Script):
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
+    ##
+    #
+    self.portal_camera_node = avango.gua.nodes.TransformNode(Name = "portal_cam_0")
+    self.portal_camera_node.Transform.connect_from(self.tracking_reader.sf_abs_mat)
+    self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
+    self.PLATFORM_NODE.Children.value.append(self.portal_camera_node)
+
     ## @var camera_frame
     # Geometry node containing the PortalCamera's portal frame.
-    self.camera_frame = _loader.create_geometry_from_file("portal_camera", "data/objects/screen.obj", "data/materials/ShadelessRed.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.camera_frame = _loader.create_geometry_from_file("camera_frame", "data/objects/screen.obj", "data/materials/ShadelessRed.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
+                                        avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
     self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.camera_frame.GroupNames.value = ["do_not_display_group"]
-    self.PLATFORM_NODE.Children.value.append(self.camera_frame)
-
-    self.camera_frame.Transform.connect_from(self.sf_border_mat)
+    self.portal_camera_node.Children.value.append(self.camera_frame)
 
     ## @var viewing_mode_indicator
     # Tiny geometry in the border of the camera frame to illustrate the current state of self.capture_viewing_mode.
@@ -229,12 +235,12 @@ class PortalCamera(avango.script.Script):
                                                                     'data/objects/plane.obj',
                                                                     'data/materials/CameraMode' + self.capture_viewing_mode + '.gmd',
                                                                     avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width * 1.5, self.portal_height * 1.5, 0.0) * \
+    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width/2 * 0.86, self.portal_height * 0.93, 0.0) * \
                                                   avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                                  avango.gua.make_scale_mat(self.portal_height * 0.3, 1.0, self.portal_height * 0.3)
+                                                  avango.gua.make_scale_mat(self.portal_height * 0.1, 1.0, self.portal_height * 0.1)
     self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
 
-    self.camera_frame.Children.value.append(self.viewing_mode_indicator)
+    self.portal_camera_node.Children.value.append(self.viewing_mode_indicator)
 
     ## @var last_open_portal_index
     # Index within self.captured_portals saying which of the Portals was lastly opened by the PortalCamera.
@@ -263,7 +269,7 @@ class PortalCamera(avango.script.Script):
 
     # always hide red camera frame when a portal is displayed
     if self.current_portal != None:
-      self.camera_frame.GroupNames.value = ["do_not_display_group"]
+      self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
 
     # apply scale changes 
     if self.sf_scale_up_button.value == True:
@@ -467,14 +473,14 @@ class PortalCamera(avango.script.Script):
     if self.sf_focus_button.value == True:
 
       try:
-        self.camera_frame.GroupNames.value = []
+        self.portal_camera_node.GroupNames.value = []
       except:
         pass
 
     else:
 
       try:
-        self.camera_frame.GroupNames.value = ["do_not_display_group"]
+        self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
       except:
         pass
 

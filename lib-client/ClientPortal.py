@@ -370,6 +370,11 @@ class PortalPreView(avango.script.Script):
 
   ## Updates the size of the portal according to the screen node.
   def update_size(self):
+    try:
+      self.textured_quad
+    except:
+      return
+
     self.textured_quad.Width.value = self.screen_node.Width.value
     self.textured_quad.Height.value = self.screen_node.Height.value
     self.back_geometry.Transform.value = avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
@@ -387,6 +392,7 @@ class PortalPreView(avango.script.Script):
     
     self.portal_matrix_node.Children.value.remove(self.textured_quad)
     del self.textured_quad
+    del self.back_geometry
 
     del self.pipeline
     del self.camera

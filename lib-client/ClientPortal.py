@@ -439,17 +439,19 @@ class PortalPreView(avango.script.Script):
 
       # check for negative parallax
       if self.mf_portal_modes.value[2] == "2-True":
-        self.pipeline.EnableGlobalClippingPlane.value = False
+        #self.pipeline.EnableGlobalClippingPlane.value = False
+        self.pipeline.NearClip.value = 0.1
       else:
-        self.pipeline.EnableGlobalClippingPlane.value = True
+        self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
+        #self.pipeline.EnableGlobalClippingPlane.value = True
 
-        _portal_scene_mat = self.PORTAL_NODE.Children.value[1].WorldTransform.value
-        _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
-        _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate()) * _vec        
-        _vec2 = _portal_scene_mat.get_translate()
-        _vec2 = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate()) * _vec2
-        _dist = _vec2.z
-        self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
+        #_portal_scene_mat = self.PORTAL_NODE.Children.value[1].WorldTransform.value
+        #_vec = avango.gua.Vec3(0.0, 0.0, -1.0)
+        #_vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate()) * _vec        
+        #_vec2 = _portal_scene_mat.get_translate()
+        #_vec2 = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate()) * _vec2
+        #_dist = _vec2.z
+        #self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
 
       # set correct border material
       if self.portal_border.Material.value != self.mf_portal_modes.value[3].replace("3-", ""):

@@ -327,7 +327,9 @@ class View(avango.script.Script):
       self.pipeline.EnableFog.value = False
 
     self.pipeline.FogStart.value = float(_splitted_string[13])
-    self.pipeline.FogStart.value = float(_splitted_string[14])
+    self.pipeline.FogEnd.value = float(_splitted_string[14])
+    self.pipeline.NearClip.value = float(_splitted_string[15])
+    self.pipeline.FarClip.value = float(_splitted_string[16])
   
     #avango.gua.reload_materials()
   

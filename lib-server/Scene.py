@@ -147,3 +147,28 @@ class SceneMonkey(SceneObject):
     _mat = avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90.0,-1,0,0)
     self.init_light(TYPE = 2, NAME = "spot_light", COLOR = avango.gua.Color(1.0, 0.25, 0.25), MATRIX = _mat, PARENT_NODE = self.scene_root, MANIPULATION_PICK_FLAG = True, ENABLE_SHADOW = True, LIGHT_DIMENSIONS = avango.gua.Vec3(2.0,2.0,1.0)) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
       
+
+class SceneWeimar(SceneObject):
+
+  # constructor
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+    SceneObject.__init__(self, "Weimar", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
+    self.enable_ssao = True
+    self.ssao_radius = 5.0
+    self.ssao_intensity = 2.0
+    self.enable_fog = True
+    self.ambient_color.value = avango.gua.Color(0.4, 0.4, 0.5)
+    self.far_clip = 3000.0
+
+    _mat = avango.gua.make_scale_mat(0.5)
+    self.init_geometry("monkey1", "/opt/3d_models/architecture/weimar_stadtmodell_29.08.12/weimar_stadtmodell_final.obj", _mat, "data/materials/SimplePhongWhite.gmd", False, True, self.scene_root, "main_scene")
+
+    _mat = avango.gua.make_scale_mat(10, 10, 10) * \
+           avango.gua.make_trans_mat(0.0, 40.0, 40.0) * \
+           avango.gua.make_rot_mat(-45.0, 1.0, 0.0, 0.0)
+    self.init_light(TYPE = 2, NAME = "spot_light", COLOR = avango.gua.Color(1.0, 1.0, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, MANIPULATION_PICK_FLAG = True, ENABLE_SHADOW = True, LIGHT_DIMENSIONS = avango.gua.Vec3(100.0,100.0,160.0), FALLOFF = 0.009, SOFTNESS = 0.003, SHADOW_MAP_SIZE = 2048)
+
+    #_mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
+    #self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = True) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE

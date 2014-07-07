@@ -117,6 +117,14 @@ class SceneObject:
     # Mapping of pipeline value FogEnd.
     self.fog_end = 500.0
 
+    ## @var near_clip
+    # Mapping of pipeline value NearClip.
+    self.near_clip = 0.1
+
+    ## @var far_clip
+    # Mapping of pipeline value FarClip.
+    self.far_clip = 1000.0
+
 
     '''
       Navigation values
@@ -162,7 +170,9 @@ class SceneObject:
            str(round(self.ambient_color.r,3)) + "," + str(round(self.ambient_color.g,3)) + "," + str(round(self.ambient_color.b,3)) + "#" + \
            str(self.enable_fog) + "#" + \
            str(self.fog_start) + "#" + \
-           str(self.fog_end)
+           str(self.fog_end) + "#" + \
+           str(self.near_clip) + "#" + \
+           str(self.far_clip)
 
 
   ## Creates and initializes a geometry node in the scene.

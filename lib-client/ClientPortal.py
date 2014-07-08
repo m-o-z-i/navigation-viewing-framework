@@ -448,7 +448,7 @@ class PortalPreView(avango.script.Script):
         self.left_eye_node.Transform.value = avango.gua.make_identity_mat()
         self.right_eye_node.Transform.value = avango.gua.make_identity_mat()
 
-      # check for camera modeF
+      # check for camera mode
       if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
         self.camera.Mode.value = 1
       else:
@@ -456,19 +456,19 @@ class PortalPreView(avango.script.Script):
 
       # check for negative parallax
       if self.mf_portal_modes.value[2] == "2-True":
-        #self.pipeline.EnableGlobalClippingPlane.value = False
-        self.pipeline.NearClip.value = 0.1
+        #self.pipeline.NearClip.value = 0.1
+        self.pipeline.EnableGlobalClippingPlane.value = False
       else:
-        self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
-        #self.pipeline.EnableGlobalClippingPlane.value = True
+        #self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
+        self.pipeline.EnableGlobalClippingPlane.value = True
 
-        #_portal_scene_mat = self.PORTAL_NODE.Children.value[1].WorldTransform.value
-        #_vec = avango.gua.Vec3(0.0, 0.0, -1.0)
-        #_vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate()) * _vec        
-        #_vec2 = _portal_scene_mat.get_translate()
-        #_vec2 = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate()) * _vec2
-        #_dist = _vec2.z
-        #self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
+        _portal_scene_mat = self.PORTAL_NODE.Children.value[1].Transform.value
+        _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
+        _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec        
+        _vec2 = _portal_scene_mat.get_translate()
+        _vec2 = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected())) * _vec2
+        _dist = _vec2.z
+        self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
 
       # set correct border material
       if self.portal_border.Material.value != self.mf_portal_modes.value[3].replace("3-", ""):

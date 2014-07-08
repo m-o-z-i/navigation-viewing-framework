@@ -59,7 +59,7 @@ def init_dlp_wall_tracking():
   _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron')     # new spheron device
 
   _dtrack.stations[23] = avango.daemon.Station('tracking-dlp-pointer1')    # AUGUST1 pointer
-  _dtrack.stations[26] = avango.daemon.Station('tracking-portal-camera')   # portal camera 3.2
+  _dtrack.stations[25] = avango.daemon.Station('tracking-portal-camera')   # portal camera 3.2
 
 
   device_list.append(_dtrack)
@@ -480,9 +480,9 @@ def init_august_pointer(ID, DEVICE_STATION_STRING):
 		print "August Pointer NOT found !"
 
 ## Initializes a portal camera for portal features.
-def init_portal_camera():
+def init_portal_camera(VERSION_NUMBER):
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"portalCam 3.2\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"portalCam " + VERSION_NUMBER + "\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
 
   _string = _string.split()
 
@@ -515,10 +515,10 @@ def init_portal_camera():
 
 
     device_list.append(_portal_camera)
-    print "Portal Cam 3.2 started at:", _string
+    print "Portal Cam " + VERSION_NUMBER + " started at:", _string
 
   else:
-    print "Portal Cam 3.2 NOT found !"
+    print "Portal Cam " + VERSION_NUMBER + " NOT found !"
 
 
 ## @var device_list
@@ -549,7 +549,7 @@ init_mouse()
 init_spacemouse()
 
 # init portal camera
-init_portal_camera()
+init_portal_camera("3.1")
 
 # init oculus rift sensors
 #init_oculus()

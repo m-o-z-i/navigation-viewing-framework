@@ -397,7 +397,16 @@ class PortalCamera(avango.script.Script):
 
         _portal.connect_portal_matrix(None)
         _portal.portal_matrix_node.Transform.value = _matrix
-        _portal.set_visibility(True)
+
+        if self.captured_portals.index(_portal) > self.gallery_focus_portal_index - 2 and \
+           self.captured_portals.index(_portal) < self.gallery_focus_portal_index + 2:
+
+          _portal.set_visibility(True)
+
+        else:
+
+          _portal.set_visibility(False)
+        
         _i += 1
 
 

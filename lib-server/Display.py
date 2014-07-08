@@ -29,6 +29,7 @@ class Display:
   # @param stereo Boolean indicating if the stereo mode is to be used.
   # @param stereomode A string indicating the stereo mode that is used by this display.
   # @param cameramode An integer indicating the Mode field value to be set on the rendering camera.
+  # @param render_mask A string supplying additional render mask constraints.
   def __init__( self
               , hostname
               , name = None
@@ -42,6 +43,7 @@ class Display:
               , stereo = False
               , stereomode = "ANAGLYPH_RED_CYAN"
               , cameramode = 0
+              , render_mask = ""
               ):
 
     # save values in members
@@ -100,6 +102,10 @@ class Display:
     ## @var cameramode
     # An integer indicating the Mode field value to be set on the rendering camera.
     self.cameramode = cameramode
+
+    ## @var render_mask
+    # A string supplying additional render mask constraints.
+    self.render_mask = render_mask
 
 
   ## Registers a new view at this display and returns the display string assigned to the new view.

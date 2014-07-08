@@ -33,8 +33,8 @@ class View(avango.script.Script):
   def __init__(self):
     self.super(View).__init__()
 
-    ##
-    #
+    ## @var portal_pre_views
+    # A list of all PortalPreView instances for this view.
     self.portal_pre_views = []
 
   ## Custom constructor.
@@ -63,8 +63,8 @@ class View(avango.script.Script):
     # The number of the screen node on the platform.
     self.screen_num = SCREEN_NUM
 
-    ##
-    #
+    ## @var is_stereo
+    # Boolean indicating if the view to be constructed is stereo or mono.
     self.is_stereo = STEREO
 
     ## @var ONLY_TRANSLATION_UPDATE
@@ -105,6 +105,8 @@ class View(avango.script.Script):
       for _slot in range(0, 10):
         if _screen != self.screen_num or _slot != self.slot_id:
           _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
+
+    _render_mask = _render_mask + " && " + DISPLAY_INSTANCE.render_mask
 
     self.camera.RenderMask.value = _render_mask
 

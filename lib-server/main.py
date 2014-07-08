@@ -116,8 +116,8 @@ def start():
   table_interaction_space = PortalInteractionSpace()
   table_interaction_space.my_constructor(table_device
                                        , application_manager.navigation_list[0].platform
-                                       , avango.gua.Vec3(-2.016, 0.956, 1.651)
-                                       , avango.gua.Vec3(-1.152, 1.021, 2.904))
+                                       , avango.gua.Vec3(-2.441, 0.956, 1.635)
+                                       , avango.gua.Vec3(-1.450, 1.021, 2.936))
   portal_camera.add_interaction_space(table_interaction_space)
 
   monkey_updater = TimedRotate()

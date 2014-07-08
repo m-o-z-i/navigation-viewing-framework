@@ -204,8 +204,8 @@ class PortalCamera(avango.script.Script):
     self.sf_open_close_button.connect_from(self.device_sensor.Button6)
     self.sf_delete_button.connect_from(self.device_sensor.Button15)
     self.sf_gallery_button.connect_from(self.device_sensor.Button11)
-    self.sf_scene_copy_button.connect_from(self.device_sensor.Button14)
-    #self.sf_maximize_button.connect_from(self.device_sensor.Button14)
+    #self.sf_scene_copy_button.connect_from(self.device_sensor.Button14)
+    self.sf_maximize_button.connect_from(self.device_sensor.Button14)
     self.sf_size_up_button.connect_from(self.device_sensor.Button3)
     self.sf_size_down_button.connect_from(self.device_sensor.Button2)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
@@ -289,18 +289,18 @@ class PortalCamera(avango.script.Script):
 
     # apply size changes
     if self.sf_size_up_button.value == True:
-      self.portal_width += 0.02
-      self.portal_height += 0.02
+      self.portal_width += 0.005
+      self.portal_height += 0.005
 
     if self.sf_size_down_button.value == True:
-      self.portal_width -= 0.02
-      self.portal_height -= 0.02
+      self.portal_width -= 0.005
+      self.portal_height -= 0.005
       
-      if self.portal_width < 0.0:
-        self.portal_width = 0.0
+      if self.portal_width < 0.05:
+        self.portal_width = 0.05
 
-      if self.portal_height < 0.0:
-        self.portal_height = 0.0
+      if self.portal_height < 0.05:
+        self.portal_height = 0.05
 
     if self.current_portal != None:
       self.current_portal.set_size(self.portal_width, self.portal_height)

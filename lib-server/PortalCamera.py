@@ -29,6 +29,10 @@ class PortalCamera(avango.script.Script):
   # World transformation of the camera frame without scaling. Used for Portal instantiation.
   sf_world_border_mat_no_scale = avango.gua.SFMatrix4()
 
+  ##
+  #
+  sf_animation_matrix = avango.gua.SFMatrix4()
+
   # button fields
   ## @var sf_focus_button
   # Boolean field to check if the focus button was pressed.
@@ -168,6 +172,22 @@ class PortalCamera(avango.script.Script):
     # Time how long a scaling process is stopped at a fixed step in seconds.
     self.scale_stop_duration = 1.0
 
+    ##
+    #
+    self.animation_start_time = None
+
+    ##
+    #
+    self.animation_start_matrix = None
+
+    ##
+    #
+    self.animation_start_size = None
+
+    ##
+    #
+    self.animation_duration = 1.0
+
 
   ## Custom constructor.
   # @param ID Identification number of the PortalCamera. Used for scenegraph node naming.
@@ -302,10 +322,6 @@ class PortalCamera(avango.script.Script):
       if self.portal_height < 0.05:
         self.portal_height = 0.05
 
-    if self.current_portal != None:
-      self.current_portal.set_size(self.portal_width, self.portal_height)
-
-
     # update matrices in drag mode
     if self.drag_relation_portal_scene != None:
 
@@ -347,6 +363,37 @@ class PortalCamera(avango.script.Script):
         
         _device_values = _interaction_space.mf_device_transformed_values.value
         self.current_portal.modify_scene_matrix(_device_values)
+
+    # check for animations
+    if self.animation_start_time != None:
+
+      _time_step = time.time() - self.animation_start_time
+
+      if _time_step > self.animation_duration:
+        self.animation_start_time = None
+        self.animation_start_matrix = None
+        self.animation_start_size = None
+        self.current_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+        self.current_portal.set_size(self.portal_width, self.portal_height)
+        return
+
+      _ratio = _time_step / self.animation_duration
+      _start_trans = self.animation_start_matrix.get_translate()
+      _end_trans = self.sf_world_border_mat_no_scale.value.get_translate()
+      _animation_trans = _start_trans.lerp_to(_end_trans, _ratio)
+
+      _start_rot = self.animation_start_matrix.get_rotate()
+      _end_rot = self.sf_world_border_mat_no_scale.value.get_rotate()
+      _animation_rot = _start_rot.slerp_to(_end_rot, _ratio)
+
+      _start_size = self.animation_start_size
+      _end_size = avango.gua.Vec3(self.portal_width, self.portal_height, 1.0)
+      _animation_size = _start_size.lerp_to(_end_size, _ratio)
+
+      self.sf_animation_matrix.value = avango.gua.make_trans_mat(_animation_trans) * \
+                                       avango.gua.make_rot_mat(_animation_rot)
+      self.current_portal.set_size(_animation_size.x, _animation_size.y)
+      return
 
     # update matrices in gallery mode
     if self.gallery_activated:
@@ -429,6 +476,10 @@ class PortalCamera(avango.script.Script):
           self.gallery_activated = False
           self.current_portal = _portal
           return
+
+      # size to camera
+      if self.current_portal != None:
+        self.current_portal.set_size(self.portal_width, self.portal_height)
 
   ## Checks if the position of a camera is close to the position of a portal.
   # @param CAMERA_VEC The camera's vector to be used for incidence computation.
@@ -695,7 +746,7 @@ class PortalCamera(avango.script.Script):
           # push current portal to interaction space and maximize it
           if _interaction_space.maximized_portal == None:
 
-            if self.current_portal == None: # no portal to maximize
+            if self.current_portal == None or self.animation_start_time != None: # no portal to maximize
               return
 
             _portal = self.current_portal
@@ -714,9 +765,12 @@ class PortalCamera(avango.script.Script):
             _portal = _interaction_space.remove_maximized_portal()
 
             if _portal != None:
-              _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+              self.sf_animation_matrix.value = _portal.portal_matrix_node.WorldTransform.value
+              self.animation_start_time = time.time()
+              self.animation_start_matrix = self.sf_animation_matrix.value
+              self.animation_start_size = avango.gua.Vec3(_portal.width, _portal.height, 1.0)
               self.current_portal = _portal
-              self.current_portal.set_size(self.portal_width, self.portal_height)
+              self.current_portal.connect_portal_matrix(self.sf_animation_matrix)
               self.captured_portals.append(self.current_portal)
 
           return

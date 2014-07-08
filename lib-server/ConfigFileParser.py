@@ -342,8 +342,7 @@ class ConfigFileParser:
              (_device_attributes[0] != "Globefish") and \
              (_device_attributes[0] != "XBoxController") and \
              (_device_attributes[0] != "OldSpheron") and \
-             (_device_attributes[0] != "NewSpheron") and \
-             (_device_attributes[0] != "TouchTable2D"):
+             (_device_attributes[0] != "NewSpheron"):
           print_error("Unknown device type: " + _device_attributes[0], True)
 
         _starting_matrix = avango.gua.make_trans_mat(_device_attributes[3], _device_attributes[4], _device_attributes[5]) * \

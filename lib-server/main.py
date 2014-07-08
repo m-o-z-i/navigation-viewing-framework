@@ -6,7 +6,7 @@
 # import avango-guacamole libraries
 import avango
 import avango.gua
-#import _avango.gua.guajacum
+#import avango.utils
 
 # import framework libraries
 from SceneManager import *
@@ -74,6 +74,15 @@ def start():
   scene_manager = SceneManager()
   scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
+  # initialize touch devices
+  multi_touch_devices = []
+  for i in application_manager.navigation_list:
+    for j in i.platform.displays:
+      if "TUIO" in j.get_touch_protocols():
+        device = TUIODevice()
+        device.my_constructor(graph, j)
+        print_message("TUIO touch display '{}' detected.".format(j.name))
+        multi_touch_devices.append(device)
 
   # initialize animation manager
   #animation_manager = AnimationManager()
@@ -98,6 +107,7 @@ def start():
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)
+
 
   # run application loop
   application_manager.run(locals(), globals())

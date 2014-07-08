@@ -15,7 +15,7 @@ from TrackingReader import *
 import Tools
 
 # import python libraries
-# ...
+import time
 
 ## A PortalCamera is a physical device to interactively caputure, view
 # and manipulate Portal instances in the scene.
@@ -29,8 +29,8 @@ class PortalCamera(avango.script.Script):
   # World transformation of the camera frame without scaling. Used for Portal instantiation.
   sf_world_border_mat_no_scale = avango.gua.SFMatrix4()
 
-  ##
-  #
+  ## @var sf_animation_matrix
+  # Matrix to which animated objects are connected to.
   sf_animation_matrix = avango.gua.SFMatrix4()
 
   # button fields
@@ -172,20 +172,20 @@ class PortalCamera(avango.script.Script):
     # Time how long a scaling process is stopped at a fixed step in seconds.
     self.scale_stop_duration = 1.0
 
-    ##
-    #
+    ## @var animation_start_time
+    # Starting time of an animation handled by this class.
     self.animation_start_time = None
 
-    ##
-    #
+    ## @var animation_start_matrix
+    # Starting matrix of an animation handled by this class.
     self.animation_start_matrix = None
 
-    ##
-    #
+    ## @var animation_start_size
+    # Starting size of an animation handled by this class.
     self.animation_start_size = None
 
-    ##
-    #
+    ## @var animation_duration
+    # Duration of an animation handled by this class.
     self.animation_duration = 1.0
 
 

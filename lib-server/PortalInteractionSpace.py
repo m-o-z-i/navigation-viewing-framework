@@ -30,9 +30,9 @@ class PortalInteractionSpace(avango.script.Script):
   ## @var sf_min_y_plane_transform
   # Transformation matrix of the min y plane.
   sf_min_y_plane_transform = avango.gua.SFMatrix4()
-
-  ##
-  #
+  
+  ## @var sf_animation_matrix
+  # Matrix to which animated objects are connected to.
   sf_animation_matrix = avango.gua.SFMatrix4()
 
   ## Default constructor.
@@ -66,20 +66,20 @@ class PortalInteractionSpace(avango.script.Script):
     # Portal instance which is currently maximized in this interaction space.
     self.maximized_portal = None
 
-    ##
-    #
+    ## @var animation_start_time
+    # Starting time of an animation handled by this class.
     self.animation_start_time = None
 
-    ##
-    #
+    ## @var animation_start_matrix
+    # Starting matrix of an animation handled by this class.
     self.animation_start_matrix = None
 
-    ##
-    #
+    ## @var animation_start_size
+    # Starting size of an animation handled by this class.
     self.animation_start_size = None
 
-    ##
-    #
+    ## @var animation_duration
+    # Duration of an animation handled by this class.
     self.animation_duration = 1.0
 
     self.mf_device_values.connect_from(self.DEVICE.mf_dof)

@@ -418,6 +418,7 @@ class PortalPreView(avango.script.Script):
     # check for visibility
     if self.mf_portal_modes.value[4] == "4-False":
       self.active = False
+      self.pipeline.Enabled.value = False
     else:
       self.active = True
 

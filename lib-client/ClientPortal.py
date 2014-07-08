@@ -211,6 +211,14 @@ class PortalPreView(avango.script.Script):
   # Field containing the GroupNames of the associated portal node. Used for transferring portal mode settings.
   mf_portal_modes = avango.MFString()
 
+  ##
+  #
+  sf_left_eye_transform = avango.gua.SFMatrix4()
+
+  ##
+  #
+  sf_right_eye_transform = avango.gua.SFMatrix4()
+
   # Default constructor.
   def __init__(self):
     self.super(PortalPreView).__init__()
@@ -234,7 +242,7 @@ class PortalPreView(avango.script.Script):
     # Boolean indicating the activity of the evaluation loop.
     self.active = True
 
-    # connect mode field
+    # connect fields
     self.mf_portal_modes.connect_from(PORTAL_NODE.GroupNames)
 
     ## @var view_node
@@ -246,15 +254,17 @@ class PortalPreView(avango.script.Script):
     ## @var left_eye_node
     # Scenegraph node representing the left eye's position in the portal's exit space.
     _user_left_eye = VIEW.SCENEGRAPH["/net/platform_" + str(VIEW.platform_id) + "/scale/s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id) + "/eyeL"]
+    self.sf_left_eye_transform.connect_from(_user_left_eye.Transform)
     self.left_eye_node = avango.gua.nodes.TransformNode(Name = "eyeL")
-    self.left_eye_node.Transform.connect_from(_user_left_eye.Transform)
+    self.left_eye_node.Transform.connect_from(self.sf_left_eye_transform)
     self.view_node.Children.value.append(self.left_eye_node)
 
     ## @var right_eye_node
     # Scenegraph node representing the right eye's position in the portal's exit space.
     _user_right_eye = VIEW.SCENEGRAPH["/net/platform_" + str(VIEW.platform_id) + "/scale/s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id) + "/eyeR"]
+    self.sf_right_eye_transform.connect_from(_user_right_eye.Transform)
     self.right_eye_node = avango.gua.nodes.TransformNode(Name = "eyeR")
-    self.right_eye_node.Transform.connect_from(_user_right_eye.Transform)
+    self.right_eye_node.Transform.connect_from(self.sf_right_eye_transform)
     self.view_node.Children.value.append(self.right_eye_node)
 
     ## @var screen_node
@@ -301,7 +311,7 @@ class PortalPreView(avango.script.Script):
     self.pipeline.BloomIntensity.connect_from(VIEW.pipeline.BloomIntensity)
     self.pipeline.BloomThreshold.connect_from(VIEW.pipeline.BloomThreshold)
     self.pipeline.BloomRadius.connect_from(VIEW.pipeline.BloomRadius)
-    self.pipeline.EnableSsao.value = False
+    self.pipeline.EnableSsao.connect_from(VIEW.pipeline.EnableSsao)
     self.pipeline.SsaoRadius.connect_from(VIEW.pipeline.SsaoRadius)
     self.pipeline.SsaoIntensity.connect_from(VIEW.pipeline.SsaoIntensity)
     self.pipeline.EnableBackfaceCulling.connect_from(VIEW.pipeline.EnableBackfaceCulling)
@@ -428,10 +438,16 @@ class PortalPreView(avango.script.Script):
       if self.mf_portal_modes.value[0] == "0-3D":
         self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
                                          self.sf_slot_world_mat.value
+        self.left_eye_node.Transform.connect_from(self.sf_left_eye_transform)
+        self.right_eye_node.Transform.connect_from(self.sf_right_eye_transform)
       else:
         self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
+        self.left_eye_node.Transform.disconnect()
+        self.right_eye_node.Transform.disconnect()
+        self.left_eye_node.Transform.value = avango.gua.make_identity_mat()
+        self.right_eye_node.Transform.value = avango.gua.make_identity_mat()
 
-      # check for camera mode
+      # check for camera modeF
       if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
         self.camera.Mode.value = 1
       else:

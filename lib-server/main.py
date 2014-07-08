@@ -122,9 +122,9 @@ def start():
 
   monkey_updater = TimedRotate()
 
-  timer = avango.nodes.TimeSensor()
-  monkey_updater.TimeIn.connect_from(timer.Time)
-  graph["/net/Monkey/group/monkey1"].Transform.connect_from(monkey_updater.MatrixOut)
+  #timer = avango.nodes.TimeSensor()
+  #monkey_updater.TimeIn.connect_from(timer.Time)
+  #graph["/net/Monkey/group/monkey1"].Transform.connect_from(monkey_updater.MatrixOut)
 
   # initialize animation manager
   #animation_manager = AnimationManager()

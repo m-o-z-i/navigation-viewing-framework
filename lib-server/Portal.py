@@ -382,7 +382,6 @@ class Portal:
 
       self.platform_matrix = _new_platform_matrix
       self.scene_matrix_node.Transform.value = _scene_transform
-      print self.scene_matrix_node.Transform.value.get_scale()
 
 
   ## Sets the border material to be used for the portal.

@@ -74,6 +74,14 @@ class PortalCamera(avango.script.Script):
   # Boolean field to check if the maximize button was pressed.
   sf_maximize_button = avango.SFBool()
 
+  ## @var sf_size_up_button
+  # Boolean field to check if the size up button was pressed.
+  sf_size_up_button = avango.SFBool()
+
+  ## @var sf_size_down_button
+  # Boolean field to check if the size down button was pressed.
+  sf_size_down_button = avango.SFBool()
+
   ## @var sf_2D_mode_button
   # Boolean field to check if the 2D mode button was pressed.
   sf_2D_mode_button = avango.SFBool()
@@ -193,11 +201,13 @@ class PortalCamera(avango.script.Script):
     self.sf_prior_rec_button.connect_from(self.device_sensor.Button4)
     self.sf_scale_up_button.connect_from(self.device_sensor.Button9)
     self.sf_scale_down_button.connect_from(self.device_sensor.Button10)
-    self.sf_open_close_button.connect_from(self.device_sensor.Button2)
+    self.sf_open_close_button.connect_from(self.device_sensor.Button6)
     self.sf_delete_button.connect_from(self.device_sensor.Button15)
-    self.sf_gallery_button.connect_from(self.device_sensor.Button6)
-    self.sf_scene_copy_button.connect_from(self.device_sensor.Button3)
-    self.sf_maximize_button.connect_from(self.device_sensor.Button14)
+    self.sf_gallery_button.connect_from(self.device_sensor.Button11)
+    self.sf_scene_copy_button.connect_from(self.device_sensor.Button14)
+    #self.sf_maximize_button.connect_from(self.device_sensor.Button14)
+    self.sf_size_up_button.connect_from(self.device_sensor.Button3)
+    self.sf_size_down_button.connect_from(self.device_sensor.Button2)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
     self.sf_3D_mode_button.connect_from(self.device_sensor.Button8)
     self.sf_negative_parallax_on_button.connect_from(self.device_sensor.Button12)
@@ -221,8 +231,6 @@ class PortalCamera(avango.script.Script):
     ## @var camera_frame
     # Geometry node containing the PortalCamera's portal frame.
     self.camera_frame = _loader.create_geometry_from_file("camera_frame", "data/objects/screen.obj", "data/materials/ShadelessRed.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
-                                        avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
     self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.portal_camera_node.Children.value.append(self.camera_frame)
 
@@ -259,6 +267,13 @@ class PortalCamera(avango.script.Script):
                                               self.tracking_reader.sf_abs_mat.value * \
                                               avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
 
+    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
+                                        avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
+
+    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width/2 * 0.86, self.portal_height * 0.93, 0.0) * \
+                                                  avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                                  avango.gua.make_scale_mat(self.portal_height * 0.1, 1.0, self.portal_height * 0.1)
+
     # always hide red camera frame when a portal is displayed
     if self.current_portal != None:
       self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
@@ -271,6 +286,24 @@ class PortalCamera(avango.script.Script):
     if self.sf_scale_down_button.value == True:
 
       self.set_current_portal_scale(self.current_portal.platform_scale * 1.015)
+
+    # apply size changes
+    if self.sf_size_up_button.value == True:
+      self.portal_width += 0.02
+      self.portal_height += 0.02
+
+    if self.sf_size_down_button.value == True:
+      self.portal_width -= 0.02
+      self.portal_height -= 0.02
+      
+      if self.portal_width < 0.0:
+        self.portal_width = 0.0
+
+      if self.portal_height < 0.0:
+        self.portal_height = 0.0
+
+    if self.current_portal != None:
+      self.current_portal.set_size(self.portal_width, self.portal_height)
 
 
     # update matrices in drag mode
@@ -322,6 +355,12 @@ class PortalCamera(avango.script.Script):
       if len(self.captured_portals) == 0:
         self.gallery_activated = False
         return
+      else:
+        # make all portals of equal size
+        self.portal_width = 0.3
+        self.portal_height = 0.3
+        for _portal in self.captured_portals:
+          _portal.set_size(0.3, 0.3)
 
       # if current index equals next index, no animation is needed
       if self.gallery_focus_portal_index == self.next_focus_portal_index:
@@ -347,7 +386,7 @@ class PortalCamera(avango.script.Script):
         _station_mat = self.NAVIGATION.device.sf_station_mat.value
         _station_vec = _station_mat.get_translate()
 
-        _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.gallery_magnification_factor * (self.portal_width + 0.2 * self.portal_width) * _i, _station_vec.y + 1.5 * self.portal_height, _station_vec.z)
+        _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.gallery_magnification_factor * (0.3 + 0.2 * 0.3) * _i, _station_vec.y + 1.5 * 0.3, _station_vec.z)
 
         _matrix = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
                   avango.gua.make_trans_mat(_station_vec) * \

@@ -161,6 +161,9 @@ class MultiTouchGesture(object):
     Base class for multi touch gestures.
     """
 
+    def __init__(self):
+        self.resetMovingAverage()
+
     def processGesture(self, activePoints, touchDevice):
         """
         Process gesture. This method needs to be implemented in subclasses.
@@ -171,6 +174,27 @@ class MultiTouchGesture(object):
         @return True if gesture was executed, otherwise False
         """
         pass
+
+    def movingAverage(self, lastDataPoint, windowSize):
+        """
+        Stateful iterative moving average implementation to continuously _smooth
+        input data. Smooths lastDataPoint based on previous inputs depending
+        on windowSize. If you want to start a fresh input series, you have to
+        call resetMovingAverage().
+
+        @param lastDataPoint: the latest data point to smooth
+        @param windowSize: the size of the window (smoothing factor)
+        """
+        if windowSize == self._maSamples:
+            self._totalMA -= self._totalMA / windowSize
+            self._maSamples -= 1
+        self._totalMA += lastDataPoint
+        self._maSamples += 1
+        return self._totalMA / self._maSamples
+
+    def resetMovingAverage(self):
+        self._totalMA   = 0
+        self._maSamples = 0
 
 
 class DragGesture(MultiTouchGesture):
@@ -273,10 +297,8 @@ class RotationGesture(MultiTouchGesture):
         self._distances = []
         self._lastAngle = 0
 
-        # global values for moving average
-        self._totalAngle      = 0
-        self._samples         = 0
-        self._smoothingFactor = 30
+        # smoothing factor for rotation angles
+        self._smoothingFactor = 20
 
 
     def processGesture(self, activePoints, touchDevice):
@@ -307,14 +329,12 @@ class RotationGesture(MultiTouchGesture):
         #center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
         #rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
         angle = -math.copysign(math.acos(dotProduct) * 180 / math.pi, crossProduct.z)
+        angle = self.movingAverage(angle, self._smoothingFactor)
+
+        #if .04 > abs(self._lastAngle - angle) and 0 == math.copysign(1, self._lastAngle) + math.copysign(1, angle):
+        #    angle *= -1
 
         # calculate moving average to prevent oscillation
-        if self._smoothingFactor == self._samples:
-            self._totalAngle -= self._totalAngle / self._smoothingFactor
-            self._samples -= 1
-        self._totalAngle += angle
-        self._samples += 1
-        angle = self._totalAngle / self._samples
         print(angle)
 
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, avango.gua.Vec3(0, 1, 0)))

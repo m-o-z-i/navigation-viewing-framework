@@ -712,10 +712,12 @@ class PortalCamera(avango.script.Script):
               self.current_portal.set_visibility(False)
 
             _portal = _interaction_space.remove_maximized_portal()
-            _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-            self.current_portal = _portal
-            self.current_portal.set_size(self.portal_width, self.portal_height)
-            self.captured_portals.append(self.current_portal)
+
+            if _portal != None:
+              _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+              self.current_portal = _portal
+              self.current_portal.set_size(self.portal_width, self.portal_height)
+              self.captured_portals.append(self.current_portal)
 
           return
 

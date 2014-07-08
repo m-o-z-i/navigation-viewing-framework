@@ -13,7 +13,7 @@ from avango.script import field_has_changed
 from Device import *
 
 # import python libraries
-# ...
+import time
 
 ## Space on a platform in which an additional device can be used for
 # modifying the scene matrices of portals.
@@ -30,6 +30,10 @@ class PortalInteractionSpace(avango.script.Script):
   ## @var sf_min_y_plane_transform
   # Transformation matrix of the min y plane.
   sf_min_y_plane_transform = avango.gua.SFMatrix4()
+
+  ##
+  #
+  sf_animation_matrix = avango.gua.SFMatrix4()
 
   ## Default constructor.
   def __init__(self):
@@ -62,6 +66,22 @@ class PortalInteractionSpace(avango.script.Script):
     # Portal instance which is currently maximized in this interaction space.
     self.maximized_portal = None
 
+    ##
+    #
+    self.animation_start_time = None
+
+    ##
+    #
+    self.animation_start_matrix = None
+
+    ##
+    #
+    self.animation_start_size = None
+
+    ##
+    #
+    self.animation_duration = 1.0
+
     self.mf_device_values.connect_from(self.DEVICE.mf_dof)
 
     # set evaluation policy
@@ -78,6 +98,38 @@ class PortalInteractionSpace(avango.script.Script):
     self.sf_min_y_plane_transform.value = self.PLATFORM.platform_scale_transform_node.WorldTransform.value * \
                                           _plane_transform
 
+    # handle maximization animation
+    if self.animation_start_time != None:
+
+      _time_step = time.time() - self.animation_start_time
+
+      if _time_step > self.animation_duration:
+        self.animation_start_time = None
+        self.animation_start_matrix = None
+        self.animation_start_size = None
+        self.maximized_portal.connect_portal_matrix(self.sf_min_y_plane_transform)
+        self.maximized_portal.set_size(self.get_width(), self.get_height())
+        return
+      
+      _ratio = _time_step / self.animation_duration
+      _start_trans = self.animation_start_matrix.get_translate()
+      _end_trans = self.sf_min_y_plane_transform.value.get_translate()
+      _animation_trans = _start_trans.lerp_to(_end_trans, _ratio)
+
+      _start_rot = self.animation_start_matrix.get_rotate()
+      _end_rot = self.sf_min_y_plane_transform.value.get_rotate()
+      _animation_rot = _start_rot.slerp_to(_end_rot, _ratio)
+
+      _start_size = self.animation_start_size
+      _end_size = avango.gua.Vec3(self.get_width(), self.get_height(), 1.0)
+      _animation_size = _start_size.lerp_to(_end_size, _ratio)
+
+      self.sf_animation_matrix.value = avango.gua.make_trans_mat(_animation_trans) * \
+                                       avango.gua.make_rot_mat(_animation_rot)
+      self.maximized_portal.set_size(_animation_size.x, _animation_size.y)
+      return
+
+    # give input to maximized portal
     if self.maximized_portal != None:
       self.maximized_portal.modify_scene_matrix(self.mf_device_transformed_values.value)
 
@@ -109,16 +161,20 @@ class PortalInteractionSpace(avango.script.Script):
   # @param PORTAL_INSTANCE The Portal instance to be added.
   def add_maximized_portal(self, PORTAL_INSTANCE):
 
-    if self.maximized_portal == None:
+    if self.maximized_portal == None and self.animation_start_time == None:
 
-      PORTAL_INSTANCE.connect_portal_matrix(self.sf_min_y_plane_transform)
-      PORTAL_INSTANCE.set_size(self.get_width(), self.get_height())
+      self.sf_animation_matrix.value = PORTAL_INSTANCE.portal_matrix_node.WorldTransform.value
+      self.animation_start_time = time.time()
+      self.animation_start_matrix = self.sf_animation_matrix.value
+      self.animation_start_size = avango.gua.Vec3(PORTAL_INSTANCE.width, PORTAL_INSTANCE.height, 1.0)
+
+      PORTAL_INSTANCE.connect_portal_matrix(self.sf_animation_matrix)
       self.maximized_portal = PORTAL_INSTANCE
  
   ## Removes and returns the currently maximized portal.
   def remove_maximized_portal(self):
 
-    if self.maximized_portal != None:
+    if self.maximized_portal != None and self.animation_start_time == None:
 
       _portal = self.maximized_portal
       self.maximized_portal = None

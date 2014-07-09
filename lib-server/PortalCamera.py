@@ -299,11 +299,11 @@ class PortalCamera(avango.script.Script):
       self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
 
     # apply scale changes 
-    if self.sf_scale_up_button.value == True:
+    if self.sf_scale_up_button.value == True and self.current_portal != None:
       
       self.set_current_portal_scale(self.current_portal.platform_scale * 0.985)
       
-    if self.sf_scale_down_button.value == True:
+    if self.sf_scale_down_button.value == True and self.current_portal != None:
 
       self.set_current_portal_scale(self.current_portal.platform_scale * 1.015)
 
@@ -363,6 +363,10 @@ class PortalCamera(avango.script.Script):
         
         _device_values = _interaction_space.mf_device_transformed_values.value
         self.current_portal.modify_scene_matrix(_device_values)
+
+    # size to camera
+    if self.current_portal != None:
+      self.current_portal.set_size(self.portal_width, self.portal_height)
 
     # check for animations
     if self.animation_start_time != None:
@@ -476,10 +480,6 @@ class PortalCamera(avango.script.Script):
           self.gallery_activated = False
           self.current_portal = _portal
           return
-
-      # size to camera
-      if self.current_portal != None:
-        self.current_portal.set_size(self.portal_width, self.portal_height)
 
   ## Checks if the position of a camera is close to the position of a portal.
   # @param CAMERA_VEC The camera's vector to be used for incidence computation.

@@ -97,7 +97,7 @@ def start():
   #'''
   table_device = SpacemouseDevice()
   table_device.my_constructor("device-spacemouse", avango.gua.make_identity_mat())
-  table_device.translation_factor = 0.05
+  table_device.translation_factor = 0.01
 
   table_interaction_space = PortalInteractionSpace()
   table_interaction_space.my_constructor(table_device

@@ -125,7 +125,8 @@ class PortalInteractionSpace(avango.script.Script):
       _animation_size = _start_size.lerp_to(_end_size, _ratio)
 
       self.sf_animation_matrix.value = avango.gua.make_trans_mat(_animation_trans) * \
-                                       avango.gua.make_rot_mat(_animation_rot)
+                                       avango.gua.make_rot_mat(_animation_rot) * \
+                                       self.PLATFORM.platform_scale_transform_node.Transform.value
       self.maximized_portal.set_size(_animation_size.x, _animation_size.y)
       return
 

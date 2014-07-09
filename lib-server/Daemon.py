@@ -549,7 +549,7 @@ init_august_pointer(0, "device-pointer1")
 
 # init desktop devices
 init_keyboard()
-init_mouse()
+#init_mouse()
 init_spacemouse()
 
 # init portal camera

@@ -367,6 +367,31 @@ class Portal:
 
     if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
 
+      # object metaphor
+      _transformed_trans_vec = avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected()) * avango.gua.Vec3(_x*-1.0, _z, _y*-1.0)
+      _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
+      _transformed_trans_vec *= self.platform_scale
+
+      _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
+                             self.platform_matrix
+
+
+      # object metaphor
+      '''
+      _transformed_trans_vec = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected())) * avango.gua.Vec3(_x, _y, _z)
+      _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
+      _transformed_trans_vec *= self.platform_scale
+
+      _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec.x*-1.0, _transformed_trans_vec.z*-1.0, _transformed_trans_vec.y) * \
+                             avango.gua.make_trans_mat(self.platform_matrix.get_translate()) * \
+                             avango.gua.make_rot_mat( _rot_vec.z, 0, 0, -1) * \
+                             avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
+                             avango.gua.make_rot_mat( _rot_vec.y, 0, -1, 0) * \
+                             avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected())
+      '''
+
+      '''
+      # navigation metaphor
       _transformed_trans_vec = avango.gua.make_rot_mat(self.platform_matrix.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
       _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
 
@@ -376,6 +401,7 @@ class Portal:
                              avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
                              avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0) * \
                              avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected())
+      '''
 
       _scene_transform = _new_platform_matrix * \
                          avango.gua.make_scale_mat(self.platform_scale)

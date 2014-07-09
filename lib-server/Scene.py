@@ -103,7 +103,7 @@ class SceneVianden(SceneObject):
 
     _mat = avango.gua.make_trans_mat(50.0, 100.0, -50.0) * \
            avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
-    self.init_light(TYPE = 2, NAME = "spot_light", COLOR = avango.gua.Color(1.0, 1.0, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, MANIPULATION_PICK_FLAG = True, ENABLE_SHADOW = True, LIGHT_DIMENSIONS = avango.gua.Vec3(600.0,600.0,200.0), FALLOFF = 0.009, SOFTNESS = 0.003, SHADOW_MAP_SIZE = 1024)
+    self.init_light(TYPE = 2, NAME = "spot_light", COLOR = avango.gua.Color(1.0, 1.0, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, MANIPULATION_PICK_FLAG = True, ENABLE_SHADOW = False, LIGHT_DIMENSIONS = avango.gua.Vec3(600.0,600.0,200.0), FALLOFF = 0.009, SOFTNESS = 0.003, SHADOW_MAP_SIZE = 1024)
 
     # render pipeline parameters
     self.enable_backface_culling = False

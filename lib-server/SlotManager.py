@@ -217,7 +217,7 @@ class SlotManager(avango.script.Script):
 
       # check if current display is a stereo one
       _stereo = True
-      if _display.shutter_timings == []:
+      if _display.stereo == False:
         _stereo = False
 
       _default_user_list = []

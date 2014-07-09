@@ -82,7 +82,7 @@ class GroundFollowing(avango.script.Script):
 
     ## @var height_modification_factor
     # Scaling factor used for the modification of up and down vectors.
-    self.height_modification_factor = 0.1
+    self.height_modification_factor = 0.15
 
     # fall velocity in meter per frame
     ## @var fall_velocity

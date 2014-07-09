@@ -59,7 +59,8 @@ def init_dlp_wall_tracking():
   _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron')     # new spheron device
 
   _dtrack.stations[23] = avango.daemon.Station('tracking-dlp-pointer1')    # AUGUST1 pointer
-  _dtrack.stations[26] = avango.daemon.Station('tracking-portal-camera')   # portal camera 3.2
+  _dtrack.stations[26] = avango.daemon.Station('tracking-portal-camera-32')   # portal camera 3.2
+  _dtrack.stations[25] = avango.daemon.Station('tracking-portal-camera-31')   # portal camera 3.1
 
 
   device_list.append(_dtrack)
@@ -492,8 +493,11 @@ def init_portal_camera(VERSION_NUMBER):
   
     # create a station to propagate the input events
     _portal_camera = avango.daemon.HIDInput()
-    _portal_camera.station = avango.daemon.Station('device-portal-camera')
+    _splitted_number = VERSION_NUMBER.split(".")
+    _portal_camera.station = avango.daemon.Station('device-portal-camera-' + _splitted_number[0] + _splitted_number[1])
     _portal_camera.device = _string
+
+    print 'device-portal-camera' + _splitted_number[0] + _splitted_number[1]
 
     # map incoming portal camera buttons to station
     _portal_camera.buttons[0] = "EV_KEY::BTN_START"  # trigger button half step

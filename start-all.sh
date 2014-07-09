@@ -33,6 +33,7 @@ export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./
 # run daemon
 python ./lib-server/Daemon.py > /dev/null &
 
+
 # run program
 if [ "$2" != false ] ; then
     cd "$DIR" && python ./lib-server/main.py $1 True

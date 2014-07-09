@@ -246,6 +246,7 @@ class SceneManager(avango.script.Script):
     #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_plod = ScenePLOD(self, SCENEGRAPH, NET_TRANS_NODE)      
+    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
 
     self.activate_scene(0) # activate first scene
 

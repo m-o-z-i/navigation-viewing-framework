@@ -92,7 +92,7 @@ def start():
   portal_manager.my_constructor(graph, application_manager.navigation_list)
 
   portal_camera = PortalCamera()
-  portal_camera.my_constructor(0, portal_manager, application_manager.navigation_list[0], "device-portal-camera", "tracking-portal-camera")
+  portal_camera.my_constructor(0, portal_manager, application_manager.navigation_list[0], "device-portal-camera-32", "tracking-portal-camera-32")
 
   #'''
   table_device = SpacemouseDevice()

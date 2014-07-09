@@ -116,9 +116,13 @@ class PortalInteractionSpace(avango.script.Script):
       _end_trans = self.sf_min_y_plane_transform.value.get_translate()
       _animation_trans = _start_trans.lerp_to(_end_trans, _ratio)
 
-      _start_rot = self.animation_start_matrix.get_rotate()
-      _end_rot = self.sf_min_y_plane_transform.value.get_rotate()
+      _start_rot = self.animation_start_matrix.get_rotate_scale_corrected()
+      _end_rot = self.sf_min_y_plane_transform.value.get_rotate_scale_corrected()
       _animation_rot = _start_rot.slerp_to(_end_rot, _ratio)
+
+      _start_scale = self.animation_start_matrix.get_scale()
+      _end_scale = self.sf_min_y_plane_transform.value.get_scale()
+      _animation_scale = _start_scale * (1-_ratio) + _end_scale * _ratio
 
       _start_size = self.animation_start_size
       _end_size = avango.gua.Vec3(self.get_width(), self.get_height(), 1.0)
@@ -126,7 +130,8 @@ class PortalInteractionSpace(avango.script.Script):
 
       self.sf_animation_matrix.value = avango.gua.make_trans_mat(_animation_trans) * \
                                        avango.gua.make_rot_mat(_animation_rot) * \
-                                       self.PLATFORM.platform_scale_transform_node.Transform.value
+                                       avango.gua.make_scale_mat(_animation_scale)
+
       self.maximized_portal.set_size(_animation_size.x, _animation_size.y)
       return
 

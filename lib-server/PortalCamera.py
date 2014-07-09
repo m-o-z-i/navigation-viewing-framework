@@ -386,16 +386,21 @@ class PortalCamera(avango.script.Script):
       _end_trans = self.sf_world_border_mat_no_scale.value.get_translate()
       _animation_trans = _start_trans.lerp_to(_end_trans, _ratio)
 
-      _start_rot = self.animation_start_matrix.get_rotate()
-      _end_rot = self.sf_world_border_mat_no_scale.value.get_rotate()
+      _start_rot = self.animation_start_matrix.get_rotate_scale_corrected()
+      _end_rot = self.sf_world_border_mat_no_scale.value.get_rotate_scale_corrected()
       _animation_rot = _start_rot.slerp_to(_end_rot, _ratio)
+
+      _start_scale = self.animation_start_matrix.get_scale()
+      _end_scale = self.sf_world_border_mat_no_scale.value.get_scale()
+      _animation_scale = _start_scale * (1-_ratio) + _end_scale * _ratio
 
       _start_size = self.animation_start_size
       _end_size = avango.gua.Vec3(self.portal_width, self.portal_height, 1.0)
       _animation_size = _start_size.lerp_to(_end_size, _ratio)
 
       self.sf_animation_matrix.value = avango.gua.make_trans_mat(_animation_trans) * \
-                                       avango.gua.make_rot_mat(_animation_rot)
+                                       avango.gua.make_rot_mat(_animation_rot) * \
+                                       avango.gua.make_scale_mat(_animation_scale)
       self.current_portal.set_size(_animation_size.x, _animation_size.y)
       return
 

@@ -458,12 +458,27 @@ class OldSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, -0.00787377543747, -0.0115, -0.003, 20, 20)")
     self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value, -0.00787377543747, -0.015, 0.0, 5, 5)")    
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
-    #self.add_input_binding("if self.device_sensor.Value4.value != 0.0:\n\tself.set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")    
+    self.add_input_binding("self.conditional_set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
     self.add_input_binding("self.set_reset_trigger(self.button_sensor.Button1.value)")       # middle button      
-    self.add_input_binding("self.set_dof(6, self.button_sensor.Button0.value*-1.0)")              # left button
-    self.add_input_binding("self.set_dof(6, self.button_sensor.Button2.value*1.0)")               # right button
+    self.add_input_binding("self.set_dof(6, self.button_sensor.Button0.value*-1.0)")         # left button
+    self.add_input_binding("self.set_dof(6, self.button_sensor.Button2.value*1.0)")          # right button
+
+  ## Conditional execution of of set_and_filter_dof in order to prevent input errors for the old spheron.
+  # @param ID ID Number of the degree of freedom to be set.
+  # @param VALUE The value to be filtered.
+  # @param OFFSET The offset to be applied to VALUE, MIN and MAX.
+  # @param MIN The minimum value of the old interval.
+  # @param MAX The maximum value of the old interval.
+  # @param NEG_THRESHOLD The negative threshold to be used.
+  # @param POS_THRESHOLD The positive threshold to be used.
+  def conditional_set_and_filter_dof(self, ID, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD):
+    _condition = "self.device_sensor.Value" + str(ID) + ".value != 0.0"
+    _result = eval(_condition)
+
+    if _result:
+      self.set_and_filter_dof(ID, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD)
+
 
   ## Creates a representation of the device in the virutal world.
   # @param PLATFORM_NODE The platform node to which the avatar should be appended to.

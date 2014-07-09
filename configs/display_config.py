@@ -188,7 +188,7 @@ class SmallPowerwall2(Display):
   ## Default constructor.
   def __init__(self, render_mask = ""):
     Display.__init__( self
-                    , hostname = "pandora"
+                    , hostname = "eos"
                     , name = "small_powerwall2"
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.1"]
@@ -414,7 +414,7 @@ displays = [
   LargePowerwall() ,
   #LargePowerwall2() ,  
   #SmallPowerwall() ,
-  SmallPowerwall2() ,  
+  #SmallPowerwall2() ,  
   #OculusRift() ,
   #TouchTable3DStandalone() ,
   TouchTable3DSecondary(render_mask = "!main_scene") ,  

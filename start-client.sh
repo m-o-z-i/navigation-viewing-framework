@@ -12,6 +12,7 @@ LOCAL_AVANGO="$DIR/../../../avango"
 #AVANGO=/opt/guacamole/testing/avango
 
 GUACAMOLE=/opt/guacamole/master
+#GUACAMOLE=/opt/guacamole/gua1806
 AVANGO=/opt/avango/master
 
 # third party libs

@@ -240,14 +240,15 @@ class SceneManager(avango.script.Script):
     _pipeline_value_node.Children.value.append(self.pipeline_info_node)
 
     # init scenes   
-    self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)       
+    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_pig = ScenePig(self, SCENEGRAPH, NET_TRANS_NODE)      
 
     self.activate_scene(0) # activate first scene
 
-    SCENEGRAPH.update_cache()
+    #SCENEGRAPH.update_cache()
         
 
   # callbacks

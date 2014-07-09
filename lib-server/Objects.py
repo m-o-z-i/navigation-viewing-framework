@@ -200,7 +200,7 @@ class SceneObject:
       _light_node.EnableShadows.value = ENABLE_SHADOW
       _light_node.ShadowMapSize.value = SHADOW_MAP_SIZE
       _light_node.ShadowOffset.value = 0.002
-      #_light_node.ShadowCascadedSplits.value = [0.2, 3, 10, 100, 150],
+      _light_node.ShadowCascadedSplits.value = [0.2, 3, 10, 50, 150]
 
       MANIPULATION_PICK_FLAG = False # sun light not pickable (infinite position) 
 
@@ -241,6 +241,7 @@ class SceneObject:
   
       _light_geometry = _loader.create_geometry_from_file(_light_node.Name.value + "_geometry", _filename, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
       _light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
+      #_light_geometry.Transform.value = avango.gua.make_scale_mat(5.0)
       _light_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
       _light_geometry.GroupNames.value.append("man_pick_group") # prepare light geometry for picking
       
@@ -279,18 +280,25 @@ class SceneObject:
     self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP, False)    
 
 
-  def init_point_cloud(self, NAME, FILENAME, MATRIX, PARENT_NODE, RENDER_GROUP):
+  def init_plod(self, NAME, FILENAME, MATRIX, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP):
  
     _loader = avango.gua.nodes.PLODLoader()
     _loader.UploadBudget.value = 32
     _loader.RenderBudget.value = 1024
     _loader.OutOfCoreBudget.value = 4096    
 
-    _node = _loader.create_geometry_from_file(NAME, FILENAME)
+    _loader_flags = "avango.gua.LoaderFlags.DEFAULTS" # default loader flags
+
+    _loader_flags += " | avango.gua.LoaderFlags.NORMALIZE_POSITION | avango.gua.LoaderFlags.NORMALIZE_SCALE"
+    
+    if GROUNDFOLLOWING_PICK_FLAG == True or MANIPULATION_PICK_FLAG == True:
+      _loader_flags += " | avango.gua.LoaderFlags.MAKE_PICKABLE"      
+
+    _node = _loader.create_geometry_from_file(NAME, FILENAME, eval(_loader_flags))
     _node.Transform.value = MATRIX
     #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
  
-    self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP, False)    
+    self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
 
 
 
@@ -316,7 +324,7 @@ class SceneObject:
         for _child in _childs:
           self.init_interactive_objects(_child, _object, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, RECURSIVE_FLAG)
 
-      else: # Geometry
+      else: # geometry
         _object = InteractiveObject()
         _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
   

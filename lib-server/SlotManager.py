@@ -211,7 +211,6 @@ class SlotManager(avango.script.Script):
       for _i in range(total_number_of_shutter_glasses):
         self.radio_master_hid.set_shutter_const(_i + 1, int("22", 16), 1)  # activate all shutter glasses
 
-    
     # loop over all displays to be handled
     for _display in self.slots:
 
@@ -341,6 +340,10 @@ class SlotManager(avango.script.Script):
         _user = _state[0]
         _number_of_slots = _state[1]
 
+        # warn if a handled user has no glasses id specified
+        if _user.glasses_id == None:
+          print_warning("Warning: User " + str(_user.id) + " has no glasses id specified.")
+
         # check if the user has slots assigned to him
         if _number_of_slots > 0:
           if _stereo:
@@ -376,7 +379,8 @@ class SlotManager(avango.script.Script):
               _right_values = (_end_values_left[1], _end_values_right[1])
 
               # set event count properly
-              self.radio_master_hid.set_event_count(_user.glasses_id, 4)
+              if _user.glasses_id != None:
+                self.radio_master_hid.set_event_count(_user.glasses_id, 4)
 
             # ACTIVE_STEREO shutter mode
             else:
@@ -386,66 +390,63 @@ class SlotManager(avango.script.Script):
               _right_values = (_start_values_right[0], _start_values_right[1], _end_values_right[2], _end_values_right[3])
 
               # set event count properly
-              self.radio_master_hid.set_event_count(_user.glasses_id, 8)
+              if _user.glasses_id != None:
+                self.radio_master_hid.set_event_count(_user.glasses_id, 8)
 
             _j = 0
 
-            # warn if a handled user has no glasses id specified
-            if _user.glasses_id == None:
-              print_warning("Warning: User " + str(_user.id) + " has no glasses id specified.")
-
             # fail if glasses id is too large, else mark the glasses id as updated for this display
-            if _user.glasses_id > total_number_of_shutter_glasses:
-              print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)
-            else:
-              _glasses_updated[_user.glasses_id - 1] = True
-            
-            # if user glasses are closing, do it immediately (slot image already present)
-            if _display_slot_assignment[_user.glasses_id - 1] <= _old_display_slot_assignment[_user.glasses_id - 1]:
+            if _user.glasses_id != None:
+              if _user.glasses_id > total_number_of_shutter_glasses:
+                print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)
+              else:
+                _glasses_updated[_user.glasses_id - 1] = True
               
-              # set ids with shutter timings and values properly
-              while _j < len(_left_timings):
-                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _left_timings[_j])
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
-                _j += 1
+              # if user glasses are closing, do it immediately (slot image already present)
+              if _display_slot_assignment[_user.glasses_id - 1] <= _old_display_slot_assignment[_user.glasses_id - 1]:
+                
+                # set ids with shutter timings and values properly
+                while _j < len(_left_timings):
+                  self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _left_timings[_j])
+                  self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
+                  _j += 1
 
-              while _j < 2 * len(_left_timings):
-                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _right_timings[_j - len(_left_timings)])
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
-                _j += 1
+                while _j < 2 * len(_left_timings):
+                  self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _right_timings[_j - len(_left_timings)])
+                  self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
+                  _j += 1
 
-            # if the user glasses are opening, wait for some frames (new slot image not yet present)
-            else:
+              # if the user glasses are opening, wait for some frames (new slot image not yet present)
+              else:
 
-              # set ids with shutter timings and values properly, queue the commands
-              _command_list = []
-              '''
-              # set ids with shutter timings and values properly
-              while _j < len(_left_timings):
-                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _left_timings[_j])
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
-                _j += 1
+                # set ids with shutter timings and values properly, queue the commands
+                _command_list = []
+                '''
+                # set ids with shutter timings and values properly
+                while _j < len(_left_timings):
+                  self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _left_timings[_j])
+                  self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
+                  _j += 1
 
-              while _j < 2 * len(_left_timings):
-                self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _right_timings[_j - len(_left_timings)])
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
-                _j += 1
+                while _j < 2 * len(_left_timings):
+                  self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _right_timings[_j - len(_left_timings)])
+                  self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
+                  _j += 1
 
-              '''
-              while _j < len(_left_timings):
-                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_left_timings[_j]) + ")")
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
-                _j += 1
+                '''
+                while _j < len(_left_timings):
+                  _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_left_timings[_j]) + ")")
+                  self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_left_values[_j]), 16))
+                  _j += 1
 
-              while _j < 2 * len(_left_timings):
-                _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_right_timings[_j - len(_left_timings)]) + ")")
-                self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
-                _j += 1
+                while _j < 2 * len(_left_timings):
+                  _command_list.append("self.radio_master_hid.set_timer_value(" + str(_user.glasses_id) + "," + str(_j) + "," + str(_right_timings[_j - len(_left_timings)]) + ")")
+                  self.radio_master_hid.set_shutter_value(_user.glasses_id, _j, int(str(_right_values[_j - len(_left_timings)]), 16))
+                  _j += 1
 
-              self.queue_commands(_command_list, 9)
+                self.queue_commands(_command_list, 9)
               
               
-
             # assign user to slot instances (headtracking matrix update)
             for _k in range(_start_i, _end_i + 1):
               _slot_instances[_k].assign_user(_user)

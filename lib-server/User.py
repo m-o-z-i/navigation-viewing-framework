@@ -195,7 +195,9 @@ class User(avango.script.Script):
         _hit_screen = int(_hit[1])
         _intended_display = _intended_platform.displays[_hit_screen]
 
-        if _intended_display != self.current_display:
+        if _intended_display != self.current_display and \
+           _hit_platform == self.platform_id:
+
           self.set_user_location(_hit_platform, _hit_screen, True)
 
       else:

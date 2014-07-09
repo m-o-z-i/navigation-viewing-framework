@@ -351,7 +351,6 @@ class User(avango.script.Script):
                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
 
-
     if self.platform.avatar_type != "None" and \
       self.platform.avatar_type.endswith(".ks") == False:
       self.append_to_platform(self.head_avatar)

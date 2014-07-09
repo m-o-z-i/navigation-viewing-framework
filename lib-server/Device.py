@@ -13,6 +13,9 @@ import avango.daemon
 from TrackingReader import *
 from ConsoleIO import *
 
+# import standard python modules
+import types
+
 ## Base class for the representation of an input device supplying multiple degrees of freedom.
 #
 # This class should not be instantiated, but concrete device reading
@@ -146,10 +149,15 @@ class MultiDofDevice(avango.script.Script):
     self.dofs = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
   
     for _input_binding in self.input_bindings:
-      try:
-        eval(_input_binding)
-      except:
-        print_error("Error parsing input binding " + str(_input_binding), False)
+      if type(_input_binding) is types.StringType:
+        try:
+          eval(_input_binding)
+        except Exception as e:
+          print_error("Error parsing string input binding {} [Message: {}]".format(_input_binding, e), False)
+      elif type(_input_binding) is types.LambdaType:
+        _input_binding()
+      else:
+        raise TypeError("Input binding '{}' is neither string nor lambda expression".format(_input_binding))
     
     self.mf_dof.value = self.dofs
 

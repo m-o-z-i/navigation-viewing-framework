@@ -12,6 +12,10 @@ from SceneManager import *
 from ApplicationManager import *
 from RecorderPlayer import *
 from Manipulation import *
+from Portal import *
+from PortalCamera import *
+from PortalInteractionSpace import *
+from Device import *
 
 # import python libraries
 import sys
@@ -22,8 +26,21 @@ import subprocess
 # @param CONFIG_FILE The filname of the configuration file to parse.
 # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
 
+class TimedRotate(avango.script.Script):
+  TimeIn = avango.SFFloat()
+  MatrixOut = avango.gua.SFMatrix4()
+
+  @field_has_changed(TimeIn)
+  def update(self):
+    self.MatrixOut.value = avango.gua.make_trans_mat(0.0,1.2,0.0) * \
+                           avango.gua.make_rot_mat(self.TimeIn.value*15.0, 0.0, 1.0, 0.0) * \
+                           avango.gua.make_scale_mat(0.1)
+
 ## Main method for the server application
 def start():
+
+  # disable logger warningss
+  logger = avango.gua.nodes.Logger(EnableWarning = False)
 
   # create scenegraph
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
@@ -38,8 +55,6 @@ def start():
   # initialize pseudo nettrans node as client processes are started in Platform class
   pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
   graph.Root.value.Children.value = [pseudo_nettrans]
-
-  print sys.argv[2]
 
   if sys.argv[2] == "True":
     start_clients = True 
@@ -72,6 +87,31 @@ def start():
   scene_manager = SceneManager()
   scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
+  # initialize portal manager
+  portal_manager = PortalManager()
+  portal_manager.my_constructor(graph, application_manager.navigation_list)
+
+  portal_camera = PortalCamera()
+  portal_camera.my_constructor(0, portal_manager, application_manager.navigation_list[0], "device-portal-camera", "tracking-portal-camera")
+
+  #'''
+  table_device = SpacemouseDevice()
+  table_device.my_constructor("device-spacemouse", avango.gua.make_identity_mat())
+  table_device.translation_factor = 0.05
+
+  table_interaction_space = PortalInteractionSpace()
+  table_interaction_space.my_constructor(table_device
+                                       , application_manager.navigation_list[0].platform
+                                       , avango.gua.Vec3(-2.441, 0.956, 1.635)
+                                       , avango.gua.Vec3(-1.450, 1.021, 2.936))
+  portal_camera.add_interaction_space(table_interaction_space)
+  #'''
+
+  #monkey_updater = TimedRotate()
+
+  #timer = avango.nodes.TimeSensor()
+  #monkey_updater.TimeIn.connect_from(timer.Time)
+  #graph["/net/Monkey/group/monkey1"].Transform.connect_from(monkey_updater.MatrixOut)
 
   # initialize animation manager
   #animation_manager = AnimationManager()
@@ -92,7 +132,7 @@ def start():
   #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]]
   #                               , [None])
 
-  manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

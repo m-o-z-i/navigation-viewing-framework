@@ -12,9 +12,10 @@ from avango.script import field_has_changed
 
 # import framework libraries
 from ClientTrackingReader import *
-import ClientPipelineValues
+from ClientPortal import *
 from ConsoleIO import *
 
+# import python libraries
 import time
 
 
@@ -31,6 +32,10 @@ class View(avango.script.Script):
   ## Default constructor.
   def __init__(self):
     self.super(View).__init__()
+
+    ## @var portal_pre_views
+    # A list of all PortalPreView instances for this view.
+    self.portal_pre_views = []
 
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
@@ -58,6 +63,10 @@ class View(avango.script.Script):
     # The number of the screen node on the platform.
     self.screen_num = SCREEN_NUM
 
+    ## @var is_stereo
+    # Boolean indicating if the view to be constructed is stereo or mono.
+    self.is_stereo = STEREO
+
     ## @var ONLY_TRANSLATION_UPDATE
     # In case this boolean is true, only the translation values will be locally updated from the tracking system.
     self.ONLY_TRANSLATION_UPDATE = False
@@ -82,15 +91,22 @@ class View(avango.script.Script):
     # The camera from which this View will be rendered.
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = SCENEGRAPH.Name.value
+    self.camera.Mode.value = DISPLAY_INSTANCE.cameramode
 
     # set render mask for camera
-    #_render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-    _render_mask = "!pre_scene1 && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-
+    _render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+    #_render_mask = "!pre_scene1 && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
 
     for _i in range(0, 10):
       if _i != self.platform_id:
         _render_mask = _render_mask + " && !platform_group_" + str(_i)
+
+    for _screen in range(0, 10):
+      for _slot in range(0, 10):
+        if _screen != self.screen_num or _slot != self.slot_id:
+          _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
+
+    _render_mask = _render_mask + " && " + DISPLAY_INSTANCE.render_mask
 
     self.camera.RenderMask.value = _render_mask
 
@@ -125,10 +141,10 @@ class View(avango.script.Script):
       self.pipeline.RightResolution.value = self.window.RightResolution.value
 
 
-    elif STEREO:
+    else:
 
       '''
-        Stereo View
+        Standard View
       '''
 
       self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(self.screen_num)
@@ -144,6 +160,7 @@ class View(avango.script.Script):
       self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       self.window.LeftResolution.value = self.window_size
       self.window.RightResolution.value = self.window_size
+      #self.window.EnableVsync.value = True
 
       if DISPLAY_INSTANCE.stereomode == "SIDE_BY_SIDE":
         self.window.Size.value = avango.gua.Vec2ui(self.window_size.x * 2, self.window_size.y)
@@ -162,42 +179,22 @@ class View(avango.script.Script):
         elif DISPLAY_INSTANCE.stereomode == "CHECKERBOARD":
           self.window.StereoMode.value = avango.gua.StereoMode.CHECKERBOARD
 
-      self.pipeline.EnableStereo.value = True
       self.pipeline.LeftResolution.value = self.window.LeftResolution.value
       self.pipeline.RightResolution.value = self.window.RightResolution.value
 
-    else:
-
-      '''
-        Mono View
-      '''
-
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(SCREEN_NUM)
-      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eye"
-
-      # create window
-      ## @var window
-      # The window in which this View will be rendered to.
-      self.window = avango.gua.nodes.Window()
-      self.window.Display.value = self.display_values[0] # GPU-ID
-      self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
-      self.window.Size.value = self.window_size
-      self.window.LeftResolution.value = self.window_size
-
-      self.pipeline.EnableStereo.value = False
-      self.pipeline.LeftResolution.value = self.window.LeftResolution.value
-
+      if self.is_stereo:
+        self.pipeline.EnableStereo.value = True
+      else:
+        self.pipeline.EnableStereo.value = False
 
     self.pipeline.Window.value = self.window
     self.pipeline.Camera.value = self.camera
+    self.pipeline.EnableFPSDisplay.value = True
 
 
     '''
       General user settings
     '''
-
-    # set nice pipeline values
-    ClientPipelineValues.set_default_pipeline_values(self.pipeline)
 
     # add tracking reader to avoid latency
     self.init_local_tracking_override(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())
@@ -252,6 +249,28 @@ class View(avango.script.Script):
       WINDOW.WarpMatrixGreenLeft.value   = WARPMATRICES[4]
       WINDOW.WarpMatrixBlueLeft.value    = WARPMATRICES[5]
 
+  ##
+  def create_portal_preview(self, LOCAL_PORTAL_NODE):
+    _pre_view = PortalPreView()
+    _pre_view.my_constructor(LOCAL_PORTAL_NODE, self)
+    self.portal_pre_views.append(_pre_view)
+
+  ##
+  def remove_portal_preview(self, LOCAL_PORTAL_NODE):
+
+    _pre_views_to_remove = []
+
+    for _pre_view in self.portal_pre_views:
+      if _pre_view.compare_portal_node(LOCAL_PORTAL_NODE) == True:
+        _pre_views_to_remove.append(_pre_view)
+        
+    for _pre_view in _pre_views_to_remove:
+      print "Remove a pre view"
+      _pre_view.deactivate()
+      self.portal_pre_views.remove(_pre_view)
+      del _pre_view
+      print "New list of pre views", self.portal_pre_views
+
   ## Called whenever sf_pipeline_string changes.
   @field_has_changed(sf_pipeline_string)
   def sf_pipeline_string_changed(self):
@@ -264,8 +283,9 @@ class View(avango.script.Script):
     # to crash. All textures have to be preloaded, for example in ClientPipelineValues.py
     # avango.gua.create_texture(_splitted_string[0])
     
+    self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
     self.pipeline.BackgroundTexture.value = _splitted_string[0]
-    #self.pipeline.FogTexture.value = _splitted_string[0]
+    self.pipeline.FogTexture.value = _splitted_string[0]
 
     if _splitted_string[1] == "True":
       self.pipeline.EnableBloom.value = True
@@ -298,12 +318,26 @@ class View(avango.script.Script):
       self.pipeline.EnableFXAA.value = True
     else:
       self.pipeline.EnableFXAA.value = False
+
+    _ambient_color_values = _splitted_string[11].split(",")
+    _ambient_color = avango.gua.Color(float(_ambient_color_values[0]), float(_ambient_color_values[1]), float(_ambient_color_values[2]))
+    self.pipeline.AmbientColor.value = _ambient_color
+
+    if _splitted_string[12] == "True":
+      self.pipeline.EnableFog.value = True
+    else:
+      self.pipeline.EnableFog.value = False
+
+    self.pipeline.FogStart.value = float(_splitted_string[13])
+    self.pipeline.FogEnd.value = float(_splitted_string[14])
+    self.pipeline.NearClip.value = float(_splitted_string[15])
+    self.pipeline.FarClip.value = float(_splitted_string[16])
   
     #avango.gua.reload_materials()
   
   ## Evaluated every frame.
   def evaluate(self):
-    
+
     try:
       _pipeline_info_node = self.SCENEGRAPH["/net/pipeline_values"].Children.value[0]
     except:

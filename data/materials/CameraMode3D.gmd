@@ -1,0 +1,11 @@
+{
+	"shading_model" : "ComplexTexture.gsd",
+	"uniforms" : 
+	{
+		"diffuse_map" : "data/textures/3D_mode.png",
+		"emit" : "1.0",
+		"normal_map" : "data/textures/3D_mode.png",
+		"shinyness" : "50",
+		"specular_map" : "data/textures/3D_mode.png"
+	}
+}

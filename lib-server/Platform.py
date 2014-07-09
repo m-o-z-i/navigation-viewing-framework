@@ -174,6 +174,7 @@ class Platform(avango.script.Script):
         # create screen visualization when desired
         if AVATAR_TYPE != "None":
           _screen_visualization = _display.create_screen_visualization()
+          _screen_visualization.GroupNames.value = ["avatar_group_" + str(self.platform_id)]
           self.platform_scale_transform_node.Children.value.append(_screen_visualization)
 
       # create screen proxy geometry for view ray hit tests
@@ -426,7 +427,7 @@ class Platform(avango.script.Script):
                                                                 'data/materials/' + self.avatar_material + 'Shadeless.gmd',
                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
-    #self.own_color_geometry.GroupNames.value = ["do_not_display_group"]
+    self.own_color_geometry.GroupNames.value = ["status_group_" + str(self.platform_id)]
 
     self.coupling_status_node.Children.value.append(self.own_color_geometry)
 
@@ -523,6 +524,7 @@ class Platform(avango.script.Script):
                                                      'data/objects/plane.obj',
                                                      'data/materials/' +_nav.trace_material + 'Shadeless.gmd',
                                                      avango.gua.LoaderFlags.LOAD_MATERIALS)
+          _plane.GroupNames.value = ["status_group_" + str(self.platform_id)]
           _plane.ShadowMode.value = avango.gua.ShadowMode.OFF
           self.NET_TRANS_NODE.distribute_object(_plane)
           self.coupling_status_node.Children.value.append(_plane)

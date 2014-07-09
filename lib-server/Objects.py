@@ -95,13 +95,36 @@ class SceneObject:
 
     ## @var enable_frustum_culling
     # Mapping of pipeline value EnableFrustumCulling.
-    self.enable_frustum_culling = False
+    self.enable_frustum_culling = True
 
     ## @var enable_fxaa
     # Mapping of pipeline value EnableFXAA.
-    self.enable_fxaa = False
+    self.enable_fxaa = True
 
-    self.ambient_color = avango.gua.Vec3(0.0,0.0,0.0)
+    ## @var ambient_color
+    # Mapping of pipeline value AmbientColor.
+    self.ambient_color = avango.gua.Color(0.4, 0.4, 0.4)
+
+    ## @var enable_fog
+    # Mapping of pipeline value EnableFog.
+    self.enable_fog = True
+
+    ## @var fog_start
+    # Mapping of pipeline value FogStart.
+    self.fog_start = 300.0
+
+    ## @var fog_end
+    # Mapping of pipeline value FogEnd.
+    self.fog_end = 500.0
+
+    ## @var near_clip
+    # Mapping of pipeline value NearClip.
+    self.near_clip = 0.1
+
+    ## @var far_clip
+    # Mapping of pipeline value FarClip.
+    self.far_clip = 1000.0
+
 
     '''
       Navigation values
@@ -143,7 +166,13 @@ class SceneObject:
            str(self.ssao_intensity) + "#" + \
            str(self.enable_backface_culling) + "#" + \
            str(self.enable_frustum_culling) + "#" + \
-           str(self.enable_fxaa)
+           str(self.enable_fxaa) + "#" + \
+           str(round(self.ambient_color.r,3)) + "," + str(round(self.ambient_color.g,3)) + "," + str(round(self.ambient_color.b,3)) + "#" + \
+           str(self.enable_fog) + "#" + \
+           str(self.fog_start) + "#" + \
+           str(self.fog_end) + "#" + \
+           str(self.near_clip) + "#" + \
+           str(self.far_clip)
 
 
   ## Creates and initializes a geometry node in the scene.
@@ -277,7 +306,7 @@ class SceneObject:
     _node.Transform.value = MATRIX
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
  
-    self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP, False)    
+    self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP, False)
 
 
   def init_plod(self, NAME, FILENAME, MATRIX, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP):
@@ -287,16 +316,16 @@ class SceneObject:
     _loader.RenderBudget.value = 1024
     _loader.OutOfCoreBudget.value = 4096    
 
-    _loader_flags = "avango.gua.LoaderFlags.DEFAULTS" # default loader flags
+    _loader_flags = "avango.gua.PLODLoaderFlags.DEFAULTS" # default loader flags
 
-    _loader_flags += " | avango.gua.LoaderFlags.NORMALIZE_POSITION | avango.gua.LoaderFlags.NORMALIZE_SCALE"
+    _loader_flags += " | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE"
     
     if GROUNDFOLLOWING_PICK_FLAG == True or MANIPULATION_PICK_FLAG == True:
-      _loader_flags += " | avango.gua.LoaderFlags.MAKE_PICKABLE"      
+      _loader_flags += " | avango.gua.PLODLoaderFlags.MAKE_PICKABLE"      
 
     _node = _loader.create_geometry_from_file(NAME, FILENAME, eval(_loader_flags))
     _node.Transform.value = MATRIX
-    #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
+    _node.ShadowMode.value = avango.gua.ShadowMode.OFF
  
     self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
 

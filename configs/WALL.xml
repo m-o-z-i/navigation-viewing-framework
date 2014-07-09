@@ -57,7 +57,7 @@
       <raystartheight>0.75</raystartheight>
     </groundfollowing>
 
-    <movementtraces>True</movementtraces>
+    <movementtraces>False</movementtraces>
 
   </device>
 
@@ -76,57 +76,8 @@
 
     <warnings>False</warnings>
 
-  </user>
-
-
-  <!-- Second User -->
-  
-  <user>
-
-    <vip>False</vip>
-
-    <glasses>4</glasses>
-
-    <headtrackingstation>tracking-dlp-glasses-4</headtrackingstation>
-
-    <startplatform>0</startplatform>
-
-    <warnings>False</warnings>
+    <eyedist>0.065</eyedist>
 
   </user>
 
-  <!-- Fourth User -->
-  
-  <user>
-
-    <vip>False</vip>
-
-    <glasses>5</glasses>
-
-    <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
-
-    <startplatform>0</startplatform>
-
-    <warnings>False</warnings>
-
-  </user>
-
-
-  <!-- Fourth User -->
-  
-  <user>
-
-    <vip>False</vip>
-
-    <glasses>6</glasses>
-
-    <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
-
-    <startplatform>0</startplatform>
-
-    <warnings>False</warnings>
-
-  </user>
-  
-    
 </setup>

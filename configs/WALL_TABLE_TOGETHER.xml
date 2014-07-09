@@ -55,32 +55,16 @@
     </platformsize>
 
     <groundfollowing>
-      <activated>True</activated>
+      <activated>False</activated>
       <raystartheight>0.75</raystartheight>
     </groundfollowing>
 
-    <movementtraces>True</movementtraces>
+    <movementtraces>False</movementtraces>
 
   </device>
 
 
   <!-- First User -->
-  
-  <user>
-
-    <vip>False</vip>
-
-    <glasses>1</glasses>
-
-    <headtrackingstation>tracking-dlp-glasses-1</headtrackingstation>
-
-    <startplatform>0</startplatform>
-
-    <warnings>False</warnings>
-
-  </user>
-
-  <!-- Second User -->
   
   <user>
 
@@ -92,27 +76,29 @@
 
     <startplatform>0</startplatform>
 
+    <eyedist>0.065</eyedist>
+
     <warnings>False</warnings>
 
   </user>
 
-
-  <!-- Fourth User -->
+  <!-- Second User -->
   
   <user>
 
     <vip>False</vip>
 
-    <glasses>6</glasses>
+    <glasses>5</glasses>
 
-    <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
+    <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
 
     <startplatform>0</startplatform>
+
+    <eyedist>0.065</eyedist>
 
     <warnings>False</warnings>
 
   </user>
-  
   
     
 </setup>

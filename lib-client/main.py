@@ -12,6 +12,7 @@ import avango.oculus
 # import framework libraries
 import ClientMaterialUpdaters
 from View import *
+from ClientPortal import * 
 from display_config import displays
 
 # import python libraries
@@ -58,7 +59,11 @@ def start():
 
   # create a dummy scenegraph to be extended by distribution
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
-  graph.Root.value.Children.value = [nettrans]
+
+  # create node for local portal updates
+  local_portal_node = avango.gua.nodes.TransformNode(Name = "local_portal_group")
+
+  graph.Root.value.Children.value = [nettrans, local_portal_node]
 
   # create material updaters as this cannot be distributed
   avango.gua.load_shading_models_from("data/materials")
@@ -69,20 +74,19 @@ def start():
   _loader.RenderBudget.value = 1024
   _loader.OutOfCoreBudget.value = 4096    
 
-  _node = _loader.create_geometry_from_file("pig", "/opt/3d_models/point_based/plod/pig.kdn", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.NORMALIZE_POSITION | avango.gua.LoaderFlags.NORMALIZE_SCALE | avango.gua.LoaderFlags.MAKE_PICKABLE)
-  _node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/KDN_LOD/PITOTI_KDN_LOD/Spacemonkey_new.kdn", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.NORMALIZE_POSITION | avango.gua.LoaderFlags.NORMALIZE_SCALE | avango.gua.LoaderFlags.MAKE_PICKABLE)  
-  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area_4_hunter_with_bow.kdn", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.NORMALIZE_POSITION | avango.gua.LoaderFlags.NORMALIZE_SCALE | avango.gua.LoaderFlags.MAKE_PICKABLE) 
+  #_node = _loader.create_geometry_from_file("pig", "/opt/3d_models/point_based/plod/pig.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)
+  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/KDN_LOD/PITOTI_KDN_LOD/Spacemonkey_new.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)  
+  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area_4_hunter_with_bow.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE) 
+  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/TLS_Seradina_Rock-12C.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)
   
-
-  
-  '''
+  #'''
   timer = avango.nodes.TimeSensor()
   
   water_updater = ClientMaterialUpdaters.TimedMaterialUniformUpdate()
   water_updater.MaterialName.value = "data/materials/Water.gmd"
   water_updater.UniformName.value = "time"
   water_updater.TimeIn.connect_from(timer.Time)
-  '''
+  #'''
 
   '''  
   avango.gua.load_material("data/materials/bwb/Fog.gmd")
@@ -139,6 +143,10 @@ def start():
     _string_num += 1
 
   viewer.SceneGraphs.value = [graph]
+
+  # create client portal manager
+  portal_manager = ClientPortalManager()
+  portal_manager.my_constructor(graph, views)
 
   # start rendering process
   viewer.run()

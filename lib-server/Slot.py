@@ -73,26 +73,21 @@ class Slot:
     self.no_tracking_node = avango.gua.nodes.TransformNode(Name = "no_tracking_mat")
     self.information_node.Children.value.append(self.no_tracking_node)
 
-    if self.stereo:
-      # create the eyes
-      ## @var left_eye
-      # Representation of the slot's user's left eye.
-      self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
-      self.left_eye.Transform.value = avango.gua.make_identity_mat()
-      self.slot_node.Children.value.append(self.left_eye)
+    # create the eyes
+    ## @var left_eye
+    # Representation of the slot's user's left eye.
+    self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
+    self.left_eye.Transform.value = avango.gua.make_identity_mat()
+    self.slot_node.Children.value.append(self.left_eye)
 
-      ## @var right_eye
-      # Representation of the slot's user's right eye.
-      self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
-      self.right_eye.Transform.value = avango.gua.make_identity_mat()
-      self.slot_node.Children.value.append(self.right_eye)
+    ## @var right_eye
+    # Representation of the slot's user's right eye.
+    self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
+    self.right_eye.Transform.value = avango.gua.make_identity_mat()
+    self.slot_node.Children.value.append(self.right_eye)
 
-    else:
-      ## create the eye
-      # Representation of the slot's user's eye.
-      self.eye = avango.gua.nodes.TransformNode(Name = "eye")
-      self.eye.Transform.value = avango.gua.make_identity_mat()
-      self.slot_node.Children.value.append(self.eye)
+    if self.stereo == False:
+      self.set_eye_distance(0.0)
 
 
   ## Sets the transformation values of left and right eye.
@@ -108,7 +103,9 @@ class Slot:
     # connect tracking matrix
     self.slot_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
     self.assigned_user = USER_INSTANCE
-    self.set_eye_distance(self.assigned_user.eye_distance)
+
+    if self.stereo:
+      self.set_eye_distance(self.assigned_user.eye_distance)
  
     # set information node
     if USER_INSTANCE.headtracking_target_name == None:
@@ -126,7 +123,7 @@ class Slot:
   def clear_user(self):
     if self.assigned_user != None:
       self.slot_node.Transform.disconnect()
-      self.slot_node.Transform.value = avango.gua.make_trans_mat(10, 10, 10)
+      self.slot_node.Transform.value = avango.gua.make_identity_mat()
       self.assigned_user = None
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()

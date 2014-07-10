@@ -83,11 +83,11 @@ class ScenePitoti(SceneObject):
     self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = True) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
 
-class SceneVianden(SceneObject):
+class SceneViandenHigh(SceneObject):
 
   # constructor
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
-    SceneObject.__init__(self, "SceneVianden", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+    SceneObject.__init__(self, "SceneViandenHigh", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
     # navigation parameters
     self.starting_matrix = avango.gua.make_trans_mat(72.730, -5.571, -51.930)
@@ -95,7 +95,8 @@ class SceneVianden(SceneObject):
 
     # geometry
     _mat = avango.gua.make_rot_mat(90.0,-1,0,0)
-    self.init_geometry("vianden", "data/objects/demo_models/Arctron/Vianden/Aussen_gesamt/VIANDEN.obj", _mat, None, True, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("vianden_out", "data/objects/demo_models/Arctron/Vianden/Aussen_gesamt/VIANDEN.obj", _mat, None, True, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("vianden_in", "data/objects/demo_models/Arctron/Vianden/Innen_gesamt/Innenraeume_Gesamt.obj", _mat, None, True, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
           
     # lights
     #_mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
@@ -103,7 +104,17 @@ class SceneVianden(SceneObject):
 
     _mat = avango.gua.make_trans_mat(50.0, 100.0, -50.0) * \
            avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
-    self.init_light(TYPE = 2, NAME = "spot_light", COLOR = avango.gua.Color(1.0, 1.0, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, MANIPULATION_PICK_FLAG = True, ENABLE_SHADOW = False, LIGHT_DIMENSIONS = avango.gua.Vec3(600.0,600.0,200.0), FALLOFF = 0.009, SOFTNESS = 0.003, SHADOW_MAP_SIZE = 1024)
+    self.init_light(TYPE = 2, 
+                    NAME = "spot_light", 
+                    COLOR = avango.gua.Color(1.0, 1.0, 1.0), 
+                    MATRIX = _mat, 
+                    PARENT_NODE = self.scene_root, 
+                    MANIPULATION_PICK_FLAG = True, 
+                    ENABLE_SHADOW = True, 
+                    LIGHT_DIMENSIONS = avango.gua.Vec3(600.0,600.0,200.0), 
+                    FALLOFF = 0.009, 
+                    SOFTNESS = 0.003, 
+                    SHADOW_MAP_SIZE = 2048)
 
     # render pipeline parameters
     self.enable_backface_culling = False
@@ -111,6 +122,49 @@ class SceneVianden(SceneObject):
     self.enable_ssao = False
     self.enable_fxaa = True
     self.enable_fog = False
+    self.ambient_color = avango.gua.Color(0.5, 0.5, 0.5)
+    #self.background_texture = "/opt/guacamole/resources/skymaps/DH221SN.png"
+    self.background_texture = "/opt/guacamole/resources/skymaps/cycles_island2.jpg"
+
+class SceneViandenLow(SceneObject):
+
+  # constructor
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+    SceneObject.__init__(self, "SceneViandenLow", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+
+    # navigation parameters
+    self.starting_matrix = avango.gua.make_trans_mat(72.730, -5.571, -51.930)
+    self.starting_scale = 1.0    
+
+    # geometry
+    _mat = avango.gua.make_rot_mat(90.0,-1,0,0)
+    self.init_geometry("vianden_out", "data/objects/demo_models/Arctron/Vianden/Aussen_gesamt/VIANDEN.obj", _mat, None, True, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+          
+    # lights
+    #_mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
+    #self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.75, 0.75, 0.75), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = False, SHADOW_MAP_SIZE = 256, ENABLE_GODRAYS = False) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(50.0, 100.0, -50.0) * \
+           avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
+    self.init_light(TYPE = 2, 
+                    NAME = "spot_light", 
+                    COLOR = avango.gua.Color(1.0, 1.0, 1.0), 
+                    MATRIX = _mat, 
+                    PARENT_NODE = self.scene_root, 
+                    MANIPULATION_PICK_FLAG = True, 
+                    ENABLE_SHADOW = False, 
+                    LIGHT_DIMENSIONS = avango.gua.Vec3(600.0,600.0,200.0), 
+                    FALLOFF = 0.009, 
+                    SOFTNESS = 0.003, 
+                    SHADOW_MAP_SIZE = 1024)
+
+    # render pipeline parameters
+    self.enable_backface_culling = False
+    self.enable_frustum_culling = True
+    self.enable_ssao = False
+    self.enable_fxaa = True
+    self.enable_fog = False
+    self.ambient_color = avango.gua.Color(0.5, 0.5, 0.5)
     #self.background_texture = "/opt/guacamole/resources/skymaps/DH221SN.png"
     self.background_texture = "/opt/guacamole/resources/skymaps/cycles_island2.jpg"
 

@@ -242,11 +242,13 @@ class SceneManager(avango.script.Script):
     # init scenes   
     #self.scene_weimar = SceneWeimar(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_plod = ScenePLOD(self, SCENEGRAPH, NET_TRANS_NODE)      
-    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
+    
+    self.scene_vianden_low = SceneViandenLow(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_vianden_high = SceneViandenHigh(self, SCENEGRAPH, NET_TRANS_NODE)
 
     self.activate_scene(0) # activate first scene
 
@@ -348,14 +350,20 @@ class SceneManager(avango.script.Script):
 
       # overwrite first Navigation's starting matrix if described in scene.
       if self.active_scene.starting_matrix != None and len(self.navigation_list) > 0:
-        self.navigation_list[0].start_matrix = self.active_scene.starting_matrix
-        self.navigation_list[0].reset()
-        print_warning("Overwrite platform 0's starting matrix by the one given in the scene description.")
+
+        print_warning("Overwriting the platforms' starting matrices by the one given in the scene description.")
+
+        for _navigation in self.navigation_list:
+          _navigation.start_matrix = self.active_scene.starting_matrix
+          _navigation.reset()
 
       if self.active_scene.starting_scale != None and len(self.navigation_list) > 0:
-        self.navigation_list[0].start_scale = self.active_scene.starting_scale
-        self.navigation_list[0].reset()
-        print_warning("Overwrite platform 0's starting scale factor by the one given in the scene description.")
+
+        print_warning("Overwriting the platforms' starting scale factors by the one given in the scene description.")
+
+        for _navigation in self.navigation_list:
+          _navigation.start_scale = self.active_scene.starting_scale
+          _navigation.reset()
   
       print "Switching to Scene: " + self.active_scene.name
   

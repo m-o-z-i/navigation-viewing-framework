@@ -242,12 +242,12 @@ class SceneManager(avango.script.Script):
     # init scenes   
     #self.scene_weimar = SceneWeimar(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_plod = ScenePLOD(self, SCENEGRAPH, NET_TRANS_NODE)      
     
-    self.scene_vianden_low = SceneViandenLow(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_vianden_low = SceneViandenLow(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden_high = SceneViandenHigh(self, SCENEGRAPH, NET_TRANS_NODE)
 
     self.activate_scene(0) # activate first scene

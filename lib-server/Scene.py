@@ -119,7 +119,7 @@ class SceneViandenHigh(SceneObject):
     # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = True
-    self.enable_ssao = False
+    self.enable_ssao = True
     self.enable_fxaa = True
     self.enable_fog = False
     self.ambient_color = avango.gua.Color(0.5, 0.5, 0.5)

@@ -121,11 +121,11 @@ class PortalCamera(avango.script.Script):
 
     ## @var portal_width
     # Width of the portals displayed in this PortalCamera.
-    self.portal_width = 0.3
+    self.portal_width = 0.35
 
     ## @var portal_height
     # Height of the portals displayed in this PortalCamera.
-    self.portal_height = 0.3
+    self.portal_height = 0.35
 
     ## @var capture_viewing_mode
     # Viewing mode with which new portals will be created.
@@ -133,7 +133,7 @@ class PortalCamera(avango.script.Script):
 
     ## @var capture_parallax_mode
     # Negative parallax mode with which new portals will be created.
-    self.capture_parallax_mode = "True"
+    self.capture_parallax_mode = "False"
 
     ## @var gallery_activated
     # Boolean indicating if the gallery is currently visible for this PortalCamera.

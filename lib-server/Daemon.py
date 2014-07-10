@@ -31,8 +31,8 @@ def init_lcd_wall_tracking():
   _dtrack.stations[17] = avango.daemon.Station('tracking-oculus-front')    # oculus rift tracking
   _dtrack.stations[16] = avango.daemon.Station('tracking-oculus-stag')     # oculus rift tracking
 
-  _dtrack.stations[4] = avango.daemon.Station('tracking-lcd-glasses-1')    # glasses powerwall user one
-  _dtrack.stations[3] = avango.daemon.Station('tracking-lcd-glasses-2')    # glasses powerwall user two
+  _dtrack.stations[3] = avango.daemon.Station('tracking-lcd-glasses-1')    # glasses powerwall user one
+  _dtrack.stations[4] = avango.daemon.Station('tracking-lcd-glasses-2')    # glasses powerwall user two
 
   _dtrack.stations[7] = avango.daemon.Station('tracking-old-spheron')      # old spheron device
 

@@ -533,24 +533,6 @@ class NewSpheronDevice(MultiDofDevice):
     # Factor to modify the device's rotation input.
     self.rotation_factor = 1.0
 
-    '''
-    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_right.Value0.value*-1.0, 0.0, -0.98, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_right.Value1.value, 0.0, -0.44, 0.24, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_right.Value2.value, 0.0, -1.0, 0.94, 0, 0)")    
-    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor_right.Value3.value*-1.0, 0.0, -2048, 2048, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value4.value*-1.0, 0.0, -2048, 2048, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value6.value, 0.0, -0.6, 0.37, 10, 10)")
-    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor_right.Value5.value, 0.0, -2048, 2048, 0, 0)")
-
-    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_left.Value0.value, 0.0, -1.0, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_left.Value1.value, 0.0, -1.0, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_left.Value2.value * -1.0, 0.0, -1.0, 1.0, 0, 0)")
-    
-    self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
-    self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
-    self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
-    '''
-
     self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_left.Value0.value, 0.0, -1.0, 1.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_left.Value1.value, 0.0, -1.0, 1.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_left.Value2.value*-1.0, 0.0, -0.1, 0.22, 0, 0)")            
@@ -559,7 +541,8 @@ class NewSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value4.value*-1.0, 0.0, -150, 150, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor_right.Value5.value*-1.0, 0.0, -150, 150, 0, 0)")    
     
-    self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
+    #self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button
+    self.add_input_binding("self.set_dof_trigger(self.device_sensor_right.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
     

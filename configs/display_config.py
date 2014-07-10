@@ -143,7 +143,7 @@ class SmallPowerwall(Display):
   ## Default constructor.
   def __init__(self, render_mask = ""):
     Display.__init__( self
-                    , hostname = "pandora"
+                    , hostname = "eos"
                     , name = "small_powerwall"
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.1", ":0.0"]
@@ -413,7 +413,7 @@ class OculusRift(Display):
 displays = [
   LargePowerwall() ,
   #LargePowerwall2() ,  
-  #SmallPowerwall() ,
+  SmallPowerwall() ,
   #SmallPowerwall2() ,  
   #OculusRift() ,
   #TouchTable3DStandalone() ,

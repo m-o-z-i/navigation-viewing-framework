@@ -247,23 +247,26 @@ class SceneWeimar(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "Weimar", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-    self.starting_matrix = avango.gua.make_trans_mat(0.0, 10.0, 0.0)
-    self.enable_ssao = False
+    self.starting_matrix = avango.gua.make_trans_mat(42.0, 0.1, -5.8)
+    self.enable_ssao = True
     self.ssao_radius = 2.0
     self.ssao_intensity = 2.0
     self.enable_fog = False
-    #self.ambient_color.value = avango.gua.Color(0.0, 0.0, 0.0)
-    self.ambient_color.value = avango.gua.Color(1.0, 0.0, 0.0)
+    self.ambient_color.value = avango.gua.Color(0.0, 0.0, 0.0)
+    #self.ambient_color.value = avango.gua.Color(1.0, 0.0, 0.0)
     self.far_clip = 2000.0
 
+    self.background_texture = "data/textures/bright_sky.jpg"
+
     _mat = avango.gua.make_scale_mat(0.5)
-    self.init_geometry("monkey1", "/opt/3d_models/architecture/weimar_stadtmodell_29.08.12/weimar_stadtmodell_final.obj", _mat, None, False, True, self.scene_root, "main_scene")
+    #self.init_geometry("weimar", "data/objects/demo_models/weimar_stadtmodell_29.08.12/weimar_stadtmodell_final.obj", _mat, "data/materials/SimplePhongWhite.gmd", True, False, self.scene_root, "main_scene")
+    self.init_geometry("weimar", "data/objects/demo_models/weimar_stadtmodell_29.08.12/weimar_stadtmodell_final.obj", _mat, None, True, False, self.scene_root, "main_scene")
 
-    #_mat = avango.gua.make_trans_mat(0.0, 60.0, 60.0) * \
-    #       avango.gua.make_rot_mat(-45.0, 1.0, 0.0, 0.0)
-    #self.init_light(TYPE = 2, NAME = "spot_light", COLOR = avango.gua.Color(1.0, 1.0, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, MANIPULATION_PICK_FLAG = True, ENABLE_SHADOW = True, LIGHT_DIMENSIONS = avango.gua.Vec3(500.0,500.0,100.0), FALLOFF = 0.009, SOFTNESS = 0.003, SHADOW_MAP_SIZE = 2048, ENABLE_SPECULAR_SHADING = False)
+    _mat = avango.gua.make_trans_mat(0.0, 200.0, 60.0) * \
+           avango.gua.make_rot_mat(-45.0, 1.0, 0.0, 0.0)
+    self.init_light(TYPE = 2, NAME = "spot_light", COLOR = avango.gua.Color(1.0, 1.0, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, MANIPULATION_PICK_FLAG = True, ENABLE_SHADOW = False, LIGHT_DIMENSIONS = avango.gua.Vec3(1000.0,1000.0,300.0), FALLOFF = 0.009, SOFTNESS = 0.003, SHADOW_MAP_SIZE = 2048, ENABLE_SPECULAR_SHADING = True)
 
-    _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
-    self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = False) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+    #_mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
+    #self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = True, SHADOW_MAP_SIZE = 2048) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
     
     

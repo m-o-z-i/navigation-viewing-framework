@@ -418,10 +418,10 @@ displays = [
   #OculusRift() ,
   #TouchTable3DStandalone() ,
   TouchTable3DSecondary(render_mask = "!main_scene") ,  
-  #Display(hostname = "daedalos", stereo = False) ,
+  Display(hostname = "daedalos", stereo = False) ,
 ]
 
 ## @var INTELLIGENT_SHUTTER_SWITCHING
 # If true, free display slots will be assigned to users, vip and active flags
 # of users are considered and the users' shutter timings are updated.
-INTELLIGENT_SHUTTER_SWITCHING = True
+INTELLIGENT_SHUTTER_SWITCHING = False

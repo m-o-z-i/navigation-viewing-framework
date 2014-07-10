@@ -306,7 +306,7 @@ class PortalPreView(avango.script.Script):
     self.pipeline.Camera.value = self.camera
 
     # init pipline value connections
-    self.pipeline.BackgroundMode.connect_from(VIEW.pipeline.BackgroundMode)
+    #self.pipeline.BackgroundMode.connect_from(VIEW.pipeline.BackgroundMode)
     self.pipeline.BackgroundTexture.connect_from(VIEW.pipeline.BackgroundTexture)
     self.pipeline.FogTexture.connect_from(VIEW.pipeline.FogTexture)
     self.pipeline.EnableBloom.connect_from(VIEW.pipeline.EnableBloom)

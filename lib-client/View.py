@@ -76,6 +76,10 @@ class View(avango.script.Script):
     # Values that are retrieved from the display. Vary for each view on this display.
     self.display_values = DISPLAY_INSTANCE.register_view()
 
+    ##
+    #
+    self.display_render_mask = DISPLAY_INSTANCE.render_mask
+
     # check if no more users allowed at this screen
     if not self.display_values:
       # TODO better handling of this case?
@@ -106,7 +110,7 @@ class View(avango.script.Script):
         if _screen != self.screen_num or _slot != self.slot_id:
           _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
 
-    _render_mask = _render_mask + " && " + DISPLAY_INSTANCE.render_mask
+    _render_mask = _render_mask + " && " + self.display_render_mask
 
     self.camera.RenderMask.value = _render_mask
 
@@ -283,9 +287,13 @@ class View(avango.script.Script):
     # to crash. All textures have to be preloaded, for example in ClientPipelineValues.py
     # avango.gua.create_texture(_splitted_string[0])
     
-    self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
-    self.pipeline.BackgroundTexture.value = _splitted_string[0]
-    self.pipeline.FogTexture.value = _splitted_string[0]
+    if self.display_render_mask == "!main_scene":
+      self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.COLOR
+      self.pipeline.BackgroundColor.value = avango.gua.Color(0.2, 0.45, 0.6)
+    else:
+      self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
+      self.pipeline.BackgroundTexture.value = _splitted_string[0]
+      self.pipeline.FogTexture.value = _splitted_string[0]
 
     if _splitted_string[1] == "True":
       self.pipeline.EnableBloom.value = True

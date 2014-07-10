@@ -375,8 +375,8 @@ class Portal:
       _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
                              self.platform_matrix * \
                              avango.gua.make_rot_mat( _rot_vec.y, 0, 0, -1) * \
-                             avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
-                             avango.gua.make_rot_mat( _rot_vec.z, 0, -1, 0)
+                             avango.gua.make_rot_mat( _rot_vec.x, -1, 0, 0) * \
+                             avango.gua.make_rot_mat( _rot_vec.z, 0, 1, 0)
 
       '''
       # navigation metaphor

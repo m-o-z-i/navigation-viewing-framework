@@ -186,7 +186,7 @@ class PortalCamera(avango.script.Script):
 
     ## @var animation_duration
     # Duration of an animation handled by this class.
-    self.animation_duration = 0.5
+    self.animation_duration = 1.0
 
 
   ## Custom constructor.
@@ -316,8 +316,8 @@ class PortalCamera(avango.script.Script):
       self.portal_width -= 0.005
       self.portal_height -= 0.005
       
-      if self.portal_width < 0.05:
-        self.portal_width = 0.05
+      if self.portal_width < 0.15:
+        self.portal_width = 0.15
 
       if self.portal_height < 0.05:
         self.portal_height = 0.05

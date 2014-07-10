@@ -386,6 +386,19 @@ class PerseusTouchTable(Display):
     def get_touch_protocols(self):
         return [ "TUIO" ]
 
+class MedusaTouchTable(Display):
+    def __init__(self):
+        Display.__init__(self
+                        , hostname = "medusa"
+                        , name = "touch_table"
+                        , resolution = (1920 * 2, 1080 * 2)
+                        , displaystrings = [":0.0"]
+                        , size = (1.25, .75)
+                        , transformation = avango.gua.make_trans_mat(0.0,1.2,0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+                        )
+
+    def get_touch_protocols(self):
+        return [ "TUIO" ]
 
 ##################################################
 # STORE ALL DISPLAYS TO BE USED IN THIS LIST
@@ -402,6 +415,7 @@ displays = [
   Display(hostname = "daedalos", stereo = False) ,
 
   PerseusTouchTable() ,
+  MedusaTouchTable(), 
 
   Display(hostname = "apollo"
       , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)

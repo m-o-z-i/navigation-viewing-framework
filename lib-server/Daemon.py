@@ -553,6 +553,7 @@ init_keyboard()
 init_spacemouse()
 
 # init portal camera
+init_portal_camera("3.1")
 init_portal_camera("3.2")
 
 # init oculus rift sensors

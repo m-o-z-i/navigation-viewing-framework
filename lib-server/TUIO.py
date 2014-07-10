@@ -74,8 +74,7 @@ class MultiTouchDevice(avango.script.Script):
         Apply calculated world matrix to scene graph.
         Requires the scene graph to have a transform node as root node.
         """
-        self._worldMat   = self._transMat * self._rotMat
-        self._sceneGraph["/net/MedievalTown"].Transform.value = self._transMat * self._sceneGraph["/net/MedievalTown"].Transform.value * self._rotMat
+        self._sceneGraph["/net/MedievalTown"].Transform.value = self._transMat * self._sceneGraph["/net/MedievalTown"].Transform.value * self._rotMat * self._scaleMat
         self._transMat   = avango.gua.make_identity_mat()
         self._rotMat     = avango.gua.make_identity_mat()
         self._scaleMat   = avango.gua.make_identity_mat()
@@ -120,7 +119,7 @@ class TUIODevice(MultiTouchDevice):
         # TODO: do this somewhere else
         self.registerGesture(RotationGesture())
         self.registerGesture(DragGesture())
-        #self.registerGesture(PinchGesture())
+        self.registerGesture(PinchGesture())
 
 
     @field_has_changed(PosChanged)
@@ -207,14 +206,14 @@ class DragGesture(MultiTouchGesture):
         if 2 != len(activePoints):
             self._lastPos = None
             return False
-        elif None == self._lastPos:
-            self._lastPos = (activePoints[0].PosX.value, activePoints[0].PosY.value)
-            return False
 
         point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
         point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
-        point = point1 + (point2 - point1) / 2
-        point = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
+        point = point1.lerp_to(point2, .5)
+
+        if None == self._lastPos:
+            self._lastPos = point
+            return False
 
         # map points from interval [0, 1] to [-1, 1]
         mappedPosX = point[0] * 2 - 1
@@ -238,22 +237,11 @@ class DragGesture(MultiTouchGesture):
         return True
 
 class PinchGesture(MultiTouchGesture):
-    def __init__(self, display):
-        super(PinchGesture, self).__init__(display)
+    def __init__(self):
+        super(PinchGesture, self).__init__()
         self.distances = []
-        self.scaleCenter = None
-        self.centerDirection = None
 
-    def _calculateScaleCenter(self, vec1, vec2):
-        vec1Trans = vec1 * 2 - 1
-        vec2Trans = vec2 * 2 - 1
-        distanceTrans = vec2Trans - vec1Trans
-        self.scaleCenter = vec1Trans + distanceTrans / 2.0
-        self.centerDirection = self.scaleCenter
-        self.centerDirection.normalize()
-
-
-    def processGesture(self, activePoints, mDofDevice):
+    def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 2:
             self.distances = []
             self.scaleCenter = None
@@ -263,8 +251,6 @@ class PinchGesture(MultiTouchGesture):
         vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
         vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
         distance = vec2 - vec1
-        if None == self.scaleCenter:
-            self._calculateScaleCenter(vec1, vec2)
 
         # save old distance
         if 3 == len(self.distances):
@@ -274,19 +260,19 @@ class PinchGesture(MultiTouchGesture):
             self.distances.append(distance)
             return False
 
-        relDistance = (self.distances[0].length() - self.distances[-1].length()) / 2
+        relDistance = (self.distances[0].length() - self.distances[-1].length())
 
         # return if no significant movement occurred
         #if abs(relDistance) < .0005:
         #    return False
 
-        center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
-        rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
-        mDofDevice.tracking_reader.set_no_tracking_matrix(rotMat)
+        #center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
+        #rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
 
-        mDofDevice.mf_dof.value[6] += relDistance * 16.3
-        mDofDevice.mf_dof.value[0] -= self.centerDirection.x * relDistance * 15 * self.display.size[0]
-        mDofDevice.mf_dof.value[2] -= self.centerDirection.y * relDistance * 15 * self.display.size[1]
+        #mDofDevice.mf_dof.value[6] += relDistance * 16.3
+        #mDofDevice.mf_dof.value[0] -= self.centerDirection.x * relDistance * 15 * self.display.size[0]
+        #mDofDevice.mf_dof.value[2] -= self.centerDirection.y * relDistance * 15 * self.display.size[1]
+        touchDevice.addLocalScaling(avango.gua.make_scale_mat(1 - relDistance))
 
         return True
 
@@ -298,7 +284,7 @@ class RotationGesture(MultiTouchGesture):
         self._lastAngle = 0
 
         # smoothing factor for rotation angles
-        self._smoothingFactor = 20
+        self._smoothingFactor = 30
 
 
     def processGesture(self, activePoints, touchDevice):
@@ -310,7 +296,6 @@ class RotationGesture(MultiTouchGesture):
         vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
         distance = vec2 - vec1
         distance = avango.gua.Vec3(distance.x * touchDevice.getDisplay().size[0], distance.y * touchDevice.getDisplay().size[1], 0)
-        distance.normalize()
 
         # save old distance
         if 2 == len(self._distances):
@@ -318,24 +303,35 @@ class RotationGesture(MultiTouchGesture):
             self._distances.pop(0)
         else:
             self._distances.append(distance)
+            return False
 
-        dotProduct   = self._distances[0].dot(self._distances[-1])
+        dist1 = self._distances[0]
+        dist1.normalize()
+        dist2 = self._distances[-1]
+        dist2.normalize()
+        dotProduct   = dist1.dot(dist2)
         crossProduct = self._distances[0].cross(self._distances[-1])
 
         # make sure have no overflows due to rounding issues
         if 1.0 < dotProduct:
             dotProduct = 1.0
 
+        #print(crossProduct.z, self._distances[0], self._distances[-1])
+
         #center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
         #rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
-        angle = -math.copysign(math.acos(dotProduct) * 180 / math.pi, crossProduct.z)
+        angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, -crossProduct.z)
         angle = self.movingAverage(angle, self._smoothingFactor)
+
+        #if 1 < abs(angle) - abs(self._lastAngle):
+        #    self._lastAngle = angle
+        #    return False
 
         #if .04 > abs(self._lastAngle - angle) and 0 == math.copysign(1, self._lastAngle) + math.copysign(1, angle):
         #    angle *= -1
 
         # calculate moving average to prevent oscillation
-        print(angle)
+        #print(angle)
 
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, avango.gua.Vec3(0, 1, 0)))
         self._lastAngle = angle

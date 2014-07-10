@@ -75,14 +75,15 @@ def start():
   scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
   # initialize touch devices
-  multi_touch_devices = []
+  multi_touch_device = None
   for i in application_manager.navigation_list:
     for j in i.platform.displays:
       if "TUIO" in j.get_touch_protocols():
-        device = TUIODevice()
-        device.my_constructor(graph, j)
         print_message("TUIO touch display '{}' detected.".format(j.name))
-        multi_touch_devices.append(device)
+        if None == multi_touch_device:
+          device = TUIODevice()
+          device.my_constructor(graph, j)
+          multi_touch_device = device
 
   # initialize animation manager
   #animation_manager = AnimationManager()
@@ -103,7 +104,7 @@ def start():
   #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]]
   #                               , [None])
 
-  manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

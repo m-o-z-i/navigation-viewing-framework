@@ -15,8 +15,6 @@
 
     <display>touch_table</display>
 
-    <avatartype>joseph</avatartype>
-
     <transmitteroffset>
       <x>0.0</x>
       <y>0.043</y>
@@ -34,7 +32,7 @@
 
     <platformpos>
       <x>0.0</x>
-      <y>90.0</y>
+      <y>5.0</y>
       <z>0.0</z>
     </platformpos>
 

@@ -275,8 +275,8 @@ class TouchTable3D(Display):
                     , stereomode = "SIDE_BY_SIDE"                    
                     )
 
-    def get_touch_protocols(self):
-        return [ "TUIO" ]
+  def get_touch_protocols(self):
+    return [ "TUIO" ]
 
 
   ## Registers a new view at this display and returns the display string 
@@ -402,21 +402,21 @@ displays = [
   #SmallPowerwall2() ,  
   #OculusRift() ,
   TouchTable3D() ,
-  Display(hostname = "daedalos", stereo = False) ,
+  #Display(hostname = "daedalos", stereo = False) ,
 
-  PerseusTouchTable() ,
+  #PerseusTouchTable() ,
 
-  Display(hostname = "apollo"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
-  )
-  ,
-  Display(hostname = "atalante"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
-  )
-  ,
-  Display(hostname = "agenor"
-      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
-  )
+  #Display(hostname = "apollo"
+  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+  #)
+  #,
+  #Display(hostname = "atalante"
+  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+  #)
+  #,
+  #Display(hostname = "agenor"
+  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+  #)
 ]
 
 ## @var INTELLIGENT_SHUTTER_SWITCHING

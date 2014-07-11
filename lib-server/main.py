@@ -79,7 +79,6 @@ def start():
   for i in application_manager.navigation_list:
     for j in i.platform.displays:
       if "TUIO" in j.get_touch_protocols():
-        print_message("TUIO touch display '{}' detected.".format(j.name))
         if None == multi_touch_device:
           device = TUIODevice()
           device.my_constructor(graph, j)

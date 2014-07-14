@@ -268,7 +268,7 @@ class Navigation(avango.script.Script):
       # create trace and add 'Shadeless' to material string to have a nicer line apperance
       ## @var trace
       # Instance of Trace class to handle trace drawing of this navigation's movements.
-      self.trace = TraceLines.Trace(self.NET_TRANS_NODE, self.platform.platform_id, 500, 20.0, STARTING_MATRIX, self.trace_material + 'Shadeless')    
+      self.trace = TraceLines.Trace(self.NET_TRANS_NODE, self.platform.platform_id, 500, 50.0, STARTING_MATRIX, self.trace_material + 'Shadeless')    
 
     # evaluate every frame
     self.always_evaluate(True)

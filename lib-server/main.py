@@ -97,7 +97,6 @@ def start():
   portal_camera_2 = PortalCamera()
   portal_camera_2.my_constructor(1, portal_manager, application_manager.navigation_list[0], "device-portal-camera-31", "tracking-portal-camera-31")
 
-  #'''
   table_device = SpacemouseDevice()
   table_device.my_constructor("device-spacemouse", avango.gua.make_identity_mat())
   table_device.translation_factor = 0.01
@@ -109,7 +108,17 @@ def start():
                                        , avango.gua.Vec3(-1.450, 1.021, 2.936))
   portal_camera.add_interaction_space(table_interaction_space)
   portal_camera_2.add_interaction_space(table_interaction_space)
-  #'''
+
+  _table_portal = portal_manager.add_portal(avango.gua.make_rot_mat(-90, 1, 0, 0),
+                                            80.0,
+                                            avango.gua.make_identity_mat(),
+                                            4.0,
+                                            2.0,
+                                            "3D",
+                                            "PERSPECTIVE",
+                                            "True",
+                                            "data/materials/ShadelessBlue.gmd")
+  table_interaction_space.add_maximized_portal(_table_portal)
 
   #monkey_updater = TimedRotate()
 

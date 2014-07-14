@@ -427,7 +427,6 @@ class PortalPreView(avango.script.Script):
     except:
       return
 
-    print self.active
 
     if self.active:
 
@@ -440,10 +439,13 @@ class PortalPreView(avango.script.Script):
       self.portal_border.GroupNames.value.remove("do_not_display_group")
       self.pipeline.Enabled.value = True
 
+      
       # check for viewing mode
       if self.mf_portal_modes.value[0] == "0-3D":
         self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
                                          _slot_world_mat
+        self.left_eye_node.Transform.disconnect()
+        self.right_eye_node.Transform.disconnect()
         self.left_eye_node.Transform.connect_from(self.sf_left_eye_transform)
         self.right_eye_node.Transform.connect_from(self.sf_right_eye_transform)
       else:

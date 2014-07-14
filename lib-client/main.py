@@ -68,55 +68,13 @@ def start():
   # create material updaters as this cannot be distributed
   avango.gua.load_shading_models_from("data/materials")
   avango.gua.load_materials_from("data/materials")
-
-  _loader = avango.gua.nodes.PLODLoader()
-  _loader.UploadBudget.value = 32
-  _loader.RenderBudget.value = 1024
-  _loader.OutOfCoreBudget.value = 4096    
-
-  #_node = _loader.create_geometry_from_file("pig", "/opt/3d_models/point_based/plod/pig.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)
-  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/KDN_LOD/PITOTI_KDN_LOD/Spacemonkey_new.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)  
-  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area_4_hunter_with_bow.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE) 
-  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/TLS_Seradina_Rock-12C.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)
   
-  #'''
   timer = avango.nodes.TimeSensor()
   
   water_updater = ClientMaterialUpdaters.TimedMaterialUniformUpdate()
   water_updater.MaterialName.value = "data/materials/Water.gmd"
   water_updater.UniformName.value = "time"
   water_updater.TimeIn.connect_from(timer.Time)
-  #'''
-
-  '''  
-  avango.gua.load_material("data/materials/bwb/Fog.gmd")
-
-  #avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_l", "pre_scene2_texture")
-  #avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_r", "pre_scene2_texture")
-  #avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_l", "pre_scene2_texture_depth")
-  #avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_r", "pre_scene2_texture_depth")     
-  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_l", "pre_scene2_texture_left")
-  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_r", "pre_scene2_texture_right")
-  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_l", "pre_scene2_texture_depth_left")
-  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_r", "pre_scene2_texture_depth_right")   
-  avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "sun_transform", avango.gua.make_rot_mat(-148, 0, 1, 0) * avango.gua.make_rot_mat(-15.0, 1.0, 0.0, 0.0))
-
-  timer = avango.nodes.TimeSensor()
-
-  fog_updater = ClientMaterialUpdaters.TimedMaterialUniformUpdate()
-  fog_updater.MaterialName.value = "data/materials/bwb/Fog.gmd"
-  fog_updater.UniformName.value = "time"
-  fog_updater.TimeIn.connect_from(timer.Time)
-  '''
-  
-  '''
-  avango.gua.load_material("data/materials/bwb/Glass2.gmd")
-
-  #avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture")
-  #avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture")  
-  avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture_left")
-  avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture_right")
-  '''
 
   # get the display instance
   for _display in displays:

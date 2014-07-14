@@ -411,6 +411,15 @@ class PortalPreView(avango.script.Script):
     del self.right_eye_node
     del self.view_node
 
+  ## Computes the WorldTransform of a scenegraph node manually without using the pre-defined field.
+  # @param NODE The scenegraph node to compute the world transformation for.
+  def compute_world_transform(self, NODE):
+
+    if NODE == None:
+      return avango.gua.make_identity_mat()
+    else:   
+      return self.compute_world_transform(NODE.Parent.value) * NODE.Transform.value
+
   ## Called whenever an input field changes.
   def evaluate(self):
 
@@ -430,9 +439,11 @@ class PortalPreView(avango.script.Script):
 
     if self.active:
 
-      _slot_world_mat = self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id)].Transform.value * \
-                        self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale"].Transform.value * \
-                        self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].Transform.value
+      #_slot_world_mat = self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id)].Transform.value * \
+      #                  self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale"].Transform.value * \
+      #                  self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].Transform.value
+
+      _slot_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)])
 
       # remove inactivity status if necessary
       self.textured_quad.GroupNames.value.remove("do_not_display_group")

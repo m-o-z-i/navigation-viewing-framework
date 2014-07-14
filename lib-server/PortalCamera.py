@@ -271,11 +271,6 @@ class PortalCamera(avango.script.Script):
     # Index within self.captured_portals saying which of the Portals was lastly opened by the PortalCamera.
     self.last_open_portal_index = None
 
-    ## @var drag_relation_portal_scene
-    # Expression of the portal matrix in the scene matrix coordinate system of the current Portal to be
-    # dragged. Must remain constant during dragging. None if no dragging is in progress.
-    self.drag_relation_portal_scene = None
-
     ##
     #
     self.drag_last_frame_camera_mat = None
@@ -358,6 +353,7 @@ class PortalCamera(avango.script.Script):
           return
 
     # check for interaction spaces and corresponding scene matrix updates
+    '''
     for _interaction_space in self.interaction_spaces:
 
       if _interaction_space.is_inside(self.tracking_reader.sf_abs_mat.value.get_translate()) and \
@@ -367,6 +363,7 @@ class PortalCamera(avango.script.Script):
         
         _device_values = _interaction_space.mf_device_transformed_values.value
         self.current_portal.modify_scene_matrix(_device_values)
+    '''
 
     # size to camera
     if self.current_portal != None:
@@ -614,13 +611,10 @@ class PortalCamera(avango.script.Script):
 
         self.drag_last_frame_camera_mat = self.tracking_reader.sf_abs_mat.value * \
                                           avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
-        #self.drag_relation_portal_scene = self.tracking_reader.sf_abs_mat.value * \
-        #                                  avango.gua.make_inverse_mat(self.current_portal.scene_matrix_node.Transform.value)
 
     # capture button released, stop dragging
     else:
 
-      #self.drag_relation_portal_scene = None
       self.drag_last_frame_camera_mat = None
 
   ## Called whenever sf_next_rec_button changes.
@@ -762,6 +756,10 @@ class PortalCamera(avango.script.Script):
               return
 
             _portal = self.current_portal
+
+            if _portal.negative_parallax == "False":
+              _portal.switch_negative_parallax()
+
             self.last_open_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
             self.gallery_focus_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
             self.captured_portals.remove(self.current_portal)

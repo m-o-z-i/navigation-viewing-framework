@@ -415,7 +415,7 @@ displays = [
   #LargePowerwall2() ,  
   SmallPowerwall() ,
   #SmallPowerwall2() ,  
-  #OculusRift() ,
+  #OculusRift(hostname = "atalante", name = "oculus_rift_atalante") ,
   #TouchTable3DStandalone() ,
   TouchTable3DSecondary(render_mask = "!main_scene") ,  
   Display(hostname = "daedalos", stereo = False) ,

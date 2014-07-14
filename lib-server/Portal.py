@@ -67,9 +67,9 @@ class PortalManager(avango.script.Script):
                     "data/materials/ShadelessBlack.gmd")
     '''
     #'''
-    self.add_portal(avango.gua.make_trans_mat(118.730, -2.571, -40.000) * avango.gua.make_rot_mat(225, 0, 1, 0),
+    self.add_portal(avango.gua.make_trans_mat(118.730, -3.571, -40.000) * avango.gua.make_rot_mat(225, 0, 1, 0),
                     1.0,
-                    avango.gua.make_trans_mat(118.730, -1.571, -40.000) * avango.gua.make_rot_mat(45, 0, 1, 0) * avango.gua.make_scale_mat(-1, 1, 1),
+                    avango.gua.make_trans_mat(118.730, -3.571, -40.000) * avango.gua.make_rot_mat(45, 0, 1, 0) * avango.gua.make_scale_mat(-1, 1, 1),
                     3.0,
                     2.0,
                     "3D",
@@ -100,10 +100,7 @@ class PortalManager(avango.script.Script):
                     "PERSPECTIVE",
                     "False",
                     "data/materials/ShadelessBlue.gmd")
-    '''
-    
-    '''
-    self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90, 0, 1, 0),
+
                     1.0,
                     avango.gua.make_trans_mat(1.2, 2.0, -2.5),
                     1.0,

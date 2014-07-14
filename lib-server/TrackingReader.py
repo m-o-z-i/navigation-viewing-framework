@@ -133,8 +133,10 @@ class TrackingHMDReader(TrackingReader):
     self.hmd_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.hmd_sensor.Station.value = HMD_SENSOR_NAME
 
-    #self.sf_tracking_mat.connect_from(self.tracking_sensor.Matrix)
+    self.sf_tracking_mat.connect_from(self.tracking_sensor.Matrix)
     self.sf_hmd_mat.connect_from(self.hmd_sensor.Matrix)
+
+    self.always_evaluate(True)
 
   ## Called whenever sf_tracking_mat changes.
   @field_has_changed(sf_tracking_mat)

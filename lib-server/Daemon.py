@@ -18,6 +18,7 @@ def init_oculus():
   _oculus.stations[1] = avango.daemon.Station('oculus-1')
   _oculus.stations[2] = avango.daemon.Station('oculus-2')
 
+  print "Initialized 3 Oculus Rifts"
   device_list.append(_oculus)
 
 ## Initializes AR Track on LCD wall.
@@ -529,6 +530,9 @@ def init_portal_camera(VERSION_NUMBER):
 # List of devices to be handled by daemon.
 device_list = []
 
+# init oculus rift sensors
+init_oculus()
+
 # initialize trackings
 init_lcd_wall_tracking()
 init_dlp_wall_tracking()
@@ -555,9 +559,6 @@ init_spacemouse()
 # init portal camera
 init_portal_camera("3.1")
 init_portal_camera("3.2")
-
-# init oculus rift sensors
-#init_oculus()
 
 # init touch input
 #init_tuio_input() # crash ???

@@ -194,11 +194,6 @@ class ClientPortal:
 # perspective for the view within the portal.
 class PortalPreView(avango.script.Script):
 
-  ## @var sf_slot_world_mat
-  # Field containing the WorldTransform of the associated slot node.
-  sf_slot_world_mat = avango.gua.SFMatrix4()
-  sf_slot_world_mat.value = avango.gua.make_identity_mat()
-
   ## @var sf_screen_width
   # Field containing the current width of the portal screen.
   sf_screen_width = avango.SFFloat()
@@ -368,7 +363,6 @@ class PortalPreView(avango.script.Script):
     self.portal_matrix_node.Children.value.append(self.portal_border)
 
     # init field connections
-    self.sf_slot_world_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].WorldTransform)
     self.sf_screen_width.connect_from(self.screen_node.Width)
     self.sf_screen_height.connect_from(self.screen_node.Height)
 
@@ -432,6 +426,10 @@ class PortalPreView(avango.script.Script):
 
     if self.active:
 
+      _slot_world_mat = self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id)].Transform.value * \
+                        self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale"].Transform.value * \
+                        self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].Transform.value
+
       # remove inactivity status if necessary
       self.textured_quad.GroupNames.value.remove("do_not_display_group")
       self.portal_border.GroupNames.value.remove("do_not_display_group")
@@ -439,8 +437,8 @@ class PortalPreView(avango.script.Script):
 
       # check for viewing mode
       if self.mf_portal_modes.value[0] == "0-3D":
-        self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
-                                         self.sf_slot_world_mat.value
+        self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
+                                         _slot_world_mat
         self.left_eye_node.Transform.connect_from(self.sf_left_eye_transform)
         self.right_eye_node.Transform.connect_from(self.sf_right_eye_transform)
       else:
@@ -489,7 +487,7 @@ class PortalPreView(avango.script.Script):
 
       # determine view in portal space and decide if renering is necessary
       _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
-                              self.sf_slot_world_mat.value
+                              _slot_world_mat
 
       if _view_in_portal_space.get_translate().z < 0:
         self.pipeline.Enabled.value = False

@@ -276,6 +276,10 @@ class PortalCamera(avango.script.Script):
     # dragged. Must remain constant during dragging. None if no dragging is in progress.
     self.drag_relation_portal_scene = None
 
+    ##
+    #
+    self.drag_last_frame_camera_mat = None
+
     # set evaluation policy
     self.always_evaluate(True)
 
@@ -323,17 +327,17 @@ class PortalCamera(avango.script.Script):
         self.portal_height = 0.05
 
     # update matrices in drag mode
-    if self.drag_relation_portal_scene != None:
+    if self.drag_last_frame_camera_mat != None:
 
-      _current_portal_matrix = self.current_portal.portal_matrix_node.Transform.value
-      _new_scene_matrix = avango.gua.make_inverse_mat(
-                                                      avango.gua.make_inverse_mat(_current_portal_matrix) * \
-                                                      self.drag_relation_portal_scene
-                                                     )
-      self.current_portal.set_platform_matrix(
-                                                      _new_scene_matrix * \
-                                                      avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.current_portal.platform_scale))
-                                             )
+      _current_camera_mat = self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
+      _drag_input_mat = avango.gua.make_inverse_mat(self.drag_last_frame_camera_mat) * _current_camera_mat
+      _drag_input_mat.set_translate(_drag_input_mat.get_translate() * self.current_portal.platform_scale)
+
+      _new_scene_mat = self.current_portal.platform_matrix * _drag_input_mat
+
+      self.current_portal.set_platform_matrix(_new_scene_mat)
+
+      self.drag_last_frame_camera_mat = _current_camera_mat
 
 
     # check for camera hitting free portals
@@ -608,13 +612,16 @@ class PortalCamera(avango.script.Script):
       # initiate dragging
       else:
 
-        self.drag_relation_portal_scene = self.current_portal.portal_matrix_node.Transform.value * \
-                                          avango.gua.make_inverse_mat(self.current_portal.scene_matrix_node.Transform.value)
+        self.drag_last_frame_camera_mat = self.tracking_reader.sf_abs_mat.value * \
+                                          avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
+        #self.drag_relation_portal_scene = self.tracking_reader.sf_abs_mat.value * \
+        #                                  avango.gua.make_inverse_mat(self.current_portal.scene_matrix_node.Transform.value)
 
     # capture button released, stop dragging
     else:
 
-      self.drag_relation_portal_scene = None
+      #self.drag_relation_portal_scene = None
+      self.drag_last_frame_camera_mat = None
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)

@@ -366,6 +366,9 @@ class PortalPreView(avango.script.Script):
     self.sf_screen_width.connect_from(self.screen_node.Width)
     self.sf_screen_height.connect_from(self.screen_node.Height)
 
+    # set evaluation policy
+    self.always_evaluate(True)
+
   ## Compares a given portal node with the portal node associated with this instance.
   # @param PORTAL_NODE The portal node to be compared with.
   def compare_portal_node(self, PORTAL_NODE):
@@ -423,6 +426,8 @@ class PortalPreView(avango.script.Script):
       self.textured_quad
     except:
       return
+
+    print self.active
 
     if self.active:
 

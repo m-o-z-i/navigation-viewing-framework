@@ -220,13 +220,13 @@ class SpacemouseDevice(MultiDofDevice):
 
     ## @var translation_factor
     # Factor to modify the device's translation input.
-    #self.translation_factor = 0.3
-    self.translation_factor = -0.015
+    self.translation_factor = 0.3
+    #self.translation_factor = -0.015
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
-    #self.rotation_factor = 0.7
-    self.rotation_factor = -0.7
+    self.rotation_factor = 0.7
+    #self.rotation_factor = -0.7
 
     self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor.Value0.value, 0.0, -0.76, 0.82, 3, 3)")
     self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, 0.0, -0.7, 0.6, 3, 3)")

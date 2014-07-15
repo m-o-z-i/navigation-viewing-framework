@@ -69,6 +69,8 @@ def start():
   avango.gua.load_shading_models_from("data/materials")
   avango.gua.load_materials_from("data/materials")
 
+  '''
+  # PLOD Stuff
   _loader = avango.gua.nodes.PLODLoader()
   _loader.UploadBudget.value = 32
   _loader.RenderBudget.value = 8*1024
@@ -117,7 +119,9 @@ def start():
   _node = _loader.create_geometry_from_file("pitoti29", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-5_hunter_with_speer_P01.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)              
   _node = _loader.create_geometry_from_file("pitoti30", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-5_hunter_with_speer_P02.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)      
       
-  
+  # PLOD Stuff END
+  '''
+    
   #'''
   timer = avango.nodes.TimeSensor()
   

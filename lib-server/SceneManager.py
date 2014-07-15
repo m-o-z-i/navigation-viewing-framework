@@ -247,9 +247,9 @@ class SceneManager(avango.script.Script):
     #self.scene_plod = ScenePLOD(self, SCENEGRAPH, NET_TRANS_NODE)
 
     self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_golf = SceneGolfEngine(self, SCENEGRAPH, NET_TRANS_NODE)                    
-    self.scene_terrakotta = SceneTerrakotta(self, SCENEGRAPH, NET_TRANS_NODE)                    
+    #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_golf = SceneGolfEngine(self, SCENEGRAPH, NET_TRANS_NODE)                    
+    #self.scene_terrakotta = SceneTerrakotta(self, SCENEGRAPH, NET_TRANS_NODE)                    
     
     #self.scene_vianden_low = SceneViandenLow(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden_high = SceneViandenHigh(self, SCENEGRAPH, NET_TRANS_NODE)

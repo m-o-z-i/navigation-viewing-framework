@@ -206,12 +206,12 @@ class PortalPreView(avango.script.Script):
   # Field containing the GroupNames of the associated portal node. Used for transferring portal mode settings.
   mf_portal_modes = avango.MFString()
 
-  ##
-  #
+  ## @var sf_left_eye_transform
+  # Transformation of the slot's left eye.
   sf_left_eye_transform = avango.gua.SFMatrix4()
 
-  ##
-  #
+  ## @var sf_right_eye_transform
+  # Transformation of the slot's right eye.
   sf_right_eye_transform = avango.gua.SFMatrix4()
 
   # Default constructor.
@@ -436,12 +436,7 @@ class PortalPreView(avango.script.Script):
     except:
       return
 
-
     if self.active:
-
-      #_slot_world_mat = self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id)].Transform.value * \
-      #                  self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale"].Transform.value * \
-      #                  self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].Transform.value
 
       _slot_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)])
 
@@ -450,7 +445,6 @@ class PortalPreView(avango.script.Script):
       self.portal_border.GroupNames.value.remove("do_not_display_group")
       self.pipeline.Enabled.value = True
 
-      
       # check for viewing mode
       if self.mf_portal_modes.value[0] == "0-3D":
         self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
@@ -474,10 +468,8 @@ class PortalPreView(avango.script.Script):
 
       # check for negative parallax
       if self.mf_portal_modes.value[2] == "2-True":
-        #self.pipeline.NearClip.value = 0.1
         self.pipeline.EnableGlobalClippingPlane.value = False
       else:
-        #self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
         self.pipeline.EnableGlobalClippingPlane.value = True
 
         _portal_scene_mat = self.PORTAL_NODE.Children.value[1].Transform.value

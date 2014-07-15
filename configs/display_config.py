@@ -236,7 +236,8 @@ class TouchTable3DStandalone(Display):
                     , hostname = "medusa"
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
-                    , displaystrings = [":0.0", ":0.1", ":0.2"] 
+                    #, displaystrings = [":0.0", ":0.1", ":0.2"]
+                    , displaystrings = [":0.2", ":0.1"] 
                     #, shutter_timings = [  [(100, 200, 2900, 3000), (8330, 8430, 11230, 11330)],
                     #                       [(2600, 2700, 5700, 5800), (11030, 11130, 14630, 14730)],
                     #                       [(6000, 6100, 8700, 8800), (14330, 14430, 15900, 16000)]                                          
@@ -250,9 +251,7 @@ class TouchTable3DStandalone(Display):
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
                                         ]
                     , size = (1.17, 0.84)
-                    , transformation = #avango.gua.make_trans_mat(-1.56, 0.953, 2.28) * \
-                                       #avango.gua.make_rot_mat(90, 0, 1, 0) * \
-                                       avango.gua.make_rot_mat(90.0, -1,0, 0)
+                    , transformation = avango.gua.make_rot_mat(90.0, -1,0, 0)
                     , max_viewing_distance = 1.0
                     , stereo = True
                     , stereomode = "SIDE_BY_SIDE"  
@@ -411,14 +410,14 @@ class OculusRift(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  LargePowerwall() ,
+  #LargePowerwall() ,
   #LargePowerwall2() ,  
-  SmallPowerwall() ,
+  #SmallPowerwall() ,
   #SmallPowerwall2() ,  
   #OculusRift() ,
-  #TouchTable3DStandalone() ,
-  TouchTable3DSecondary(render_mask = "!main_scene") ,  
-  Display(hostname = "daedalos", stereo = False) ,
+  TouchTable3DStandalone() ,
+  #TouchTable3DSecondary(render_mask = "!main_scene") ,  
+  #Display(hostname = "daedalos", stereo = False) ,
 ]
 
 ## @var INTELLIGENT_SHUTTER_SWITCHING

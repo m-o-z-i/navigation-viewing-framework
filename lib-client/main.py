@@ -71,13 +71,52 @@ def start():
 
   _loader = avango.gua.nodes.PLODLoader()
   _loader.UploadBudget.value = 32
-  _loader.RenderBudget.value = 1024
-  _loader.OutOfCoreBudget.value = 4096    
+  _loader.RenderBudget.value = 8*1024
+  _loader.OutOfCoreBudget.value = 24*1024
 
   #_node = _loader.create_geometry_from_file("pig", "/opt/3d_models/point_based/plod/pig.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)
-  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/KDN_LOD/PITOTI_KDN_LOD/Spacemonkey_new.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)  
-  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area_4_hunter_with_bow.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE) 
-  #_node = _loader.create_geometry_from_file("pitoti", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/TLS_Seradina_Rock-12C.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)
+  #_node = _loader.create_geometry_from_file("spacemonkey", "/mnt/pitoti/KDN_LOD/PITOTI_KDN_LOD/Spacemonkey_new.kdn", avango.gua.PLODLoaderFlags.DEFAULTS | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE | avango.gua.PLODLoaderFlags.MAKE_PICKABLE)
+
+  # Pitoti
+  _node = _loader.create_geometry_from_file("rock", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/TLS_Seradina_Rock-12C.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+    
+  _node = _loader.create_geometry_from_file("pitoti1", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P01-1.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti2", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P01-2.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti3", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P01-3.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti4", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P01-4.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti5", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P02-1.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti6", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P02-2.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti7", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P02-3.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti8", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P02-4.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti9", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P03-1.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti10", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P03-2.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti11", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P03-3.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti12", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-1_Warrior-scene_P03-4.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+
+  _node = _loader.create_geometry_from_file("pitoti13", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-2_Plowing-scene_P01-1.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti14", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-2_Plowing-scene_P01-2.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)  
+  _node = _loader.create_geometry_from_file("pitoti15", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-2_Plowing-scene_P01-3.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)  
+  _node = _loader.create_geometry_from_file("pitoti16", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-2_Plowing-scene_P01-4.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti17", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-2_Plowing-scene_P02-1.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti18", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-2_Plowing-scene_P02-2.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)  
+  _node = _loader.create_geometry_from_file("pitoti19", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-2_Plowing-scene_P02-3.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)  
+  _node = _loader.create_geometry_from_file("pitoti20", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-2_Plowing-scene_P02-4.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+    
+  _node = _loader.create_geometry_from_file("pitoti21", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-10_Hunting_Scene_P01.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti22", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-10_Hunting_Scene_P02.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti23", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-10_Hunting_Scene_P03.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)    
+
+  _node = _loader.create_geometry_from_file("pitoti24", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-6_house_P01.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti25", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-6_house_P02.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)  
+
+  _node = _loader.create_geometry_from_file("pitoti26", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-3_Archers_P01.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("pitoti27", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-3_Archers_P02.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)    
+  
+  _node = _loader.create_geometry_from_file("pitoti28", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area_4_hunter_with_bow.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)
+
+  _node = _loader.create_geometry_from_file("pitoti29", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-5_hunter_with_speer_P01.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)              
+  _node = _loader.create_geometry_from_file("pitoti30", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/Area-5_hunter_with_speer_P02.kdn", avango.gua.PLODLoaderFlags.DEFAULTS)      
+      
   
   #'''
   timer = avango.nodes.TimeSensor()

@@ -63,7 +63,7 @@ class BoundingBoxVisualization(avango.script.Script):
     ## @var edge_group
     # Scenegraph transformation node to group all the bounding box edges.
     self.edge_group = avango.gua.nodes.TransformNode()
-    NET_TRANS_NODE.Children.value.append(self.edge_group)
+    #NET_TRANS_NODE.Children.value.append(self.edge_group)
     
     ## @var edge1
     # Geometry node representing the first edge of the visualized bounding box.

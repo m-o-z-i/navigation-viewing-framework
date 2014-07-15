@@ -29,8 +29,9 @@ class ManipulationManager:
   
     # init first ray
     _parent_node = SCENEGRAPH["/net/platform_0/scale"]
-    _transmitter_offset = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
-  
+    #_transmitter_offset = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
+    _transmitter_offset = avango.gua.make_trans_mat(0.73, -0.9, 1.97) * avango.gua.make_rot_mat(90,0,-1,0)
+
     ## @var ray_pointer1
     # First instance of RayPointer to create manipulations.
     self.ray_pointer1 = RayPointer()

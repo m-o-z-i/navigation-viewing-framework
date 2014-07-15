@@ -240,12 +240,14 @@ class SceneManager(avango.script.Script):
     _pipeline_value_node.Children.value.append(self.pipeline_info_node)
 
     # init scenes   
-    self.scene_weimar = SceneWeimar(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_weimar = SceneWeimar(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_plod = ScenePLOD(self, SCENEGRAPH, NET_TRANS_NODE)      
+    #self.scene_plod = ScenePLOD(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_golf = SceneGolfEngine(self, SCENEGRAPH, NET_TRANS_NODE)                    
+    self.scene_terrakotta = SceneTerrakotta(self, SCENEGRAPH, NET_TRANS_NODE)                    
     
     #self.scene_vianden_low = SceneViandenLow(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden_high = SceneViandenHigh(self, SCENEGRAPH, NET_TRANS_NODE)

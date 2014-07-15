@@ -269,8 +269,8 @@ class SceneObject:
       _loader = avango.gua.nodes.TriMeshLoader()
   
       _light_geometry = _loader.create_geometry_from_file(_light_node.Name.value + "_geometry", _filename, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-      _light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
-      #_light_geometry.Transform.value = avango.gua.make_scale_mat(5.0)
+      #_light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
+      _light_geometry.Transform.value = avango.gua.make_scale_mat(4.0)
       _light_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
       _light_geometry.GroupNames.value.append("man_pick_group") # prepare light geometry for picking
       
@@ -318,7 +318,7 @@ class SceneObject:
 
     _loader_flags = "avango.gua.PLODLoaderFlags.DEFAULTS" # default loader flags
 
-    _loader_flags += " | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE"
+    #_loader_flags += " | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE"
     
     if GROUNDFOLLOWING_PICK_FLAG == True or MANIPULATION_PICK_FLAG == True:
       _loader_flags += " | avango.gua.PLODLoaderFlags.MAKE_PICKABLE"      

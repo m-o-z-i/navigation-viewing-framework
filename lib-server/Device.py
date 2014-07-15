@@ -462,7 +462,7 @@ class OldSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
     self.add_input_binding("self.conditional_set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
-    self.add_input_binding("self.set_reset_trigger(self.button_sensor.Button1.value)")       # middle button      
+    self.add_input_binding("self.set_dof_trigger(self.button_sensor.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.button_sensor.Button0.value*-1.0)")         # left button
     self.add_input_binding("self.set_dof(6, self.button_sensor.Button2.value*1.0)")          # right button
 

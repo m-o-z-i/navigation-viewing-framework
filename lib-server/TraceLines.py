@@ -39,6 +39,8 @@ class Trace:
     # A list of scene graph nodes where each respresents a line segment.
     self.lines  = []
 
+    self.line_thickness = 0.1 # in meter
+
     ## @var transform_node
     # A transform node that is the parent of all line segments. It groups the line segments in the scene graph as the given ID is added to it's name and therefore allows multiple instances of this class.
     self.transform_node = avango.gua.nodes.TransformNode(Name = 'platform_trace_' + str(ID))
@@ -76,7 +78,7 @@ class Trace:
     _rotation_mat = Tools.get_rotation_between_vectors(avango.gua.Vec3(0, 0, -1), _vec)
 
     # build the complete matrix
-    return avango.gua.make_trans_mat(_center) * _rotation_mat * avango.gua.make_scale_mat(0.03, 0.03, _scale)
+    return avango.gua.make_trans_mat(_center) * _rotation_mat * avango.gua.make_scale_mat(self.line_thickness, self.line_thickness, _scale * 2.0)
 
   ## Clears the traces and starts drawing again from the current position.
   def clear(self, CURRENT_MAT):

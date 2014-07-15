@@ -233,10 +233,6 @@ class PortalPreView(avango.script.Script):
     # The View instance to be associated with this instance.
     self.VIEW = VIEW
 
-    ## @var active
-    # Boolean indicating the activity of the evaluation loop.
-    self.active = True
-
     ## @var view_node
     # Scenegraph node representing the slot (head) position in the portal's exit space.
     self.view_node = avango.gua.nodes.TransformNode(Name = "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id))
@@ -345,6 +341,10 @@ class PortalPreView(avango.script.Script):
     self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
     self.portal_matrix_node.Children.value.append(self.portal_border)
 
+    ## @var frame_trigger
+    # Triggers framewise evaluation of frame_callback method.
+    self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
+
     # init field connections
     self.mf_portal_modes.connect_from(PORTAL_NODE.GroupNames)
     self.sf_screen_width.connect_from(self.screen_node.Width)
@@ -400,7 +400,7 @@ class PortalPreView(avango.script.Script):
   def deactivate(self):
 
     # disable pipeline and evaluation loop
-    self.active = False
+    self.frame_trigger.Active.value = False
     self.pipeline.Enabled.value = False
 
     self.portal_matrix_node.Children.value.remove(self.portal_border)
@@ -427,13 +427,11 @@ class PortalPreView(avango.script.Script):
     else:   
       return self.compute_world_transform(NODE.Parent.value) * NODE.Transform.value
 
-  ##
-  #
+  ## Called whenever mf_portal_modes changes.
   @field_has_changed(mf_portal_modes)
   def mf_portal_modes_changed(self):
-    
-    print "changed"
 
+    # check for deletion
     try:
       self.pipeline
     except:
@@ -480,58 +478,55 @@ class PortalPreView(avango.script.Script):
 
     # check for visibility
     if self.mf_portal_modes.value[4] == "4-False":
-      self.active = False
+      self.frame_trigger.Active.value = False
       self.pipeline.Enabled.value = False
       self.textured_quad.GroupNames.value.append("do_not_display_group")
       self.portal_border.GroupNames.value.append("do_not_display_group")
       self.back_geometry.GroupNames.value.append("do_not_display_group")
     else:
-      self.active = True
+      self.frame_trigger.Active.value = True
       self.pipeline.Enabled.value = True
       self.textured_quad.GroupNames.value.remove("do_not_display_group")
       self.portal_border.GroupNames.value.remove("do_not_display_group")
 
+  ## Evaluated every frame when active.
+  def frame_callback(self):
 
-  ## Called whenever an input field changes.
-  def evaluate(self):
+    _slot_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)])
 
-    if self.active:
+    # update view_node in 3D portal mode
+    if self.mf_portal_modes.value[0] == "0-3D":
+      self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
+                                       _slot_world_mat
 
-      _slot_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)])
+    # update global clipping plane when negative parallax is false
+    if self.mf_portal_modes.value[2] == "2-False":
+      _portal_scene_mat = self.PORTAL_NODE.Children.value[1].Transform.value
+      _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
+      _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec        
+      _vec2 = _portal_scene_mat.get_translate()
+      _vec2 = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected())) * _vec2
+      _dist = _vec2.z
+      self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
 
-      # update view_node in 3D portal mode
-      if self.mf_portal_modes.value[0] == "0-3D":
-        self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
-                                         _slot_world_mat
+    # determine view in portal space and decide if renering is necessary
+    _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
+                            _slot_world_mat
 
-      # update global clipping plane when negative parallax is false
-      if self.mf_portal_modes.value[2] == "2-False":
-        _portal_scene_mat = self.PORTAL_NODE.Children.value[1].Transform.value
-        _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
-        _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec        
-        _vec2 = _portal_scene_mat.get_translate()
-        _vec2 = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected())) * _vec2
-        _dist = _vec2.z
-        self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
+    if _view_in_portal_space.get_translate().z < 0:
+      self.pipeline.Enabled.value = False
+      self.textured_quad.GroupNames.value.append("do_not_display_group")
+      self.back_geometry.GroupNames.value.remove("do_not_display_group")
+    else:
+      self.pipeline.Enabled.value = True
+      self.textured_quad.GroupNames.value.remove("do_not_display_group")
+      self.back_geometry.GroupNames.value.append("do_not_display_group")
 
-      # determine view in portal space and decide if renering is necessary
-      _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
-                              _slot_world_mat
-
-      if _view_in_portal_space.get_translate().z < 0:
-        self.pipeline.Enabled.value = False
-        self.textured_quad.GroupNames.value.append("do_not_display_group")
-        self.back_geometry.GroupNames.value.remove("do_not_display_group")
-      else:
-        self.pipeline.Enabled.value = True
-        self.textured_quad.GroupNames.value.remove("do_not_display_group")
-        self.back_geometry.GroupNames.value.append("do_not_display_group")
-
-      # check for scale and update render mask
-      #if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:
-      #  self.set_render_mask(False)
-      #else:
-      #  self.set_render_mask(True)
+    # check for scale and update render mask
+    #if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:
+    #  self.set_render_mask(False)
+    #else:
+    #  self.set_render_mask(True)
 
   ## Called whenever sf_screen_width changes.
   @field_has_changed(sf_screen_width)

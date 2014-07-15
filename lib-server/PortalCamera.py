@@ -16,6 +16,7 @@ import Tools
 
 # import python libraries
 import time
+import math
 
 ## A PortalCamera is a physical device to interactively caputure, view
 # and manipulate Portal instances in the scene.
@@ -742,6 +743,14 @@ class PortalCamera(avango.script.Script):
 
             if _portal.negative_parallax == "False":
               _portal.switch_negative_parallax()
+
+            # set correct forward angle in interaction space
+            _camera_forward = math.degrees(Tools.get_yaw(self.tracking_reader.sf_abs_mat.value))
+
+            if _camera_forward < 180.0 and _camera_forward > 0.0:
+              _interaction_space.animation_forward_angle = 90.0
+            else:
+              _interaction_space.animation_forward_angle = 270.0
 
             self.last_open_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
             self.gallery_focus_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)

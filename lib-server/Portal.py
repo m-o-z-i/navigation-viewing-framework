@@ -370,7 +370,8 @@ class Portal:
 
   ## Modifies the scene matrix by the input values given from a device.
   # @param DEVICE_INPUT_VALUES List of input values from a device.
-  def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0]):
+  #
+  def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0], OFFSET_MAT = avango.gua.make_identity_mat):
 
     _x = DEVICE_INPUT_VALUES[0]
     _y = DEVICE_INPUT_VALUES[1]
@@ -392,8 +393,11 @@ class Portal:
 
       # object metaphor
       _transformed_trans_vec = avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected()) * avango.gua.Vec3(_x*-1.0, _z, _y*-1.0)
+      _transformed_trans_vec = OFFSET_MAT * _transformed_trans_vec
       _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
       _transformed_trans_vec *= self.platform_scale
+
+      _rot_vec = OFFSET_MAT * _rot_vec
 
       _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
                              self.platform_matrix * \

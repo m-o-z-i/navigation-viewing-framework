@@ -111,10 +111,6 @@ class PortalCamera(avango.script.Script):
     # List of Portal instances belonging to this PortalCamera.
     self.captured_portals = []
 
-    ## @var free_portals
-    # List of Portal instances that were placed in the scene by this PortalCamera.
-    self.free_portals = []
-
     ## @var current_portal
     # Portal instance which is currently displayed above the PortalCamera.
     self.current_portal = None
@@ -271,8 +267,8 @@ class PortalCamera(avango.script.Script):
     # Index within self.captured_portals saying which of the Portals was lastly opened by the PortalCamera.
     self.last_open_portal_index = None
 
-    ##
-    #
+    ## @var drag_last_frame_camera_mat
+    # Matrix containing the value of the tracking target of the last frame when in drag mode.
     self.drag_last_frame_camera_mat = None
 
     # set evaluation policy
@@ -340,30 +336,17 @@ class PortalCamera(avango.script.Script):
 
     if self.current_portal == None:
 
-      for _free_portal in self.free_portals:
+      for _free_portal in self.PORTAL_MANAGER.free_portals:
 
         _portal_vec = _free_portal.portal_matrix_node.WorldTransform.value.get_translate()
 
         if self.check_for_hit(_camera_vec, _portal_vec):
 
           _free_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-          self.free_portals.remove(_free_portal)
+          self.PORTAL_MANAGER.free_portals.remove(_free_portal)
           self.captured_portals.append(_free_portal)
           self.current_portal = _free_portal
           return
-
-    # check for interaction spaces and corresponding scene matrix updates
-    '''
-    for _interaction_space in self.interaction_spaces:
-
-      if _interaction_space.is_inside(self.tracking_reader.sf_abs_mat.value.get_translate()) and \
-         self.current_portal != None and \
-         self.gallery_activated == False and \
-         _interaction_space.maximized_portal == None:
-        
-        _device_values = _interaction_space.mf_device_transformed_values.value
-        self.current_portal.modify_scene_matrix(_device_values)
-    '''
 
     # size to camera
     if self.current_portal != None:
@@ -736,7 +719,7 @@ class PortalCamera(avango.script.Script):
                                                  self.current_portal.camera_mode,
                                                  self.current_portal.negative_parallax,
                                                  self.current_portal.border_material)
-        self.free_portals.append(_portal)
+        self.PORTAL_MANAGER.free_portals.append(_portal)
 
   ## Called whenever sf_maximize_button changes.
   @field_has_changed(sf_maximize_button)

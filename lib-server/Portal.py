@@ -47,8 +47,12 @@ class PortalManager(avango.script.Script):
     self.SCENEGRAPH["/net"].Children.value.append(self.portal_group_node)
 
     ## @var portals
-    # List of currently active Portal instances.
+    # List of current Portal instances.
     self.portals = []
+
+    ## @var free_portals
+    # List of Portal instances that are currently not coupled to a PortalCamera.
+    self.free_portals = []
 
     ## @var counter
     # Integer which counts the number of portals already created. Used for portal IDs.

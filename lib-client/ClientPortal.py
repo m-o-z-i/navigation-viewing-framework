@@ -264,9 +264,6 @@ class PortalPreView(avango.script.Script):
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = VIEW.SCENEGRAPH.Name.value
 
-    # set render mask for camera
-    self.set_render_mask(True)
-
     self.camera.LeftScreen.value = self.screen_node.Path.value
     self.camera.RightScreen.value = self.screen_node.Path.value
     self.camera.LeftEye.value = self.left_eye_node.Path.value
@@ -312,6 +309,9 @@ class PortalPreView(avango.script.Script):
     self.pipeline.BackgroundTexture.value = "data/textures/sky.jpg"
 
     self.VIEW.pipeline.PreRenderPipelines.value.append(self.pipeline)
+
+    # set render mask
+    self.set_render_mask(True)
 
     ## @var textured_quad
     # The textured quad instance in which the portal view will be rendered.
@@ -367,10 +367,8 @@ class PortalPreView(avango.script.Script):
 
     if SHOW_VIDEO:
       _render_mask = "!do_not_display_group && !video_abstraction"
-      print "Video show true"
     else:
       _render_mask = "!do_not_display_group && !video"
-      print "Video show false"
 
     for _i in range(0, 10):
       _render_mask = _render_mask + " && !status_group_" + str(_i)
@@ -383,6 +381,7 @@ class PortalPreView(avango.script.Script):
           _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
 
     self.camera.RenderMask.value = _render_mask
+    self.pipeline.Camera.value = self.camera
 
   ## Updates the size of the portal according to the screen node.
   def update_size(self):
@@ -523,10 +522,10 @@ class PortalPreView(avango.script.Script):
       self.back_geometry.GroupNames.value.append("do_not_display_group")
 
     # check for scale and update render mask
-    #if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:
-    #  self.set_render_mask(False)
-    #else:
-    #  self.set_render_mask(True)
+    if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:
+      self.set_render_mask(False)
+    else:
+      self.set_render_mask(True)
 
   ## Called whenever sf_screen_width changes.
   @field_has_changed(sf_screen_width)

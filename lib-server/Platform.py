@@ -245,6 +245,8 @@ class Platform(avango.script.Script):
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
     self.sf_scale.connect_from(INPUT_MAPPING_INSTANCE.sf_scale)
 
+    _loader = avango.gua.nodes.TriMeshLoader()
+
     # create kinect avatars if desired
     if AVATAR_TYPE.endswith(".ks"):
 
@@ -256,10 +258,26 @@ class Platform(avango.script.Script):
 
       self.video_geode.Transform.value = self.transmitter_offset
       self.platform_scale_transform_node.Children.value.append(self.video_geode)
-      self.video_geode.GroupNames.value = ['avatar_group_' + str(self.platform_id)] # own group avatars not visible (only for WALL setups)
+      self.video_geode.GroupNames.value = ['avatar_group_' + str(self.platform_id), 'video'] # own group avatars not visible (only for WALL setups)
+
+      ## @var video_abstraction_transform
+      # Transform node for the placement of the video abstraction.
+      self.video_abstraction_transform = avango.gua.nodes.TransformNode(Name = "video_abstraction_transform")
+      self.video_abstraction_transform.Transform.connect_from(self.INPUT_MAPPING_INSTANCE.DEVICE_INSTANCE.sf_station_mat)
+      self.platform_scale_transform_node.Children.value.append(self.video_abstraction_transform)
+
+      ## @var video_abstraction
+      # Abstract geometry displayed when too far away from the video geode.
+      self.video_abstraction = _loader.create_geometry_from_file('video_abstraction',
+                                                                 'data/objects/sphere.obj',
+                                                                 'data/materials/' + self.avatar_material + 'Shadeless.gmd',
+                                                                 avango.gua.LoaderFlags.DEFAULTS)
+      self.video_abstraction.Transform.value = avango.gua.make_scale_mat(2.0)
+      self.video_abstraction.GroupNames.value = ["video_abstraction", "server_do_not_display_group"]
+      self.video_abstraction_transform.Children.value.append(self.video_abstraction)
+
 
     # create four boundary planes
-    _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var left_border
     # Geometry scenegraph node of the platform's left border

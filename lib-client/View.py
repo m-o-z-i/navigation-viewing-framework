@@ -98,8 +98,7 @@ class View(avango.script.Script):
     self.camera.Mode.value = DISPLAY_INSTANCE.cameramode
 
     # set render mask for camera
-    _render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-    #_render_mask = "!pre_scene1 && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+    _render_mask = "!do_not_display_group && !video_abstraction && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
 
     for _i in range(0, 10):
       if _i != self.platform_id:

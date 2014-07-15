@@ -747,10 +747,14 @@ class PortalCamera(avango.script.Script):
             # set correct forward angle in interaction space
             _camera_forward = math.degrees(Tools.get_yaw(self.tracking_reader.sf_abs_mat.value))
 
-            if _camera_forward < 180.0 and _camera_forward > 0.0:
-              _interaction_space.animation_forward_angle = 90.0
+            if _camera_forward < 135.0 and _camera_forward > 45.0:
+              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle
+            elif _camera_forward < 225.0 and _camera_forward > 135.0:
+              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 90.0
+            elif _camera_forward < 315.0 and _camera_forward > 225.0:
+              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 180.0
             else:
-              _interaction_space.animation_forward_angle = 270.0
+              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 270.0
 
             self.last_open_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
             self.gallery_focus_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)

@@ -181,6 +181,8 @@ class PortalManager(avango.script.Script):
                                         avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0) * \
                                         avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_portal.platform_scale)))
 
+          if _nav.movement_traces_activated:
+            _nav.trace.clear(_nav.inputmapping.sf_abs_mat.value)
           _nav.inputmapping.scale_stop_time = None
           _nav.inputmapping.set_scale(_portal.platform_scale, False)
           

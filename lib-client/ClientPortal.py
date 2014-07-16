@@ -513,14 +513,25 @@ class PortalPreView(avango.script.Script):
     _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
                             _slot_world_mat
 
-    if _view_in_portal_space.get_translate().z < 0:
-      self.pipeline.Enabled.value = False
-      self.textured_quad.GroupNames.value.append("do_not_display_group")
-      self.back_geometry.GroupNames.value.remove("do_not_display_group")
+    _view_vec = avango.gua.make_rot_mat(_slot_world_mat.get_rotate()) * avango.gua.Vec3(0, 0, -1)
+    _view_vec = avango.gua.Vec3(_view_vec.x, _view_vec.y, _view_vec.z)
+    _portal_vec = avango.gua.make_rot_mat(self.portal_matrix_node.Transform.value.get_rotate()) * avango.gua.Vec3(0, 0, -1)
+    _portal_vec = avango.gua.Vec3(_portal_vec.x, _portal_vec.y, _portal_vec.z)
+    _angle = math.acos(_view_vec.dot(_portal_vec))
+
+    if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 100.0:
+
+      if self.pipeline.Enabled.value == True:
+        self.pipeline.Enabled.value = False
+        self.textured_quad.GroupNames.value.append("do_not_display_group")
+        self.back_geometry.GroupNames.value.remove("do_not_display_group")
+
     else:
-      self.pipeline.Enabled.value = True
-      self.textured_quad.GroupNames.value.remove("do_not_display_group")
-      self.back_geometry.GroupNames.value.append("do_not_display_group")
+
+      if self.pipeline.Enabled.value == False:
+        self.pipeline.Enabled.value = True
+        self.textured_quad.GroupNames.value.remove("do_not_display_group")
+        self.back_geometry.GroupNames.value.append("do_not_display_group")
 
     # check for scale and update render mask
     #if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:

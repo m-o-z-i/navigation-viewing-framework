@@ -146,14 +146,56 @@ class PortalManager(avango.script.Script):
     # check every navigation instance for portal intersections
     for _nav in self.NAVIGATION_LIST:
 
+      _nav_device_mat = _nav.platform.platform_transform_node.Transform.value * \
+                        _nav.platform.platform_scale_transform_node.Transform.value * \
+                          avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate())
+
+
+      _nav_device_pos = _nav_device_mat.get_translate()
+
+      _nav_device_pos2 = _nav_device_mat * avango.gua.Vec3(0.0,0.0,1.0)
+      _nav_device_pos2 = avango.gua.Vec3(_nav_device_pos2.x, _nav_device_pos2.y, _nav_device_pos2.z)
+
+
+      for _portal in self.transit_portals:
+        _mat = avango.gua.make_inverse_mat(_portal.portal_matrix_node.Transform.value)
+
+        _nav_device_portal_space_mat = _mat * _nav_device_mat
+        _nav_device_portal_space_pos = _mat * _nav_device_pos
+        _nav_device_portal_space_pos2 = _mat * _nav_device_pos2
+        _nav_device_portal_space_pos = avango.gua.Vec3(_nav_device_portal_space_pos.x, _nav_device_portal_space_pos.y, _nav_device_portal_space_pos.z)
+
+        # do a teleportation if navigation enters portal
+        if  _nav_device_portal_space_pos.x > -_portal.width/2     and \
+            _nav_device_portal_space_pos.x <  _portal.width/2     and \
+            _nav_device_portal_space_pos.y > -_portal.height/2    and \
+            _nav_device_portal_space_pos.y <  _portal.height/2    and \
+            _nav_device_portal_space_pos.z < 0.0                  and \
+            _nav_device_portal_space_pos2.z >= 0.0                and \
+            _portal.viewing_mode == "3D":
+
+          _nav.inputmapping.set_abs_mat(_portal.platform_matrix * \
+                                        avango.gua.make_scale_mat(_portal.platform_scale) * \
+                                        avango.gua.make_trans_mat(_nav_device_portal_space_pos) * \
+                                        avango.gua.make_rot_mat(_nav_device_portal_space_mat.get_rotate_scale_corrected()) * \
+                                        avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0) * \
+                                        avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_portal.platform_scale)))
+
+          _nav.inputmapping.scale_stop_time = None
+          _nav.inputmapping.set_scale(_portal.platform_scale, False)
+          
+
+      '''
       _mat = _nav.platform.platform_scale_transform_node.WorldTransform.value * _nav.device.sf_station_mat.value
       _scale = _nav.inputmapping.sf_scale.value
       _last_teleport_time = self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)]
 
       for _portal in self.transit_portals:
 
-        _mat_in_portal_space = avango.gua.make_inverse_mat(_portal.portal_matrix_node.WorldTransform.value) * \
+        _mat_in_portal_space = avango.gua.make_inverse_mat(_portal.portal_matrix_node.Transform.value) * \
                                _mat
+
+        _transit_check_mat = _mat_in_portal_space 
 
         _vec_in_portal_space = _mat_in_portal_space.get_translate()
 
@@ -176,6 +218,7 @@ class PortalManager(avango.script.Script):
           _nav.inputmapping.scale_stop_time = None
           _nav.inputmapping.set_scale(_portal.platform_scale, False)
           self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
+      '''
 
 
   ## Adds a new Portal instance to the scene.

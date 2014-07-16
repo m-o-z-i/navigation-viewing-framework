@@ -54,6 +54,10 @@ class PortalManager(avango.script.Script):
     # List of Portal instances that are currently not coupled to a PortalCamera.
     self.free_portals = []
 
+    ## @var transit_portals
+    # List of Portal instances that allow transit.
+    self.transit_portals = []
+
     ## @var counter
     # Integer which counts the number of portals already created. Used for portal IDs.
     self.counter = 0
@@ -124,6 +128,15 @@ class PortalManager(avango.script.Script):
                                   "PERSPECTIVE",
                                   "False")
     '''
+    
+    # tower portal
+    self.add_bidirectional_portal( avango.gua.make_trans_mat(-23.0, 1.3, 21.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
+                                   avango.gua.make_trans_mat(-12.0, 17.3, -7.0) * avango.gua.make_rot_mat(180, 0, 1, 0),
+                                   4.0,
+                                   2.6,
+                                   "3D",
+                                   "PERSPECTIVE",
+                                   "False")
 
     self.always_evaluate(True)
 
@@ -137,7 +150,7 @@ class PortalManager(avango.script.Script):
       _scale = _nav.inputmapping.sf_scale.value
       _last_teleport_time = self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)]
 
-      for _portal in self.portals:
+      for _portal in self.transit_portals:
 
         _mat_in_portal_space = avango.gua.make_inverse_mat(_portal.portal_matrix_node.WorldTransform.value) * \
                                _mat
@@ -152,9 +165,6 @@ class PortalManager(avango.script.Script):
             abs(_vec_in_portal_space.z) < max(0.1 * _scale, 0.1))  and \
             time.time() - _last_teleport_time > 1.0                and \
             _portal.viewing_mode == "3D":
-
-          print_warning("Portal teleportation deactivated for debugging.")
-          return
 
           _nav.inputmapping.set_abs_mat(_portal.platform_matrix * \
                                         avango.gua.make_scale_mat(_portal.platform_scale) * \
@@ -178,10 +188,14 @@ class PortalManager(avango.script.Script):
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   # @param BORDER_MATERIAL The material string to be used for the portal's border.
-  def add_portal(self, PLATFORM_MATRIX, PLATFORM_SCALE, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
+  def add_portal(self, PLATFORM_MATRIX, PLATFORM_SCALE, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL, TRANSIT = False):
     _portal = Portal(self, self.counter, PLATFORM_MATRIX, PLATFORM_SCALE, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
     self.counter += 1
     self.portals.append(_portal)
+
+    if TRANSIT:
+      self.transit_portals.append(_portal)
+
     return _portal
 
   ## Add a new bidirectional portal to the scene.
@@ -193,13 +207,13 @@ class PortalManager(avango.script.Script):
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   def add_bidirectional_portal(self, FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX):
-    self.add_portal(FIRST_MATRIX, 1.0, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessBlue.gmd")
+    self.add_portal(FIRST_MATRIX, 1.0, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessBlue.gmd", True)
 
     # mirror matrices for opposite portal
     _mirrored_scene_matrix = SECOND_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
     _mirrored_portal_matrix = FIRST_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
 
-    self.add_portal(_mirrored_scene_matrix, 1.0, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd")
+    self.add_portal(_mirrored_scene_matrix, 1.0, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd", True)
 
   ## Gets an active Portal instance by its ID. Returns None when no matching instance was found.
   # @param The Portal ID to be searched for.

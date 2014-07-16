@@ -289,11 +289,12 @@ class PortalPreView(avango.script.Script):
     self.pipeline.SsaoIntensity.connect_from(VIEW.pipeline.SsaoIntensity)
     self.pipeline.EnableBackfaceCulling.connect_from(VIEW.pipeline.EnableBackfaceCulling)
     self.pipeline.EnableFrustumCulling.connect_from(VIEW.pipeline.EnableFrustumCulling)
-    self.pipeline.EnableFXAA.connect_from(VIEW.pipeline.EnableFXAA)  
+    self.pipeline.EnableFXAA.connect_from(VIEW.pipeline.EnableFXAA)
     self.pipeline.AmbientColor.connect_from(VIEW.pipeline.AmbientColor)
     self.pipeline.EnableFog.connect_from(VIEW.pipeline.EnableFog)
     self.pipeline.FogStart.connect_from(VIEW.pipeline.FogStart)
     self.pipeline.FogEnd.connect_from(VIEW.pipeline.FogEnd)
+
 
     self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1024, 1024)
     self.pipeline.RightResolution.value = self.pipeline.LeftResolution.value

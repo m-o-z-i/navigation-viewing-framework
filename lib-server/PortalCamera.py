@@ -315,8 +315,8 @@ class PortalCamera(avango.script.Script):
       if self.portal_width < 0.15:
         self.portal_width = 0.15
 
-      if self.portal_height < 0.05:
-        self.portal_height = 0.05
+      if self.portal_height < 0.15:
+        self.portal_height = 0.15
 
     # update matrices in drag mode
     if self.drag_last_frame_camera_mat != None:

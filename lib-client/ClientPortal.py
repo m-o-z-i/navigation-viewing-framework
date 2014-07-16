@@ -237,7 +237,7 @@ class PortalPreView(avango.script.Script):
     # Scenegraph node representing the slot (head) position in the portal's exit space.
     self.view_node = avango.gua.nodes.TransformNode(Name = "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id))
     self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
-    self.PORTAL_NODE.Children.value[1].Children.value[0].Children.value.append(self.view_node)
+    self.PORTAL_NODE.Children.value[1].Children.value.append(self.view_node)
 
     ## @var left_eye_node
     # Scenegraph node representing the left eye's position in the portal's exit space.

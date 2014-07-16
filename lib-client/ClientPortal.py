@@ -522,10 +522,10 @@ class PortalPreView(avango.script.Script):
       self.back_geometry.GroupNames.value.append("do_not_display_group")
 
     # check for scale and update render mask
-    if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:
-      self.set_render_mask(False)
-    else:
-      self.set_render_mask(True)
+    #if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:
+    #  self.set_render_mask(False)
+    #else:
+    #  self.set_render_mask(True)
 
   ## Called whenever sf_screen_width changes.
   @field_has_changed(sf_screen_width)

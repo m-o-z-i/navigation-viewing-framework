@@ -63,7 +63,7 @@ class BoundingBoxVisualization(avango.script.Script):
     ## @var edge_group
     # Scenegraph transformation node to group all the bounding box edges.
     self.edge_group = avango.gua.nodes.TransformNode()
-    #NET_TRANS_NODE.Children.value.append(self.edge_group)
+    NET_TRANS_NODE.Children.value.append(self.edge_group)
     
     ## @var edge1
     # Geometry node representing the first edge of the visualized bounding box.
@@ -186,9 +186,10 @@ class BoundingBoxVisualization(avango.script.Script):
     #print "object moved"
     _lf_scale = self.lf_node_mat.get_scale()
     _scale = self.sf_node_mat.value.get_scale()
-
-    #if _lf_scale != _scale: # scale has changed
-    #  self.update_bb_scale()
+       
+    if round(_lf_scale.x,5) != round(_scale.x,5) or round(_lf_scale.y,5) != round(_scale.y,5) or round(_lf_scale.z,5) != round(_scale.z,5): # scale has changed
+      #self.update_bb_scale()
+      self.calc_bb()
       
     self.lf_node_mat = self.sf_node_mat.value
 

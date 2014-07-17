@@ -269,8 +269,8 @@ class SceneObject:
       _loader = avango.gua.nodes.TriMeshLoader()
   
       _light_geometry = _loader.create_geometry_from_file(_light_node.Name.value + "_geometry", _filename, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-      #_light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
-      _light_geometry.Transform.value = avango.gua.make_scale_mat(4.0)
+      _light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
+      #_light_geometry.Transform.value = avango.gua.make_scale_mat(4.0)
       _light_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
       _light_geometry.GroupNames.value.append("man_pick_group") # prepare light geometry for picking
       
@@ -362,24 +362,13 @@ class SceneObject:
       _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
   
 
-    '''
-    if NODE.get_type() == "av::gua::TriMeshNode":
-    
-      _object = GeometryObject()
-      _object.init(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
-
-    elif NODE.get_type() == 'av::gua::SunLightNode' or NODE.get_type() == 'av::gua::PointLightNode' or NODE.get_type() == 'av::gua::SpotLightNode':
-
-      _object = LightObject()
-      _object.init(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
-    '''
-
 
   def register_interactive_object(self, INTERACTIVE_OBJECT):
 
     self.objects.append(INTERACTIVE_OBJECT)
 
 
+  '''
   def get_object(self, NAME):
   
     _node = self.SCENEGRAPH[self.scene_root.Path.value + "/" + NAME]
@@ -389,6 +378,16 @@ class SceneObject:
       if _node.has_field("InteractiveObject") == True:
 
         return _node.InteractiveObject.value
+  '''
+
+  def get_interactive_object(self, NAME):
+  
+    for _object in self.objects:
+
+      if _object.get_node().Name.value == NAME:
+        return _object
+    
+
 
   ## Enables all objects in the scene.
   # @param FLAG Boolean indicating if all objects should be reset first.
@@ -501,7 +500,7 @@ class InteractiveObject(avango.script.Script):
       #for _child in self.node.Children.value:
       #  _child.GroupNames.value = [] # set geometry visible
     
-      #self.enable_highlight(True)
+      self.enable_highlight(True)
     
     else: # disable object
       self.node.GroupNames.value = ["do_not_display_group"] # set geometry invisible
@@ -611,22 +610,5 @@ class InteractiveObject(avango.script.Script):
 
       else: # scene root
         return None
-
-
-'''
-class GeometryObject(InteractiveObject):
-
-  def init(self, SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
-
-    self.base_constructor(SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
-
-
-
-class LightObject(InteractiveObject):
-
-  def init(self, SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP):
-    
-    self.base_constructor(SCENE, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
-'''
 
     

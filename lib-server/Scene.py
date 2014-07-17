@@ -8,6 +8,7 @@ import avango
 
 # import framework libraries
 from Objects import *
+from FrameUpdate import *
 
 # import python libraries
 # ...
@@ -161,17 +162,19 @@ class SceneMonkey(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "Monkey", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
+    # navigation parameters
     self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 1.0)
 
+    # content
     _mat = avango.gua.make_identity_mat()
-    self.init_group("group", _mat, False, True, self.scene_root, "main_scene")
+    self.init_group("group1", _mat, False, True, self.scene_root, "main_scene")
 
-    _parent_object = self.get_object("group")
+    _parent_object = self.get_interactive_object("group1")
 
     _mat = avango.gua.make_trans_mat(0.0,1.2,0.0) * avango.gua.make_scale_mat(0.1)
-    self.init_geometry("monkey1", "data/objects/monkey.obj", _mat, "data/materials/SimplePhongWhite.gmd", False, True, _parent_object, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP
+    self.init_geometry("monkey1", "data/objects/monkey.obj", _mat, "data/materials/SimplePhongWhite.gmd", False, True, _parent_object, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP    
 
-    _mat = avango.gua.make_trans_mat(-0.25,1.2,0.0) * avango.gua.make_scale_mat(0.05)
+    _mat = avango.gua.make_trans_mat(-0.35,1.2,0.0) * avango.gua.make_scale_mat(0.05)
     self.init_geometry("monkey2", "data/objects/monkey.obj", _mat, "data/materials/AvatarBlue.gmd", False, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(0.25,1.2,0.0) * avango.gua.make_scale_mat(0.05)
@@ -191,6 +194,29 @@ class SceneMonkey(SceneObject):
     _mat = avango.gua.make_trans_mat(0.0, 1.55, 0.0) * avango.gua.make_rot_mat(90.0,-1,0,0)
     self.init_light(TYPE = 2, NAME = "spot_light", COLOR = avango.gua.Color(1.0, 0.25, 0.25), MATRIX = _mat, PARENT_NODE = self.scene_root, MANIPULATION_PICK_FLAG = True, ENABLE_SHADOW = True, LIGHT_DIMENSIONS = avango.gua.Vec3(2.0,2.0,1.0)) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
+    # updates
+    _object = self.get_interactive_object("group1")
+    FrameRotationUpdate(_object.node.Transform, 20.0, avango.gua.Vec3(0,1,0))
+
+    _object = self.get_interactive_object("monkey3")
+    FrameRotationUpdate(_object.node.Transform, 90.0, avango.gua.Vec3(1,0,0))
+
+    #_object = self.get_interactive_object("monkey2")
+    #FrameSineTranslationUpdate(_object.node.Transform, 2.0, avango.gua.Vec3(0.0,0.2,0.0))
+
+    _object = self.get_interactive_object("monkey2")
+    FrameSineScaleUpdate(_object.node.Transform, 1.0, avango.gua.Vec3(0.5,0.5,0.5))
+
+    #_object = self.get_interactive_object("spot_light")
+    #FrameSineTranslationUpdate(_object.node.Transform, 1.0, avango.gua.Vec3(0.0,0.3,0.0))
+
+
+    # render pipeline parameters
+    self.enable_backface_culling = True
+    self.enable_frustum_culling = True
+    self.enable_ssao = True
+    self.enable_fxaa = True
+    #self.ambient_color = avango.gua.Color(0.5, 0.5, 0.5)
 
 
 class ScenePLOD(SceneObject):
@@ -240,7 +266,7 @@ class ScenePitoti(SceneObject):
     _mat = avango.gua.make_rot_mat(90.0,-1,0,0) * avango.gua.make_rot_mat(25.0,0,-1,0) * avango.gua.make_trans_mat(23.0957, -391.458, -56.8221)
     self.init_group("group", _mat, False, True, self.scene_root, "main_scene")
 
-    _parent_object = self.get_object("group")
+    _parent_object = self.get_interactive_object("group")
 
     _mat = avango.gua.make_identity_mat()
     self.init_plod("rock", "/mnt/pitoti/XYZ_ALL/new_pitoti_sampling/TLS_Seradina_Rock-12C.kdn", _mat, False, True, _parent_object, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    

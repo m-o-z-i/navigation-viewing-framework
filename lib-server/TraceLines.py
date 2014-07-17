@@ -51,7 +51,7 @@ class Trace:
     for i in range(self.num_lines):
       _line = _loader.create_geometry_from_file('line_geometry_' + str(i), 'data/objects/cube.obj', 'data/materials/' + TRACE_MATERIAL + '.gmd', avango.gua.LoaderFlags.DEFAULTS)
       _line.Transform.value = avango.gua.make_scale_mat(0, 0, 0)
-      _line.ShadowMode.value = avango.gua.ShadowMode.OFFcleclearar
+      _line.ShadowMode.value = avango.gua.ShadowMode.OFF
       _line.GroupNames.value = ["main_scene"]
       self.lines.append(_line)
 

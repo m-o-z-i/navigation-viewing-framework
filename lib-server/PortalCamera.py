@@ -16,6 +16,7 @@ import Tools
 
 # import python libraries
 import time
+import math
 
 ## A PortalCamera is a physical device to interactively caputure, view
 # and manipulate Portal instances in the scene.
@@ -110,10 +111,6 @@ class PortalCamera(avango.script.Script):
     ## @var captured_portals
     # List of Portal instances belonging to this PortalCamera.
     self.captured_portals = []
-
-    ## @var free_portals
-    # List of Portal instances that were placed in the scene by this PortalCamera.
-    self.free_portals = []
 
     ## @var current_portal
     # Portal instance which is currently displayed above the PortalCamera.
@@ -271,10 +268,9 @@ class PortalCamera(avango.script.Script):
     # Index within self.captured_portals saying which of the Portals was lastly opened by the PortalCamera.
     self.last_open_portal_index = None
 
-    ## @var drag_relation_portal_scene
-    # Expression of the portal matrix in the scene matrix coordinate system of the current Portal to be
-    # dragged. Must remain constant during dragging. None if no dragging is in progress.
-    self.drag_relation_portal_scene = None
+    ## @var drag_last_frame_camera_mat
+    # Matrix containing the value of the tracking target of the last frame when in drag mode.
+    self.drag_last_frame_camera_mat = None
 
     # set evaluation policy
     self.always_evaluate(True)
@@ -319,21 +315,21 @@ class PortalCamera(avango.script.Script):
       if self.portal_width < 0.15:
         self.portal_width = 0.15
 
-      if self.portal_height < 0.05:
-        self.portal_height = 0.05
+      if self.portal_height < 0.15:
+        self.portal_height = 0.15
 
     # update matrices in drag mode
-    if self.drag_relation_portal_scene != None:
+    if self.drag_last_frame_camera_mat != None:
 
-      _current_portal_matrix = self.current_portal.portal_matrix_node.Transform.value
-      _new_scene_matrix = avango.gua.make_inverse_mat(
-                                                      avango.gua.make_inverse_mat(_current_portal_matrix) * \
-                                                      self.drag_relation_portal_scene
-                                                     )
-      self.current_portal.set_platform_matrix(
-                                                      _new_scene_matrix * \
-                                                      avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.current_portal.platform_scale))
-                                             )
+      _current_camera_mat = self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
+      _drag_input_mat = avango.gua.make_inverse_mat(self.drag_last_frame_camera_mat) * _current_camera_mat
+      _drag_input_mat.set_translate(_drag_input_mat.get_translate() * self.current_portal.platform_scale)
+
+      _new_scene_mat = self.current_portal.platform_matrix * _drag_input_mat
+
+      self.current_portal.set_platform_matrix(_new_scene_mat)
+
+      self.drag_last_frame_camera_mat = _current_camera_mat
 
 
     # check for camera hitting free portals
@@ -341,28 +337,17 @@ class PortalCamera(avango.script.Script):
 
     if self.current_portal == None:
 
-      for _free_portal in self.free_portals:
+      for _free_portal in self.PORTAL_MANAGER.free_portals:
 
         _portal_vec = _free_portal.portal_matrix_node.WorldTransform.value.get_translate()
 
         if self.check_for_hit(_camera_vec, _portal_vec):
 
           _free_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-          self.free_portals.remove(_free_portal)
+          self.PORTAL_MANAGER.free_portals.remove(_free_portal)
           self.captured_portals.append(_free_portal)
           self.current_portal = _free_portal
           return
-
-    # check for interaction spaces and corresponding scene matrix updates
-    for _interaction_space in self.interaction_spaces:
-
-      if _interaction_space.is_inside(self.tracking_reader.sf_abs_mat.value.get_translate()) and \
-         self.current_portal != None and \
-         self.gallery_activated == False and \
-         _interaction_space.maximized_portal == None:
-        
-        _device_values = _interaction_space.mf_device_transformed_values.value
-        self.current_portal.modify_scene_matrix(_device_values)
 
     # size to camera
     if self.current_portal != None:
@@ -608,13 +593,13 @@ class PortalCamera(avango.script.Script):
       # initiate dragging
       else:
 
-        self.drag_relation_portal_scene = self.current_portal.portal_matrix_node.Transform.value * \
-                                          avango.gua.make_inverse_mat(self.current_portal.scene_matrix_node.Transform.value)
+        self.drag_last_frame_camera_mat = self.tracking_reader.sf_abs_mat.value * \
+                                          avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
 
     # capture button released, stop dragging
     else:
 
-      self.drag_relation_portal_scene = None
+      self.drag_last_frame_camera_mat = None
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)
@@ -735,7 +720,7 @@ class PortalCamera(avango.script.Script):
                                                  self.current_portal.camera_mode,
                                                  self.current_portal.negative_parallax,
                                                  self.current_portal.border_material)
-        self.free_portals.append(_portal)
+        self.PORTAL_MANAGER.free_portals.append(_portal)
 
   ## Called whenever sf_maximize_button changes.
   @field_has_changed(sf_maximize_button)
@@ -755,6 +740,22 @@ class PortalCamera(avango.script.Script):
               return
 
             _portal = self.current_portal
+
+            if _portal.negative_parallax == "False":
+              _portal.switch_negative_parallax()
+
+            # set correct forward angle in interaction space
+            _camera_forward = math.degrees(Tools.get_yaw(self.tracking_reader.sf_abs_mat.value))
+
+            if _camera_forward < 135.0 and _camera_forward > 45.0:
+              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle
+            elif _camera_forward < 225.0 and _camera_forward > 135.0:
+              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 90.0
+            elif _camera_forward < 315.0 and _camera_forward > 225.0:
+              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 180.0
+            else:
+              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 270.0
+
             self.last_open_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
             self.gallery_focus_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
             self.captured_portals.remove(self.current_portal)

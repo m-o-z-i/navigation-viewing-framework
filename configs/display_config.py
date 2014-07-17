@@ -410,12 +410,12 @@ class OculusRift(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  #LargePowerwall() ,
+  LargePowerwall() ,
   #LargePowerwall2() ,  
-  #SmallPowerwall() ,
+  SmallPowerwall() ,
   #SmallPowerwall2() ,  
   #OculusRift(hostname = "atalante", name = "oculus_rift_atalante") ,  
-  #TouchTable3DStandalone() ,
+  TouchTable3DStandalone() ,
   #TouchTable3DSecondary(render_mask = "!main_scene") ,  
   Display(hostname = "agenor", stereo = False) ,
 

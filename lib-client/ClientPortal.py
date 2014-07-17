@@ -194,11 +194,6 @@ class ClientPortal:
 # perspective for the view within the portal.
 class PortalPreView(avango.script.Script):
 
-  ## @var sf_slot_world_mat
-  # Field containing the WorldTransform of the associated slot node.
-  sf_slot_world_mat = avango.gua.SFMatrix4()
-  sf_slot_world_mat.value = avango.gua.make_identity_mat()
-
   ## @var sf_screen_width
   # Field containing the current width of the portal screen.
   sf_screen_width = avango.SFFloat()
@@ -211,12 +206,12 @@ class PortalPreView(avango.script.Script):
   # Field containing the GroupNames of the associated portal node. Used for transferring portal mode settings.
   mf_portal_modes = avango.MFString()
 
-  ##
-  #
+  ## @var sf_left_eye_transform
+  # Transformation of the slot's left eye.
   sf_left_eye_transform = avango.gua.SFMatrix4()
 
-  ##
-  #
+  ## @var sf_right_eye_transform
+  # Transformation of the slot's right eye.
   sf_right_eye_transform = avango.gua.SFMatrix4()
 
   # Default constructor.
@@ -238,18 +233,11 @@ class PortalPreView(avango.script.Script):
     # The View instance to be associated with this instance.
     self.VIEW = VIEW
 
-    ## @var active
-    # Boolean indicating the activity of the evaluation loop.
-    self.active = True
-
-    # connect fields
-    self.mf_portal_modes.connect_from(PORTAL_NODE.GroupNames)
-
     ## @var view_node
     # Scenegraph node representing the slot (head) position in the portal's exit space.
     self.view_node = avango.gua.nodes.TransformNode(Name = "s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id))
     self.portal_matrix_node = self.PORTAL_NODE.Children.value[0]
-    self.PORTAL_NODE.Children.value[1].Children.value[0].Children.value.append(self.view_node)
+    self.PORTAL_NODE.Children.value[1].Children.value.append(self.view_node)
 
     ## @var left_eye_node
     # Scenegraph node representing the left eye's position in the portal's exit space.
@@ -276,23 +264,6 @@ class PortalPreView(avango.script.Script):
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = VIEW.SCENEGRAPH.Name.value
 
-    # set render mask for camera
-    _render_mask = "!do_not_display_group"
-
-    for _i in range(0, 10):
-      #_render_mask = _render_mask + " && !avatar_group_" + str(_i) + " && !status_group_" + str(_i)
-      _render_mask = _render_mask + " && !status_group_" + str(_i)
-
-      if _i != VIEW.platform_id:
-        _render_mask = _render_mask + " && !platform_group_" + str(_i)
-
-    for _screen in range(0, 10):
-      for _slot in range(0, 10):
-          _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
-    
-
-    self.camera.RenderMask.value = _render_mask
-
     self.camera.LeftScreen.value = self.screen_node.Path.value
     self.camera.RightScreen.value = self.screen_node.Path.value
     self.camera.LeftEye.value = self.left_eye_node.Path.value
@@ -318,11 +289,12 @@ class PortalPreView(avango.script.Script):
     self.pipeline.SsaoIntensity.connect_from(VIEW.pipeline.SsaoIntensity)
     self.pipeline.EnableBackfaceCulling.connect_from(VIEW.pipeline.EnableBackfaceCulling)
     self.pipeline.EnableFrustumCulling.connect_from(VIEW.pipeline.EnableFrustumCulling)
-    self.pipeline.EnableFXAA.connect_from(VIEW.pipeline.EnableFXAA)  
+    self.pipeline.EnableFXAA.connect_from(VIEW.pipeline.EnableFXAA)
     self.pipeline.AmbientColor.connect_from(VIEW.pipeline.AmbientColor)
     self.pipeline.EnableFog.connect_from(VIEW.pipeline.EnableFog)
     self.pipeline.FogStart.connect_from(VIEW.pipeline.FogStart)
     self.pipeline.FogEnd.connect_from(VIEW.pipeline.FogEnd)
+
 
     self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1024, 1024)
     self.pipeline.RightResolution.value = self.pipeline.LeftResolution.value
@@ -338,6 +310,9 @@ class PortalPreView(avango.script.Script):
     self.pipeline.BackgroundTexture.value = "data/textures/sky.jpg"
 
     self.VIEW.pipeline.PreRenderPipelines.value.append(self.pipeline)
+
+    # set render mask
+    self.set_render_mask(True)
 
     ## @var textured_quad
     # The textured quad instance in which the portal view will be rendered.
@@ -367,10 +342,17 @@ class PortalPreView(avango.script.Script):
     self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
     self.portal_matrix_node.Children.value.append(self.portal_border)
 
+    ## @var frame_trigger
+    # Triggers framewise evaluation of frame_callback method.
+    self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
+
     # init field connections
-    self.sf_slot_world_mat.connect_from(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)].WorldTransform)
+    self.mf_portal_modes.connect_from(PORTAL_NODE.GroupNames)
     self.sf_screen_width.connect_from(self.screen_node.Width)
     self.sf_screen_height.connect_from(self.screen_node.Height)
+
+    # set evaluation policy
+    self.always_evaluate(True)
 
   ## Compares a given portal node with the portal node associated with this instance.
   # @param PORTAL_NODE The portal node to be compared with.
@@ -379,6 +361,28 @@ class PortalPreView(avango.script.Script):
       return True
 
     return False
+
+  ## Sets the proper render mask for the camera.
+  # @param SHOW_VIDEO If True, video avatars will be displayed. If False, the video abstraction is shown.
+  def set_render_mask(self, SHOW_VIDEO):
+
+    if SHOW_VIDEO:
+      _render_mask = "!do_not_display_group && !video_abstraction"
+    else:
+      _render_mask = "!do_not_display_group && !video"
+
+    for _i in range(0, 10):
+      _render_mask = _render_mask + " && !status_group_" + str(_i)
+
+      if _i != self.VIEW.platform_id:
+        _render_mask = _render_mask + " && !platform_group_" + str(_i)
+
+    for _screen in range(0, 10):
+      for _slot in range(0, 10):
+          _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
+
+    self.camera.RenderMask.value = _render_mask
+    self.pipeline.Camera.value = self.camera
 
   ## Updates the size of the portal according to the screen node.
   def update_size(self):
@@ -396,7 +400,7 @@ class PortalPreView(avango.script.Script):
   def deactivate(self):
 
     # disable pipeline and evaluation loop
-    self.active = False
+    self.frame_trigger.Active.value = False
     self.pipeline.Enabled.value = False
 
     self.portal_matrix_node.Children.value.remove(self.portal_border)
@@ -414,100 +418,126 @@ class PortalPreView(avango.script.Script):
     del self.right_eye_node
     del self.view_node
 
-  ## Called whenever an input field changes.
-  def evaluate(self):
+  ## Computes the WorldTransform of a scenegraph node manually without using the pre-defined field.
+  # @param NODE The scenegraph node to compute the world transformation for.
+  def compute_world_transform(self, NODE):
 
-    # check for visibility
-    if self.mf_portal_modes.value[4] == "4-False":
-      self.active = False
-      self.pipeline.Enabled.value = False
-    else:
-      self.active = True
+    if NODE == None:
+      return avango.gua.make_identity_mat()
+    else:   
+      return self.compute_world_transform(NODE.Parent.value) * NODE.Transform.value
+
+  ## Called whenever mf_portal_modes changes.
+  @field_has_changed(mf_portal_modes)
+  def mf_portal_modes_changed(self):
 
     # check for deletion
     try:
-      self.textured_quad
+      self.pipeline
     except:
       return
 
-    if self.active:
+    # check for viewing mode
+    if self.mf_portal_modes.value[0] == "0-3D":
+      self.left_eye_node.Transform.disconnect()
+      self.right_eye_node.Transform.disconnect()
+      self.left_eye_node.Transform.connect_from(self.sf_left_eye_transform)
+      self.right_eye_node.Transform.connect_from(self.sf_right_eye_transform)
+    else:
+      self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
+      self.left_eye_node.Transform.disconnect()
+      self.right_eye_node.Transform.disconnect()
+      self.left_eye_node.Transform.value = avango.gua.make_identity_mat()
+      self.right_eye_node.Transform.value = avango.gua.make_identity_mat()
 
-      # remove inactivity status if necessary
+    # check for camera mode
+    if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
+      self.camera.Mode.value = avango.gua.ProjectionMode.ORTHOGRAPHIC
+    else:
+      self.camera.Mode.value = avango.gua.ProjectionMode.PERSPECTIVE
+
+    # check for negative parallax
+    if self.mf_portal_modes.value[2] == "2-True":
+      self.pipeline.EnableGlobalClippingPlane.value = False
+    else:
+      self.pipeline.EnableGlobalClippingPlane.value = True
+
+    # set correct border material
+    if self.portal_border.Material.value != self.mf_portal_modes.value[3].replace("3-", ""):
+      
+      _material = self.mf_portal_modes.value[3].replace("3-", "")
+
+      if _material != "None":
+        self.portal_border.Material.value = _material
+        self.back_geometry.Material.value = _material
+        self.portal_border.GroupNames.value.remove("do_not_display_group")
+        self.back_geometry.GroupNames.value.remove("do_not_display_group")
+      else:
+        self.portal_border.GroupNames.value.append("do_not_display_group")
+        self.back_geometry.GroupNames.value.append("do_not_display_group")
+
+    # check for visibility
+    if self.mf_portal_modes.value[4] == "4-False":
+      self.frame_trigger.Active.value = False
+      self.pipeline.Enabled.value = False
+      self.textured_quad.GroupNames.value.append("do_not_display_group")
+      self.portal_border.GroupNames.value.append("do_not_display_group")
+      self.back_geometry.GroupNames.value.append("do_not_display_group")
+    else:
+      self.frame_trigger.Active.value = True
+      self.pipeline.Enabled.value = True
       self.textured_quad.GroupNames.value.remove("do_not_display_group")
       self.portal_border.GroupNames.value.remove("do_not_display_group")
-      self.pipeline.Enabled.value = True
 
-      # check for viewing mode
-      if self.mf_portal_modes.value[0] == "0-3D":
-        self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
-                                         self.sf_slot_world_mat.value
-        self.left_eye_node.Transform.connect_from(self.sf_left_eye_transform)
-        self.right_eye_node.Transform.connect_from(self.sf_right_eye_transform)
-      else:
-        self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
-        self.left_eye_node.Transform.disconnect()
-        self.right_eye_node.Transform.disconnect()
-        self.left_eye_node.Transform.value = avango.gua.make_identity_mat()
-        self.right_eye_node.Transform.value = avango.gua.make_identity_mat()
+  ## Evaluated every frame when active.
+  def frame_callback(self):
 
-      # check for camera mode
-      if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
-        self.camera.Mode.value = 1
-      else:
-        self.camera.Mode.value = 0
+    _slot_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/platform_" + str(self.VIEW.platform_id) + "/scale" + "/s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)])
 
-      # check for negative parallax
-      if self.mf_portal_modes.value[2] == "2-True":
-        #self.pipeline.NearClip.value = 0.1
-        self.pipeline.EnableGlobalClippingPlane.value = False
-      else:
-        #self.pipeline.NearClip.value = self.view_node.Transform.value.get_translate().z
-        self.pipeline.EnableGlobalClippingPlane.value = True
+    # update view_node in 3D portal mode
+    if self.mf_portal_modes.value[0] == "0-3D":
+      self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
+                                       _slot_world_mat
 
-        _portal_scene_mat = self.PORTAL_NODE.Children.value[1].Transform.value
-        _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
-        _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec        
-        _vec2 = _portal_scene_mat.get_translate()
-        _vec2 = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected())) * _vec2
-        _dist = _vec2.z
-        self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
+    # update global clipping plane when negative parallax is false
+    if self.mf_portal_modes.value[2] == "2-False":
+      _portal_scene_mat = self.PORTAL_NODE.Children.value[1].Transform.value
+      _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
+      _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec        
+      _vec2 = _portal_scene_mat.get_translate()
+      _vec2 = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected())) * _vec2
+      _dist = _vec2.z
+      self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
 
-      # set correct border material
-      if self.portal_border.Material.value != self.mf_portal_modes.value[3].replace("3-", ""):
-        
-        _material = self.mf_portal_modes.value[3].replace("3-", "")
+    # determine view in portal space and decide if renering is necessary
+    _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
+                            _slot_world_mat
 
-        if _material != "None":
-          self.portal_border.Material.value = _material
-          self.back_geometry.Material.value = _material
-          self.portal_border.GroupNames.value.remove("do_not_display_group")
-          self.back_geometry.GroupNames.value.remove("do_not_display_group")
-        else:
-          self.portal_border.GroupNames.value.append("do_not_display_group")
-          self.back_geometry.GroupNames.value.append("do_not_display_group")
+    _view_vec = avango.gua.make_rot_mat(_slot_world_mat.get_rotate()) * avango.gua.Vec3(0, 0, -1)
+    _view_vec = avango.gua.Vec3(_view_vec.x, _view_vec.y, _view_vec.z)
+    _portal_vec = avango.gua.make_rot_mat(self.portal_matrix_node.Transform.value.get_rotate()) * avango.gua.Vec3(0, 0, -1)
+    _portal_vec = avango.gua.Vec3(_portal_vec.x, _portal_vec.y, _portal_vec.z)
+    _angle = math.acos(_view_vec.dot(_portal_vec))
 
+    if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 100.0:
 
-      # determine view in portal space and decide if renering is necessary
-      _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
-                              self.sf_slot_world_mat.value
-
-      if _view_in_portal_space.get_translate().z < 0:
+      if self.pipeline.Enabled.value == True:
         self.pipeline.Enabled.value = False
         self.textured_quad.GroupNames.value.append("do_not_display_group")
         self.back_geometry.GroupNames.value.remove("do_not_display_group")
-      else:
+
+    else:
+
+      if self.pipeline.Enabled.value == False:
         self.pipeline.Enabled.value = True
         self.textured_quad.GroupNames.value.remove("do_not_display_group")
         self.back_geometry.GroupNames.value.append("do_not_display_group")
 
-    # self.active == False
-    else:
-
-      # trigger inactivity status if necessary
-      self.textured_quad.GroupNames.value.append("do_not_display_group")
-      self.portal_border.GroupNames.value.append("do_not_display_group")
-      self.back_geometry.GroupNames.value.append("do_not_display_group")
-      self.pipeline.Enabled.value = False
+    # check for scale and update render mask
+    #if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:
+    #  self.set_render_mask(False)
+    #else:
+    #  self.set_render_mask(True)
 
   ## Called whenever sf_screen_width changes.
   @field_has_changed(sf_screen_width)

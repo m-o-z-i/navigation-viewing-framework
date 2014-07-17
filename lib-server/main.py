@@ -26,16 +26,6 @@ import subprocess
 # @param CONFIG_FILE The filname of the configuration file to parse.
 # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
 
-class TimedRotate(avango.script.Script):
-  TimeIn = avango.SFFloat()
-  MatrixOut = avango.gua.SFMatrix4()
-
-  @field_has_changed(TimeIn)
-  def update(self):
-    self.MatrixOut.value = avango.gua.make_trans_mat(0.0,1.2,0.0) * \
-                           avango.gua.make_rot_mat(self.TimeIn.value*15.0, 0.0, 1.0, 0.0) * \
-                           avango.gua.make_scale_mat(0.1)
-
 ## Main method for the server application
 def start():
 
@@ -106,37 +96,29 @@ def start():
   table_interaction_space.my_constructor(table_device
                                        , application_manager.navigation_list[0].platform
                                        , avango.gua.Vec3(-2.441, 0.956, 1.635)
-                                       , avango.gua.Vec3(-1.450, 1.021, 2.936))
+                                       , avango.gua.Vec3(-1.450, 1.021, 2.936)
+                                       , 90.0)
   portal_camera.add_interaction_space(table_interaction_space)
   portal_camera_2.add_interaction_space(table_interaction_space)
+
+  _table_portal = portal_manager.add_portal(avango.gua.make_rot_mat(-90, 1, 0, 0),
+                                            80.0,
+                                            avango.gua.make_identity_mat(),
+                                            4.0,
+                                            2.0,
+                                            "3D",
+                                            "PERSPECTIVE",
+                                            "True",
+                                            "data/materials/ShadelessBlue.gmd")
+  table_interaction_space.add_maximized_portal(_table_portal)
   '''
-
-  #monkey_updater = TimedRotate()
-
-  #timer = avango.nodes.TimeSensor()
-  #monkey_updater.TimeIn.connect_from(timer.Time)
-  #graph["/net/Monkey/group/monkey1"].Transform.connect_from(monkey_updater.MatrixOut)
 
   # initialize animation manager
   #animation_manager = AnimationManager()
   #animation_manager.my_constructor([ graph["/net/platform_0"]]
   #                               , [ application_manager.navigation_list[0]])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"], graph["/net/SceneVRHyperspace1/ceiling_light5"], graph["/net/SceneVRHyperspace1/ceiling_light6"]]
-  #                               , [None, None, None, None, None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"]]
-  #                               , [None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"]]
-  #                               , [None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"]]
-  #                               , [None, None, None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/steppo"]]
-  #                               , [None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"], graph["/net/SceneVRHyperspace4/terrain_group"]]
-  #                               , [None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]]
-  #                               , [None])
 
-  manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

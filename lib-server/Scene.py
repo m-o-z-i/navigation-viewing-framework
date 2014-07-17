@@ -38,7 +38,7 @@ class SceneMedievalTown(SceneObject):
 
 
     # navigation parameters
-    self.starting_matrix = avango.gua.make_trans_mat(0.0, 3.0, 22.0)
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 22.0)
     self.starting_scale = 1.0
     #self.starting_matrix = avango.gua.make_identity_mat()
     #self.starting_scale = 120.0

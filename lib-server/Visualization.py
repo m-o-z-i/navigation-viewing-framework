@@ -186,11 +186,13 @@ class BoundingBoxVisualization(avango.script.Script):
     #print "object moved"
     _lf_scale = self.lf_node_mat.get_scale()
     _scale = self.sf_node_mat.value.get_scale()
-       
+
+    '''       
     if round(_lf_scale.x,5) != round(_scale.x,5) or round(_lf_scale.y,5) != round(_scale.y,5) or round(_lf_scale.z,5) != round(_scale.z,5): # scale has changed
       #self.update_bb_scale()
       self.calc_bb()
-      
+    '''
+    
     self.lf_node_mat = self.sf_node_mat.value
 
 

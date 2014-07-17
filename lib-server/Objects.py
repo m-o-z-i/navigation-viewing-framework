@@ -500,7 +500,7 @@ class InteractiveObject(avango.script.Script):
       #for _child in self.node.Children.value:
       #  _child.GroupNames.value = [] # set geometry visible
     
-      self.enable_highlight(True)
+      #self.enable_highlight(True)
     
     else: # disable object
       self.node.GroupNames.value = ["do_not_display_group"] # set geometry invisible

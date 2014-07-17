@@ -47,8 +47,16 @@ class PortalManager(avango.script.Script):
     self.SCENEGRAPH["/net"].Children.value.append(self.portal_group_node)
 
     ## @var portals
-    # List of currently active Portal instances.
+    # List of current Portal instances.
     self.portals = []
+
+    ## @var free_portals
+    # List of Portal instances that are currently not coupled to a PortalCamera.
+    self.free_portals = []
+
+    ## @var transit_portals
+    # List of Portal instances that allow transit.
+    self.transit_portals = []
 
     ## @var counter
     # Integer which counts the number of portals already created. Used for portal IDs.
@@ -120,7 +128,17 @@ class PortalManager(avango.script.Script):
                                   "PERSPECTIVE",
                                   "False")
     '''
-
+    
+    # tower portal
+    '''
+    self.add_bidirectional_portal( avango.gua.make_trans_mat(-23.0, 1.3, 21.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
+                                   avango.gua.make_trans_mat(-12.0, 17.3, -7.0) * avango.gua.make_rot_mat(180, 0, 1, 0),
+                                   4.0,
+                                   2.6,
+                                   "3D",
+                                   "PERSPECTIVE",
+                                   "False")
+    '''
     self.always_evaluate(True)
 
   ## Evaluated every frame.
@@ -129,14 +147,58 @@ class PortalManager(avango.script.Script):
     # check every navigation instance for portal intersections
     for _nav in self.NAVIGATION_LIST:
 
+      _nav_device_mat = _nav.platform.platform_transform_node.Transform.value * \
+                        _nav.platform.platform_scale_transform_node.Transform.value * \
+                          avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate())
+
+
+      _nav_device_pos = _nav_device_mat.get_translate()
+
+      _nav_device_pos2 = _nav_device_mat * avango.gua.Vec3(0.0,0.0,1.0)
+      _nav_device_pos2 = avango.gua.Vec3(_nav_device_pos2.x, _nav_device_pos2.y, _nav_device_pos2.z)
+
+
+      for _portal in self.transit_portals:
+        _mat = avango.gua.make_inverse_mat(_portal.portal_matrix_node.Transform.value)
+
+        _nav_device_portal_space_mat = _mat * _nav_device_mat
+        _nav_device_portal_space_pos = _mat * _nav_device_pos
+        _nav_device_portal_space_pos2 = _mat * _nav_device_pos2
+        _nav_device_portal_space_pos = avango.gua.Vec3(_nav_device_portal_space_pos.x, _nav_device_portal_space_pos.y, _nav_device_portal_space_pos.z)
+
+        # do a teleportation if navigation enters portal
+        if  _nav_device_portal_space_pos.x > -_portal.width/2     and \
+            _nav_device_portal_space_pos.x <  _portal.width/2     and \
+            _nav_device_portal_space_pos.y > -_portal.height/2    and \
+            _nav_device_portal_space_pos.y <  _portal.height/2    and \
+            _nav_device_portal_space_pos.z < 0.0                  and \
+            _nav_device_portal_space_pos2.z >= 0.0                and \
+            _portal.viewing_mode == "3D":
+
+          _nav.inputmapping.set_abs_mat(_portal.platform_matrix * \
+                                        avango.gua.make_scale_mat(_portal.platform_scale) * \
+                                        avango.gua.make_trans_mat(_nav_device_portal_space_pos) * \
+                                        avango.gua.make_rot_mat(_nav_device_portal_space_mat.get_rotate_scale_corrected()) * \
+                                        avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0) * \
+                                        avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_portal.platform_scale)))
+
+          if _nav.movement_traces_activated:
+            _nav.trace.clear(_nav.inputmapping.sf_abs_mat.value)
+          _nav.inputmapping.scale_stop_time = None
+          _nav.inputmapping.set_scale(_portal.platform_scale, False)
+          
+
+      '''
       _mat = _nav.platform.platform_scale_transform_node.WorldTransform.value * _nav.device.sf_station_mat.value
       _scale = _nav.inputmapping.sf_scale.value
       _last_teleport_time = self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)]
 
-      for _portal in self.portals:
+      for _portal in self.transit_portals:
 
-        _mat_in_portal_space = avango.gua.make_inverse_mat(_portal.portal_matrix_node.WorldTransform.value) * \
+        _mat_in_portal_space = avango.gua.make_inverse_mat(_portal.portal_matrix_node.Transform.value) * \
                                _mat
+
+        _transit_check_mat = _mat_in_portal_space 
 
         _vec_in_portal_space = _mat_in_portal_space.get_translate()
 
@@ -149,9 +211,6 @@ class PortalManager(avango.script.Script):
             time.time() - _last_teleport_time > 1.0                and \
             _portal.viewing_mode == "3D":
 
-          print_warning("Portal teleportation deactivated for debugging.")
-          return
-
           _nav.inputmapping.set_abs_mat(_portal.platform_matrix * \
                                         avango.gua.make_scale_mat(_portal.platform_scale) * \
                                         avango.gua.make_trans_mat(_vec_in_portal_space) * \
@@ -162,6 +221,7 @@ class PortalManager(avango.script.Script):
           _nav.inputmapping.scale_stop_time = None
           _nav.inputmapping.set_scale(_portal.platform_scale, False)
           self.last_teleportation_times[self.NAVIGATION_LIST.index(_nav)] = time.time()
+      '''
 
 
   ## Adds a new Portal instance to the scene.
@@ -174,10 +234,14 @@ class PortalManager(avango.script.Script):
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   # @param BORDER_MATERIAL The material string to be used for the portal's border.
-  def add_portal(self, PLATFORM_MATRIX, PLATFORM_SCALE, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL):
+  def add_portal(self, PLATFORM_MATRIX, PLATFORM_SCALE, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL, TRANSIT = False):
     _portal = Portal(self, self.counter, PLATFORM_MATRIX, PLATFORM_SCALE, PORTAL_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, BORDER_MATERIAL)
     self.counter += 1
     self.portals.append(_portal)
+
+    if TRANSIT:
+      self.transit_portals.append(_portal)
+
     return _portal
 
   ## Add a new bidirectional portal to the scene.
@@ -189,13 +253,13 @@ class PortalManager(avango.script.Script):
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   def add_bidirectional_portal(self, FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX):
-    self.add_portal(FIRST_MATRIX, 1.0, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessBlue.gmd")
+    self.add_portal(FIRST_MATRIX, 1.0, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessBlue.gmd", True)
 
     # mirror matrices for opposite portal
     _mirrored_scene_matrix = SECOND_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
     _mirrored_portal_matrix = FIRST_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
 
-    self.add_portal(_mirrored_scene_matrix, 1.0, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd")
+    self.add_portal(_mirrored_scene_matrix, 1.0, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd", True)
 
   ## Gets an active Portal instance by its ID. Returns None when no matching instance was found.
   # @param The Portal ID to be searched for.
@@ -366,7 +430,8 @@ class Portal:
 
   ## Modifies the scene matrix by the input values given from a device.
   # @param DEVICE_INPUT_VALUES List of input values from a device.
-  def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0]):
+  #
+  def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0], OFFSET_MAT = avango.gua.make_identity_mat):
 
     _x = DEVICE_INPUT_VALUES[0]
     _y = DEVICE_INPUT_VALUES[1]
@@ -388,8 +453,11 @@ class Portal:
 
       # object metaphor
       _transformed_trans_vec = avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected()) * avango.gua.Vec3(_x*-1.0, _z, _y*-1.0)
+      _transformed_trans_vec = OFFSET_MAT * _transformed_trans_vec
       _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
       _transformed_trans_vec *= self.platform_scale
+
+      _rot_vec = OFFSET_MAT * _rot_vec
 
       _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
                              self.platform_matrix * \

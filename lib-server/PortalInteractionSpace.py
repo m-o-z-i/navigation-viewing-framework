@@ -44,7 +44,8 @@ class PortalInteractionSpace(avango.script.Script):
   # @param PLATFORM Platform instance to which this PortalInteractionSpace is belonging to.
   # @param MIN_POINT Minimum coordinates of the point spanning up the space.
   # @param MAX_POINT Maximum coordinates of the point spanning up the space.
-  def my_constructor(self, DEVICE, PLATFORM, MIN_POINT, MAX_POINT):
+  # @param FORWARD_ANGLE Angle which represents forward in this interaction space.
+  def my_constructor(self, DEVICE, PLATFORM, MIN_POINT, MAX_POINT, FORWARD_ANGLE):
 
     ## @var DEVICE
     # Instance of Device to be used for portal navigation.
@@ -82,6 +83,14 @@ class PortalInteractionSpace(avango.script.Script):
     # Duration of an animation handled by this class.
     self.animation_duration = 1.0
 
+    ## @var maximize_forward_angle
+    # Angle in degrees in which a portal will face at when maximized.
+    self.maximize_forward_angle = FORWARD_ANGLE
+
+    ## @var forward_angle
+    # Angle in degrees which represents forward in this interaction space.
+    self.forward_angle = FORWARD_ANGLE
+
     self.mf_device_values.connect_from(self.DEVICE.mf_dof)
 
     # set evaluation policy
@@ -92,7 +101,7 @@ class PortalInteractionSpace(avango.script.Script):
     
     _avg_point = (self.MIN_POINT + self.MAX_POINT) / 2
     _plane_transform = avango.gua.make_trans_mat(_avg_point.x, self.MIN_POINT.y, _avg_point.z) * \
-                       avango.gua.make_rot_mat(90, 0, 1, 0) * \
+                       avango.gua.make_rot_mat(self.maximize_forward_angle, 0, 1, 0) * \
                        avango.gua.make_rot_mat(-90, 1, 0, 0)
 
     self.sf_min_y_plane_transform.value = self.PLATFORM.platform_scale_transform_node.WorldTransform.value * \
@@ -103,12 +112,20 @@ class PortalInteractionSpace(avango.script.Script):
 
       _time_step = time.time() - self.animation_start_time
 
+      # determine if width and height have to be swapped
+      _diff_forward_angle = self.maximize_forward_angle - self.forward_angle
+      if (_diff_forward_angle < 135.0 and _diff_forward_angle > 45.0) or \
+         (_diff_forward_angle < 315.0 and _diff_forward_angle > 225.0):
+        _end_size = avango.gua.Vec3(self.get_height(), self.get_width(), 1.0)
+      else:
+        _end_size = avango.gua.Vec3(self.get_width(), self.get_height(), 1.0)
+
       if _time_step > self.animation_duration:
         self.animation_start_time = None
         self.animation_start_matrix = None
         self.animation_start_size = None
         self.maximized_portal.connect_portal_matrix(self.sf_min_y_plane_transform)
-        self.maximized_portal.set_size(self.get_width(), self.get_height())
+        self.maximized_portal.set_size(_end_size.x, _end_size.y)
         return
       
       _ratio = _time_step / self.animation_duration
@@ -125,7 +142,6 @@ class PortalInteractionSpace(avango.script.Script):
       _animation_scale = _start_scale * (1-_ratio) + _end_scale * _ratio
 
       _start_size = self.animation_start_size
-      _end_size = avango.gua.Vec3(self.get_width(), self.get_height(), 1.0)
       _animation_size = _start_size.lerp_to(_end_size, _ratio)
 
       self.sf_animation_matrix.value = avango.gua.make_trans_mat(_animation_trans) * \
@@ -137,7 +153,8 @@ class PortalInteractionSpace(avango.script.Script):
 
     # give input to maximized portal
     if self.maximized_portal != None:
-      self.maximized_portal.modify_scene_matrix(self.mf_device_transformed_values.value)
+      _forward_yaw = avango.gua.make_rot_mat(self.forward_angle - self.maximize_forward_angle, 0, 1, 0)
+      self.maximized_portal.modify_scene_matrix(self.mf_device_transformed_values.value, _forward_yaw)
 
   ## Returns a boolean saying if a point lies within the interaction space.
   # @param POINT The point to be checked for.

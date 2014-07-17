@@ -98,8 +98,7 @@ class View(avango.script.Script):
     self.camera.Mode.value = DISPLAY_INSTANCE.cameramode
 
     # set render mask for camera
-    _render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-    #_render_mask = "!pre_scene1 && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+    _render_mask = "!do_not_display_group && !video_abstraction && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
 
     for _i in range(0, 10):
       if _i != self.platform_id:
@@ -164,7 +163,7 @@ class View(avango.script.Script):
       self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
       self.window.LeftResolution.value = self.window_size
       self.window.RightResolution.value = self.window_size
-      #self.window.EnableVsync.value = True
+      #self.window.EnableVsync.value = False
 
       if DISPLAY_INSTANCE.stereomode == "SIDE_BY_SIDE":
         self.window.Size.value = avango.gua.Vec2ui(self.window_size.x * 2, self.window_size.y)

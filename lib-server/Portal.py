@@ -130,7 +130,7 @@ class PortalManager(avango.script.Script):
     '''
     
     # tower portal
-    #'''
+    '''
     self.add_bidirectional_portal( avango.gua.make_trans_mat(-23.0, 1.3, 21.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
                                    avango.gua.make_trans_mat(-12.0, 17.3, -7.0) * avango.gua.make_rot_mat(180, 0, 1, 0),
                                    4.0,
@@ -138,7 +138,7 @@ class PortalManager(avango.script.Script):
                                    "3D",
                                    "PERSPECTIVE",
                                    "False")
-    #'''
+    '''
     self.always_evaluate(True)
 
   ## Evaluated every frame.

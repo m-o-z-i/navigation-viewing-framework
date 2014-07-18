@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class PortalCamera.
+# Contains classes Shot and PortalCamera.
 
 # import avango-guacamole libraries
 import avango
@@ -17,6 +17,110 @@ import Tools
 # import python libraries
 import time
 import math
+
+## Class representing the parameters of a captured photo by a PortalCamera.
+class Shot(avango.script.Script):
+
+  ## @var sf_platform_mat
+  # Field representing the platform matrix of this shot.
+  sf_platform_mat = avango.gua.SFMatrix4()
+
+  ## @var sf_platform_scale
+  # Field representing the platform scale of this shot.
+  sf_platform_scale = avango.SFFloat()
+
+  ## @var sf_viewing_mode
+  # Field representing the viewing mode of this shot.
+  sf_viewing_mode = avango.SFString()
+
+  ## @var sf_camera_mode
+  # Field representing the camera mode of this shot.
+  sf_camera_mode = avango.SFString()
+
+  ## @var sf_negative_parallax
+  # Field representing the negative parallax state of this shot.
+  sf_negative_parallax = avango.SFString()
+
+  ## Default constructor.
+  def __init__(self):
+    self.super(Shot).__init__()
+    self.associated_portal_instance = None
+
+  ## Custom constructor.
+  def my_constructor(self
+                   , PLATFORM_MATRIX
+                   , PLATFORM_SCALE
+                   , VIEWING_MODE
+                   , CAMERA_MODE
+                   , NEGATIVE_PARALLAX):
+    
+    self.sf_platform_mat.value = PLATFORM_MATRIX
+    self.sf_platform_scale.value = PLATFORM_SCALE
+    self.sf_viewing_mode.value = VIEWING_MODE
+    self.sf_camera_mode.value = CAMERA_MODE
+    self.sf_negative_parallax.value = NEGATIVE_PARALLAX
+
+  ## Tells this Shot that it was loaded into a Portal instance and is now being displayed.
+  # @param PORTAL_INSTANCE The Portal instance in which this Shot was loaded.
+  def assign_portal(self, PORTAL_INSTANCE):
+
+    self.associated_portal_instance = PORTAL_INSTANCE
+    self.associated_portal_instance.set_platform_matrix(self.sf_platform_mat.value)
+    self.associated_portal_instance.set_platform_scale(self.sf_platform_scale.value)
+
+    if self.associated_portal_instance.viewing_mode != self.sf_viewing_mode.value:
+      self.associated_portal_instance.switch_viewing_mode()
+
+    if self.associated_portal_instance.camera_mode != self.sf_camera_mode.value:
+      self.associated_portal_instance.switch_camera_mode()
+
+    if self.associated_portal_instance.negative_parallax != self.sf_negative_parallax.value:
+      self.associated_portal_instance.switch_negative_parallax()
+
+    PORTAL_INSTANCE.set_visibility(True)
+
+  ## Tells this Shot that no portal instance is associated anymore.
+  def deassign_portal(self):
+
+    self.associated_portal_instance.set_visibility(False)
+    self.associated_portal_instance = None
+
+  ## Called whenever sf_platform_mat changes.
+  @field_has_changed(sf_platform_mat)
+  def sf_platform_mat_changed(self):
+    if self.associated_portal_instance != None:
+      self.associated_portal_instance.set_platform_matrix(self.sf_platform_mat.value)
+
+  ## Called whenever sf_platform_scale changes.
+  @field_has_changed(sf_platform_scale)
+  def sf_platform_scale_changed(self):
+    if self.associated_portal_instance != None:
+      self.associated_portal_instance.set_platform_scale(self.sf_platform_scale.value)
+
+  ## Called whenever sf_viewing_mode changes.
+  @field_has_changed(sf_viewing_mode)
+  def sf_viewing_mode_changed(self):
+    if self.associated_portal_instance != None and \
+       self.associated_portal_instance.viewing_mode != self.sf_viewing_mode.value:
+
+      self.associated_portal_instance.switch_viewing_mode()
+
+  ## Called whenever sf_camera_mode changes.
+  @field_has_changed(sf_camera_mode)
+  def sf_camera_mode_changed(self):
+    if self.associated_portal_instance != None and \
+       self.associated_portal_instance.camera_mode != self.sf_camera_mode.value:
+
+      self.associated_portal_instance.switch_camera_mode()
+
+  ## Called whenever sf_negative_parallax changes.
+  @field_has_changed(sf_negative_parallax)
+  def sf_negative_parallax_changed(self):
+    if self.associated_portal_instance != None and \
+       self.associated_portal_instance.negative_parallax != self.sf_negative_parallax.value:
+
+      self.associated_portal_instance.switch_negative_parallax()
+
 
 ## A PortalCamera is a physical device to interactively caputure, view
 # and manipulate Portal instances in the scene.
@@ -108,13 +212,13 @@ class PortalCamera(avango.script.Script):
   def __init__(self):
     self.super(PortalCamera).__init__()
 
-    ## @var captured_portals
-    # List of Portal instances belonging to this PortalCamera.
-    self.captured_portals = []
+    ## @var captured_shots
+    # List of Shot instances belonging to this PortalCamera.
+    self.captured_shots = []
 
-    ## @var current_portal
-    # Portal instance which is currently displayed above the PortalCamera.
-    self.current_portal = None
+    ## @var current_shot
+    # Shot instance which is currently displayed above the PortalCamera.
+    self.current_shot = None
 
     ## @var portal_width
     # Width of the portals displayed in this PortalCamera.
@@ -264,9 +368,23 @@ class PortalCamera(avango.script.Script):
 
     self.portal_camera_node.Children.value.append(self.viewing_mode_indicator)
 
-    ## @var last_open_portal_index
-    # Index within self.captured_portals saying which of the Portals was lastly opened by the PortalCamera.
-    self.last_open_portal_index = None
+    ##
+    #
+    self.display_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
+                                                         1.0,
+                                                         avango.gua.make_identity_mat(),
+                                                         self.portal_width,
+                                                         self.portal_height,
+                                                         self.capture_viewing_mode,
+                                                         "PERSPECTIVE",
+                                                         self.capture_parallax_mode,
+                                                         "data/materials/ShadelessBlue.gmd")
+    self.display_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+    self.display_portal.set_visibility(False)
+
+    ## @var last_open_shot_index
+    # Index within self.captured_shots saying which of the Shots was lastly opened by the PortalCamera.
+    self.last_open_shot_index = None
 
     ## @var drag_last_frame_camera_mat
     # Matrix containing the value of the tracking target of the last frame when in drag mode.
@@ -290,6 +408,7 @@ class PortalCamera(avango.script.Script):
                                                   avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                                   avango.gua.make_scale_mat(self.portal_height * 0.1, 1.0, self.portal_height * 0.1)
 
+    '''
     # always hide red camera frame when a portal is displayed
     if self.current_portal != None:
       self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
@@ -470,6 +589,7 @@ class PortalCamera(avango.script.Script):
           self.gallery_activated = False
           self.current_portal = _portal
           return
+    '''
 
   ## Checks if the position of a camera is close to the position of a portal.
   # @param CAMERA_VEC The camera's vector to be used for incidence computation.
@@ -571,24 +691,21 @@ class PortalCamera(avango.script.Script):
     if self.sf_capture_button.value == True:
 
       # capture a new portal
-      if self.current_portal == None:
+      if self.current_shot == None:
 
-        _portal_platform_matrix = self.sf_world_border_mat_no_scale.value * \
-                                  avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.NAVIGATION.inputmapping.sf_scale.value))
+        _shot_platform_matrix = self.sf_world_border_mat_no_scale.value * \
+                                avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.NAVIGATION.inputmapping.sf_scale.value))
 
-        _portal = self.PORTAL_MANAGER.add_portal(_portal_platform_matrix,
-                                                 self.NAVIGATION.inputmapping.sf_scale.value,
-                                                 self.sf_world_border_mat_no_scale.value,
-                                                 self.portal_width,
-                                                 self.portal_height,
-                                                 self.capture_viewing_mode,
-                                                 "PERSPECTIVE",
-                                                 self.capture_parallax_mode,
-                                                 "data/materials/ShadelessBlue.gmd")
+        _shot = Shot()
+        _shot.my_constructor(_shot_platform_matrix,
+                             self.NAVIGATION.inputmapping.sf_scale.value,
+                             self.capture_viewing_mode,
+                             "PERSPECTIVE",
+                             self.capture_parallax_mode)
 
-        self.captured_portals.append(_portal)
-        _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-        self.current_portal = _portal
+        self.captured_shots.append(_shot)
+        _shot.assign_portal(self.display_portal)
+        self.current_shot = _shot
 
       # initiate dragging
       else:
@@ -653,15 +770,15 @@ class PortalCamera(avango.script.Script):
     if self.sf_open_close_button.value == True:
 
       # open lastly opened portal when no portal is opened
-      if self.current_portal == None and len(self.captured_portals) > 0:
-        self.current_portal = self.captured_portals[self.last_open_portal_index]
-        self.current_portal.set_visibility(True)
+      if self.current_shot == None and len(self.captured_shots) > 0:
+        self.current_shot = self.captured_shots[self.last_open_shot_index]
+        self.current_shot.assign_portal(self.display_portal)
 
       # close currently opened portal
-      elif self.current_portal != None:
-        self.current_portal.set_visibility(False)
-        self.last_open_portal_index = self.captured_portals.index(self.current_portal)
-        self.current_portal = None
+      elif self.current_shot != None:
+        self.current_shot.deassign_portal()
+        self.last_open_shot_index = self.captured_shots.index(self.current_shot)
+        self.current_shot = None
 
 
   ## Called whenever sf_delete_button changes.

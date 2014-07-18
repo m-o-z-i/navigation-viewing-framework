@@ -175,7 +175,6 @@ class PortalInteractionSpace(avango.script.Script):
 
     # give input to maximized portal
     if self.maximized_shot != None:
-      print "Forward to shot"
       _forward_yaw = avango.gua.make_rot_mat(self.forward_angle - self.maximize_forward_angle, 0, 1, 0)
       self.maximized_shot.modify_scene_matrix(self.mf_device_transformed_values.value, _forward_yaw)
 
@@ -222,7 +221,6 @@ class PortalInteractionSpace(avango.script.Script):
       self.maximized_portal.connect_portal_matrix(self.sf_animation_matrix)
       SHOT_INSTANCE.assign_portal(self.maximized_portal)
       self.maximized_shot = SHOT_INSTANCE
-      print "set maximized shot"
  
   ## Removes and returns the currently maximized shot.
   def remove_maximized_shot(self):

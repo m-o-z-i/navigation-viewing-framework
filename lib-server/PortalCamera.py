@@ -98,8 +98,9 @@ class Shot(avango.script.Script):
   ## Tells this Shot that no portal instance is associated anymore.
   def deassign_portal(self):
 
-    self.associated_portal_instance.set_visibility(False)
-    self.associated_portal_instance = None
+    if self.associated_portal_instance != None:
+      self.associated_portal_instance.set_visibility(False)
+      self.associated_portal_instance = None
 
   ## Modifies the scene matrix (platform matrix and platform scale) by the input values given from a device.
   # @param DEVICE_INPUT_VALUES List of input values from a device.
@@ -345,11 +346,6 @@ class PortalCamera(avango.script.Script):
     # Index within self.captured_shots saying which of the Shots is currently in the gallery's focus.
     self.gallery_focus_shot_index = 0
 
-    ## @var next_focus_shot_index
-    # Index within self.captured_shots to indicate which Shot is the next one to be set in focus.
-    # Used for animation purposed.
-    self.next_focus_shot_index = 0
-
     ## @var gallery_magification_factor
     # Factor with which the size of the portals will be multiplied when in gallery mode.
     self.gallery_magnification_factor = 1.5
@@ -466,6 +462,55 @@ class PortalCamera(avango.script.Script):
                                                          "data/materials/ShadelessBlue.gmd")
     self.display_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
     self.display_portal.set_visibility(False)
+
+    ##
+    #
+    self.gallery_portals = []
+
+    ##
+    #
+    self.gallery_left_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
+                                                              1.0,
+                                                              avango.gua.make_identity_mat(),
+                                                              self.portal_width,
+                                                              self.portal_height,
+                                                              self.capture_viewing_mode,
+                                                              "PERSPECTIVE",
+                                                              self.capture_parallax_mode,
+                                                              "data/materials/ShadelessBlue.gmd")
+    self.gallery_portals.append(self.gallery_left_portal)
+    self.gallery_left_portal.set_visibility(False)
+
+    ##
+    #
+    self.gallery_center_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
+                                                                1.0,
+                                                                avango.gua.make_identity_mat(),
+                                                                self.portal_width,
+                                                                self.portal_height,
+                                                                self.capture_viewing_mode,
+                                                                "PERSPECTIVE",
+                                                                self.capture_parallax_mode,
+                                                                "data/materials/ShadelessBlue.gmd")
+    self.gallery_portals.append(self.gallery_center_portal)
+    self.gallery_center_portal.set_visibility(False)
+
+    ##
+    #
+    self.gallery_right_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
+                                                               1.0,
+                                                               avango.gua.make_identity_mat(),
+                                                               self.portal_width,
+                                                               self.portal_height,
+                                                               self.capture_viewing_mode,
+                                                               "PERSPECTIVE",
+                                                               self.capture_parallax_mode,
+                                                               "data/materials/ShadelessBlue.gmd")
+    self.gallery_portals.append(self.gallery_right_portal)
+    self.gallery_right_portal.set_visibility(False)
+
+    for _gallery_portal in self.gallery_portals:
+      _gallery_portal.set_size(0.3, 0.3)
 
     ## @var last_open_shot_index
     # Index within self.captured_shots saying which of the Shots was lastly opened by the PortalCamera.
@@ -603,42 +648,24 @@ class PortalCamera(avango.script.Script):
       self.display_portal.set_size(_animation_size.x, _animation_size.y)
       return
 
-    '''
+    
     # update matrices in gallery mode
     if self.gallery_activated:
 
-      # disable gallery when no captured portals are present (anymore)
-      if len(self.captured_portals) == 0:
+      # disable gallery when no captured shots are present (anymore)
+      if len(self.captured_shots) == 0:
         self.gallery_activated = False
+
+        for _gallery_portal in self.gallery_portals:
+          _gallery_portal.set_visibility(False)
+
         return
-      else:
-        # make all portals of equal size
-        self.portal_width = 0.3
-        self.portal_height = 0.3
-        for _portal in self.captured_portals:
-          _portal.set_size(0.3, 0.3)
-
-      # if current index equals next index, no animation is needed
-      if self.gallery_focus_portal_index == self.next_focus_portal_index:
-        _i = -self.gallery_focus_portal_index
-        self.current_portal = self.captured_portals[self.gallery_focus_portal_index]
-
-      # animation is needed
-      else:
-        
-        # snap to next integer value if close enough
-        if (self.gallery_focus_portal_index < self.next_focus_portal_index and self.gallery_focus_portal_index > self.next_focus_portal_index - 0.01) or \
-           (self.gallery_focus_portal_index > self.next_focus_portal_index and self.gallery_focus_portal_index < self.next_focus_portal_index + 0.01):
-          _i = -self.next_focus_portal_index
-
-        # determine animation coefficient
-        else:
-          _i = -(self.gallery_focus_portal_index + (self.next_focus_portal_index-self.gallery_focus_portal_index) * 0.1)
-
-        self.gallery_focus_portal_index = -_i
 
       # place gallery correctly over device
-      for _portal in self.captured_portals:
+      _i = int(math.floor(-len(self.gallery_portals) / 2) + 1)
+
+      for _gallery_portal in self.gallery_portals:
+
         _station_mat = self.NAVIGATION.device.sf_station_mat.value
         _station_vec = _station_mat.get_translate()
 
@@ -649,43 +676,20 @@ class PortalCamera(avango.script.Script):
                   avango.gua.make_rot_mat(_station_mat.get_rotate()) * \
                   avango.gua.make_trans_mat(_station_vec * -1) * \
                   _modified_station_mat * \
-                  avango.gua.make_scale_mat(self.gallery_magnification_factor, self.gallery_magnification_factor, 1.0)         
+                  avango.gua.make_scale_mat(self.gallery_magnification_factor, self.gallery_magnification_factor, 1.0)
 
-        _portal.connect_portal_matrix(None)
-        _portal.portal_matrix_node.Transform.value = _matrix
+        _gallery_portal.portal_matrix_node.Transform.value = _matrix
 
-        if self.captured_portals.index(_portal) > self.gallery_focus_portal_index - 2 and \
-           self.captured_portals.index(_portal) < self.gallery_focus_portal_index + 2:
+        _shot_index = self.gallery_focus_shot_index
+        _shot_index += _i
+        _shot_index = _shot_index % len(self.captured_shots)
 
-          _portal.set_visibility(True)
+        _shot_instance = self.captured_shots[_shot_index]
+        #_shot_instance.deassign_portal()
+        _shot_instance.assign_portal(_gallery_portal)
 
-        else:
-
-          _portal.set_visibility(False)
-        
         _i += 1
 
-
-      # check for camera hitting portal in gallery mode
-      for _portal in self.captured_portals:
-
-        _portal_vec = _portal.portal_matrix_node.WorldTransform.value.get_translate()
-        
-        if self.check_for_hit(_camera_vec, _portal_vec):
-
-          for _portal_2 in self.captured_portals:
-            
-            if _portal_2 != _portal:
-              _portal_2.set_visibility(False)
-            
-            _portal_2.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-
-          _grabbed_portal_index = self.captured_portals.index(_portal)
-          self.last_open_portal_index = _grabbed_portal_index
-          self.gallery_activated = False
-          self.current_portal = _portal
-          return
-    '''
 
   ## Checks if the position of a camera is close to the position of a portal.
   # @param CAMERA_VEC The camera's vector to be used for incidence computation.
@@ -780,8 +784,13 @@ class PortalCamera(avango.script.Script):
 
       # update focus in gallery mode
       if self.gallery_activated:
-        if (self.gallery_focus_shot_index == self.next_focus_shot_index):
-          self.next_focus_shot_index = min(self.gallery_focus_shot_index + 1, len(self.captured_shots) - 1)
+
+          _shot_index = self.gallery_focus_shot_index
+          _shot_index += 1
+          _shot_index = _shot_index % len(self.captured_shots)
+          
+          self.gallery_focus_shot_index = _shot_index
+          self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
           return
       
       # move to next recording in open mode
@@ -802,9 +811,14 @@ class PortalCamera(avango.script.Script):
 
       # update focus in gallery mode
       if self.gallery_activated:
-        if (self.gallery_focus_shot_index == self.next_focus_shot_index):
-          self.next_focus_shot_index = max(self.gallery_focus_shot_index - 1, 0)
-          return
+        
+        _shot_index = self.gallery_focus_shot_index
+        _shot_index -= 1
+        _shot_index = _shot_index % len(self.captured_shots)
+        
+        self.gallery_focus_shot_index = _shot_index
+        self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
+        return
       
       # move to prior recording in open mode
       if self.current_shot != None:
@@ -821,6 +835,19 @@ class PortalCamera(avango.script.Script):
   @field_has_changed(sf_open_close_button)
   def sf_open_button_changed(self):
     if self.sf_open_close_button.value == True:
+
+      # grab current gallery portal in gallery mode
+      if self.gallery_activated:
+
+        self.gallery_activated = False
+
+        for _gallery_portal in self.gallery_portals:
+          _gallery_portal.set_visibility(False)
+
+        self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
+        self.current_shot.assign_portal(self.display_portal)
+
+        return
 
       # open lastly opened portal when no portal is opened
       if self.current_shot == None and len(self.captured_shots) > 0:
@@ -840,16 +867,19 @@ class PortalCamera(avango.script.Script):
     if self.sf_delete_button.value == True:
 
       # delete current portal
-      if self.current_shot != None and self.gallery_focus_shot_index == self.next_focus_shot_index:
+      if self.current_shot != None:
         _shot_to_delete = self.current_shot
         self.gallery_focus_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
-        self.next_focus_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
         self.last_open_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
         _shot_to_delete.deassign_portal()
 
         self.captured_shots.remove(_shot_to_delete)
         del _shot_to_delete
-        self.current_shot = None
+
+        if self.gallery_activated and len(self.captured_shots) > 0:
+          self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
+        else:
+          self.current_shot = None
 
   ## Called whenever sf_gallery_button changes.
   @field_has_changed(sf_gallery_button)
@@ -858,21 +888,23 @@ class PortalCamera(avango.script.Script):
 
       # open gallery when not opened
       if self.gallery_activated == False:
+        
         self.gallery_activated = True
+
+        if self.current_shot != None:
+          self.current_shot.deassign_portal()
+
+        if len(self.captured_shots) > 0:
+          self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
       
       # close gallery when opened, trigger correct portal visibilities
       else:
-        
-        if self.gallery_focus_portal_index != self.next_focus_portal_index:
-          self.gallery_focus_portal_index = self.next_focus_portal_index
 
         self.gallery_activated = False
-        self.last_open_portal_index = self.gallery_focus_portal_index
-        self.current_portal = None
-
-        for _portal in self.captured_portals:
-          _portal.set_visibility(False)
-          _portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+        for _gallery_portal in self.gallery_portals:
+          _gallery_portal.set_visibility(False)
+        self.last_open_shot_index = self.gallery_focus_shot_index
+        self.current_shot = None
 
   ## Called whenever sf_scene_copy_button changes.
   @field_has_changed(sf_scene_copy_button)

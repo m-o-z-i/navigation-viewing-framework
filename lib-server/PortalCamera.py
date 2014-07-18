@@ -422,11 +422,12 @@ class PortalCamera(avango.script.Script):
 
       self.set_current_shot_scale(self.current_shot.sf_platform_scale.value * 1.015)
     
-    '''
+    
     # apply size changes
     if self.sf_size_up_button.value == True:
       self.portal_width += 0.005
       self.portal_height += 0.005
+      self.display_portal.set_size(self.portal_width, self.portal_height)
 
     if self.sf_size_down_button.value == True:
       self.portal_width -= 0.005
@@ -438,20 +439,22 @@ class PortalCamera(avango.script.Script):
       if self.portal_height < 0.15:
         self.portal_height = 0.15
 
+      self.display_portal.set_size(self.portal_width, self.portal_height)
+
     # update matrices in drag mode
     if self.drag_last_frame_camera_mat != None:
 
       _current_camera_mat = self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
       _drag_input_mat = avango.gua.make_inverse_mat(self.drag_last_frame_camera_mat) * _current_camera_mat
-      _drag_input_mat.set_translate(_drag_input_mat.get_translate() * self.current_portal.platform_scale)
+      _drag_input_mat.set_translate(_drag_input_mat.get_translate() * self.current_shot.sf_platform_scale.value)
 
-      _new_scene_mat = self.current_portal.platform_matrix * _drag_input_mat
+      _new_scene_mat = self.current_shot.sf_platform_mat.value * _drag_input_mat
 
-      self.current_portal.set_platform_matrix(_new_scene_mat)
+      self.current_shot.sf_platform_mat.value = _new_scene_mat
 
       self.drag_last_frame_camera_mat = _current_camera_mat
 
-
+    '''
     # check for camera hitting free portals
     _camera_vec = self.camera_frame.WorldTransform.value.get_translate()
 
@@ -468,10 +471,6 @@ class PortalCamera(avango.script.Script):
           self.captured_portals.append(_free_portal)
           self.current_portal = _free_portal
           return
-
-    # size to camera
-    if self.current_portal != None:
-      self.current_portal.set_size(self.portal_width, self.portal_height)
 
     # check for animations
     if self.animation_start_time != None:

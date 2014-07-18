@@ -46,6 +46,22 @@ class Shot(avango.script.Script):
     self.super(Shot).__init__()
     self.associated_portal_instance = None
 
+    ## @var min_scale
+    # The minimum scaling factor that can be applied.
+    self.min_scale = 0.001
+
+    ## @var max_scale
+    # The maximum scaling factor that can be applied.
+    self.max_scale = 1000.0
+
+    ## @var scale_stop_time
+    # Time at which a scaling process stopped at a fixed step.
+    self.scale_stop_time = None
+
+    ## @var scale_stop_duration
+    # Time how long a scaling process is stopped at a fixed step in seconds.
+    self.scale_stop_duration = 1.0
+
   ## Custom constructor.
   def my_constructor(self
                    , PLATFORM_MATRIX
@@ -84,6 +100,91 @@ class Shot(avango.script.Script):
 
     self.associated_portal_instance.set_visibility(False)
     self.associated_portal_instance = None
+
+  ## Modifies the scene matrix (platform matrix and platform scale) by the input values given from a device.
+  # @param DEVICE_INPUT_VALUES List of input values from a device.
+  #
+  def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0], OFFSET_MAT = avango.gua.make_identity_mat):
+
+    _x = DEVICE_INPUT_VALUES[0]
+    _y = DEVICE_INPUT_VALUES[1]
+    _z = DEVICE_INPUT_VALUES[2]
+    _rx = DEVICE_INPUT_VALUES[3]
+    _ry = DEVICE_INPUT_VALUES[4]
+    _rz = DEVICE_INPUT_VALUES[5]
+    _w = DEVICE_INPUT_VALUES[6]
+
+    if _w == -1:
+      self.set_scale(self.sf_platform_scale.value * 0.985)
+    elif _w == 1:
+      self.set_scale(self.sf_platform_scale.value * 1.015)
+
+    _trans_vec = avango.gua.Vec3(_x, _y, _z)
+    _rot_vec = avango.gua.Vec3(_rx, _ry, _rz)
+
+    if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
+
+      # object metaphor
+      _transformed_trans_vec = avango.gua.make_rot_mat(self.sf_platform_mat.value.get_rotate_scale_corrected()) * avango.gua.Vec3(_x*-1.0, _z, _y*-1.0)
+      _transformed_trans_vec = OFFSET_MAT * _transformed_trans_vec
+      _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
+      _transformed_trans_vec *= self.sf_platform_scale.value
+
+      _rot_vec = OFFSET_MAT * _rot_vec
+
+      _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
+                             self.sf_platform_mat.value * \
+                             avango.gua.make_rot_mat( _rot_vec.y, 0, 0, -1) * \
+                             avango.gua.make_rot_mat( _rot_vec.x, -1, 0, 0) * \
+                             avango.gua.make_rot_mat( _rot_vec.z, 0, 1, 0)
+
+      self.sf_platform_mat.value = _new_platform_matrix
+
+  ## 
+  #
+  def set_scale(self, SCALE):
+ 
+    if self.scale_stop_time == None:
+  
+      _old_scale = self.sf_platform_scale.value
+      _old_scale = round(_old_scale,6)
+      
+      _new_scale = max(min(SCALE, self.max_scale), self.min_scale)
+      _new_scale = round(_new_scale,6)
+            
+      # stop at certain scale levels
+      if (_old_scale < 100.0 and _new_scale > 100.0) or (_new_scale < 100.0 and _old_scale > 100.0):
+        #print "snap 100:1"
+        _new_scale = 100.0
+        self.scale_stop_time = time.time()
+              
+      elif (_old_scale < 10.0 and _new_scale > 10.0) or (_new_scale < 10.0 and _old_scale > 10.0):
+        #print "snap 10:1"
+        _new_scale = 10.0
+        self.scale_stop_time = time.time()
+      
+      elif (_old_scale < 1.0 and _new_scale > 1.0) or (_new_scale < 1.0 and _old_scale > 1.0):
+        #print "snap 1:1"
+        _new_scale = 1.0
+        self.scale_stop_time = time.time()
+
+      elif (_old_scale < 0.1 and _new_scale > 0.1) or (_new_scale < 0.1 and _old_scale > 0.1):
+        #print "snap 1:10"
+        _new_scale = 0.1
+        self.scale_stop_time = time.time()
+
+
+      elif (_old_scale < 0.01 and _new_scale > 0.01) or (_new_scale < 0.01 and _old_scale > 0.01):
+        #print "snap 1:100"
+        _new_scale = 0.01
+        self.scale_stop_time = time.time()
+
+      self.sf_platform_scale.value = _new_scale
+
+    else:
+
+      if (time.time() - self.scale_stop_time) > self.scale_stop_duration:
+        self.scale_stop_time = None
 
   ## Called whenever sf_platform_mat changes.
   @field_has_changed(sf_platform_mat)
@@ -256,22 +357,6 @@ class PortalCamera(avango.script.Script):
     ## @var interaction_spaces
     # List of PortalInteractionSpace instances currently associated with this PortalCamera.
     self.interaction_spaces = []
-
-    ## @var min_scale
-    # The minimum scaling factor that can be applied.
-    self.min_scale = 0.001
-
-    ## @var max_scale
-    # The maximum scaling factor that can be applied.
-    self.max_scale = 1000.0
-
-    ## @var scale_stop_time
-    # Time at which a scaling process stopped at a fixed step.
-    self.scale_stop_time = None
-
-    ## @var scale_stop_duration
-    # Time how long a scaling process is stopped at a fixed step in seconds.
-    self.scale_stop_duration = 1.0
 
     ## @var animation_start_time
     # Starting time of an animation handled by this class.
@@ -481,7 +566,7 @@ class PortalCamera(avango.script.Script):
           self.PORTAL_MANAGER.remove_portal(_free_portal.id)
           return
 
-    '''
+
     # check for animations
     if self.animation_start_time != None:
 
@@ -491,8 +576,8 @@ class PortalCamera(avango.script.Script):
         self.animation_start_time = None
         self.animation_start_matrix = None
         self.animation_start_size = None
-        self.current_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-        self.current_portal.set_size(self.portal_width, self.portal_height)
+        self.display_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+        self.display_portal.set_size(self.portal_width, self.portal_height)
         return
 
       _ratio = _time_step / self.animation_duration
@@ -515,9 +600,10 @@ class PortalCamera(avango.script.Script):
       self.sf_animation_matrix.value = avango.gua.make_trans_mat(_animation_trans) * \
                                        avango.gua.make_rot_mat(_animation_rot) * \
                                        avango.gua.make_scale_mat(_animation_scale)
-      self.current_portal.set_size(_animation_size.x, _animation_size.y)
+      self.display_portal.set_size(_animation_size.x, _animation_size.y)
       return
 
+    '''
     # update matrices in gallery mode
     if self.gallery_activated:
 
@@ -626,55 +712,14 @@ class PortalCamera(avango.script.Script):
 
     self.interaction_spaces.append(INTERACTION_SPACE)
 
-  ## Set the scaling factor of the currently active shot.
-  # @param SCALE The new scaling to be set.
+  ##
+  #
   def set_current_shot_scale(self, SCALE):
 
     if self.current_shot == None:
       return
- 
-    if self.scale_stop_time == None:
-  
-      _old_scale = self.current_shot.sf_platform_scale.value
-      _old_scale = round(_old_scale,6)
-      
-      _new_scale = max(min(SCALE, self.max_scale), self.min_scale)
-      _new_scale = round(_new_scale,6)
-            
-      # stop at certain scale levels
-      if (_old_scale < 100.0 and _new_scale > 100.0) or (_new_scale < 100.0 and _old_scale > 100.0):
-        #print "snap 100:1"
-        _new_scale = 100.0
-        self.scale_stop_time = time.time()
-              
-      elif (_old_scale < 10.0 and _new_scale > 10.0) or (_new_scale < 10.0 and _old_scale > 10.0):
-        #print "snap 10:1"
-        _new_scale = 10.0
-        self.scale_stop_time = time.time()
-      
-      elif (_old_scale < 1.0 and _new_scale > 1.0) or (_new_scale < 1.0 and _old_scale > 1.0):
-        #print "snap 1:1"
-        _new_scale = 1.0
-        self.scale_stop_time = time.time()
-
-      elif (_old_scale < 0.1 and _new_scale > 0.1) or (_new_scale < 0.1 and _old_scale > 0.1):
-        #print "snap 1:10"
-        _new_scale = 0.1
-        self.scale_stop_time = time.time()
-
-
-      elif (_old_scale < 0.01 and _new_scale > 0.01) or (_new_scale < 0.01 and _old_scale > 0.01):
-        #print "snap 1:100"
-        _new_scale = 0.01
-        self.scale_stop_time = time.time()
-
-      self.current_shot.sf_platform_scale.value = _new_scale
-
     else:
-
-      if (time.time() - self.scale_stop_time) > self.scale_stop_duration:
-        self.scale_stop_time = None
-
+      self.current_shot.set_scale(SCALE)
 
   ## Called whenever sf_focus_button changes.
   @field_has_changed(sf_focus_button)
@@ -860,15 +905,13 @@ class PortalCamera(avango.script.Script):
            self.gallery_activated == False:
           
           # push current portal to interaction space and maximize it
-          if _interaction_space.maximized_portal == None:
+          if _interaction_space.maximized_shot == None:
 
-            if self.current_portal == None or self.animation_start_time != None: # no portal to maximize
+            if self.current_shot == None or self.animation_start_time != None: # no shot to maximize
               return
 
-            _portal = self.current_portal
-
-            if _portal.negative_parallax == "False":
-              _portal.switch_negative_parallax()
+            _shot = self.current_shot
+            _shot.sf_negative_parallax.value = "True"
 
             # set correct forward angle in interaction space
             _camera_forward = math.degrees(Tools.get_yaw(self.tracking_reader.sf_abs_mat.value))
@@ -882,30 +925,40 @@ class PortalCamera(avango.script.Script):
             else:
               _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 270.0
 
-            self.last_open_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
-            self.gallery_focus_portal_index = max(self.captured_portals.index(self.current_portal)-1, 0)
-            self.captured_portals.remove(self.current_portal)
-            self.current_portal = None
-            _interaction_space.add_maximized_portal(_portal)
+            self.last_open_shot_index = max(self.captured_shots.index(self.current_shot)-1, 0)
+            self.gallery_focus_shot_index = max(self.captured_shots.index(self.current_shot)-1, 0)
+            
+            _shot.deassign_portal()
+            self.captured_shots.remove(self.current_shot)
+            self.current_shot = None
+            _interaction_space.add_maximized_shot(_shot
+                                                , self.display_portal.portal_matrix_node.WorldTransform.value
+                                                , self.display_portal.width
+                                                , self.display_portal.height)
 
           # grab portal from interaction space and resize it
           else:
+            
+            if self.current_shot != None:
+              self.current_shot.deassign_portal()
 
-            if self.current_portal != None:
-              self.current_portal.set_visibility(False)
+            _shot = _interaction_space.remove_maximized_shot()
 
-            _portal = _interaction_space.remove_maximized_portal()
-
-            if _portal != None:
-              self.sf_animation_matrix.value = _portal.portal_matrix_node.WorldTransform.value
+            if _shot != None:
               self.animation_start_time = time.time()
-              self.animation_start_matrix = self.sf_animation_matrix.value
-              self.animation_start_size = avango.gua.Vec3(_portal.width, _portal.height, 1.0)
-              self.current_portal = _portal
-              self.current_portal.connect_portal_matrix(self.sf_animation_matrix)
-              self.captured_portals.append(self.current_portal)
+              self.animation_start_matrix = _interaction_space.sf_min_y_plane_transform.value
+              self.sf_animation_matrix.value = self.animation_start_matrix
+              self.animation_start_size = avango.gua.Vec3(_interaction_space.get_width()
+                                                        , _interaction_space.get_height()
+                                                        , 1.0)
+              _shot.assign_portal(self.display_portal)
+              self.current_shot = _shot
+              self.display_portal.portal_matrix_node.Transform.disconnect()
+              self.display_portal.connect_portal_matrix(self.sf_animation_matrix)
+              self.captured_shots.append(_shot)
 
           return
+
 
   ## Called whenever sf_2D_mode_button changes.
   @field_has_changed(sf_2D_mode_button)

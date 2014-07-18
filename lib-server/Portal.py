@@ -428,63 +428,6 @@ class Portal:
     if SF_PORTAL_MATRIX != None:
       self.portal_matrix_node.Transform.connect_from(SF_PORTAL_MATRIX)
 
-  ## Modifies the scene matrix by the input values given from a device.
-  # @param DEVICE_INPUT_VALUES List of input values from a device.
-  #
-  def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0], OFFSET_MAT = avango.gua.make_identity_mat):
-
-    _x = DEVICE_INPUT_VALUES[0]
-    _y = DEVICE_INPUT_VALUES[1]
-    _z = DEVICE_INPUT_VALUES[2]
-    _rx = DEVICE_INPUT_VALUES[3]
-    _ry = DEVICE_INPUT_VALUES[4]
-    _rz = DEVICE_INPUT_VALUES[5]
-    _w = DEVICE_INPUT_VALUES[6]
-
-    if _w == -1:
-      self.set_platform_scale(self.platform_scale * 0.985)
-    elif _w == 1:
-      self.set_platform_scale(self.platform_scale * 1.015)
-
-    _trans_vec = avango.gua.Vec3(_x, _y, _z)
-    _rot_vec = avango.gua.Vec3(_rx, _ry, _rz)
-
-    if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
-
-      # object metaphor
-      _transformed_trans_vec = avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected()) * avango.gua.Vec3(_x*-1.0, _z, _y*-1.0)
-      _transformed_trans_vec = OFFSET_MAT * _transformed_trans_vec
-      _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
-      _transformed_trans_vec *= self.platform_scale
-
-      _rot_vec = OFFSET_MAT * _rot_vec
-
-      _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
-                             self.platform_matrix * \
-                             avango.gua.make_rot_mat( _rot_vec.y, 0, 0, -1) * \
-                             avango.gua.make_rot_mat( _rot_vec.x, -1, 0, 0) * \
-                             avango.gua.make_rot_mat( _rot_vec.z, 0, 1, 0)
-
-      '''
-      # navigation metaphor
-      _transformed_trans_vec = avango.gua.make_rot_mat(self.platform_matrix.get_rotate()) * avango.gua.Vec3(_x, _y, _z)
-      _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
-
-      _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
-                             avango.gua.make_trans_mat(self.platform_matrix.get_translate()) * \
-                             avango.gua.make_rot_mat( _rot_vec.z, 0, 0, 1) * \
-                             avango.gua.make_rot_mat( _rot_vec.x, 1, 0, 0) * \
-                             avango.gua.make_rot_mat( _rot_vec.y, 0, 1, 0) * \
-                             avango.gua.make_rot_mat(self.platform_matrix.get_rotate_scale_corrected())
-      '''
-
-      _scene_transform = _new_platform_matrix * \
-                         avango.gua.make_scale_mat(self.platform_scale)
-
-      self.platform_matrix = _new_platform_matrix
-      self.scene_matrix_node.Transform.value = _scene_transform
-
-
   ## Sets the border material to be used for the portal.
   # @param BORDER_MATERIAL The material string to be set.
   def set_border_material(self, BORDER_MATERIAL):

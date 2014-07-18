@@ -902,10 +902,9 @@ class PortalCamera(avango.script.Script):
   def sf_2D_mode_button_changed(self):
     if self.sf_2D_mode_button.value == True:
       
-      # switch mode of currently opened portal
-      if self.current_portal != None:
-        if self.current_portal.viewing_mode == "3D":
-          self.current_portal.switch_viewing_mode()
+      # switch mode of currently opened shot
+      if self.current_shot != None:
+        self.current_shot.sf_viewing_mode.value = "2D"
 
       # switch capture_viewing_mode
       else:
@@ -917,10 +916,9 @@ class PortalCamera(avango.script.Script):
   def sf_3D_mode_button_changed(self):
     if self.sf_3D_mode_button.value == True:
       
-      # switch mode of currently opened portal
-      if self.current_portal != None:
-        if self.current_portal.viewing_mode == "2D":
-          self.current_portal.switch_viewing_mode()
+      # switch mode of currently opened shot
+      if self.current_shot != None:
+        self.current_shot.sf_viewing_mode.value = "3D"
       
       # switch capture_viewing_mode
       else:
@@ -933,10 +931,9 @@ class PortalCamera(avango.script.Script):
   def sf_negative_parallax_on_button_changed(self):
     if self.sf_negative_parallax_on_button.value == True:
       
-      # switch mode of currently opened portal
-      if self.current_portal != None:
-        if self.current_portal.negative_parallax == "False":
-          self.current_portal.switch_negative_parallax()
+      # switch mode of currently opened shot
+      if self.current_shot != None:
+        self.current_shot.sf_negative_parallax.value = "True"
 
       # switch capture_parallax_mode
       else:
@@ -948,10 +945,9 @@ class PortalCamera(avango.script.Script):
   def sf_negative_parallax_off_button_changed(self):
     if self.sf_negative_parallax_off_button.value == True:
       
-      # switch mode of currently opened portal portal
-      if self.current_portal != None:
-        if self.current_portal.negative_parallax == "True":
-          self.current_portal.switch_negative_parallax()
+      # switch mode of currently opened shot
+      if self.current_shot != None:
+        self.current_shot.sf_negative_parallax.value = "False"
 
       # switch capture_parallax_mode
       else:

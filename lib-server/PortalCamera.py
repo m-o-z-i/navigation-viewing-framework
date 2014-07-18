@@ -408,20 +408,21 @@ class PortalCamera(avango.script.Script):
                                                   avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                                   avango.gua.make_scale_mat(self.portal_height * 0.1, 1.0, self.portal_height * 0.1)
 
-    '''
-    # always hide red camera frame when a portal is displayed
-    if self.current_portal != None:
+    
+    # always hide red camera frame when a shot is displayed
+    if self.current_shot != None:
       self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
-
+    
     # apply scale changes 
-    if self.sf_scale_up_button.value == True and self.current_portal != None:
+    if self.sf_scale_up_button.value == True and self.current_shot != None:
       
-      self.set_current_portal_scale(self.current_portal.platform_scale * 0.985)
+      self.set_current_shot_scale(self.current_shot.sf_platform_scale.value * 0.985)
       
-    if self.sf_scale_down_button.value == True and self.current_portal != None:
+    if self.sf_scale_down_button.value == True and self.current_shot != None:
 
-      self.set_current_portal_scale(self.current_portal.platform_scale * 1.015)
-
+      self.set_current_shot_scale(self.current_shot.sf_platform_scale.value * 1.015)
+    
+    '''
     # apply size changes
     if self.sf_size_up_button.value == True:
       self.portal_width += 0.005
@@ -616,16 +617,16 @@ class PortalCamera(avango.script.Script):
 
     self.interaction_spaces.append(INTERACTION_SPACE)
 
-  ## Set the scaling factor of the currently active portal.
+  ## Set the scaling factor of the currently active shot.
   # @param SCALE The new scaling to be set.
-  def set_current_portal_scale(self, SCALE):
+  def set_current_shot_scale(self, SCALE):
 
-    if self.current_portal == None:
+    if self.current_shot == None:
       return
  
     if self.scale_stop_time == None:
   
-      _old_scale = self.current_portal.platform_scale
+      _old_scale = self.current_shot.sf_platform_scale.value
       _old_scale = round(_old_scale,6)
       
       _new_scale = max(min(SCALE, self.max_scale), self.min_scale)
@@ -658,7 +659,7 @@ class PortalCamera(avango.script.Script):
         _new_scale = 0.01
         self.scale_stop_time = time.time()
 
-      self.current_portal.set_platform_scale(_new_scale)
+      self.current_shot.sf_platform_scale.value = _new_scale
 
     else:
 

@@ -98,12 +98,12 @@ class PortalInteractionSpace(avango.script.Script):
 
     self.mf_device_values.connect_from(self.DEVICE.mf_dof)
 
-    ##
-    #
+    ## @var maximized_shot
+    # Shot instance which is currently maximized in this PortalInteractionSpace.
     self.maximized_shot = None
 
-    ##
-    #
+    ## @var maximized_portal
+    # Portal instance in which maximized shots are loaded.
     self.maximized_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
                                                            1.0,
                                                            avango.gua.make_identity_mat(),
@@ -204,10 +204,9 @@ class PortalInteractionSpace(avango.script.Script):
 
   ## Adds a Shot instance to this interaction space and maximizes it.
   # @param SHOT_INSTANCE The Shot instance to be added.
-  #
-  #
-  #
-  #
+  # @param ANIMATION_START_MATRIX Starting matrix of the animation towards the maximization state.
+  # @param ANIMATION_START_WIDTH Starting width of the animation towards the maximization state.
+  # @param ANIMATION_START_HEIGHT Starting height of the animation towards the maximization state.
   def add_maximized_shot(self, SHOT_INSTANCE, ANIMATION_START_MATRIX, ANIMATION_START_WIDTH, ANIMATION_START_HEIGHT):
 
     if self.maximized_shot == None and self.animation_start_time == None:

@@ -104,7 +104,7 @@ class Shot(avango.script.Script):
 
   ## Modifies the scene matrix (platform matrix and platform scale) by the input values given from a device.
   # @param DEVICE_INPUT_VALUES List of input values from a device.
-  #
+  # @param OFFSET_MAT Offset matrix to be applied to the translation and rotation.
   def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0], OFFSET_MAT = avango.gua.make_identity_mat):
 
     _x = DEVICE_INPUT_VALUES[0]
@@ -141,8 +141,8 @@ class Shot(avango.script.Script):
 
       self.sf_platform_mat.value = _new_platform_matrix
 
-  ## 
-  #
+  ## Sets the scale of this shot and snaps at specific scalings.
+  # @param SCALE The new scale value to be set.
   def set_scale(self, SCALE):
  
     if self.scale_stop_time == None:
@@ -449,8 +449,8 @@ class PortalCamera(avango.script.Script):
 
     self.portal_camera_node.Children.value.append(self.viewing_mode_indicator)
 
-    ##
-    #
+    ## @var display_portal
+    # Portal instance in which shots of this PortalCamera will be loaded.
     self.display_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
                                                          1.0,
                                                          avango.gua.make_identity_mat(),
@@ -463,12 +463,12 @@ class PortalCamera(avango.script.Script):
     self.display_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
     self.display_portal.set_visibility(False)
 
-    ##
-    #
+    ## @var gallery_portals
+    # List of Portal instance that serve as gallery shot containers.
     self.gallery_portals = []
 
-    ##
-    #
+    ## @var gallery_left_portal
+    # Portal instance in which the left gallery shot is loaded.
     self.gallery_left_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
                                                               1.0,
                                                               avango.gua.make_identity_mat(),
@@ -480,9 +480,9 @@ class PortalCamera(avango.script.Script):
                                                               "data/materials/ShadelessBlue.gmd")
     self.gallery_portals.append(self.gallery_left_portal)
     self.gallery_left_portal.set_visibility(False)
-
-    ##
-    #
+    
+    ## @var gallery_center_portal
+    # Portal instance in which the center gallery shot is loaded.
     self.gallery_center_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
                                                                 1.0,
                                                                 avango.gua.make_identity_mat(),
@@ -495,8 +495,8 @@ class PortalCamera(avango.script.Script):
     self.gallery_portals.append(self.gallery_center_portal)
     self.gallery_center_portal.set_visibility(False)
 
-    ##
-    #
+    ## @var gallery_right_portal
+    # Portal instance in which the right gallery shot is loaded.
     self.gallery_right_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
                                                                1.0,
                                                                avango.gua.make_identity_mat(),
@@ -716,8 +716,8 @@ class PortalCamera(avango.script.Script):
 
     self.interaction_spaces.append(INTERACTION_SPACE)
 
-  ##
-  #
+  ## Sets the scale of the currently active shot or returns when no shot is active.
+  # @param SCALE The new scale to be set.
   def set_current_shot_scale(self, SCALE):
 
     if self.current_shot == None:

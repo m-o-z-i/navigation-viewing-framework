@@ -240,14 +240,14 @@ class PortalCamera(avango.script.Script):
     # Boolean indicating if the gallery is currently visible for this PortalCamera.
     self.gallery_activated = False
 
-    ## @var gallery_focus_portal_index
-    # Index within self.captured_portals saying which of the Portals is currently in the gallery's focus.
-    self.gallery_focus_portal_index = 0
+    ## @var gallery_focus_shot_index
+    # Index within self.captured_shots saying which of the Shots is currently in the gallery's focus.
+    self.gallery_focus_shot_index = 0
 
-    ## @var next_focus_portal_index
-    # Index within self.captured_portals to indicate which Portal is the next one to be set in focus.
+    ## @var next_focus_shot_index
+    # Index within self.captured_shots to indicate which Shot is the next one to be set in focus.
     # Used for animation purposed.
-    self.next_focus_portal_index = 0
+    self.next_focus_shot_index = 0
 
     ## @var gallery_magification_factor
     # Factor with which the size of the portals will be multiplied when in gallery mode.
@@ -725,20 +725,19 @@ class PortalCamera(avango.script.Script):
 
       # update focus in gallery mode
       if self.gallery_activated:
-        if (self.gallery_focus_portal_index == self.next_focus_portal_index):
-          self.next_focus_portal_index = min(self.gallery_focus_portal_index + 1, len(self.captured_portals) - 1)
+        if (self.gallery_focus_shot_index == self.next_focus_shot_index):
+          self.next_focus_shot_index = min(self.gallery_focus_shot_index + 1, len(self.captured_shots) - 1)
           return
       
       # move to next recording in open mode
-      if self.current_portal != None:
-        self.current_portal.set_visibility(False)
+      if self.current_shot != None:
 
-        _current_index = self.captured_portals.index(self.current_portal)
+        _current_index = self.captured_shots.index(self.current_shot)
         _current_index += 1
-        _current_index = _current_index % len(self.captured_portals)
+        _current_index = _current_index % len(self.captured_shots)
 
-        self.current_portal = self.captured_portals[_current_index]
-        self.current_portal.set_visibility(True)
+        self.current_shot = self.captured_shots[_current_index]
+        self.current_shot.assign_portal(self.display_portal)
 
 
   ## Called whenever sf_prior_rec_button changes.
@@ -748,20 +747,19 @@ class PortalCamera(avango.script.Script):
 
       # update focus in gallery mode
       if self.gallery_activated:
-        if (self.gallery_focus_portal_index == self.next_focus_portal_index):
-          self.next_focus_portal_index = max(self.gallery_focus_portal_index - 1, 0)
+        if (self.gallery_focus_shot_index == self.next_focus_shot_index):
+          self.next_focus_shot_index = max(self.gallery_focus_shot_index - 1, 0)
           return
       
       # move to prior recording in open mode
-      if self.current_portal != None:
-        self.current_portal.set_visibility(False)
+      if self.current_shot != None:
 
-        _current_index = self.captured_portals.index(self.current_portal)
+        _current_index = self.captured_shots.index(self.current_shot)
         _current_index -= 1
-        _current_index = _current_index % len(self.captured_portals)
+        _current_index = _current_index % len(self.captured_shots)
 
-        self.current_portal = self.captured_portals[_current_index]
-        self.current_portal.set_visibility(True)
+        self.current_shot = self.captured_shots[_current_index]
+        self.current_shot.assign_portal(self.display_portal)
 
 
   ## Called whenever sf_open_button changes.
@@ -787,15 +785,16 @@ class PortalCamera(avango.script.Script):
     if self.sf_delete_button.value == True:
 
       # delete current portal
-      if self.current_portal != None and self.gallery_focus_portal_index == self.next_focus_portal_index:
-        _portal_to_delete = self.current_portal
-        self.gallery_focus_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
-        self.next_focus_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
-        self.last_open_portal_index = max(self.captured_portals.index(_portal_to_delete) - 1, 0)
+      if self.current_shot != None and self.gallery_focus_shot_index == self.next_focus_shot_index:
+        _shot_to_delete = self.current_shot
+        self.gallery_focus_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
+        self.next_focus_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
+        self.last_open_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
+        _shot_to_delete.deassign_portal()
 
-        self.captured_portals.remove(_portal_to_delete)
-        self.PORTAL_MANAGER.remove_portal(_portal_to_delete.id)
-        self.current_portal = None
+        self.captured_shots.remove(_shot_to_delete)
+        del _shot_to_delete
+        self.current_shot = None
 
   ## Called whenever sf_gallery_button changes.
   @field_has_changed(sf_gallery_button)

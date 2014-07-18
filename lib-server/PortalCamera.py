@@ -662,14 +662,24 @@ class PortalCamera(avango.script.Script):
         return
 
       # place gallery correctly over device
-      _i = int(math.floor(-len(self.gallery_portals) / 2) + 1)
+      if len(self.captured_shots) < len(self.gallery_portals):
+        _num_displayed_portals = len(self.captured_shots)
+      else:
+        _num_displayed_portals = len(self.gallery_portals)
+
+      _increment_index = int(math.floor(-_num_displayed_portals / 2) + 1)
+      _increment_place = (-_num_displayed_portals / 2.0) + 0.5
 
       for _gallery_portal in self.gallery_portals:
+
+        if self.gallery_portals.index(_gallery_portal) > _num_displayed_portals - 1:
+          _gallery_portal.set_visibility(False)
+          break
 
         _station_mat = self.NAVIGATION.device.sf_station_mat.value
         _station_vec = _station_mat.get_translate()
 
-        _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.gallery_magnification_factor * (0.3 + 0.2 * 0.3) * _i, _station_vec.y + 1.5 * 0.3, _station_vec.z)
+        _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.gallery_magnification_factor * (0.3 + 0.2 * 0.3) * _increment_place, _station_vec.y + 1.5 * 0.3, _station_vec.z)
 
         _matrix = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
                   avango.gua.make_trans_mat(_station_vec) * \
@@ -681,14 +691,15 @@ class PortalCamera(avango.script.Script):
         _gallery_portal.portal_matrix_node.Transform.value = _matrix
 
         _shot_index = self.gallery_focus_shot_index
-        _shot_index += _i
+        _shot_index += _increment_index
         _shot_index = _shot_index % len(self.captured_shots)
 
         _shot_instance = self.captured_shots[_shot_index]
         #_shot_instance.deassign_portal()
         _shot_instance.assign_portal(_gallery_portal)
 
-        _i += 1
+        _increment_index += 1
+        _increment_place += 1.0
 
 
   ## Checks if the position of a camera is close to the position of a portal.

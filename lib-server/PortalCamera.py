@@ -454,11 +454,11 @@ class PortalCamera(avango.script.Script):
 
       self.drag_last_frame_camera_mat = _current_camera_mat
 
-    '''
+
     # check for camera hitting free portals
     _camera_vec = self.camera_frame.WorldTransform.value.get_translate()
 
-    if self.current_portal == None:
+    if self.current_shot == None:
 
       for _free_portal in self.PORTAL_MANAGER.free_portals:
 
@@ -466,12 +466,22 @@ class PortalCamera(avango.script.Script):
 
         if self.check_for_hit(_camera_vec, _portal_vec):
 
-          _free_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+          _shot = Shot()
+          _shot.my_constructor(_free_portal.platform_matrix,
+                               _free_portal.platform_scale,
+                               _free_portal.viewing_mode,
+                               _free_portal.camera_mode,
+                               _free_portal.negative_parallax)
+
+          self.captured_shots.append(_shot)
+          _shot.assign_portal(self.display_portal)
+          self.current_shot = _shot
+
           self.PORTAL_MANAGER.free_portals.remove(_free_portal)
-          self.captured_portals.append(_free_portal)
-          self.current_portal = _free_portal
+          self.PORTAL_MANAGER.remove_portal(_free_portal.id)
           return
 
+    '''
     # check for animations
     if self.animation_start_time != None:
 
@@ -824,18 +834,18 @@ class PortalCamera(avango.script.Script):
   def sf_scene_copy_button_changed(self):
     if self.sf_scene_copy_button.value == True:
       
-      # create a free copy of the opened portal in the scene
-      if self.current_portal != None and self.gallery_activated == False:
+      # create a free copy of the opened shot in the scene
+      if self.current_shot != None and self.gallery_activated == False:
 
-        _portal = self.PORTAL_MANAGER.add_portal(self.current_portal.platform_matrix,
-                                                 self.current_portal.platform_scale,
-                                                 self.current_portal.portal_matrix_node.Transform.value,
-                                                 self.current_portal.width,
-                                                 self.current_portal.height,
-                                                 self.current_portal.viewing_mode,
-                                                 self.current_portal.camera_mode,
-                                                 self.current_portal.negative_parallax,
-                                                 self.current_portal.border_material)
+        _portal = self.PORTAL_MANAGER.add_portal(self.current_shot.sf_platform_mat.value,
+                                                 self.current_shot.sf_platform_scale.value,
+                                                 self.display_portal.portal_matrix_node.Transform.value,
+                                                 self.display_portal.width,
+                                                 self.display_portal.height,
+                                                 self.current_shot.sf_viewing_mode.value,
+                                                 self.current_shot.sf_camera_mode.value,
+                                                 self.current_shot.sf_negative_parallax.value,
+                                                 self.display_portal.border_material)
         self.PORTAL_MANAGER.free_portals.append(_portal)
 
   ## Called whenever sf_maximize_button changes.

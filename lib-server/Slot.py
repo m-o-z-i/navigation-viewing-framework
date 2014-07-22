@@ -113,7 +113,7 @@ class Slot(avango.script.Script):
 
       ## @var video_geode
       # Video3D node containing the caputred video geometry.
-      self.video_geode = _video_loader.load("kincet", self.PLATFORM.avatar_type)
+      self.video_geode = _video_loader.load("kinect", self.PLATFORM.avatar_type)
 
       self.video_geode.Transform.value = self.PLATFORM.transmitter_offset
       self.slot_scale_node.Children.value.append(self.video_geode)

@@ -297,14 +297,12 @@ class Platform(avango.script.Script):
 
       _slot.slot_scale_node.Transform.disconnect()
       _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
-      
+
       self.individual_slot_navigation.append(False)
 
 
   # Evaluated every frame
   def evaluate(self):
-    
-    _first_group_slot_found = False
 
     # toggle avatar visibilities
     # joseph case - avatar always needed except double displaying
@@ -324,8 +322,11 @@ class Platform(avango.script.Script):
           _slot.hide_avatars()
 
 
-    # kinect case - avatar once for group slots and once for each individual navigation slot
+    # kinect case - avatar once for group slots and once for each individual navigation user
     elif self.avatar_type.endswith(".ks"):
+
+      _first_group_slot_found = False
+      _individual_user_instances_with_activated_avatars = []
 
       for _slot in self.slot_list:
 
@@ -345,4 +346,7 @@ class Platform(avango.script.Script):
 
         else:
 
-          _slot.show_avatars()
+          if _slot.assigned_user != None and _slot.assigned_user not in _individual_user_instances_with_activated_avatars:
+          
+            _slot.show_avatars()
+            _individual_user_instances_with_activated_avatars.append(_slot.assigned_user)

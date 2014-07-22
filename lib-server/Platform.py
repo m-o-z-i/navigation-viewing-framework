@@ -129,7 +129,6 @@ class Platform(avango.script.Script):
     # List which Slot instances in slot_list have an individual (!= sf_abs_mat, sf_scale_mat) navigation.
     self.individual_slot_navigation = []
 
-
     ## @var avatar_material
     # String containing the material to be used for avatars of this platform.
     self.avatar_material = AVATAR_MATERIAL
@@ -271,6 +270,36 @@ class Platform(avango.script.Script):
   def remove_from_coupling_display(self, NAVIGATION, SHOW_NOTIFICATION):
     for _slot in self.slot_list:
       _slot.remove_from_coupling_display(NAVIGATION, SHOW_NOTIFICATION)
+
+  ## Sets an own (!= platform) transformation for a specific user instance.
+  # @param USER_INSTANCE The User instance to individualize from the group navigation.
+  # @param NEW_TRANSFORM The new transformation matrix of the user without scaling.
+  # @param NEW_SCALE The new scaling factor to be applied.
+  def individualize_user(self, USER_INSTANCE, NEW_TRANSFORM, NEW_SCALE):
+
+    for _slot in self.slot_list:
+      
+      if _slot.assigned_user == USER_INSTANCE:
+
+          _slot.slot_node.Transform.disconnect()
+          _slot.slot_node.Transform.value = NEW_TRANSFORM
+          _slot.slot_scale_node.Transform.disconnect()
+          _slot.slot_scale_node.Transform.value = avango.gua.make_scale_mat(NEW_SCALE)
+          self.individual_slot_navigation[self.slot_list.index(_slot)] = True
+
+  ## Resets all individualized users and their slots to the platform transformation.
+  def reset_all_user_transformations(self):
+
+    for _slot in self.slot_list:
+
+      _slot.slot_node.Transform.disconnect()
+      _slot.slot_node.Transform.connect_from(self.sf_abs_mat)
+
+      _slot.slot_scale_node.Transform.disconnect()
+      _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
+      
+      self.individual_slot_navigation.append(False)
+
 
   # Evaluated every frame
   def evaluate(self):

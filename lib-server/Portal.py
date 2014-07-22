@@ -148,8 +148,8 @@ class PortalManager(avango.script.Script):
     for _nav in self.NAVIGATION_LIST:
 
       _nav_device_mat = _nav.platform.platform_transform_node.Transform.value * \
-                        _nav.platform.platform_scale_transform_node.Transform.value * \
-                          avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate())
+                        avango.gua.make_scale_mat(_nav.platform.sf_scale.value) * \
+                        avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate())
 
 
       _nav_device_pos = _nav_device_mat.get_translate()

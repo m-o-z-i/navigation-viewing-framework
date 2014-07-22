@@ -306,8 +306,9 @@ class User(avango.script.Script):
 
       if self.platform.avatar_type != "None" and \
          self.platform.avatar_type.endswith(".ks") == False:
-        self.append_to_platform(self.head_avatar)
-        self.append_to_platform(self.body_avatar)
+        pass
+        #self.append_to_platform(self.head_avatar)
+        #self.append_to_platform(self.body_avatar)
 
       if RESEND_CONFIG:
         self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()
@@ -355,8 +356,9 @@ class User(avango.script.Script):
 
     if self.platform.avatar_type != "None" and \
       self.platform.avatar_type.endswith(".ks") == False:
-      self.append_to_platform(self.head_avatar)
-      self.append_to_platform(self.body_avatar)    
+      pass
+      #self.append_to_platform(self.head_avatar)
+      #self.append_to_platform(self.body_avatar)    
 
     self.head_avatar.Transform.connect_from(SF_AVATAR_HEAD_MATRIX)
     self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX)

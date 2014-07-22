@@ -138,16 +138,15 @@ class Platform(avango.script.Script):
     self.avatar_material = AVATAR_MATERIAL
 
     # extend scenegraph with platform node
-    ## @var platform_transform_node
-    # Scenegraph node representing this platform's transformation.
+    ## @var platform__node
+    # Semantic scenegraph node representing this platform.
     self.platform_transform_node = avango.gua.nodes.TransformNode(Name = "platform_" + str(PLATFORM_ID))
-    self.platform_transform_node.Transform.connect_from(self.sf_abs_mat)
     NET_TRANS_NODE.Children.value.append(self.platform_transform_node)
 
     ## @var platform_scale_transform_node
     # Scenegraph node representing this platform's scale. Is below platform_transform_node.
-    self.platform_scale_transform_node = avango.gua.nodes.TransformNode(Name = "scale")
-    self.platform_transform_node.Children.value = [self.platform_scale_transform_node]
+    #self.platform_scale_transform_node = avango.gua.nodes.TransformNode(Name = "scale")
+    #self.platform_transform_node.Children.value = [self.platform_scale_transform_node]
 
     self.start_clients = START_CLIENTS
 
@@ -164,18 +163,6 @@ class Platform(avango.script.Script):
     # open ssh connection for all hosts associated to display
     for _display in self.displays:
       # append a screen node to platform
-      _screen = _display.create_screen_node("screen_" + str(self.displays.index(_display)))
-
-      # only attach non-HMD screens to the platform
-      if _screen != None:
-        self.platform_scale_transform_node.Children.value.append(_screen)
-        self.screens.append(_screen)
-      
-        # create screen visualization when desired
-        if AVATAR_TYPE != "None":
-          _screen_visualization = _display.create_screen_visualization()
-          _screen_visualization.GroupNames.value = ["avatar_group_" + str(self.platform_id)]
-          #self.platform_scale_transform_node.Children.value.append(_screen_visualization)
 
       # create screen proxy geometry for view ray hit tests
       _proxy_geometry = _display.create_transformed_proxy_geometry(self, self.displays.index(_display))
@@ -191,11 +178,11 @@ class Platform(avango.script.Script):
                           _string_num,
                           self.displays.index(_display),
                           True,
-                          self.platform_scale_transform_node)
+                          self)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
-          self.screens.append(_slot.left_screen)
-          self.screens.append(_slot.right_screen)
+          #self.screens.append(_slot.left_screen)
+          #self.screens.append(_slot.right_screen)
 
         if _display.stereo == True:
           # create stereo slot
@@ -203,7 +190,7 @@ class Platform(avango.script.Script):
                        _string_num,
                        self.displays.index(_display),
                        True,
-                       self.platform_scale_transform_node)
+                       self)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display) 
 
@@ -213,7 +200,7 @@ class Platform(avango.script.Script):
                        _string_num,
                        self.displays.index(_display),
                        False,
-                       self.platform_scale_transform_node)
+                       self)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
 
@@ -279,6 +266,7 @@ class Platform(avango.script.Script):
 
     # create four boundary planes
 
+    '''
     ## @var left_border
     # Geometry scenegraph node of the platform's left border
     self.left_border = _loader.create_geometry_from_file('left_border_geometry',
@@ -339,6 +327,7 @@ class Platform(avango.script.Script):
 
     # create coupling status notifications
     self.create_coupling_status_overview()
+    '''
 
   ## Toggles visibility of left platform border.
   # @param VISIBLE A boolean value if the border should be set visible or not.
@@ -376,9 +365,10 @@ class Platform(avango.script.Script):
   @field_has_changed(sf_scale)
   def sf_scale_values_changed(self):
 
-    _scale = self.sf_scale.value
+    pass
+    #_scale = self.sf_scale.value
     
-    self.platform_scale_transform_node.Transform.value = avango.gua.make_scale_mat(_scale)
+    #self.platform_scale_transform_node.Transform.value = avango.gua.make_scale_mat(_scale)
 
 
   ## Creates a plane in front of the user used for displaying coupling messages.

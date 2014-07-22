@@ -125,10 +125,10 @@ class View(avango.script.Script):
         HMD View
       '''
 
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/screenL"
-      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/screenR"
-      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeL"
-      self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeR"
+      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/screenL"
+      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/screenR"
+      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/eyeL"
+      self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/eyeR"
 
       # create window
       ## @var window
@@ -150,10 +150,10 @@ class View(avango.script.Script):
         Standard View
       '''
 
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(self.screen_num)
-      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/scale/screen_" + str(self.screen_num)
-      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeL"
-      self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/eyeR"
+      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/screen"
+      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/screen"
+      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/eyeL"
+      self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/eyeR"
 
       # create window
       ## @var window

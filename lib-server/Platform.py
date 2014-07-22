@@ -55,10 +55,6 @@ class Platform(avango.script.Script):
     # Debug flag saying if client processes should be started.
     self.start_clients = True
 
-    ## @var screens
-    # List of ScreenNode instances which are appended to this platform.
-    self.screens = []
-
   ## Custom constructor.
   # @param NET_TRANS_NODE Reference to the net matrix node in the scenegraph for distribution.
   # @param SCENEGRAPH Reference to the scenegraph.
@@ -178,8 +174,6 @@ class Platform(avango.script.Script):
                                self)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
-          #self.screens.append(_slot.left_screen)
-          #self.screens.append(_slot.right_screen)
 
         if _display.stereo == True:
           # create stereo slot
@@ -230,37 +224,6 @@ class Platform(avango.script.Script):
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
     self.sf_scale.connect_from(INPUT_MAPPING_INSTANCE.sf_scale)
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    # create kinect avatars if desired
-    if AVATAR_TYPE.endswith(".ks"):
-
-      _video_loader = avango.gua.nodes.Video3DLoader()
-
-      ## @var video_geode
-      # Video3D node containing the caputred video geometry.
-      self.video_geode = _video_loader.load("kincet", AVATAR_TYPE)
-
-      self.video_geode.Transform.value = self.transmitter_offset
-      self.platform_scale_transform_node.Children.value.append(self.video_geode)
-      self.video_geode.GroupNames.value = ['avatar_group_' + str(self.platform_id), 'video'] # own group avatars not visible (only for WALL setups)
-
-      ## @var video_abstraction_transform
-      # Transform node for the placement of the video abstraction.
-      self.video_abstraction_transform = avango.gua.nodes.TransformNode(Name = "video_abstraction_transform")
-      self.video_abstraction_transform.Transform.connect_from(self.INPUT_MAPPING_INSTANCE.DEVICE_INSTANCE.sf_station_mat)
-      self.platform_scale_transform_node.Children.value.append(self.video_abstraction_transform)
-
-      ## @var video_abstraction
-      # Abstract geometry displayed when too far away from the video geode.
-      self.video_abstraction = _loader.create_geometry_from_file('video_abstraction',
-                                                                 'data/objects/sphere.obj',
-                                                                 'data/materials/' + self.avatar_material + 'Shadeless.gmd',
-                                                                 avango.gua.LoaderFlags.DEFAULTS)
-      self.video_abstraction.Transform.value = avango.gua.make_scale_mat(2.0)
-      self.video_abstraction.GroupNames.value = ["video_abstraction", "server_do_not_display_group"]
-      self.video_abstraction_transform.Children.value.append(self.video_abstraction)
 
          
   ## Scales the platform scale transform node when the scaling changes in the inputmapping.

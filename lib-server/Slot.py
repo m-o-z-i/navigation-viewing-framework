@@ -85,36 +85,67 @@ class Slot(avango.script.Script):
     self.slot_scale_node.Transform.connect_from(self.PLATFORM.sf_scale_mat)
     self.slot_node.Children.value = [self.slot_scale_node]
 
-    _loader = avango.gua.nodes.TriMeshLoader()
+    if self.PLATFORM.avatar_type == "joseph":
 
-    ## @var head_avatar
-    # Scenegraph node representing the geometry and transformation of the basic avatar's head.
-    self.head_avatar = _loader.create_geometry_from_file( 'head_avatar',
-                                                          'data/objects/Joseph/JosephHead.obj',
-                                                          'data/materials/' + self.PLATFORM.avatar_material + '.gmd',
-                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
-    self.head_avatar.GroupNames.value = ['do_not_display_group', 'avatar_group_' + str(self.PLATFORM.platform_id)]
-    self.slot_scale_node.Children.value.append(self.head_avatar)
+      _loader = avango.gua.nodes.TriMeshLoader()
 
-    ## @var body_avatar
-    # Scenegraph node representing the geometry and transformation of the basic avatar's body.
-    self.body_avatar = _loader.create_geometry_from_file( 'body_avatar',
-                                                          'data/objects/Joseph/JosephBody.obj',
-                                                          'data/materials/' + self.PLATFORM.avatar_material + '.gmd',
-                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.body_avatar.GroupNames.value = ['do_not_display_group', 'avatar_group_' + str(self.PLATFORM.platform_id)]
-    self.slot_scale_node.Children.value.append(self.body_avatar)
+      ## @var head_avatar
+      # Scenegraph node representing the geometry and transformation of the basic avatar's head.
+      self.head_avatar = _loader.create_geometry_from_file( 'head_avatar',
+                                                            'data/objects/Joseph/JosephHead.obj',
+                                                            'data/materials/' + self.PLATFORM.avatar_material + '.gmd',
+                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
+      self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
+      self.head_avatar.GroupNames.value = ['do_not_display_group', 'avatar_group_' + str(self.PLATFORM.platform_id)]
+      self.slot_scale_node.Children.value.append(self.head_avatar)
 
-    ##
-    #
+      ## @var body_avatar
+      # Scenegraph node representing the geometry and transformation of the basic avatar's body.
+      self.body_avatar = _loader.create_geometry_from_file( 'body_avatar',
+                                                            'data/objects/Joseph/JosephBody.obj',
+                                                            'data/materials/' + self.PLATFORM.avatar_material + '.gmd',
+                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
+      self.body_avatar.GroupNames.value = ['do_not_display_group', 'avatar_group_' + str(self.PLATFORM.platform_id)]
+      self.slot_scale_node.Children.value.append(self.body_avatar)
+
+    elif self.PLATFORM.avatar_type.endswith(".ks"):
+
+      _loader = avango.gua.nodes.TriMeshLoader()
+      _video_loader = avango.gua.nodes.Video3DLoader()
+
+      ## @var video_geode
+      # Video3D node containing the caputred video geometry.
+      self.video_geode = _video_loader.load("kincet", self.PLATFORM.avatar_type)
+
+      self.video_geode.Transform.value = self.PLATFORM.transmitter_offset
+      self.slot_scale_node.Children.value.append(self.video_geode)
+      self.video_geode.GroupNames.value = ['do_not_display_group', 'avatar_group_' + str(self.PLATFORM.platform_id), 'video'] # own group avatars not visible (only for WALL setups)
+
+      ## @var video_abstraction_transform
+      # Transform node for the placement of the video abstraction.
+      self.video_abstraction_transform = avango.gua.nodes.TransformNode(Name = "video_abstraction_transform")
+      self.video_abstraction_transform.Transform.connect_from(self.PLATFORM.INPUT_MAPPING_INSTANCE.DEVICE_INSTANCE.sf_station_mat)
+      self.slot_scale_node.Children.value.append(self.video_abstraction_transform)
+
+      ## @var video_abstraction
+      # Abstract geometry displayed when too far away from the video geode.
+      self.video_abstraction = _loader.create_geometry_from_file('video_abstraction',
+                                                                 'data/objects/sphere.obj',
+                                                                 'data/materials/' + self.PLATFORM.avatar_material + 'Shadeless.gmd',
+                                                                 avango.gua.LoaderFlags.DEFAULTS)
+      self.video_abstraction.Transform.value = avango.gua.make_scale_mat(2.0)
+      self.video_abstraction.GroupNames.value = ["do_not_display_group", "video_abstraction", "server_do_not_display_group"]
+      self.video_abstraction_transform.Children.value.append(self.video_abstraction)
+
+    ## @var screen
+    # Screen of this Slot.
     self.screen = DISPLAY.create_screen_node("screen")
 
     if self.screen != None:
       self.slot_scale_node.Children.value.append(self.screen)
 
-    ##
-    #
+    ## @var head_node
+    # Scenegraph node to which the headtracking matrix of the assigned user is connected to.
     self.head_node = avango.gua.nodes.TransformNode(Name = "head")
     self.slot_scale_node.Children.value.append(self.head_node)
 
@@ -166,17 +197,19 @@ class Slot(avango.script.Script):
     
     # connect tracking matrix
     self.head_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
-    print "Assign a user"
     
-    if self.PLATFORM.avatar_type != "None" and \
-       self.PLATFORM.avatar_type.endswith(".ks") == False:
+    if self.PLATFORM.avatar_type == "joseph":
 
       self.head_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_head_mat)
       self.head_avatar.GroupNames.value.remove('do_not_display_group')
-      print "make head visible"
 
       self.body_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_body_mat)
       self.body_avatar.GroupNames.value.remove('do_not_display_group')
+
+    elif self.PLATFORM.avatar_type.endswith(".ks"):
+
+      self.video_geode.GroupNames.value.remove('do_not_display_group')
+
 
     self.assigned_user = USER_INSTANCE
 
@@ -201,8 +234,7 @@ class Slot(avango.script.Script):
       self.head_node.Transform.disconnect()
       self.head_node.Transform.value = avango.gua.make_identity_mat()
 
-      if self.PLATFORM.avatar_type != "None" and \
-         self.PLATFORM.avatar_type.endswith(".ks") == False:
+      if self.PLATFORM.avatar_type == "joseph":
        
         self.head_avatar.Transform.disconnect()
         self.head_avatar.GroupNames.value.append('do_not_display_group')
@@ -210,12 +242,16 @@ class Slot(avango.script.Script):
         self.body_avatar.Transform.disconnect()
         self.body_avatar.GroupNames.value.append('do_not_display_group')
 
+      elif self.PLATFORM.avatar_type.endswith(".ks"):
+
+        self.video_geode.GroupNames.value.remove('do_not_display_group')
+
       self.assigned_user = None
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()
       self.no_tracking_node.Transform.value = avango.gua.make_identity_mat()
 
-  ##
+  ## Appends the four platform border nodes to slot_scale_nodes and create a BorderObserver.
   def append_platform_border_nodes(self):
 
     _loader = avango.gua.nodes.TriMeshLoader()

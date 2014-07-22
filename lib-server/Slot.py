@@ -115,7 +115,7 @@ class Slot:
       self.set_eye_distance(0.0)
 
     self.append_platform_border_nodes()
-
+    self.create_coupling_status_overview()
 
   ## Sets the transformation values of left and right eye.
   # @param VALUE The eye distance to be applied.
@@ -253,6 +253,139 @@ class Slot:
     else:
       self.back_border.GroupNames.value[0] = "do_not_display_group"
 
+
+  ## Creates an overview of the user's current couplings in his or her field of view.
+  def create_coupling_status_overview(self):
+    
+    _loader = avango.gua.nodes.TriMeshLoader()
+ 
+    # create transformation node
+    ## @var coupling_status_node
+    # Scenegraph transformation node for coupling icons in the user's field of view.
+    self.coupling_status_node = avango.gua.nodes.TransformNode(Name = "coupling_status")
+    self.coupling_status_node.GroupNames.value = ["display_group", "p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+
+    # sets the necessary attributes for correct positioning of coupling status notifiers
+    self.handle_coupling_status_attributes()
+
+    # create icon indicating the own color
+    ## @var own_color_geometry
+    # Plane visible to the user indictating his or her own avatar color.
+    self.own_color_geometry = _loader.create_geometry_from_file('own_notifier',
+                                                                'data/objects/plane.obj',
+                                                                'data/materials/' + self.PLATFORM.avatar_material + 'Shadeless.gmd',
+                                                                avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.own_color_geometry.GroupNames.value = ["p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+
+    self.coupling_status_node.Children.value.append(self.own_color_geometry)
+
+    self.update_coupling_status_overview()
+
+  ## Updates the Transform fields of coupling_status_node's children.
+  # Can only be called after create_coupling_status_overview()
+  def update_coupling_status_overview(self):
+
+    # get all children nodes
+    _children_nodes = self.coupling_status_node.Children.value
+
+    # write transformation for all children with respect to y increments
+    for i in range(0, len(_children_nodes)):
+      _current_node = _children_nodes[i]
+
+      # set translation of notifiers properly
+      _current_trans = avango.gua.Vec3(self.start_trans)
+      _current_trans.y += i * self.y_increment
+
+      # make coupling notifiers smaller
+      if i != 0:
+        _scale = self.start_scale * 0.6
+      else:
+        _scale = self.start_scale
+
+      _current_node.Transform.value = avango.gua.make_trans_mat(_current_trans) * \
+                                      avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                      avango.gua.make_scale_mat(_scale, _scale, _scale)
+
+  ## Handles all the specialized settings for the coupling status overview.
+  def handle_coupling_status_attributes(self):
+    self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
+    
+    # append to primary screen
+    self.screen.Children.value.append(self.coupling_status_node)
+
+    ## @var start_trans
+    # Translation of the first coupling status notifier (own color).
+    self.start_trans = avango.gua.Vec3(-0.45 * self.screen.Width.value, 0.4 * self.screen.Height.value, 0.0)
+
+    ## @var start_scale
+    # Scaling of the first coupling status notifier (own color).
+    self.start_scale = 0.05 * self.screen.Height.value
+      
+    ## @var y_increment
+    # Y offset for all coupling status notifiers after the own color.
+    self.y_increment = -self.start_scale
+
+  ## Displays coupling status notifiers for all navigations in COUPLED_NAVIGATION_LIST
+  # @param COUPLED_NAVIGATION_LIST List of Navigation instances that are now coupled.
+  def display_coupling(self, COUPLED_NAVIGATION_LIST):
+
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    # check for every user that could be updated
+    for _nav in COUPLED_NAVIGATION_LIST:
+      if _nav.platform != self:
+            
+        # check if desired plane is not already present
+        _new_node_needed = True
+
+        for _node in self.coupling_status_node.Children.value:
+          if (_node.Name.value == ('coupl_notifier_' + str(self.PLATFORM.platform_id))):
+            _new_node_needed = False
+            break
+
+        # if the desired plane is not yet present, create and draw it
+        if _new_node_needed:
+          _plane = _loader.create_geometry_from_file('coupl_notifier_' + str(self.PLATFORM.platform_id),
+                                                     'data/objects/plane.obj',
+                                                     'data/materials/' +_nav.trace_material + 'Shadeless.gmd',
+                                                     avango.gua.LoaderFlags.LOAD_MATERIALS)
+          _plane.GroupNames.value = ["p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+          _plane.ShadowMode.value = avango.gua.ShadowMode.OFF
+          self.NET_TRANS_NODE.distribute_object(_plane)
+          self.coupling_status_node.Children.value.append(_plane)
+      
+      # update the offsets of the notifiers to have a proper display
+      self.update_coupling_status_overview()
+
+  ## Removes a platform indicator from the coupling display and shows a message to all other platforms.
+  # @param NAVIGATION The Navigation instance to be removed from all couplings.
+  # @param SHOW_NOTIFICATION Boolean saying if a notification should be displayed to all other platforms involved.
+  def remove_from_coupling_display(self, NAVIGATION, SHOW_NOTIFICATION):
+
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    # if the platform has a notifier for being coupled with NAVIGATION, remove this node from the scenegraph
+    for _node in self.coupling_status_node.Children.value:
+      if (_node.Name.value == ('coupl_notifier_' + str(NAVIGATION.platform.platform_id))):
+        self.coupling_status_node.Children.value.remove(_node)
+        self.update_coupling_status_overview()
+        
+        if SHOW_NOTIFICATION:
+          pass
+          # display notification that a user was decoupled
+          #self.coupling_plane_node.GroupNames.value[0] = "display_group"
+          #self.coupling_plane_node.Material.value = "data/materials/DecouplingPlane.gmd"
+
+          # display color of decoupled navigation
+          #self.decoupling_notifier.GroupNames.value[0] = "display_group"
+          #self.decoupling_notifier.Material.value = 'data/materials/' + NAVIGATION.trace_material + 'Shadeless.gmd'
+
+          # add user to watchlist such that the notifications are removed again after a certain
+          # amount of time
+          #self.start_time = self.timer.Time.value
+
+        break
 
 ## Internal representation of a display slot on a head mounted display. A Slot is one rendering output that can be handled
 # by a display, for HMDs usually one per device.

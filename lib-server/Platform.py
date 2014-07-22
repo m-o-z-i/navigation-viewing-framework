@@ -125,10 +125,6 @@ class Platform(avango.script.Script):
     # A list of Slot instances that are associated to this platform.
     self.slot_list = []
 
-    ## @var individual_slot_navigation
-    # List which Slot instances in slot_list have an individual (!= sf_abs_mat, sf_scale_mat) navigation.
-    self.individual_slot_navigation = []
-
     ## @var avatar_material
     # String containing the material to be used for avatars of this platform.
     self.avatar_material = AVATAR_MATERIAL
@@ -172,9 +168,6 @@ class Platform(avango.script.Script):
                                True,
                                self)
           self.slot_list.append(_slot)
-          _slot.slot_node.Transform.connect_from(self.sf_abs_mat)
-          _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
-          self.individual_slot_navigation.append(False)
           SLOT_MANAGER.register_slot(_slot, _display)
 
         if _display.stereo == True:
@@ -186,9 +179,6 @@ class Platform(avango.script.Script):
                                True,
                                self)
           self.slot_list.append(_slot)
-          _slot.slot_node.Transform.connect_from(self.sf_abs_mat)
-          _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
-          self.individual_slot_navigation.append(False)
           SLOT_MANAGER.register_slot(_slot, _display) 
 
         else:
@@ -200,9 +190,6 @@ class Platform(avango.script.Script):
                                True,
                                self)
           self.slot_list.append(_slot)
-          _slot.slot_node.Transform.connect_from(self.sf_abs_mat)
-          _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
-          self.individual_slot_navigation.append(False)
           SLOT_MANAGER.register_slot(_slot, _display)
 
 
@@ -232,9 +219,6 @@ class Platform(avango.script.Script):
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
     self.sf_scale.connect_from(INPUT_MAPPING_INSTANCE.sf_scale)
-
-    # set evaluation policy
-    self.always_evaluate(True)
 
          
   ## Scales the platform scale transform node when the scaling changes in the inputmapping.
@@ -271,82 +255,27 @@ class Platform(avango.script.Script):
     for _slot in self.slot_list:
       _slot.remove_from_coupling_display(NAVIGATION, SHOW_NOTIFICATION)
 
-  ## Sets an own (!= platform) transformation for a specific user instance.
-  # @param USER_INSTANCE The User instance to individualize from the group navigation.
-  # @param NEW_TRANSFORM The new transformation matrix of the user without scaling.
-  # @param NEW_SCALE The new scaling factor to be applied.
-  def individualize_user(self, USER_INSTANCE, NEW_TRANSFORM, NEW_SCALE):
+  ## Returns a list of Slots currently assigned to a User.
+  # @param USER_INSTANCE The instance of User for which the slots should be determined.
+  def get_slots_of(self, USER_INSTANCE):
+
+    _return_list = []
 
     for _slot in self.slot_list:
-      
       if _slot.assigned_user == USER_INSTANCE:
+        _return_list.append(_slot)
 
-          _slot.slot_node.Transform.disconnect()
-          _slot.slot_node.Transform.value = NEW_TRANSFORM
-          _slot.slot_scale_node.Transform.disconnect()
-          _slot.slot_scale_node.Transform.value = avango.gua.make_scale_mat(NEW_SCALE)
-          self.individual_slot_navigation[self.slot_list.index(_slot)] = True
+    return _return_list
 
-  ## Resets all individualized users and their slots to the platform transformation.
-  def reset_all_user_transformations(self):
+  ## Determines if a video avatar representation is already set visible for the group navigation.
+  def video_avatar_visible(self):
 
     for _slot in self.slot_list:
 
-      _slot.slot_node.Transform.disconnect()
-      _slot.slot_node.Transform.connect_from(self.sf_abs_mat)
+      if _slot.assigned_user != None and \
+         _slot.assigned_user.use_group_navigation[_slot.PLATFORM.platform_id] == True and \
+         'do_not_display_group' not in _slot.video_geode.GroupNames.value:
 
-      _slot.slot_scale_node.Transform.disconnect()
-      _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
+         return True
 
-      self.individual_slot_navigation.append(False)
-
-
-  # Evaluated every frame
-  def evaluate(self):
-
-    # toggle avatar visibilities
-    # joseph case - avatar always needed except double displaying
-    if self.avatar_type == "joseph":
-
-      _user_instances_with_activated_avatars = []
-
-      for _slot in self.slot_list:
-
-        if _slot.assigned_user != None and _slot.assigned_user not in _user_instances_with_activated_avatars:
-
-          _slot.show_avatars()
-          _user_instances_with_activated_avatars.append(_slot.assigned_user)
-
-        else:
-
-          _slot.hide_avatars()
-
-
-    # kinect case - avatar once for group slots and once for each individual navigation user
-    elif self.avatar_type.endswith(".ks"):
-
-      _first_group_slot_found = False
-      _individual_user_instances_with_activated_avatars = []
-
-      for _slot in self.slot_list:
-
-        _index = self.slot_list.index(_slot)
-        _individual_nav = self.individual_slot_navigation[_index]
-
-        if _individual_nav == False:
-          
-          if _first_group_slot_found == False:
-
-            _slot.show_avatars()
-            _first_group_slot_found = True
-
-          else:
-
-            _slot.hide_avatars()
-
-        else:
-
-          if _slot.assigned_user != None and _slot.assigned_user not in _individual_user_instances_with_activated_avatars:
-          
-            _slot.show_avatars()
-            _individual_user_instances_with_activated_avatars.append(_slot.assigned_user)
+    return False

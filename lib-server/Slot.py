@@ -196,9 +196,27 @@ class Slot(avango.script.Script):
     # connect tracking matrix
     self.head_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
 
+    # trigger correct avatar visibilities
     if self.PLATFORM.avatar_type == "joseph":
-      self.head_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_head_mat)
-      self.body_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_body_mat)
+
+      if self.PLATFORM.get_slots_of(USER_INSTANCE) == []:
+        self.head_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_head_mat)
+        self.body_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_body_mat)
+        self.head_avatar.GroupNames.value.remove('do_not_display_group')
+        self.body_avatar.GroupNames.value.remove('do_not_display_group')
+
+    elif self.PLATFORM.avatar_type.endswith(".ks"):
+
+      if USER_INSTANCE.use_platform_matrix == False:
+        if self.PLATFORM.get_slots_of(USER_INSTANCE) == []:
+
+          self.video_geode.GroupNames.value.remove('do_not_display_group')
+
+      else:
+        if self.PLATFORM.video_avatar_visible() == False:
+
+          self.video_geode.GroupNames.value.remove('do_not_display_group')
+
 
     self.assigned_user = USER_INSTANCE
 
@@ -228,6 +246,10 @@ class Slot(avango.script.Script):
       if self.PLATFORM.avatar_type == "joseph":
         self.head_avatar.Transform.disconnect()
         self.body_avatar.Transform.disconnect()
+        self.head_avatar.GroupNames.value.append('do_not_display_group')
+        self.body_avatar.GroupNames.value.append('do_not_display_group')
+      elif self.PLATFORM.avatar_type.endswith(".ks"):
+        self.video_geode.GroupNames.value.append('do_not_display_group')
 
       self.assigned_user = None
       self.information_node.Name.value = "None"
@@ -549,6 +571,11 @@ class Slot(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
+
+    # update matrices as given by assigned user
+    if self.assigned_user != None:
+      self.slot_node.Transform.value = self.assigned_user.matrices_per_platform[self.PLATFORM.platform_id]
+      self.slot_scale_n  # Evaluated every frameode.Transform.value = avango.gua.make_scale_mat(self.assigned_user.scales_per_platform[self.PLATFORM.platform_id])
 
     # if a time update is required
     if self.start_time != None:

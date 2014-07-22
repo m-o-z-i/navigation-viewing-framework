@@ -88,6 +88,21 @@ class User(avango.script.Script):
     # Instance of the platform the user is belonging to.
     self.platform = self.APPLICATION_MANAGER.navigation_list[self.platform_id].platform
 
+    ## @var use_group_navigation
+    # List of booleans saying if this user uses the navigation of the associated platform.
+    # When False, an own matrix and own scaling can be provided.
+    self.use_group_navigation = [True for i in range(1, len(self.APPLICATION_MANAGER.navigation_list))]
+
+    ## @var matrices_per_platform
+    # List of matrices for each platform to be used.
+    # Can be either the group matrix or an individual one (switchable in use_group_navigation)
+    self.matrices_per_platform = [avango.gua.make_identity_mat() for i in range(1, len(self.APPLICATION_MANAGER.navigation_list))]
+
+    ## @var scales_per_platform
+    # List of scalings for each platform to be used.
+    # Can be either the group scaling or an individual one (switchable in use_group_navigation)
+    self.scales_per_platform = [avango.gua.make_identity_mat() for i in range(1, len(self.APPLICATION_MANAGER.navigation_list))]
+
     ## @var current_display
     # Display instance on which the user physically is currently looking at.
     self.current_display = self.platform.displays[0]
@@ -174,8 +189,31 @@ class User(avango.script.Script):
     # set evaluation policy
     self.always_evaluate(True)
 
+  ## Sets an own (!= platform) transformation for this User instance.
+  # @param PLATFORM_ID The platform id to individualize the view.
+  # @param NEW_TRANSFORM The new transformation matrix of the user without scaling.
+  # @param NEW_SCALE The new scaling factor to be applied.
+  def individualize_view(self, PLATFORM_ID, NEW_TRANSFORM, NEW_SCALE):
+
+    self.use_group_navigation[PLATFORM_ID] = False
+    self.matrices_per_platform[PLATFORM_ID] = NEW_TRANSFORM
+    self.scales_per_platform[PLATFORM_ID] = NEW_SCALE
+
+  ## Resets an individualized view back to the group view.
+  def reset_view(self, PLATFORM_ID):
+
+    self.use_group_navigation[PLATFORM_ID] = True
+
   ## Evaluated every frame.
   def evaluate(self):
+
+    # update platform matrix array
+    for _platform_id in range(0, len(self.APPLICATION_MANAGER.navigation_list) - 1):
+
+      if self.use_group_navigation[_platform_id]:
+        self.matrices_per_platform[_platform_id] = self.APPLICATION_MANAGER.navigation_list[_platform_id].platform.sf_abs_mat.value
+        self.scales_per_platform[_platform_id] = self.APPLICATION_MANAGER.navigation_list[_platform_id].platform.sf_scale.value
+
     
     if INTELLIGENT_SHUTTER_SWITCHING:
 
@@ -306,15 +344,3 @@ class User(avango.script.Script):
 
     else:
       print_warning("Blocked")
-
-  ## Appends a node to the children of a platform in the scenegraph.
-  # @param NODE The node to be appended to the platform node.
-  def append_to_platform(self, NODE):
-    
-    self.platform.platform_scale_transform_node.Children.value.append(NODE)
-
-  ## Removes a node from the children of a platform in the scenegraph.
-  # @param NODE The node to be removed from the platform node.
-  def remove_from_platform(self, NODE):
-
-    self.platform.platform_scale_transform_node.Children.value.remove(NODE)

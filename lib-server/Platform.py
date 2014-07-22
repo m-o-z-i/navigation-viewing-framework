@@ -125,6 +125,11 @@ class Platform(avango.script.Script):
     # A list of Slot instances that are associated to this platform.
     self.slot_list = []
 
+    ## @var individual_slot_navigation
+    # List which Slot instances in slot_list have an individual (!= sf_abs_mat, sf_scale_mat) navigation.
+    self.individual_slot_navigation = []
+
+
     ## @var avatar_material
     # String containing the material to be used for avatars of this platform.
     self.avatar_material = AVATAR_MATERIAL
@@ -134,11 +139,6 @@ class Platform(avango.script.Script):
     # Semantic scenegraph node representing this platform.
     self.platform_transform_node = avango.gua.nodes.TransformNode(Name = "platform_" + str(PLATFORM_ID))
     NET_TRANS_NODE.Children.value.append(self.platform_transform_node)
-
-    ## @var platform_scale_transform_node
-    # Scenegraph node representing this platform's scale. Is below platform_transform_node.
-    #self.platform_scale_transform_node = avango.gua.nodes.TransformNode(Name = "scale")
-    #self.platform_transform_node.Children.value = [self.platform_scale_transform_node]
 
     self.start_clients = START_CLIENTS
 
@@ -173,6 +173,9 @@ class Platform(avango.script.Script):
                                True,
                                self)
           self.slot_list.append(_slot)
+          _slot.slot_node.Transform.connect_from(self.sf_abs_mat)
+          _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
+          self.individual_slot_navigation.append(False)
           SLOT_MANAGER.register_slot(_slot, _display)
 
         if _display.stereo == True:
@@ -184,6 +187,9 @@ class Platform(avango.script.Script):
                                True,
                                self)
           self.slot_list.append(_slot)
+          _slot.slot_node.Transform.connect_from(self.sf_abs_mat)
+          _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
+          self.individual_slot_navigation.append(False)
           SLOT_MANAGER.register_slot(_slot, _display) 
 
         else:
@@ -195,6 +201,9 @@ class Platform(avango.script.Script):
                                True,
                                self)
           self.slot_list.append(_slot)
+          _slot.slot_node.Transform.connect_from(self.sf_abs_mat)
+          _slot.slot_scale_node.Transform.connect_from(self.sf_scale_mat)
+          self.individual_slot_navigation.append(False)
           SLOT_MANAGER.register_slot(_slot, _display)
 
 
@@ -224,6 +233,9 @@ class Platform(avango.script.Script):
     # connect to input mapping instance
     self.sf_abs_mat.connect_from(INPUT_MAPPING_INSTANCE.sf_abs_mat)
     self.sf_scale.connect_from(INPUT_MAPPING_INSTANCE.sf_scale)
+
+    # set evaluation policy
+    self.always_evaluate(True)
 
          
   ## Scales the platform scale transform node when the scaling changes in the inputmapping.
@@ -259,3 +271,49 @@ class Platform(avango.script.Script):
   def remove_from_coupling_display(self, NAVIGATION, SHOW_NOTIFICATION):
     for _slot in self.slot_list:
       _slot.remove_from_coupling_display(NAVIGATION, SHOW_NOTIFICATION)
+
+  # Evaluated every frame
+  def evaluate(self):
+    
+    _first_group_slot_found = False
+
+    # toggle avatar visibilities
+    # joseph case - avatar always needed except double displaying
+    if self.avatar_type == "joseph":
+
+      _user_instances_with_activated_avatars = []
+
+      for _slot in self.slot_list:
+
+        if _slot.assigned_user != None and _slot.assigned_user not in _user_instances_with_activated_avatars:
+
+          _slot.show_avatars()
+          _user_instances_with_activated_avatars.append(_slot.assigned_user)
+
+        else:
+
+          _slot.hide_avatars()
+
+
+    # kinect case - avatar once for group slots and once for each individual navigation slot
+    elif self.avatar_type.endswith(".ks"):
+
+      for _slot in self.slot_list:
+
+        _index = self.slot_list.index(_slot)
+        _individual_nav = self.individual_slot_navigation[_index]
+
+        if _individual_nav == False:
+          
+          if _first_group_slot_found == False:
+
+            _slot.show_avatars()
+            _first_group_slot_found = True
+
+          else:
+
+            _slot.hide_avatars()
+
+        else:
+
+          _slot.show_avatars()

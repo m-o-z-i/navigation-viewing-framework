@@ -76,13 +76,11 @@ class Slot(avango.script.Script):
     ## @var slot_node
     # Scenegraph transformation node of this slot.
     self.slot_node = avango.gua.nodes.TransformNode(Name = "s" + str(SCREEN_NUM) + "_slot" + str(SLOT_ID))
-    self.slot_node.Transform.connect_from(self.PLATFORM.sf_abs_mat)
     self.PLATFORM_NODE.Children.value.append(self.slot_node)
 
     ## @var slot_scale_node
     # Scenegraph node representing this slot's scale. Is below slot_node.
     self.slot_scale_node = avango.gua.nodes.TransformNode(Name = "scale")
-    self.slot_scale_node.Transform.connect_from(self.PLATFORM.sf_scale_mat)
     self.slot_node.Children.value = [self.slot_scale_node]
 
     if self.PLATFORM.avatar_type == "joseph":
@@ -197,19 +195,10 @@ class Slot(avango.script.Script):
     
     # connect tracking matrix
     self.head_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
-    
+
     if self.PLATFORM.avatar_type == "joseph":
-
       self.head_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_head_mat)
-      self.head_avatar.GroupNames.value.remove('do_not_display_group')
-
       self.body_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_body_mat)
-      self.body_avatar.GroupNames.value.remove('do_not_display_group')
-
-    elif self.PLATFORM.avatar_type.endswith(".ks"):
-
-      self.video_geode.GroupNames.value.remove('do_not_display_group')
-
 
     self.assigned_user = USER_INSTANCE
 
@@ -230,26 +219,40 @@ class Slot(avango.script.Script):
 
   ## Clears the user assignment.
   def clear_user(self):
+
     if self.assigned_user != None:
+
       self.head_node.Transform.disconnect()
       self.head_node.Transform.value = avango.gua.make_identity_mat()
 
       if self.PLATFORM.avatar_type == "joseph":
-       
         self.head_avatar.Transform.disconnect()
-        self.head_avatar.GroupNames.value.append('do_not_display_group')
-
         self.body_avatar.Transform.disconnect()
-        self.body_avatar.GroupNames.value.append('do_not_display_group')
-
-      elif self.PLATFORM.avatar_type.endswith(".ks"):
-
-        self.video_geode.GroupNames.value.remove('do_not_display_group')
 
       self.assigned_user = None
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()
       self.no_tracking_node.Transform.value = avango.gua.make_identity_mat()
+
+  ## Shows the avatars if a user is assigned.
+  def show_avatars(self):
+
+    if self.assigned_user != None:
+
+      if self.PLATFORM.avatar_type == "joseph":
+        self.head_avatar.GroupNames.value.remove('do_not_display_group')
+        self.body_avatar.GroupNames.value.remove('do_not_display_group')
+      elif self.PLATFORM.avatar_type.endswith(".ks"):
+        self.video_geode.GroupNames.value.remove('do_not_display_group')
+
+  ## Hides the avatars of this slot.
+  def hide_avatars(self):
+
+    if self.PLATFORM.avatar_type == "joseph":
+      self.head_avatar.GroupNames.value.append('do_not_display_group')
+      self.body_avatar.GroupNames.value.append('do_not_display_group')
+    elif self.PLATFORM.avatar_type.endswith(".ks"):
+      self.video_geode.GroupNames.value.append('do_not_display_group')
 
   ## Appends the four platform border nodes to slot_scale_nodes and create a BorderObserver.
   def append_platform_border_nodes(self):

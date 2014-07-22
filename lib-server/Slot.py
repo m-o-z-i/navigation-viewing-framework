@@ -85,6 +85,27 @@ class Slot(avango.script.Script):
     self.slot_scale_node.Transform.connect_from(self.PLATFORM.sf_scale_mat)
     self.slot_node.Children.value = [self.slot_scale_node]
 
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    ## @var head_avatar
+    # Scenegraph node representing the geometry and transformation of the basic avatar's head.
+    self.head_avatar = _loader.create_geometry_from_file( 'head_avatar',
+                                                          'data/objects/Joseph/JosephHead.obj',
+                                                          'data/materials/' + self.PLATFORM.avatar_material + '.gmd',
+                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
+    self.head_avatar.GroupNames.value = ['do_not_display_group', 'avatar_group_' + str(self.PLATFORM.platform_id)]
+    self.slot_scale_node.Children.value.append(self.head_avatar)
+
+    ## @var body_avatar
+    # Scenegraph node representing the geometry and transformation of the basic avatar's body.
+    self.body_avatar = _loader.create_geometry_from_file( 'body_avatar',
+                                                          'data/objects/Joseph/JosephBody.obj',
+                                                          'data/materials/' + self.PLATFORM.avatar_material + '.gmd',
+                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.body_avatar.GroupNames.value = ['do_not_display_group', 'avatar_group_' + str(self.PLATFORM.platform_id)]
+    self.slot_scale_node.Children.value.append(self.body_avatar)
+
     ##
     #
     self.screen = DISPLAY.create_screen_node("screen")
@@ -142,8 +163,21 @@ class Slot(avango.script.Script):
   ## Assigns a user to this slot. Therefore, the slot_node is connected with the user's headtracking matrix.
   # @param USER_INSTANCE An instance of User which is to be assigned.
   def assign_user(self, USER_INSTANCE):
+    
     # connect tracking matrix
     self.head_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
+    print "Assign a user"
+    
+    if self.PLATFORM.avatar_type != "None" and \
+       self.PLATFORM.avatar_type.endswith(".ks") == False:
+
+      self.head_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_head_mat)
+      self.head_avatar.GroupNames.value.remove('do_not_display_group')
+      print "make head visible"
+
+      self.body_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_body_mat)
+      self.body_avatar.GroupNames.value.remove('do_not_display_group')
+
     self.assigned_user = USER_INSTANCE
 
     if self.stereo:
@@ -166,6 +200,16 @@ class Slot(avango.script.Script):
     if self.assigned_user != None:
       self.head_node.Transform.disconnect()
       self.head_node.Transform.value = avango.gua.make_identity_mat()
+
+      if self.PLATFORM.avatar_type != "None" and \
+         self.PLATFORM.avatar_type.endswith(".ks") == False:
+       
+        self.head_avatar.Transform.disconnect()
+        self.head_avatar.GroupNames.value.append('do_not_display_group')
+
+        self.body_avatar.Transform.disconnect()
+        self.body_avatar.GroupNames.value.append('do_not_display_group')
+
       self.assigned_user = None
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()

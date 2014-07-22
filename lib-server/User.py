@@ -141,17 +141,6 @@ class User(avango.script.Script):
       self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
-    # create avatar representation
-    if self.platform.avatar_type == "joseph" or \
-      self.platform.avatar_type == "None" or \
-      self.platform.avatar_type.endswith(".ks"):
-      self.create_avatar_representation(self.headtracking_reader.sf_avatar_head_mat, self.headtracking_reader.sf_avatar_body_mat)  
-    else:
-      if self.platform.avatar_type == "joseph_table":
-        print_warning("Avatar type jospeh_table is deprecated. The creation of table avatars are now handled by the " + \
-                       "device automatically. Use avatar type jospeh instead.")
-      print_error("Error: Unknown avatar type " + self.platform.avatar_type, True)
-
     # toggles avatar display and activity
     self.toggle_user_activity(self.is_active, False)
 
@@ -270,12 +259,8 @@ class User(avango.script.Script):
 
     if ACTIVE:
       self.is_active = True
-      self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-      self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
     else:
       self.is_active = False
-      self.head_avatar.GroupNames.value.append("do_not_display_group")
-      self.body_avatar.GroupNames.value.append("do_not_display_group")
       self.platform_id = -1
 
     if RESEND_CONFIG:
@@ -333,39 +318,3 @@ class User(avango.script.Script):
   def remove_from_platform(self, NODE):
 
     self.platform.platform_scale_transform_node.Children.value.remove(NODE)
-
-  ## Creates a basic "joseph" avatar for this user.
-  # @param SF_AVATAR_HEAD_MATRIX Field containing the transformation matrix for the avatar's head on the platform.
-  # @param SF_AVATAR_BODY_MATRIX Field containing the transformation matrix for the avatar's body on the platform.
-  def create_avatar_representation(self, SF_AVATAR_HEAD_MATRIX, SF_AVATAR_BODY_MATRIX):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-    
-    # create avatar head
-    ## @var head_avatar
-    # Scenegraph node representing the geometry and transformation of the basic avatar's head.
-    self.head_avatar = _loader.create_geometry_from_file( 'head_avatar_' + str(self.id),
-                                                          'data/objects/Joseph/JosephHead.obj',
-                                                          'data/materials/' + self.avatar_material + '.gmd',
-                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
-    self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-
-    # create avatar body
-    ## @var body_avatar
-    # Scenegraph node representing the geometry and transformation of the basic avatar's body.
-    self.body_avatar = _loader.create_geometry_from_file( 'body_avatar_' + str(self.id),
-                                                          'data/objects/Joseph/JosephBody.obj',
-                                                          'data/materials/' + self.avatar_material + '.gmd',
-                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-
-    if self.platform.avatar_type != "None" and \
-      self.platform.avatar_type.endswith(".ks") == False:
-      pass
-      #self.append_to_platform(self.head_avatar)
-      #self.append_to_platform(self.body_avatar)    
-
-    self.head_avatar.Transform.connect_from(SF_AVATAR_HEAD_MATRIX)
-    self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX)
-

@@ -76,10 +76,6 @@ class ApplicationManager():
     # List of all created Navigation instances.
     self.navigation_list      = []
 
-    ## @var border_observer_list
-    # List of all created BorderObserver instances.
-    self.border_observer_list = []
-
     ## @var start_clients
     # Boolean saying if the client processes are to be started automatically.
     self.start_clients = START_CLIENTS
@@ -252,7 +248,6 @@ class ApplicationManager():
       , TRACKING_TARGET_NAME = DEVICE_TRACKING_NAME
     )
     self.navigation_list.append(_navigation)
-    self.border_observer_list.append(None)
 
   ## Creates a user.
   # @param VIP Boolean indicating if the user to be created is a vip.
@@ -282,27 +277,9 @@ class ApplicationManager():
                        , EYE_DISTANCE
                        , PLATFORM_ID
                        , self.navigation_list[PLATFORM_ID].trace_material
+                       , WARNINGS
                        )
     self.user_list.append(_user)
-
-    # init border checker to warn user on platform
-    if WARNINGS:
-      if self.border_observer_list[PLATFORM_ID] == None:
-        _checked_borders = [True, True, True, True]
-        self.create_border_observer(_checked_borders, _user, self.navigation_list[PLATFORM_ID].platform)
-      else:
-        self.border_observer_list[PLATFORM_ID].add_user(_user)
-   
-
-  ## Creates a BorderObserver instance for a Platform and adds a User to it.
-  # @param CHECKED_BORDERS A list of four booleans to indicate which borders of the platform should be checked: 
-  #                        [display_left_border, display_right_border, display_front_border, display_back_border]
-  # @param USER_INSTANCE A first User to be appended to the new BorderObserver.
-  # @param PLATFORM_INSTANCE The platform to which the BorderObserver should belong to.
-  def create_border_observer(self, CHECKED_BORDERS, USER_INSTANCE, PLATFORM_INSTANCE):
-    _border_observer = BorderObserver()
-    _border_observer.my_constructor(CHECKED_BORDERS, USER_INSTANCE, PLATFORM_INSTANCE)
-    self.border_observer_list[PLATFORM_INSTANCE.platform_id] = _border_observer
 
   ## Starts the shell and the viewer.
   # @param LOCALS Local variables.

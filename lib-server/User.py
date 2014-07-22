@@ -44,6 +44,7 @@ class User(avango.script.Script):
   # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
   # @param AVATAR_MATERIAL The material string for the user avatar to be created.
+  # @param ENABLE_BORDER_WARNINGS Boolean indicating if the user wants platform borders to be displayed.
   def my_constructor(self
                    , APPLICATION_MANAGER
                    , USER_ID
@@ -54,6 +55,7 @@ class User(avango.script.Script):
                    , EYE_DISTANCE
                    , PLATFORM_ID
                    , AVATAR_MATERIAL
+                   , ENABLE_BORDER_WARNINGS
                    ):
 
     # flags 
@@ -101,6 +103,10 @@ class User(avango.script.Script):
     ## @var avatar_material
     # Material of the user's avatar.
     self.avatar_material = AVATAR_MATERIAL
+
+    ## @var enable_border_warnings
+    # Boolean indicating if the user wants platform borders to be displayed.
+    self.enable_border_warnings = ENABLE_BORDER_WARNINGS
 
     ## @var headtracking_target_name
     # Name of the headtracking station as registered in daemon.

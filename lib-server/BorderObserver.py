@@ -12,9 +12,9 @@ import avango.script
 from Platform        import *
 from User            import *
 
-## Class to check whether users on a platform are close to platform borders.
+## Class to check whether the user of a slot is close to platform borders.
 #
-# If one of the observed users is close to a platform border, the corresponding
+# If the observed user is close to a platform border, the corresponding
 # border plane is made visible.
 
 class BorderObserver(avango.script.Script):
@@ -30,46 +30,40 @@ class BorderObserver(avango.script.Script):
   ## Custom constructor
   # @param CHECKED_BORDERS A list of four booleans about which borders of the platform should be observed. 
   #                        [display_left_border, display_right_border, display_front_border, display_back_border]
-  # @param USER_INSTANCE The first user to be observed.
-  # @param PLATFORM_INSTANCE The platform on which the observed users are.
-  def my_constructor(self, CHECKED_BORDERS, USER_INSTANCE, PLATFORM_INSTANCE):
-
-    ## @var PLATFORM_INSTANCE
-    # Reference to the platform on which the observed users stand.
-    self.PLATFORM_INSTANCE = PLATFORM_INSTANCE
-
-    ## @var platform_width
-    # Physical width of the platform in meters.
-    self.platform_width = self.PLATFORM_INSTANCE.width
-
-    ## @var platform_depth
-    # Physical depth of the platform in meters.
-    self.platform_depth = self.PLATFORM_INSTANCE.depth
+  # @param SLOT_INSTANCE The Slot instance this BorderObserver is looking for.
+  # @param PLATFORM_WIDTH Physical width of the platform in meters.
+  # @param PLATFORM_DEPTH Physical depth of the platform in meters.
+  def my_constructor(self, CHECKED_BORDERS, SLOT_INSTANCE, PLATFORM_WIDTH, PLATFORM_DEPTH):
 
     ## @var checked_borders
     # A list of four booleans about which borders of the platform should be observed. [left, right, front, back].
-    self.checked_borders = CHECKED_BORDERS                       
+    self.checked_borders = CHECKED_BORDERS     
 
-    ## @var user_list
-    # A list of users to be observed.
-    self.user_list = [USER_INSTANCE]
+    ## @var SLOT_INSTANCE
+    # The Slot instance this BorderObserver is looking for.
+    self.SLOT_INSTANCE = SLOT_INSTANCE
+
+    ## @var platform_width
+    # Physical width of the platform in meters.
+    self.platform_width = PLATFORM_WIDTH
+
+    ## @var platform_depth
+    # Physical depth of the platform in meters.
+    self.platform_depth = PLATFORM_DEPTH                  
 
     self.always_evaluate(True)
-
-  ## Adds a user to the list of observed ones.
-  # @param USER_INSTANCE The user to be added.
-  def add_user(self, USER_INSTANCE):
-    self.user_list.append(USER_INSTANCE)
 
   ## Evaluated every frame.
   def evaluate(self):
 
-    _left_plane_visible = False
-    _right_plane_visible = False
-    _front_plane_visible = False
-    _back_plane_visible = False
+    if self.SLOT_INSTANCE.assigned_user != None and self.SLOT_INSTANCE.assigned_user.enable_border_warnings:
 
-    for _user in self.user_list:
+      _left_plane_visible = False
+      _right_plane_visible = False
+      _front_plane_visible = False
+      _back_plane_visible = False
+
+      _user = self.SLOT_INSTANCE.assigned_user
       _pos = _user.headtracking_reader.sf_abs_vec.value
 
       if self.checked_borders[0]:
@@ -92,24 +86,32 @@ class BorderObserver(avango.script.Script):
         if _pos.z > self.platform_depth - self.warning_tolerance:
           _back_plane_visible = True
 
-    # set plane visibilities with respect to toggle variables
-    
-    if _left_plane_visible == False:
-      self.PLATFORM_INSTANCE.display_left_border(False)
-    else:
-      self.PLATFORM_INSTANCE.display_left_border(True)
+      # set plane visibilities with respect to toggle variables
+      
+      if _left_plane_visible == False:
+        self.SLOT_INSTANCE.display_left_border(False)
+      else:
+        self.SLOT_INSTANCE.display_left_border(True)
 
-    if _right_plane_visible == False:
-      self.PLATFORM_INSTANCE.display_right_border(False)
-    else:
-      self.PLATFORM_INSTANCE.display_right_border(True)
+      if _right_plane_visible == False:
+        self.SLOT_INSTANCE.display_right_border(False)
+      else:
+        self.SLOT_INSTANCE.display_right_border(True)
 
-    if _front_plane_visible == False:
-      self.PLATFORM_INSTANCE.display_front_border(False)
-    else:
-      self.PLATFORM_INSTANCE.display_front_border(True)
+      if _front_plane_visible == False:
+        self.SLOT_INSTANCE.display_front_border(False)
+      else:
+        self.SLOT_INSTANCE.display_front_border(True)
 
-    if _back_plane_visible == False:
-      self.PLATFORM_INSTANCE.display_back_border(False)
+      if _back_plane_visible == False:
+        self.SLOT_INSTANCE.display_back_border(False)
+      else:
+        self.SLOT_INSTANCE.display_back_border(True)
+
+
     else:
-      self.PLATFORM_INSTANCE.display_back_border(True)
+      
+      self.SLOT_INSTANCE.display_left_border(False)
+      self.SLOT_INSTANCE.display_right_border(False)
+      self.SLOT_INSTANCE.display_front_border(False)
+      self.SLOT_INSTANCE.display_back_border(False)

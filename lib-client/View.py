@@ -100,14 +100,15 @@ class View(avango.script.Script):
     # set render mask for camera
     _render_mask = "!do_not_display_group && !video_abstraction && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
 
-    for _i in range(0, 10):
-      if _i != self.platform_id:
-        _render_mask = _render_mask + " && !platform_group_" + str(_i)
+    #for _i in range(0, 10):
+    #  if _i != self.platform_id:
+    #    _render_mask = _render_mask + " && !platform_group_" + str(_i)
 
-    for _screen in range(0, 10):
-      for _slot in range(0, 10):
-        if _screen != self.screen_num or _slot != self.slot_id:
-          _render_mask = _render_mask + " && !s" + str(_screen) + "_slot" + str(_slot)
+    for _platform in range(0, 10):
+      for _screen in range(0, 10):
+        for _slot in range(0, 10):
+          if _screen != self.screen_num or _slot != self.slot_id or _platform != self.platform_id:
+            _render_mask = _render_mask + " && !p" + str(_platform) + "_s" + str(_screen) + "_slot" + str(_slot)
 
     _render_mask = _render_mask + " && " + self.display_render_mask
 

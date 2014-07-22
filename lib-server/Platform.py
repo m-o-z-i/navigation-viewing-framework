@@ -272,99 +272,12 @@ class Platform(avango.script.Script):
     # create four boundary planes
 
     '''
-    ## @var left_border
-    # Geometry scenegraph node of the platform's left border
-    self.left_border = _loader.create_geometry_from_file('left_border_geometry',
-                                                         'data/objects/plane.obj',
-                                                         'data/materials/PlatformBorder.gmd',
-                                                         avango.gua.LoaderFlags.DEFAULTS)
-    self.left_border.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.left_border.Transform.value = avango.gua.make_trans_mat(-self.width/2, 1.0, self.depth/2) * \
-                                       avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                       avango.gua.make_rot_mat(270, 0, 0, 1) * \
-                                       avango.gua.make_scale_mat(self.depth, 1, 2)
-    self.left_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_scale_transform_node.Children.value.append(self.left_border)    
-    
-    ## @var right_border
-    # Geometry scenegraph node of the platform's left border
-    self.right_border = _loader.create_geometry_from_file('right_border_geometry',
-                                                         'data/objects/plane.obj',
-                                                         'data/materials/PlatformBorder.gmd',
-                                                         avango.gua.LoaderFlags.DEFAULTS)
-    self.right_border.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.right_border.Transform.value = avango.gua.make_trans_mat(self.width/2, 1.0, self.depth/2) * \
-                                        avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                        avango.gua.make_rot_mat(90, 0, 0, 1) * \
-                                        avango.gua.make_scale_mat(self.depth, 1, 2)
-    self.right_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_scale_transform_node.Children.value.append(self.right_border)    
-
-    ## @var front_border
-    # Geometry scenegraph node of the platform's front border
-    self.front_border = _loader.create_geometry_from_file('front_border_geometry',
-                                                         'data/objects/plane.obj',
-                                                         'data/materials/PlatformBorder.gmd',
-                                                         avango.gua.LoaderFlags.DEFAULTS)
-    self.front_border.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.front_border.Transform.value = avango.gua.make_trans_mat(0, 1, 0) * \
-                                        avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                        avango.gua.make_scale_mat(self.width, 1, 2)
-    self.front_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_scale_transform_node.Children.value.append(self.front_border)
-
-    ## @var back_border
-    # Geometry scenegraph node of the platform's back border
-    self.back_border = _loader.create_geometry_from_file('back_border_geometry',
-                                                         'data/objects/plane.obj',
-                                                         'data/materials/PlatformBorder.gmd',
-                                                         avango.gua.LoaderFlags.DEFAULTS)
-    self.back_border.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.back_border.Transform.value = avango.gua.make_trans_mat(0.0, 1.0, self.depth) * \
-                                        avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                        avango.gua.make_rot_mat(180, 0, 0, 1) * \
-                                        avango.gua.make_scale_mat(self.width, 1, 2)
-    self.back_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_scale_transform_node.Children.value.append(self.back_border)
-
     # create coupling notification plane
     self.create_coupling_plane()
 
     # create coupling status notifications
     self.create_coupling_status_overview()
     '''
-
-  ## Toggles visibility of left platform border.
-  # @param VISIBLE A boolean value if the border should be set visible or not.
-  def display_left_border(self, VISIBLE):
-    if VISIBLE:
-      self.left_border.GroupNames.value[0] = "display_group"
-    else:
-      self.left_border.GroupNames.value[0] = "do_not_display_group"
-
-  ## Toggles visibility of right platform border.
-  # @param VISIBLE A boolean value if the border should be set visible or not.
-  def display_right_border(self, VISIBLE):
-    if VISIBLE:
-      self.right_border.GroupNames.value[0] = "display_group"
-    else:
-      self.right_border.GroupNames.value[0] = "do_not_display_group"
-
-  ## Toggles visibility of front platform border.
-  # @param VISIBLE A boolean value if the border should be set visible or not.
-  def display_front_border(self, VISIBLE):
-    if VISIBLE:
-      self.front_border.GroupNames.value[0] = "display_group"
-    else:
-      self.front_border.GroupNames.value[0] = "do_not_display_group"
-
-  ## Toggles visibility of back platform border.
-  # @param VISIBLE A boolean value if the border should be set visible or not.
-  def display_back_border(self, VISIBLE):
-    if VISIBLE:
-      self.back_border.GroupNames.value[0] = "display_group"
-    else:
-      self.back_border.GroupNames.value[0] = "do_not_display_group"
          
   ## Scales the platform scale transform node when the scaling changes in the inputmapping.
   @field_has_changed(sf_scale)

@@ -7,6 +7,9 @@
 import avango
 import avango.gua
 
+# import framework libraries
+from BorderObserver import *
+
 ## Internal representation of a display slot. A Slot is one rendering output that can be handled
 # by a display. User can have multiple slots to obtain a brighter image.
 class Slot:
@@ -111,6 +114,8 @@ class Slot:
     if self.stereo == False:
       self.set_eye_distance(0.0)
 
+    self.append_platform_border_nodes()
+
 
   ## Sets the transformation values of left and right eye.
   # @param VALUE The eye distance to be applied.
@@ -151,6 +156,104 @@ class Slot:
       self.information_node.Transform.value = avango.gua.make_identity_mat()
       self.no_tracking_node.Transform.value = avango.gua.make_identity_mat()
 
+  ##
+  def append_platform_border_nodes(self):
+
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    ## @var left_border
+    # Geometry scenegraph node of the platform's left border
+    self.left_border = _loader.create_geometry_from_file('left_border_geometry',
+                                                         'data/objects/plane.obj',
+                                                         'data/materials/PlatformBorder.gmd',
+                                                         avango.gua.LoaderFlags.DEFAULTS)
+    self.left_border.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.left_border.Transform.value = avango.gua.make_trans_mat(-self.PLATFORM.width/2, 1.0, self.PLATFORM.depth/2) * \
+                                       avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                       avango.gua.make_rot_mat(270, 0, 0, 1) * \
+                                       avango.gua.make_scale_mat(self.PLATFORM.depth, 1, 2)
+    self.left_border.GroupNames.value = ["do_not_display_group", "p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+    self.slot_scale_node.Children.value.append(self.left_border)    
+    
+    ## @var right_border
+    # Geometry scenegraph node of the platform's left border
+    self.right_border = _loader.create_geometry_from_file('right_border_geometry',
+                                                         'data/objects/plane.obj',
+                                                         'data/materials/PlatformBorder.gmd',
+                                                         avango.gua.LoaderFlags.DEFAULTS)
+    self.right_border.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.right_border.Transform.value = avango.gua.make_trans_mat(self.PLATFORM.width/2, 1.0, self.PLATFORM.depth/2) * \
+                                        avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                        avango.gua.make_rot_mat(90, 0, 0, 1) * \
+                                        avango.gua.make_scale_mat(self.PLATFORM.depth, 1, 2)
+    self.right_border.GroupNames.value = ["do_not_display_group", "p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+    self.slot_scale_node.Children.value.append(self.right_border)    
+
+    ## @var front_border
+    # Geometry scenegraph node of the platform's front border
+    self.front_border = _loader.create_geometry_from_file('front_border_geometry',
+                                                         'data/objects/plane.obj',
+                                                         'data/materials/PlatformBorder.gmd',
+                                                         avango.gua.LoaderFlags.DEFAULTS)
+    self.front_border.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.front_border.Transform.value = avango.gua.make_trans_mat(0, 1, 0) * \
+                                        avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                        avango.gua.make_scale_mat(self.PLATFORM.width, 1, 2)
+    self.front_border.GroupNames.value = ["do_not_display_group", "p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+    self.slot_scale_node.Children.value.append(self.front_border)
+
+    ## @var back_border
+    # Geometry scenegraph node of the platform's back border
+    self.back_border = _loader.create_geometry_from_file('back_border_geometry',
+                                                         'data/objects/plane.obj',
+                                                         'data/materials/PlatformBorder.gmd',
+                                                         avango.gua.LoaderFlags.DEFAULTS)
+    self.back_border.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.back_border.Transform.value = avango.gua.make_trans_mat(0.0, 1.0, self.PLATFORM.depth) * \
+                                        avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                        avango.gua.make_rot_mat(180, 0, 0, 1) * \
+                                        avango.gua.make_scale_mat(self.PLATFORM.width, 1, 2)
+    self.back_border.GroupNames.value = ["do_not_display_group", "p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+    self.slot_scale_node.Children.value.append(self.back_border)
+
+    ## @var border_observer
+    # Instance of BorderObserver to toggle border visibilities for this slot.
+    self.border_observer = BorderObserver()
+    self.border_observer.my_constructor([True, True, True, True], self, self.PLATFORM.width, self.PLATFORM.depth)
+
+  ## Toggles visibility of left border.
+  # @param VISIBLE A boolean value if the border should be set visible or not.
+  def display_left_border(self, VISIBLE):
+    if VISIBLE:
+      self.left_border.GroupNames.value[0] = "display_group"
+    else:
+      self.left_border.GroupNames.value[0] = "do_not_display_group"
+
+  ## Toggles visibility of right border.
+  # @param VISIBLE A boolean value if the border should be set visible or not.
+  def display_right_border(self, VISIBLE):
+    if VISIBLE:
+      self.right_border.GroupNames.value[0] = "display_group"
+    else:
+      self.right_border.GroupNames.value[0] = "do_not_display_group"
+
+  ## Toggles visibility of front border.
+  # @param VISIBLE A boolean value if the border should be set visible or not.
+  def display_front_border(self, VISIBLE):
+    if VISIBLE:
+      self.front_border.GroupNames.value[0] = "display_group"
+    else:
+      self.front_border.GroupNames.value[0] = "do_not_display_group"
+
+  ## Toggles visibility of back border.
+  # @param VISIBLE A boolean value if the border should be set visible or not.
+  def display_back_border(self, VISIBLE):
+    if VISIBLE:
+      self.back_border.GroupNames.value[0] = "display_group"
+    else:
+      self.back_border.GroupNames.value[0] = "do_not_display_group"
+
+
 ## Internal representation of a display slot on a head mounted display. A Slot is one rendering output that can be handled
 # by a display, for HMDs usually one per device.
 class SlotHMD(Slot):
@@ -160,9 +263,9 @@ class SlotHMD(Slot):
   # @param SLOT_ID Identification number of the slot within the display.
   # @param SCREEN_NUM Number of the screen / display on the platform.
   # @param STEREO Boolean indicating if the slot to be created is a stereo one.
-  # @param PLATFORM_NODE Scenegraph transformation node of the platform where the slot is to be appended to.
-  def __init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE):
-    Slot.__init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM_NODE)
+  # @param PLATFORM Platform instance to which the slot is to be appended to.
+  def __init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM):
+    Slot.__init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM)
 
     self.left_screen = avango.gua.nodes.ScreenNode(Name = "screenL")
     self.left_screen.Width.value = DISPLAY.size[0] / 2

@@ -68,6 +68,7 @@ class Slot:
     ## @var slot_scale_node
     # Scenegraph node representing this slot's scale. Is below slot_node.
     self.slot_scale_node = avango.gua.nodes.TransformNode(Name = "scale")
+    self.slot_scale_node.Transform.connect_from(self.PLATFORM.sf_scale_mat)
     self.slot_node.Children.value = [self.slot_scale_node]
 
     ##

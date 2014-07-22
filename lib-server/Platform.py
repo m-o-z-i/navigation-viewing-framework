@@ -42,6 +42,11 @@ class Platform(avango.script.Script):
   sf_scale = avango.SFFloat()
   sf_scale.value = 1.0
 
+  ## @var sf_scale_mat
+  # The current scaling matrix of this platform.
+  sf_scale_mat = avango.gua.SFMatrix4()
+  sf_scale_mat.value = avango.gua.make_scale_mat(sf_scale.value)
+
   ## @var hosts_visited
   # List of hostnames on which a client daemon was already launched. Used to avoid double launching.
   hosts_visited = []
@@ -365,10 +370,7 @@ class Platform(avango.script.Script):
   @field_has_changed(sf_scale)
   def sf_scale_values_changed(self):
 
-    pass
-    #_scale = self.sf_scale.value
-    
-    #self.platform_scale_transform_node.Transform.value = avango.gua.make_scale_mat(_scale)
+    self.sf_scale_mat.value = avango.gua.make_scale_mat(self.sf_scale.value)
 
 
   ## Creates a plane in front of the user used for displaying coupling messages.

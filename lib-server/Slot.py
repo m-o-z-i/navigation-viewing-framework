@@ -10,9 +10,16 @@ import avango.gua
 # import framework libraries
 from BorderObserver import *
 
+# import python libraries
+import time
+
 ## Internal representation of a display slot. A Slot is one rendering output that can be handled
 # by a display. User can have multiple slots to obtain a brighter image.
-class Slot:
+class Slot(avango.script.Script):
+
+  ## Default constructor.
+  def __init__(self):
+    self.super(Slot).__init__()
 
   ## Custom constructor.
   # @param DISPLAY Display instance for which this slot is being created.
@@ -20,7 +27,11 @@ class Slot:
   # @param SCREEN_NUM Number of the screen / display on the platform.
   # @param STEREO Boolean indicating if the slot to be created is a stereo one.
   # @param PLATFORM Platform instance to which the slot is to be appended to.
-  def __init__(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM):
+  def my_constructor(self, DISPLAY, SLOT_ID, SCREEN_NUM, STEREO, PLATFORM):
+
+    ## @var start_time
+    # Time when a decoupling notifier was displayed.
+    self.start_time = None
 
     ## @var slot_id
     # Identification number of the slot within the display.
@@ -34,8 +45,8 @@ class Slot:
     # Boolean indicating if this slot is a stereo one.
     self.stereo = STEREO
 
-    ##
-    #
+    ## @var PLATFORM
+    # Platform instance to which the slot is to be appended to.
     self.PLATFORM = PLATFORM
 
     ## @var PLATFORM_NODE
@@ -116,6 +127,7 @@ class Slot:
 
     self.append_platform_border_nodes()
     self.create_coupling_status_overview()
+    self.create_coupling_plane()
 
   ## Sets the transformation values of left and right eye.
   # @param VALUE The eye distance to be applied.
@@ -372,20 +384,100 @@ class Slot:
         self.update_coupling_status_overview()
         
         if SHOW_NOTIFICATION:
-          pass
+          
           # display notification that a user was decoupled
-          #self.coupling_plane_node.GroupNames.value[0] = "display_group"
-          #self.coupling_plane_node.Material.value = "data/materials/DecouplingPlane.gmd"
+          self.coupling_plane_node.GroupNames.value[0] = "display_group"
+          self.coupling_plane_node.Material.value = "data/materials/DecouplingPlane.gmd"
 
           # display color of decoupled navigation
-          #self.decoupling_notifier.GroupNames.value[0] = "display_group"
-          #self.decoupling_notifier.Material.value = 'data/materials/' + NAVIGATION.trace_material + 'Shadeless.gmd'
+          self.decoupling_notifier.GroupNames.value[0] = "display_group"
+          self.decoupling_notifier.Material.value = 'data/materials/' + NAVIGATION.trace_material + 'Shadeless.gmd'
 
           # add user to watchlist such that the notifications are removed again after a certain
           # amount of time
-          #self.start_time = self.timer.Time.value
+          self.start_time = time.time()
 
         break
+
+  ## Creates a plane in front of the user used for displaying coupling messages.
+  def create_coupling_plane(self):
+    
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    ## @var message_plane_node
+    # Transform node combining coupling and decoupling message geometry nodes.
+    self.message_plane_node = avango.gua.nodes.TransformNode(Name = "message_plane_node")
+
+    # set transform values and extend scenegraph
+    self.handle_message_plane_node()
+
+    ## @var coupling_plane_node
+    # Geometry node representing a plane for displaying messages to users.
+    # Visibility will be toggled by StatusManager.
+    self.coupling_plane_node = _loader.create_geometry_from_file('notification_geometry',
+                                                                 'data/objects/plane.obj',
+                                                                 'data/materials/CouplingPlane.gmd',
+                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.coupling_plane_node.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.coupling_plane_node.Transform.value = avango.gua.make_scale_mat(0.6 * self.screen.Width.value, 0.1, 0.2 * self.screen.Height.value)
+
+    self.coupling_plane_node.GroupNames.value = ["do_not_display_group", "p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+
+    self.message_plane_node.Children.value.append(self.coupling_plane_node)
+
+    ## @var decoupling_notifier
+    # Geometry node representing a plane showing the color of a navigation that was recently decoupled.
+    # Actual material and visibility will be toggled by StatusManager.
+    self.decoupling_notifier = _loader.create_geometry_from_file('decoupling_notifier',
+                                                                 'data/objects/plane.obj',
+                                                                 'data/materials/AvatarWhiteShadeless.gmd',
+                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.decoupling_notifier.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.decoupling_notifier.Transform.value =  avango.gua.make_trans_mat(0.0, 0.0, -0.2 * self.screen.Height.value) * \
+                                                avango.gua.make_scale_mat(self.screen.Height.value * 0.1, self.screen.Height.value * 0.1, self.screen.Height.value * 0.1)
+
+    self.decoupling_notifier.GroupNames.value = ["do_not_display_group", "p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+
+    self.message_plane_node.Children.value.append(self.decoupling_notifier)
+
+  ## Correctly places and appends the message plane node in and to the scenegraph.
+  def handle_message_plane_node(self):
+    self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0) * \
+                                              avango.gua.make_rot_mat(90, 1, 0, 0)
+    # append to primary screen
+    self.screen.Children.value.append(self.message_plane_node)
+
+  ## Displays the coupling plane with the "Coupling" texture.
+  def show_coupling_plane(self):
+
+    # display coupling plane
+    self.coupling_plane_node.Material.value = "data/materials/CouplingPlane.gmd"
+    self.coupling_plane_node.GroupNames.value[0] = "display_group"
+
+    # hide decoupling notifier if it isn't already
+    self.decoupling_notifier.GroupNames.value[0] = "do_not_display_group"
+
+  ## Hides the coupling plane.
+  def hide_coupling_plane(self):
+    self.coupling_plane_node.GroupNames.value[0] = "do_not_display_group"
+
+  ## Evaluated every frame.
+  def evaluate(self):
+
+    # if a time update is required
+    if self.start_time != None:
+      
+      # hide decoupling notifiers again after a certain amount of time
+      if time.time() - self.start_time > 3.0:
+
+        # hide message plane and reset its material
+        self.coupling_plane_node.GroupNames.value[0] = "do_not_display_group"
+
+        # hide decoupling notifier
+        self.decoupling_notifier.GroupNames.value[0] = "do_not_display_group"
+
+        self.start_time = None
+
 
 ## Internal representation of a display slot on a head mounted display. A Slot is one rendering output that can be handled
 # by a display, for HMDs usually one per device.

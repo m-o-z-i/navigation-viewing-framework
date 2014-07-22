@@ -33,10 +33,6 @@ class Platform(avango.script.Script):
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
 
-  ## @var timer
-  # A timer instance to get the current time in seconds.
-  timer = avango.nodes.TimeSensor()
-
   ## @var sf_scale
   # The current scaling factor of this platform.
   sf_scale = avango.SFFloat()
@@ -59,14 +55,9 @@ class Platform(avango.script.Script):
     # Debug flag saying if client processes should be started.
     self.start_clients = True
 
-    ## @var start_time
-    # Time when a decoupling notifier was displayed.
-    self.start_time = None
-
     ## @var screens
     # List of ScreenNode instances which are appended to this platform.
     self.screens = []
-    
 
   ## Custom constructor.
   # @param NET_TRANS_NODE Reference to the net matrix node in the scenegraph for distribution.
@@ -179,11 +170,12 @@ class Platform(avango.script.Script):
         
         if _display.stereomode == "HMD":
           # create hmd slot
-          _slot = SlotHMD(_display,
-                          _string_num,
-                          self.displays.index(_display),
-                          True,
-                          self)
+          _slot = SlotHMD()
+          _slot.my_constructor(_display,
+                               _string_num,
+                               self.displays.index(_display),
+                               True,
+                               self)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
           #self.screens.append(_slot.left_screen)
@@ -191,21 +183,23 @@ class Platform(avango.script.Script):
 
         if _display.stereo == True:
           # create stereo slot
-          _slot = Slot(_display,
-                       _string_num,
-                       self.displays.index(_display),
-                       True,
-                       self)
+          _slot = Slot()
+          _slot.my_constructor(_display,
+                               _string_num,
+                               self.displays.index(_display),
+                               True,
+                               self)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display) 
 
         else:
           # create mono slot
-          _slot = Slot(_display,
-                       _string_num,
-                       self.displays.index(_display),
-                       False,
-                       self)
+          _slot = Slot()
+          _slot.my_constructor(_display,
+                               _string_num,
+                               self.displays.index(_display),
+                               True,
+                               self)
           self.slot_list.append(_slot)
           SLOT_MANAGER.register_slot(_slot, _display)
 
@@ -275,88 +269,7 @@ class Platform(avango.script.Script):
 
     self.sf_scale_mat.value = avango.gua.make_scale_mat(self.sf_scale.value)
 
-  '''
-  ## Creates a plane in front of the user used for displaying coupling messages.
-  def create_coupling_plane(self):
-    
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var message_plane_node
-    # Transform node combining coupling and decoupling message geometry nodes.
-    self.message_plane_node = avango.gua.nodes.TransformNode(Name = "message_plane_node")
-
-    # set transform values and extend scenegraph
-    self.handle_message_plane_node()
-
-    ## @var coupling_plane_node
-    # Geometry node representing a plane for displaying messages to users.
-    # Visibility will be toggled by StatusManager.
-    self.coupling_plane_node = _loader.create_geometry_from_file('notification_geometry',
-                                                                 'data/objects/plane.obj',
-                                                                 'data/materials/CouplingPlane.gmd',
-                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.coupling_plane_node.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.coupling_plane_node.Transform.value = avango.gua.make_scale_mat(0.6 * self.screens[0].Width.value, 0.1, 0.2 * self.screens[0].Height.value)
-
-    self.coupling_plane_node.GroupNames.value = ["do_not_display_group", "platform_group_" + str(self.platform_id)]
-
-    self.message_plane_node.Children.value.append(self.coupling_plane_node)
-
-    ## @var decoupling_notifier
-    # Geometry node representing a plane showing the color of a navigation that was recently decoupled.
-    # Actual material and visibility will be toggled by StatusManager.
-    self.decoupling_notifier = _loader.create_geometry_from_file('decoupling_notifier',
-                                                                 'data/objects/plane.obj',
-                                                                 'data/materials/AvatarWhiteShadeless.gmd',
-                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.decoupling_notifier.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.decoupling_notifier.Transform.value =  avango.gua.make_trans_mat(0.0, 0.0, -0.2 * self.screens[0].Height.value) * \
-                                                avango.gua.make_scale_mat(self.screens[0].Height.value * 0.1, self.screens[0].Height.value * 0.1, self.screens[0].Height.value * 0.1)
-
-    self.decoupling_notifier.GroupNames.value = ["do_not_display_group", "platform_group_" + str(self.platform_id)]
-
-    self.message_plane_node.Children.value.append(self.decoupling_notifier)
-
-  ## Correctly places and appends the message plane node in and to the scenegraph.
-  def handle_message_plane_node(self):
-    self.message_plane_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0) * \
-                                              avango.gua.make_rot_mat(90, 1, 0, 0)
-    # append to primary screen
-    self.screens[0].Children.value.append(self.message_plane_node)
-
-  ## Displays the coupling plane with the "Coupling" texture.
-  def show_coupling_plane(self):
-
-    # display coupling plane
-    self.coupling_plane_node.Material.value = "data/materials/CouplingPlane.gmd"
-    self.coupling_plane_node.GroupNames.value[0] = "display_group"
-
-    # hide decoupling notifier if it isn't already
-    self.decoupling_notifier.GroupNames.value[0] = "do_not_display_group"
-
-  ## Hides the coupling plane.
-  def hide_coupling_plane(self):
-    self.coupling_plane_node.GroupNames.value[0] = "do_not_display_group"
-  '''
-
   ## Updates the nettrans node. Used to replace pseudo nettrans.
   # @param NET_TRANS_NODE The new nettrans node to be set.
   def update_nettrans_node(self, NET_TRANS_NODE):
     self.NET_TRANS_NODE = NET_TRANS_NODE
-
-  ## Evaluated every frame.
-  def evaluate(self):
-
-    # if a time update is required
-    if self.start_time != None:
-      
-      # hide decoupling notifiers again after a certain amount of time
-      if self.timer.Time.value - self.start_time > 3.0:
-
-        # hide message plane and reset its material
-        self.coupling_plane_node.GroupNames.value[0] = "do_not_display_group"
-
-        # hide decoupling notifier
-        self.decoupling_notifier.GroupNames.value[0] = "do_not_display_group"
-
-        self.start_time = None

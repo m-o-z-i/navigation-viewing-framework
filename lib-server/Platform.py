@@ -273,3 +273,26 @@ class Platform(avango.script.Script):
   # @param NET_TRANS_NODE The new nettrans node to be set.
   def update_nettrans_node(self, NET_TRANS_NODE):
     self.NET_TRANS_NODE = NET_TRANS_NODE
+
+  ## Displays the coupling plane with the "Coupling" texture.
+  def show_coupling_plane(self):
+    for _slot in self.slot_list:
+      _slot.show_coupling_plane()
+
+  ## Hides the coupling plane.
+  def hide_coupling_plane(self):
+    for _slot in self.slot_list:
+      _slot.hide_coupling_plane()
+
+  ## Displays coupling status notifiers for all navigations in COUPLED_NAVIGATION_LIST
+  # @param COUPLED_NAVIGATION_LIST List of Navigation instances that are now coupled.
+  def display_coupling(self, COUPLED_NAVIGATION_LIST):
+    for _slot in self.slot_list:
+      _slot.display_coupling(COUPLED_NAVIGATION_LIST)
+
+  ## Removes a platform indicator from the coupling display and shows a message to all other platforms.
+  # @param NAVIGATION The Navigation instance to be removed from all couplings.
+  # @param SHOW_NOTIFICATION Boolean saying if a notification should be displayed to all other platforms involved.
+  def remove_from_coupling_display(self, NAVIGATION, SHOW_NOTIFICATION):
+    for _slot in self.slot_list:
+      _slot.remove_from_coupling_display(NAVIGATION, SHOW_NOTIFICATION)

@@ -129,6 +129,9 @@ class Slot(avango.script.Script):
     self.create_coupling_status_overview()
     self.create_coupling_plane()
 
+    # set evaluation policy
+    self.always_evaluate(True)
+
   ## Sets the transformation values of left and right eye.
   # @param VALUE The eye distance to be applied.
   def set_eye_distance(self, VALUE):

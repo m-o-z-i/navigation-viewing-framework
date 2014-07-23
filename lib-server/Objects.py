@@ -141,18 +141,18 @@ class SceneObject:
 
   # functions
   def get_scene_manager(self):
-  
+
     return self.SCENE_MANAGER
-    
+
 
   def get_scenegraph(self):
-  
+
     return self.SCENEGRAPH
 
 
   def get_net_trans_node(self):
-  
-    return self.NET_TRANS_NODE   
+
+    return self.NET_TRANS_NODE
 
   ## Returns a string of all concatenated pipeline values for this SceneObject.
   def get_pipeline_value_string(self):
@@ -198,13 +198,13 @@ class SceneObject:
 
     _node = _loader.create_geometry_from_file(NAME, FILENAME, MATERIAL, eval(_loader_flags))
     _node.Transform.value = MATRIX
-  
+
     #print "LOADED", _node, _node.Name.value#, _loader_flags
-  
+
     self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, True)
 
-   
-  def init_light(self, 
+
+  def init_light(self,
                 TYPE = 0,
                 NAME = "light",
                 MATRIX = avango.gua.make_identity_mat(),
@@ -231,11 +231,11 @@ class SceneObject:
       _light_node.ShadowOffset.value = 0.002
       _light_node.ShadowCascadedSplits.value = [0.2, 3, 10, 50, 150]
 
-      MANIPULATION_PICK_FLAG = False # sun light not pickable (infinite position) 
+      MANIPULATION_PICK_FLAG = False # sun light not pickable (infinite position)
 
     elif TYPE == 1: # point light
       _light_node = avango.gua.nodes.PointLightNode()
-      _light_node.Falloff.value = FALLOFF # exponent      
+      _light_node.Falloff.value = FALLOFF # exponent
 
     elif TYPE == 2: # spot light
       _light_node = avango.gua.nodes.SpotLightNode()
@@ -255,7 +255,7 @@ class SceneObject:
     # init light object (incl. light source)
     if TYPE == 0: # sun light
       _light_node.Transform.value = MATRIX
-    
+
       self.init_interactive_objects(_light_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
 
     elif TYPE == 1 or TYPE == 2: # point light or spot light
@@ -267,20 +267,20 @@ class SceneObject:
         _filename = "data/objects/lamp.obj"
 
       _loader = avango.gua.nodes.TriMeshLoader()
-  
+
       _light_geometry = _loader.create_geometry_from_file(_light_node.Name.value + "_geometry", _filename, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
       _light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
       #_light_geometry.Transform.value = avango.gua.make_scale_mat(4.0)
       _light_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
       _light_geometry.GroupNames.value.append("man_pick_group") # prepare light geometry for picking
-      
+
       if ENABLE_LIGHT_GEOMETRY == False:
         _light_geometry.GroupNames.value.append("do_not_display_group")
-  
+
       _node = avango.gua.nodes.TransformNode(Name = _light_node.Name.value)
       _node.Children.value = [_light_node, _light_geometry]
       _node.Transform.value = MATRIX
-      
+
       _light_node.Transform.value = avango.gua.make_scale_mat(LIGHT_DIMENSIONS)
 
       self.init_interactive_objects(_node, PARENT_NODE, False, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
@@ -290,43 +290,43 @@ class SceneObject:
 
 
   def init_group(self, NAME, MATRIX, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP):
- 
+
     _node = avango.gua.nodes.TransformNode()
-    _node.Name.value = NAME    
+    _node.Name.value = NAME
     _node.Transform.value = MATRIX
- 
+
     self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
- 
- 
+
+
 
   def init_kinect(self, NAME, FILENAME, MATRIX, PARENT_NODE, RENDER_GROUP):
- 
+
     _loader = avango.gua.nodes.Video3DLoader()
     _node = _loader.load(NAME, FILENAME)
     _node.Transform.value = MATRIX
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
- 
+
     self.init_interactive_objects(_node, PARENT_NODE, False, False, RENDER_GROUP, False)
 
 
   def init_plod(self, NAME, FILENAME, MATRIX, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP):
- 
+
     _loader = avango.gua.nodes.PLODLoader()
     _loader.UploadBudget.value = 32
     _loader.RenderBudget.value = 1024
-    _loader.OutOfCoreBudget.value = 4096    
+    _loader.OutOfCoreBudget.value = 4096
 
     _loader_flags = "avango.gua.PLODLoaderFlags.DEFAULTS" # default loader flags
 
     #_loader_flags += " | avango.gua.PLODLoaderFlags.NORMALIZE_POSITION | avango.gua.PLODLoaderFlags.NORMALIZE_SCALE"
-    
+
     if GROUNDFOLLOWING_PICK_FLAG == True or MANIPULATION_PICK_FLAG == True:
-      _loader_flags += " | avango.gua.PLODLoaderFlags.MAKE_PICKABLE"      
+      _loader_flags += " | avango.gua.PLODLoaderFlags.MAKE_PICKABLE"
 
     _node = _loader.create_geometry_from_file(NAME, FILENAME, eval(_loader_flags))
     _node.Transform.value = MATRIX
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
- 
+
     self.init_interactive_objects(_node, PARENT_NODE, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP, False)
 
 
@@ -356,11 +356,11 @@ class SceneObject:
       else: # geometry
         _object = InteractiveObject()
         _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
-  
+
     else:
       _object = InteractiveObject()
       _object.base_constructor(self, NODE, PARENT_OBJECT, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, RENDER_GROUP)
-  
+
 
 
   def register_interactive_object(self, INTERACTIVE_OBJECT):
@@ -368,40 +368,40 @@ class SceneObject:
     self.objects.append(INTERACTIVE_OBJECT)
 
 
-  '''
+
   def get_object(self, NAME):
-  
+
     _node = self.SCENEGRAPH[self.scene_root.Path.value + "/" + NAME]
 
     if _node != None:
-      
+
       if _node.has_field("InteractiveObject") == True:
 
         return _node.InteractiveObject.value
-  '''
+
 
   def get_interactive_object(self, NAME):
-  
+
     for _object in self.objects:
 
       if _object.get_node().Name.value == NAME:
         return _object
-    
+
 
 
   ## Enables all objects in the scene.
   # @param FLAG Boolean indicating if all objects should be reset first.
   def enable_scene(self, FLAG):
-  
+
     if FLAG == True:
       self.reset()
-  
+
     for _object in self.objects:
       _object.enable_object(FLAG)
-    
+
   ## Resets all objects in the scene.
   def reset(self):
-  
+
     for _object in self.objects:
       _object.reset()
 
@@ -418,12 +418,12 @@ class InteractiveObject(avango.script.Script):
   def __init__(self):
     self.super(InteractiveObject).__init__()
 
-    # variables    
+    # variables
     self.hierarchy_level = 0
     self.render_group = ""
     self.parent_object = None
     self.child_objects = []
-    
+
 
   ## Custom constructor.
   # @param SCENE_MANAGER Reference to the SceneManager instance which is used.
@@ -440,11 +440,11 @@ class InteractiveObject(avango.script.Script):
 
     self.SCENE.register_interactive_object(self)
 
-    # update variables    
+    # update variables
     self.parent_object = PARENT_OBJECT
     self.render_group = RENDER_GROUP
     self.node = NODE
-        
+
     self.node.add_and_init_field(avango.script.SFObject(), "InteractiveObject", self)
     self.node.InteractiveObject.dont_distribute(True)
 
@@ -467,7 +467,7 @@ class InteractiveObject(avango.script.Script):
     else: # scene root
       #print "append to scene root"
       self.parent_object.Children.value.append(self.node)
-    
+
     #print "new object", self, self.hierarchy_level, self.node, self.node.Name.value, self.node.Transform.value.get_translate(), self.parent_object
 
     # init sub classes
@@ -481,13 +481,13 @@ class InteractiveObject(avango.script.Script):
 
   ## Returns the node member.
   def get_node(self):
-    
+
     return self.node
 
   ## Enables or disables this object.
   # @param FLAG Boolean indicating the activation or deactivation process.
   def enable_object(self, FLAG):
-  
+
     if FLAG == True: # enable object
       self.node.GroupNames.value = [self.render_group] # set geometry visible
 
@@ -496,26 +496,26 @@ class InteractiveObject(avango.script.Script):
 
       if self.man_pick_flag == True:
         self.node.GroupNames.value.append("man_pick_group")
-      
+
       #for _child in self.node.Children.value:
       #  _child.GroupNames.value = [] # set geometry visible
-    
+
       #self.enable_highlight(True)
-    
+
     else: # disable object
       self.node.GroupNames.value = ["do_not_display_group"] # set geometry invisible
-      
+
       self.enable_highlight(False)
-      
+
       #for _child in self.transform.Children.value:
       #  _child.GroupNames.value = ["invisible_group"] # set geometry invisible
 
   ## Enables or disables the highlight for this object.
   # @param FLAG Boolean indicating the activation or deactivation process.
   def enable_highlight(self, FLAG):
-      
+
     self.sf_highlight_flag.value = FLAG
-        
+
     # highlight/dehighlight subgraph
     for _child_object in self.child_objects:
       _child_object.enable_highlight(FLAG)
@@ -561,39 +561,39 @@ class InteractiveObject(avango.script.Script):
   ## Sets the world ransformation of the handled scenegraph node.
   def set_world_transform(self, MATRIX):
 
-    if self.parent_object.get_type() == "Objects::InteractiveObject": # interactive object    
+    if self.parent_object.get_type() == "Objects::InteractiveObject": # interactive object
       _parent_world_transform = self.parent_object.get_world_transform()
-  
+
       _mat = avango.gua.make_inverse_mat(_parent_world_transform) * MATRIX # matrix is transformed into world coordinate system of parent object in scenegraph
-  
+
       self.set_local_transform(_mat)
-    
+
     else: # scene root
-      
+
       self.set_local_transform(MATRIX)
 
   ## Resets the interactive object to the initial matrix.
   def reset(self):
-      
+
     self.set_local_transform(self.home_mat)
 
     self.bb_vis.calc_bb()
 
   ## Returns the material string belonging to this object's hierarchy level.
   def get_hierarchy_material(self):
-  
+
     return self.SCENE.get_scene_manager().get_hierarchy_material(self.hierarchy_level)
-    
-  
+
+
   ## Gets the parent object of this interactive object or returns None if there isn't any.
   def get_parent_object(self):
-    
+
     if self.parent_object.get_type() == "Objects::InteractiveObject": # interactive object
-      
+
       return self.parent_object
 
     else: # scene root
-    
+
       return None
 
   ## Returns all objects which are located at this or a higher hierarchy level.
@@ -602,13 +602,13 @@ class InteractiveObject(avango.script.Script):
 
     if self.hierarchy_level == HIERARCHY_LEVEL:
       return self
-    
+
     else:
-    
+
       if self.parent_object.get_type() == "Objects::InteractiveObject": # interactive object
         return self.parent_object.get_higher_hierarchical_object(HIERARCHY_LEVEL)
 
       else: # scene root
         return None
 
-    
+

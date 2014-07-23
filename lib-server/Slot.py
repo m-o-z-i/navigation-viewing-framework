@@ -196,28 +196,6 @@ class Slot(avango.script.Script):
     # connect tracking matrix
     self.head_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
 
-    # trigger correct avatar visibilities
-    if self.PLATFORM.avatar_type == "joseph":
-
-      if self.PLATFORM.get_slots_of(USER_INSTANCE) == []:
-        self.head_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_head_mat)
-        self.body_avatar.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_avatar_body_mat)
-        self.head_avatar.GroupNames.value.remove('do_not_display_group')
-        self.body_avatar.GroupNames.value.remove('do_not_display_group')
-
-    elif self.PLATFORM.avatar_type.endswith(".ks"):
-
-      if USER_INSTANCE.use_group_navigation == False:
-        if self.PLATFORM.get_slots_of(USER_INSTANCE) == []:
-
-          self.video_geode.GroupNames.value.remove('do_not_display_group')
-
-      else:
-        if self.PLATFORM.video_avatar_visible() == False:
-
-          self.video_geode.GroupNames.value.remove('do_not_display_group')
-
-
     self.assigned_user = USER_INSTANCE
 
     if self.stereo:
@@ -255,26 +233,6 @@ class Slot(avango.script.Script):
       self.information_node.Name.value = "None"
       self.information_node.Transform.value = avango.gua.make_identity_mat()
       self.no_tracking_node.Transform.value = avango.gua.make_identity_mat()
-
-  ## Shows the avatars if a user is assigned.
-  def show_avatars(self):
-
-    if self.assigned_user != None:
-
-      if self.PLATFORM.avatar_type == "joseph":
-        self.head_avatar.GroupNames.value.remove('do_not_display_group')
-        self.body_avatar.GroupNames.value.remove('do_not_display_group')
-      elif self.PLATFORM.avatar_type.endswith(".ks"):
-        self.video_geode.GroupNames.value.remove('do_not_display_group')
-
-  ## Hides the avatars of this slot.
-  def hide_avatars(self):
-
-    if self.PLATFORM.avatar_type == "joseph":
-      self.head_avatar.GroupNames.value.append('do_not_display_group')
-      self.body_avatar.GroupNames.value.append('do_not_display_group')
-    elif self.PLATFORM.avatar_type.endswith(".ks"):
-      self.video_geode.GroupNames.value.append('do_not_display_group')
 
   ## Appends the four platform border nodes to slot_scale_nodes and create a BorderObserver.
   def append_platform_border_nodes(self):
@@ -576,6 +534,32 @@ class Slot(avango.script.Script):
     if self.assigned_user != None:
       self.slot_node.Transform.value = self.assigned_user.matrices_per_platform[self.PLATFORM.platform_id]
       self.slot_scale_node.Transform.value = avango.gua.make_scale_mat(self.assigned_user.scales_per_platform[self.PLATFORM.platform_id])
+
+      # trigger correct avatar visibilities
+      if self.PLATFORM.avatar_type == "joseph":
+
+        if len(self.PLATFORM.get_slots_of(self.assigned_user)) == 1:
+          if 'do_not_display_group' in self.head_avatar.GroupNames.value:
+            self.head_avatar.Transform.disconnect()
+            self.head_avatar.Transform.disconnect()
+            self.head_avatar.Transform.connect_from(self.assigned_user.headtracking_reader.sf_avatar_head_mat)
+            self.body_avatar.Transform.connect_from(self.assigned_user.headtracking_reader.sf_avatar_body_mat)
+            self.head_avatar.GroupNames.value.remove('do_not_display_group')
+            self.body_avatar.GroupNames.value.remove('do_not_display_group')
+
+      elif self.PLATFORM.avatar_type.endswith(".ks"):
+
+        if self.assigned_user.use_group_navigation[self.PLATFORM.platform_id] == False:
+          if len(self.PLATFORM.get_slots_of(self.assigned_user)) == 1 and \
+            'do_not_display_group' in self.video_geode.GroupNames.value:
+
+            self.video_geode.GroupNames.value.remove('do_not_display_group')
+
+        else:
+          if self.PLATFORM.video_avatar_visible() == False and \
+             'do_not_display_group' in self.video_geode.GroupNames.value:
+
+            self.video_geode.GroupNames.value.remove('do_not_display_group')
 
     # if a time update is required
     if self.start_time != None:

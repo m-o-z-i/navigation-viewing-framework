@@ -30,7 +30,7 @@ import subprocess
 # Therefore, an instance of ConfigFileParser is created and used.
 
 class ApplicationManager():
-  
+
   ## @var viewer
   # The guacamole viewer to be used for rendering.
   viewer = avango.gua.nodes.Viewer()
@@ -51,7 +51,7 @@ class ApplicationManager():
     , CONFIG_FILE
     , START_CLIENTS
     ):
-    
+
     # parameters
     ## @var background_texture
     # The skymap to be used for all pipelines.
@@ -101,7 +101,7 @@ class ApplicationManager():
     ## @var config_file_parser
     # Instance of ConfigFileParser in order to load and parse an XML configuration file.
     self.config_file_parser = ConfigFileParser(self)
-    self.config_file_parser.parse(CONFIG_FILE)    
+    self.config_file_parser.parse(CONFIG_FILE)
 
     # care for correct slot assignment
     self.slot_manager.update_slot_configuration()
@@ -128,7 +128,7 @@ class ApplicationManager():
     #self.screen.Width.value = 160/1.5 * 0.1
     #self.screen.Height.value = 100/1.5 * 0.1
     self.screen.Width.value = 160/1.5 * 0.85
-    self.screen.Height.value = 100/1.5 * 0.85    
+    self.screen.Height.value = 100/1.5 * 0.85
     self.server_transform.Children.value.append(self.screen)
 
     ## @var camera
@@ -166,8 +166,8 @@ class ApplicationManager():
     self.pipeline.EnableFrustumCulling.value = True
     self.pipeline.EnableSsao.value = False
     self.pipeline.EnableFPSDisplay.value = True
-    #self.pipeline.Enabled.value = False
-    
+    self.pipeline.Enabled.value = False
+
     # add pipeline and scenegraph to viewer
     self.viewer.Pipelines.value = [self.pipeline]
     self.viewer.SceneGraphs.value = [self.SCENEGRAPH]
@@ -206,7 +206,7 @@ class ApplicationManager():
     , CONFIG_FILE
     , DEVICE_TRACKING_NAME = None
     ):
-    
+
     # convert list of parsed display strings to the corresponding instances
     _display_instances = []
     _displays_found = list(DISPLAYS)
@@ -221,7 +221,7 @@ class ApplicationManager():
         if _display_instance.name == DISPLAYS[_i]:
           _display_instances.append(_display_instance)
           _displays_found[_i] = True
-    
+
     # check if all display instances were found
     for _i in range(len(_displays_found)):
       if _displays_found[_i] == False:
@@ -292,10 +292,10 @@ class ApplicationManager():
         self.create_border_observer(_checked_borders, _user, self.navigation_list[PLATFORM_ID].platform)
       else:
         self.border_observer_list[PLATFORM_ID].add_user(_user)
-   
+
 
   ## Creates a BorderObserver instance for a Platform and adds a User to it.
-  # @param CHECKED_BORDERS A list of four booleans to indicate which borders of the platform should be checked: 
+  # @param CHECKED_BORDERS A list of four booleans to indicate which borders of the platform should be checked:
   #                        [display_left_border, display_right_border, display_front_border, display_back_border]
   # @param USER_INSTANCE A first User to be appended to the new BorderObserver.
   # @param PLATFORM_INSTANCE The platform to which the BorderObserver should belong to.

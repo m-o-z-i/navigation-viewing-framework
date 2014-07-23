@@ -14,6 +14,7 @@ import avango.daemon
 import Tools
 from Scene import *
 from ConsoleIO import *
+from Scene_Hyperspace import *
 
 # import python libraries
 # ...
@@ -32,7 +33,7 @@ class SceneManager(avango.script.Script):
   ## @var sf_key2
   # Boolean field representing the key for scene 2.
   sf_key2 = avango.SFBool()
-  
+
   ## @var sf_key3
   # Boolean field representing the key for scene 3.
   sf_key3 = avango.SFBool()
@@ -97,7 +98,7 @@ class SceneManager(avango.script.Script):
     # init field connections
     self.sf_key1.connect_from(self.keyboard_sensor.Button10) # key 1
     self.sf_key2.connect_from(self.keyboard_sensor.Button11) # key 2
-    self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3       
+    self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3
     self.sf_key4.connect_from(self.keyboard_sensor.Button13) # key 4
     self.sf_key5.connect_from(self.keyboard_sensor.Button14) # key 5
     self.sf_key6.connect_from(self.keyboard_sensor.Button15) # key 6
@@ -126,25 +127,20 @@ class SceneManager(avango.script.Script):
     self.pipeline_info_node = avango.gua.nodes.TransformNode()
     _pipeline_value_node.Children.value.append(self.pipeline_info_node)
 
-    # init scenes   
-    #self.scene_weimar = SceneWeimar(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-
-    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_plod = ScenePLOD(self, SCENEGRAPH, NET_TRANS_NODE)
-
-    self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_golf = SceneGolfEngine(self, SCENEGRAPH, NET_TRANS_NODE)                    
-    #self.scene_terrakotta = SceneTerrakotta(self, SCENEGRAPH, NET_TRANS_NODE)                    
-    
-    #self.scene_vianden_low = SceneViandenLow(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_vianden_high = SceneViandenHigh(self, SCENEGRAPH, NET_TRANS_NODE)
+    # init scenes
+    self.scene_hyperspace0 = SceneVRHyperspace0(self, SCENEGRAPH, NET_TRANS_NODE) # default plane
+    #self.scene_hyperspace1 = SceneVRHyperspace1(self, SCENEGRAPH, NET_TRANS_NODE) # entering the plane
+    #self.scene_hyperspace2 = SceneVRHyperspace2(self, SCENEGRAPH, NET_TRANS_NODE) # virtual air steward (flight instructions & bar)
+    #self.scene_hyperspace3 = SceneVRHyperspace3(self, SCENEGRAPH, NET_TRANS_NODE) # transparent plane
+    #self.scene_hyperspace4 = SceneVRHyperspace4(self, SCENEGRAPH, NET_TRANS_NODE) # sky window
+    #self.scene_hyperspace5 = SceneVRHyperspace5(self, SCENEGRAPH, NET_TRANS_NODE) # office meeting
+    #self.scene_hyperspace6 = SceneVRHyperspace6(self, SCENEGRAPH, NET_TRANS_NODE) # office meeting & barchart
+    #self.scene_hyperspace7 = SceneVRHyperspace7(self, SCENEGRAPH, NET_TRANS_NODE) # avatar call
 
     self.activate_scene(0) # activate first scene
 
     #SCENEGRAPH.update_cache()
-        
+
 
   # callbacks
   ## Called whenever sf_key1 changes.
@@ -202,14 +198,14 @@ class SceneManager(avango.script.Script):
 
     if self.sf_key8.value == True: # key pressed
       self.activate_scene(7)
-      
+
   ## Called whenever sf_key9 changes.
   @field_has_changed(sf_key9)
   def sf_key9_changed(self):
 
     if self.sf_key9.value == True: # key pressed
       self.activate_scene(8)
-      
+
   ## Called whenever sf_key0 changes.
   @field_has_changed(sf_key0)
   def sf_key0_changed(self):
@@ -229,11 +225,11 @@ class SceneManager(avango.script.Script):
   ## Sets one of the loaded scene to the active (displayed) one.
   # @param ID The scene id to be activated.
   def activate_scene(self, ID):
-    
+
     # disable all scenes
     for _scene in self.scenes:
       _scene.enable_scene(False)
-  
+
     if ID < len(self.scenes):
       self.active_scene = self.scenes[ID]
       self.active_scene.enable_scene(True)
@@ -255,32 +251,32 @@ class SceneManager(avango.script.Script):
         for _navigation in self.navigation_list:
           _navigation.start_scale = self.active_scene.starting_scale
           _navigation.reset()
-  
+
       print "Switching to Scene: " + self.active_scene.name
-  
+
   ## Prints all the nodes of the active scene on the console.
   def print_active_scene(self):
-  
+
     # print navigation nodes
     for _i, _navigation in enumerate(self.navigation_list):
       print "platform_" + str(_i), _navigation.platform.sf_abs_mat.value.get_translate(), _navigation.platform.sf_abs_mat.value.get_rotate(), _navigation.platform.sf_scale.value
-  
+
     # print interactive objects
     if self.active_scene != None:
-      
+
       for _object in self.active_scene.objects:
         _node = _object.node
-         
+
         print "\n"
         print _node.Name.value
         print _node.Path.value
         print _object.hierarchy_level
         print _node.Transform.value
-  
-  
+
+
   ## Returns the hierarchy material string for a given depth.
   # @param INDEX The material index / depth to be returned.
   def get_hierarchy_material(self, INDEX):
-  
+
     return self.hierarchy_materials[INDEX]
-    
+

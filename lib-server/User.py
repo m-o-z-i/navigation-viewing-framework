@@ -91,17 +91,17 @@ class User(avango.script.Script):
     ## @var use_group_navigation
     # List of booleans saying if this user uses the navigation of the associated platform.
     # When False, an own matrix and own scaling can be provided.
-    self.use_group_navigation = [True for i in range(1, len(self.APPLICATION_MANAGER.navigation_list))]
+    self.use_group_navigation = [True for i in range(len(self.APPLICATION_MANAGER.navigation_list))]
 
     ## @var matrices_per_platform
     # List of matrices for each platform to be used.
     # Can be either the group matrix or an individual one (switchable in use_group_navigation)
-    self.matrices_per_platform = [avango.gua.make_identity_mat() for i in range(1, len(self.APPLICATION_MANAGER.navigation_list))]
+    self.matrices_per_platform = [avango.gua.make_identity_mat() for i in range(len(self.APPLICATION_MANAGER.navigation_list))]
 
     ## @var scales_per_platform
     # List of scalings for each platform to be used.
     # Can be either the group scaling or an individual one (switchable in use_group_navigation)
-    self.scales_per_platform = [avango.gua.make_identity_mat() for i in range(1, len(self.APPLICATION_MANAGER.navigation_list))]
+    self.scales_per_platform = [1.0 for i in range(len(self.APPLICATION_MANAGER.navigation_list))]
 
     ## @var current_display
     # Display instance on which the user physically is currently looking at.
@@ -208,7 +208,7 @@ class User(avango.script.Script):
   def evaluate(self):
 
     # update platform matrix array
-    for _platform_id in range(0, len(self.APPLICATION_MANAGER.navigation_list) - 1):
+    for _platform_id in range(0, len(self.APPLICATION_MANAGER.navigation_list)):
 
       if self.use_group_navigation[_platform_id]:
         self.matrices_per_platform[_platform_id] = self.APPLICATION_MANAGER.navigation_list[_platform_id].platform.sf_abs_mat.value
@@ -332,12 +332,6 @@ class User(avango.script.Script):
       self.head_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
       self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
       self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
-
-      if self.platform.avatar_type != "None" and \
-         self.platform.avatar_type.endswith(".ks") == False:
-        pass
-        #self.append_to_platform(self.head_avatar)
-        #self.append_to_platform(self.body_avatar)
 
       if RESEND_CONFIG:
         self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()

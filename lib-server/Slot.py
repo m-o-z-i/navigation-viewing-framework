@@ -207,7 +207,7 @@ class Slot(avango.script.Script):
 
     elif self.PLATFORM.avatar_type.endswith(".ks"):
 
-      if USER_INSTANCE.use_platform_matrix == False:
+      if USER_INSTANCE.use_group_navigation == False:
         if self.PLATFORM.get_slots_of(USER_INSTANCE) == []:
 
           self.video_geode.GroupNames.value.remove('do_not_display_group')
@@ -575,7 +575,7 @@ class Slot(avango.script.Script):
     # update matrices as given by assigned user
     if self.assigned_user != None:
       self.slot_node.Transform.value = self.assigned_user.matrices_per_platform[self.PLATFORM.platform_id]
-      self.slot_scale_n  # Evaluated every frameode.Transform.value = avango.gua.make_scale_mat(self.assigned_user.scales_per_platform[self.PLATFORM.platform_id])
+      self.slot_scale_node.Transform.value = avango.gua.make_scale_mat(self.assigned_user.scales_per_platform[self.PLATFORM.platform_id])
 
     # if a time update is required
     if self.start_time != None:

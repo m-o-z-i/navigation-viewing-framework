@@ -272,10 +272,11 @@ class Platform(avango.script.Script):
 
     for _slot in self.slot_list:
 
-      if _slot.assigned_user != None and \
-         _slot.assigned_user.use_group_navigation[_slot.PLATFORM.platform_id] == True and \
-         'do_not_display_group' not in _slot.video_geode.GroupNames.value:
+      if _slot.assigned_user != None:
+        
+        if _slot.assigned_user.use_group_navigation[_slot.PLATFORM.platform_id] == True and \
+          'do_not_display_group' not in _slot.video_geode.GroupNames.value:
 
-         return True
+          return True
 
     return False

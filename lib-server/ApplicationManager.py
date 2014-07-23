@@ -276,7 +276,6 @@ class ApplicationManager():
                        , HMD_SENSOR_NAME
                        , EYE_DISTANCE
                        , PLATFORM_ID
-                       , self.navigation_list[PLATFORM_ID].trace_material
                        , WARNINGS
                        )
     self.user_list.append(_user)

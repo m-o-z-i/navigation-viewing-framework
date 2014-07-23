@@ -33,6 +33,10 @@ class Slot(avango.script.Script):
     # Time when a decoupling notifier was displayed.
     self.start_time = None
 
+    ## @var DISPLAY
+    # Display instance for which this slot is being created.
+    self.DISPLAY = DISPLAY
+
     ## @var slot_id
     # Identification number of the slot within the display.
     self.slot_id = SLOT_ID
@@ -59,15 +63,15 @@ class Slot(avango.script.Script):
 
     ## @var shutter_timing
     # A list of opening and closing times of shutter glasses for this slot.
-    if self.stereo and DISPLAY.stereomode == "SIDE_BY_SIDE":
-      self.shutter_timing = DISPLAY.shutter_timings[SLOT_ID]
+    if self.stereo and self.DISPLAY.stereomode == "SIDE_BY_SIDE":
+      self.shutter_timing = self.DISPLAY.shutter_timings[SLOT_ID]
     else:
       self.shutter_timing = None
 
     ## @var shutter_value
     # A list of hexadecimal commands for shutter glasses associated with the timings for this slot.
-    if self.stereo and DISPLAY.stereomode == "SIDE_BY_SIDE":
-      self.shutter_value = DISPLAY.shutter_values[SLOT_ID]
+    if self.stereo and self.DISPLAY.stereomode == "SIDE_BY_SIDE":
+      self.shutter_value = self.DISPLAY.shutter_values[SLOT_ID]
     else:
       self.shutter_value = None
 
@@ -137,7 +141,7 @@ class Slot(avango.script.Script):
 
     ## @var screen
     # Screen of this Slot.
-    self.screen = DISPLAY.create_screen_node("screen")
+    self.screen = self.DISPLAY.create_screen_node("screen")
 
     if self.screen != None:
       self.slot_scale_node.Children.value.append(self.screen)
@@ -195,7 +199,6 @@ class Slot(avango.script.Script):
     
     # connect tracking matrix
     self.head_node.Transform.connect_from(USER_INSTANCE.headtracking_reader.sf_abs_mat)
-
     self.assigned_user = USER_INSTANCE
 
     if self.stereo:
@@ -532,28 +535,27 @@ class Slot(avango.script.Script):
 
     # update matrices as given by assigned user
     if self.assigned_user != None:
+      
       self.slot_node.Transform.value = self.assigned_user.matrices_per_platform[self.PLATFORM.platform_id]
       self.slot_scale_node.Transform.value = avango.gua.make_scale_mat(self.assigned_user.scales_per_platform[self.PLATFORM.platform_id])
 
-      # trigger correct avatar visibilities
+      # trigger correct avatar visibilities on indiviudalization
       # joseph - make avatars visible if no other slot already visualizes the assigned user's avatar
       if self.PLATFORM.avatar_type == "joseph":
 
-        if len(self.PLATFORM.get_slots_of(self.assigned_user)) == 1:
-          if 'do_not_display_group' in self.head_avatar.GroupNames.value:
-            self.head_avatar.Transform.disconnect()
-            self.head_avatar.Transform.disconnect()
-            self.head_avatar.Transform.connect_from(self.assigned_user.headtracking_reader.sf_avatar_head_mat)
-            self.body_avatar.Transform.connect_from(self.assigned_user.headtracking_reader.sf_avatar_body_mat)
-            self.head_avatar.GroupNames.value.remove('do_not_display_group')
-            self.body_avatar.GroupNames.value.remove('do_not_display_group')
+        if not self.PLATFORM.joseph_avatar_visible(self.PLATFORM.get_slots_of(self.assigned_user, self.DISPLAY)):
+          self.head_avatar.Transform.disconnect()
+          self.head_avatar.Transform.disconnect()
+          self.head_avatar.Transform.connect_from(self.assigned_user.headtracking_reader.sf_avatar_head_mat)
+          self.body_avatar.Transform.connect_from(self.assigned_user.headtracking_reader.sf_avatar_body_mat)
+          self.head_avatar.GroupNames.value.remove('do_not_display_group')
+          self.body_avatar.GroupNames.value.remove('do_not_display_group')
 
       # kinect case - show avatar once at group position and one for each individual user
       elif self.PLATFORM.avatar_type.endswith(".ks"):
 
         if self.assigned_user.use_group_navigation[self.PLATFORM.platform_id] == False:
-          if len(self.PLATFORM.get_slots_of(self.assigned_user)) == 1 and \
-            'do_not_display_group' in self.video_geode.GroupNames.value:
+          if not self.PLATFORM.joseph_avatar_visible(self.PLATFORM.get_slots_of(self.assigned_user, self.DISPLAY)):
 
             self.video_geode.GroupNames.value.remove('do_not_display_group')
 

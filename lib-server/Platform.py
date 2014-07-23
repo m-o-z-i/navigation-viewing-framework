@@ -255,17 +255,28 @@ class Platform(avango.script.Script):
     for _slot in self.slot_list:
       _slot.remove_from_coupling_display(NAVIGATION, SHOW_NOTIFICATION)
 
-  ## Returns a list of Slots currently assigned to a User.
+  ## Returns a list of Slots currently assigned to a User on a display.
   # @param USER_INSTANCE The instance of User for which the slots should be determined.
-  def get_slots_of(self, USER_INSTANCE):
+  # @param DISPLAY The display instance to check for assignments of the user.
+  def get_slots_of(self, USER_INSTANCE, DISPLAY):
 
     _return_list = []
 
     for _slot in self.slot_list:
-      if _slot.assigned_user == USER_INSTANCE:
+      if _slot.assigned_user == USER_INSTANCE and _slot.DISPLAY == DISPLAY:
         _return_list.append(_slot)
 
     return _return_list
+
+  ##
+  #
+  def joseph_avatar_visible(self, SLOT_LIST):
+
+    for _slot in SLOT_LIST:
+      if 'do_not_display_group' not in _slot.head_avatar.GroupNames.value:
+        return True
+
+    return False
 
   ## Determines if a video avatar representation is already set visible for the group navigation.
   def video_avatar_visible(self):
@@ -273,7 +284,7 @@ class Platform(avango.script.Script):
     for _slot in self.slot_list:
 
       if _slot.assigned_user != None:
-        
+
         if _slot.assigned_user.use_group_navigation[_slot.PLATFORM.platform_id] == True and \
           'do_not_display_group' not in _slot.video_geode.GroupNames.value:
 

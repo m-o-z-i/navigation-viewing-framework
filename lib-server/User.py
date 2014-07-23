@@ -43,7 +43,6 @@ class User(avango.script.Script):
   # @param HMD_SENSOR_NAME Name of the HMD sensor belonging to the user, if applicable.
   # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param PLATFORM_ID Platform ID to which this user should be appended to.
-  # @param AVATAR_MATERIAL The material string for the user avatar to be created.
   # @param ENABLE_BORDER_WARNINGS Boolean indicating if the user wants platform borders to be displayed.
   def my_constructor(self
                    , APPLICATION_MANAGER
@@ -54,7 +53,6 @@ class User(avango.script.Script):
                    , HMD_SENSOR_NAME
                    , EYE_DISTANCE
                    , PLATFORM_ID
-                   , AVATAR_MATERIAL
                    , ENABLE_BORDER_WARNINGS
                    ):
 
@@ -114,10 +112,6 @@ class User(avango.script.Script):
     ## @var no_tracking_mat
     # The matrix to be applied when no tracking is available.
     self.no_tracking_mat      = self.platform.no_tracking_mat
-    
-    ## @var avatar_material
-    # Material of the user's avatar.
-    self.avatar_material = AVATAR_MATERIAL
 
     ## @var enable_border_warnings
     # Boolean indicating if the user wants platform borders to be displayed.
@@ -315,9 +309,6 @@ class User(avango.script.Script):
 
     if self.APPLICATION_MANAGER.slot_manager.display_has_free_slot(_intended_display):
 
-      self.remove_from_platform(self.head_avatar)
-      self.remove_from_platform(self.body_avatar)
-
       self.platform_id = PLATFORM_ID
       self.platform = _intended_platform
       self.current_display = _intended_display
@@ -325,13 +316,6 @@ class User(avango.script.Script):
       self.transmitter_offset = self.platform.transmitter_offset
       self.no_tracking_mat = self.platform.no_tracking_mat
       self.headtracking_reader.set_transmitter_offset(self.transmitter_offset)
-
-      self.avatar_material = self.APPLICATION_MANAGER.navigation_list[self.platform_id].trace_material
-
-      self.head_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-      self.head_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
-      self.body_avatar.GroupNames.value = ['avatar_group_' + str(self.platform_id)]
-      self.body_avatar.Material.value = 'data/materials/' + self.avatar_material + '.gmd'
 
       if RESEND_CONFIG:
         self.APPLICATION_MANAGER.slot_manager.update_slot_configuration()

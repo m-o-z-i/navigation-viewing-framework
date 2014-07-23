@@ -536,6 +536,7 @@ class Slot(avango.script.Script):
       self.slot_scale_node.Transform.value = avango.gua.make_scale_mat(self.assigned_user.scales_per_platform[self.PLATFORM.platform_id])
 
       # trigger correct avatar visibilities
+      # joseph - make avatars visible if no other slot already visualizes the assigned user's avatar
       if self.PLATFORM.avatar_type == "joseph":
 
         if len(self.PLATFORM.get_slots_of(self.assigned_user)) == 1:
@@ -547,6 +548,7 @@ class Slot(avango.script.Script):
             self.head_avatar.GroupNames.value.remove('do_not_display_group')
             self.body_avatar.GroupNames.value.remove('do_not_display_group')
 
+      # kinect case - show avatar once at group position and one for each individual user
       elif self.PLATFORM.avatar_type.endswith(".ks"):
 
         if self.assigned_user.use_group_navigation[self.PLATFORM.platform_id] == False:

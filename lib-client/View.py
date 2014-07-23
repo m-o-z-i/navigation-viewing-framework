@@ -21,7 +21,7 @@ import time
 
 ## Internal representation of a standard view on client side.
 #
-# Creates viewing setup and initializes a tracking sensor in order to avoid latency 
+# Creates viewing setup and initializes a tracking sensor in order to avoid latency
 # due to distribution in the network. Refers to a StandardUser on server side.
 class View(avango.script.Script):
 
@@ -88,7 +88,7 @@ class View(avango.script.Script):
 
     ## @var window_size
     # Size of the window in which this View will be rendered.
-    self.window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1]) 
+    self.window_size = avango.gua.Vec2ui(DISPLAY_INSTANCE.resolution[0], DISPLAY_INSTANCE.resolution[1])
 
     # create camera
     ## @var camera
@@ -170,12 +170,12 @@ class View(avango.script.Script):
         self.window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
         self.window.RightPosition.value = avango.gua.Vec2ui(self.window_size.x, 0)
         self.window.StereoMode.value = avango.gua.StereoMode.SIDE_BY_SIDE
-      
+
       elif DISPLAY_INSTANCE.stereomode == "ANAGLYPH_RED_CYAN" or DISPLAY_INSTANCE.stereomode == "CHECKERBOARD":
         self.window.Size.value = self.window_size
         self.window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
         self.window.RightPosition.value = avango.gua.Vec2ui(0, 0)
-        
+
         if DISPLAY_INSTANCE.stereomode == "ANAGLYPH_RED_CYAN":
           self.window.StereoMode.value = avango.gua.StereoMode.ANAGLYPH_RED_CYAN
 
@@ -194,6 +194,63 @@ class View(avango.script.Script):
     self.pipeline.Camera.value = self.camera
     self.pipeline.EnableFPSDisplay.value = True
 
+    _pre_pipes = True   # required for transparent seats
+
+    if _pre_pipes:
+      # pre render setup
+      self.pre_camera2 = avango.gua.nodes.Camera()
+      self.pre_camera2.SceneGraph.value = SCENEGRAPH.Name.value
+      self.pre_camera2.LeftScreen.value = self.camera.LeftScreen.value
+      self.pre_camera2.RightScreen.value = self.camera.RightScreen.value
+      self.pre_camera2.LeftEye.value = self.camera.LeftEye.value
+      self.pre_camera2.RightEye.value = self.camera.RightEye.value
+      self.pre_camera2.RenderMask.value = "!main_scene && !pre_scene1 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+
+      self.pre_pipeline2 = avango.gua.nodes.Pipeline()
+      self.pre_pipeline2.Camera.value = self.pre_camera2
+      self.pre_pipeline2.Enabled.value = self.pipeline.Enabled.value
+      self.pre_pipeline2.EnableStereo.value = self.pipeline.EnableStereo.value
+      self.pre_pipeline2.LeftResolution.value = self.pipeline.LeftResolution.value
+      self.pre_pipeline2.RightResolution.value = self.pipeline.RightResolution.value
+      self.pre_pipeline2.OutputTextureName.value = "pre_scene2_texture"
+      self.pre_pipeline2.EnableFrustumCulling.value = True
+      self.pre_pipeline2.EnableBackfaceCulling.value = True
+      self.pre_pipeline2.EnableSsao.value = False
+      self.pre_pipeline2.FogStart.value = 850.0
+      self.pre_pipeline2.FogEnd.value = 1000.0
+      self.pre_pipeline2.EnableFog.value = True
+      self.pre_pipeline2.FogColor.value = avango.gua.Color(1.0, 1.0, 1.0)
+      self.pre_pipeline2.AmbientColor.value = avango.gua.Color(0.2, 0.4, 0.5)
+      self.pre_pipeline2.BackgroundTexture.value = "/opt/guacamole/resources/skymaps/bright_sky.jpg"
+      self.pre_pipeline2.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
+
+
+      self.pre_camera1 = avango.gua.nodes.Camera()
+      self.pre_camera1.SceneGraph.value = SCENEGRAPH.Name.value
+      self.pre_camera1.LeftScreen.value = self.camera.LeftScreen.value
+      self.pre_camera1.RightScreen.value = self.camera.RightScreen.value
+      self.pre_camera1.LeftEye.value = self.camera.LeftEye.value
+      self.pre_camera1.RightEye.value = self.camera.RightEye.value
+      self.pre_camera1.RenderMask.value = "!main_scene && !pre_scene2 && !do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+
+
+      self.pre_pipeline1 = avango.gua.nodes.Pipeline()
+      self.pre_pipeline1.Camera.value = self.pre_camera1
+      self.pre_pipeline1.Enabled.value = self.pipeline.Enabled.value
+      self.pre_pipeline1.EnableStereo.value = self.pipeline.EnableStereo.value
+      self.pre_pipeline1.LeftResolution.value = self.pipeline.LeftResolution.value
+      self.pre_pipeline1.RightResolution.value = self.pipeline.RightResolution.value
+      self.pre_pipeline1.OutputTextureName.value = "pre_scene1_texture"
+      self.pre_pipeline1.PreRenderPipelines.value = [self.pre_pipeline2]
+      self.pre_pipeline1.EnableFrustumCulling.value = True
+      self.pre_pipeline1.EnableBackfaceCulling.value = True
+      self.pre_pipeline1.EnableSsao.value = False
+      self.pre_pipeline1.BackgroundTexture.value = "pre_scene2_texture"
+      self.pre_pipeline1.BackgroundMode.value = avango.gua.BackgroundMode.QUAD_TEXTURE
+
+
+      self.pipeline.PreRenderPipelines.value = [self.pre_pipeline1]
+
 
     '''
       General user settings
@@ -205,18 +262,18 @@ class View(avango.script.Script):
     # set display string and warpmatrices as given by the display
     if len(self.display_values) > 1:
       self.set_warpmatrices(self.window, self.display_values[1])
-    
+
     # append pipeline to the viewer
     VIEWER.Pipelines.value.append(self.pipeline)
 
     self.always_evaluate(True)
-  
+
   ## Adds a tracking reader to the view instance.
   # @param TRACKING_TARGET_NAME The target name of the tracked object as chosen in daemon.
   # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
   # @param NO_TRACKING_MAT The matrix to be applied if no valid tracking target was specified.
   def init_local_tracking_override(self, TRACKING_TARGET_NAME, TRANSMITTER_OFFSET, NO_TRACKING_MAT):
-    
+
     ## @var TRACKING_TARGET_NAME
     # The target name of the tracked object as chosen in daemon.
     self.TRACKING_TARGET_NAME = TRACKING_TARGET_NAME
@@ -242,12 +299,12 @@ class View(avango.script.Script):
   # @param WINDOW The window instance to apply the warp matrices to.
   # @param WARPMATRICES A list of warp matrices to be applied if there are enough of them.
   def set_warpmatrices(self, WINDOW, WARPMATRICES):
-    
+
     if len(WARPMATRICES) == 6:
       WINDOW.WarpMatrixRedRight.value    = WARPMATRICES[0]
       WINDOW.WarpMatrixGreenRight.value  = WARPMATRICES[1]
       WINDOW.WarpMatrixBlueRight.value   = WARPMATRICES[2]
-      
+
       WINDOW.WarpMatrixRedLeft.value     = WARPMATRICES[3]
       WINDOW.WarpMatrixGreenLeft.value   = WARPMATRICES[4]
       WINDOW.WarpMatrixBlueLeft.value    = WARPMATRICES[5]
@@ -266,7 +323,7 @@ class View(avango.script.Script):
     for _pre_view in self.portal_pre_views:
       if _pre_view.compare_portal_node(LOCAL_PORTAL_NODE) == True:
         _pre_views_to_remove.append(_pre_view)
-        
+
     for _pre_view in _pre_views_to_remove:
       print "Remove a pre view"
       _pre_view.deactivate()
@@ -277,7 +334,7 @@ class View(avango.script.Script):
   ## Called whenever sf_pipeline_string changes.
   @field_has_changed(sf_pipeline_string)
   def sf_pipeline_string_changed(self):
-      
+
     _splitted_string = self.sf_pipeline_string.value.split("#")
 
     print "set to", _splitted_string
@@ -285,7 +342,7 @@ class View(avango.script.Script):
     # Note: Calling avango.gua.create_texture during runtime causes the application
     # to crash. All textures have to be preloaded, for example in ClientPipelineValues.py
     # avango.gua.create_texture(_splitted_string[0])
-    
+
     if self.display_render_mask == "!main_scene":
       self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.COLOR
       self.pipeline.BackgroundColor.value = avango.gua.Color(0.2, 0.45, 0.6)
@@ -339,9 +396,9 @@ class View(avango.script.Script):
     self.pipeline.FogEnd.value = float(_splitted_string[14])
     self.pipeline.NearClip.value = float(_splitted_string[15])
     self.pipeline.FarClip.value = float(_splitted_string[16])
-  
+
     #avango.gua.reload_materials()
-  
+
   ## Evaluated every frame.
   def evaluate(self):
 
@@ -370,7 +427,7 @@ class View(avango.script.Script):
     _no_tracking_node = _information_node.Children.value[0]
 
     _tracking_target_name = _information_node.Name.value
-    
+
     if _tracking_target_name == "None":
       _tracking_target_name = None
 
@@ -384,7 +441,7 @@ class View(avango.script.Script):
     # when no value is to be updated, stop evaluation
     if self.TRACKING_TARGET_NAME == None:
       return
-    
+
     # update slot node
     # TODO: Consider ONLY_TRANSLATION_UPDATE
     if _node_to_update != None:

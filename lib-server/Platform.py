@@ -268,8 +268,9 @@ class Platform(avango.script.Script):
 
     return _return_list
 
-  ##
-  #
+  ## Checks if a joseph avatar is already visible in a given list of slots.
+  # Can be combined with get_slots_of to find out if avatars are already present for a user.
+  # @param SLOT_LIST The list of slots to be checked for joseph visibility.
   def joseph_avatar_visible(self, SLOT_LIST):
 
     for _slot in SLOT_LIST:

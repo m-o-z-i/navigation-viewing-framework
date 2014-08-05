@@ -539,7 +539,7 @@ class Slot(avango.script.Script):
       self.slot_node.Transform.value = self.assigned_user.matrices_per_platform[self.PLATFORM.platform_id]
       self.slot_scale_node.Transform.value = avango.gua.make_scale_mat(self.assigned_user.scales_per_platform[self.PLATFORM.platform_id])
 
-      # trigger correct avatar visibilities on indiviudalization
+      # trigger correct avatar visibilities
       # joseph - make avatars visible if no other slot already visualizes the assigned user's avatar
       if self.PLATFORM.avatar_type == "joseph":
 

@@ -17,7 +17,9 @@ from   scenegraph_config import scenegraphs
 from   workspace_config import workspaces
 
 # import python libraries
+import os
 import subprocess
+import time
 
 ## Class to manage all navigations and users in the viewing setup.
 #
@@ -72,7 +74,20 @@ class ApplicationManager(avango.script.Script):
               _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
 
 
-    # viewing setup #
+    # viewing setup and start of client processes #
+
+    # get own ip adress
+    _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
+    _server_ip = _server_ip.strip(" \n")
+    _server_ip = _server_ip.rsplit(" ")
+    _server_ip = str(_server_ip[-1])
+
+    # get own hostname
+    _hostname = open('/etc/hostname', 'r').readline()
+    _hostname = _hostname.strip(" \n")
+
+    # get directory name
+    _directory_name = os.path.dirname(os.path.dirname(__file__))
 
     ##
     #
@@ -87,8 +102,22 @@ class ApplicationManager(avango.script.Script):
         _dg_id = _display_group.id
 
         for _display in _display_group.displays:
- 
+
           _s_id = _display_group.displays.index(_display)
+
+          # start a client on display host if necessary
+          if START_CLIENTS:
+
+            if _display.hostname != _hostname:
+
+              # run client process on host
+              # command line parameters: server ip, platform id, display name, screen number
+              _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
+              "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
+              str(_dg_id) + " " + str(_s_id)]
+              , stderr=subprocess.PIPE)
+              print "start process on", _display.hostname
+              time.sleep(1)
 
           for _user in _workspace.users:
 
@@ -115,7 +144,6 @@ class ApplicationManager(avango.script.Script):
               _right_eye_node = avango.gua.nodes.TransformNode(Name = "eyeR")
               _right_eye_node.Transform.value = avango.gua.make_trans_mat(_user.eye_distance / 2, 0.0, 0.0)
               _head_node.Children.value.append(_right_eye_node)
-
 
 
     # server control monitor setup #

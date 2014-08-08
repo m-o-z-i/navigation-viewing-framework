@@ -19,11 +19,7 @@ from display_config import displays
 import sys
 
 # Command line parameters:
-# client.py SERVER_IP PLATFORM_ID DISPLAY_NAME SCREEN_NUM
-# @param SERVER_IP The IP address on which the server process is running.
-# @param PLATFORM_ID The platform id for which this client is responsible for.
-# @param DISPLAY_NAME The name associated to the display for which this client is responsible for.
-# @param SCREEN_NUM The number of the screen on the platform.
+# main.py SERVER_IP WORKSPACE_ID DISPLAY_GROUP_ID SCREEN_ID
 
 ## Main method for the client application.
 def start():
@@ -34,21 +30,23 @@ def start():
   # get the server ip
   server_ip = str(sys.argv[1])
 
-  # get the platform id
-  platform_id = int(sys.argv[2])
+  # get the workspace id
+  workspace_id = int(sys.argv[2])
 
-  # get the display name
-  display_name = str(sys.argv[3])
+  # get the display group id
+  display_group_id = int(sys.argv[3])
 
-  # get the screen number on platform
-  screen_num = int(sys.argv[4])
+  # get the screen id
+  screen_id = int(sys.argv[4])
 
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()
   hostname = hostname.strip(" \n")
 
   print "This client is running on", hostname, "and listens to server", server_ip
-  print "It is responsible for platform", platform_id, "and display", display_name
+  print "It is responsible for workspace", workspace_id, ", display group", display_group_id, "and screen", screen_id
+
+  return
 
   # create distribution node
   nettrans = avango.gua.nodes.NetTransform(

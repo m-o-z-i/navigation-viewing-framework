@@ -20,9 +20,7 @@ import time
 
 
 ## Internal representation of a standard view on client side.
-#
-# Creates viewing setup and initializes a tracking sensor in order to avoid latency 
-# due to distribution in the network. Refers to a StandardUser on server side.
+# Creates the viewing setup needed for one individual workspace-displaygroup-screen-user view.
 class View(avango.script.Script):
 
   ## @var sf_pipeline_string
@@ -41,7 +39,10 @@ class View(avango.script.Script):
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
   # @param VIEWER Reference to the viewer to which the created pipeline will be appended to.
   # @param DISPLAY_INSTANCE An instance of Display to represent the values.
-  # 
+  # @param WORKSPACE_ID ID of the workspace to deal with.
+  # @param DISPLAY_GROUP_ID ID of the display group to deal with.
+  # @param SCREEN_ID ID of the screen to deal with.
+  # @param USER_ID ID of the user to deal with.
   def my_constructor(self, SCENEGRAPH, VIEWER, DISPLAY_INSTANCE, WORKSPACE_ID, DISPLAY_GROUP_ID, SCREEN_ID, USER_ID):
 
     ## @var SCENEGRAPH
@@ -52,9 +53,20 @@ class View(avango.script.Script):
     # Boolean indicating if the view to be constructed is stereo or mono.
     self.is_stereo = DISPLAY_INSTANCE.stereo
 
+    ## @var workspace_id
+    # ID of the workspace to deal with.
     self.workspace_id = WORKSPACE_ID
+
+    ## @var display_group_id
+    # ID of the display group to deal with.
     self.display_group_id = DISPLAY_GROUP_ID
+
+    ## @var screen_id
+    # ID of the screen to deal with.
     self.screen_id = SCREEN_ID
+
+    ## @var user_id
+    # ID of the user to deal with.
     self.user_id = USER_ID
 
     # retrieve the needed values from display

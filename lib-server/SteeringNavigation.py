@@ -19,13 +19,12 @@ import TraceLines
 import math
 import random
 
-## Wrapper class to create an input Device, a GroundFollowing instance, an InputMapping and a Platform.
+## Representation of a steering navigation controlled by a 6-DOF device. Creates the device,
+# an InputMapping instance and a GroundFollowing instance.
 #
 # Furthermore, this class reacts on the device's button inputs and toggles the 3-DOF (realistic) / 6-DOF (unrealistic) 
-# navigation mode. When switching from unrealistic to realistic mode, an animation is triggered in which the platform
-# is rotated back in an upright position (removal of pitch and roll angle). It also handles couplings and their animations
-# with other Navigation instances. Apart from that, it uses the class Trace to draw lines representing its past movements.
-
+# navigation mode. When switching from unrealistic to realistic mode, an animation is triggered in which the matrix
+# is rotated back in an upright position (removal of pitch and roll angle).
 class SteeringNavigation(avango.script.Script):
 
   # output field
@@ -36,18 +35,18 @@ class SteeringNavigation(avango.script.Script):
 
   # input fields
   ## @var sf_abs_mat
-  # Matrix representing the current translation and rotation of the platform in the scene.
+  # Matrix representing the current translation and rotation of the navigation in the scene.
   sf_abs_mat = avango.gua.SFMatrix4()
   sf_abs_mat.value = avango.gua.make_identity_mat()
 
   ## @var sf_scale
-  # The current scaling factor of this platform.
+  # The current scaling factor of this navigation.
   sf_scale = avango.SFFloat()
   sf_scale.value = 1.0
 
   # input fields
   ## @var sf_reset_trigger
-  # Boolean field to indicate if the platform is to be reset.
+  # Boolean field to indicate if the navigation is to be reset.
   sf_reset_trigger = avango.SFBool()
 
   ## @var sf_coupling_trigger
@@ -61,7 +60,7 @@ class SteeringNavigation(avango.script.Script):
   # static class variables
   ## @var trace_materials
   # List of material pretexts to choose from when a trace is created. All avatars on this
-  # platform will have this material.
+  # navigation will have this material.
   trace_materials = ['AvatarBlue', 'AvatarCyan', 'AvatarGreen', 'AvatarMagenta', 'AvatarDarkGreen',
                      'AvatarOrange', 'AvatarRed', 'AvatarWhite', 'AvatarYellow', 'AvatarGrey']
 
@@ -99,8 +98,8 @@ class SteeringNavigation(avango.script.Script):
     SteeringNavigation.material_used[_random_material_number] = True
 
   ## Custom constructor.
-  # @param STARTING_MATRIX Initial position matrix of the platform to be created.
-  # @param STARTING_SCALE Start scaling of the platform.
+  # @param STARTING_MATRIX Initial position matrix of the navigation to be created.
+  # @param STARTING_SCALE Start scaling of the navigation.
   # @param INPUT_DEVICE_TYPE String indicating the type of input device to be created, e.g. "XBoxController" or "OldSpheron"
   # @param INPUT_DEVICE_NAME Name of the input device sensor as chosen in daemon.
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
@@ -110,7 +109,6 @@ class SteeringNavigation(avango.script.Script):
   # @param INVERT Boolean indicating if the input values should be inverted.
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system..
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
-  # @param CONFIG_FILE The path to the config file that is used.
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
   def my_constructor(
       self
@@ -139,11 +137,11 @@ class SteeringNavigation(avango.script.Script):
       self.input_device_name = "keyboard"
 
     ## @var start_matrix
-    # Initial position matrix of the platform.
+    # Initial position matrix of the navigation.
     self.start_matrix = STARTING_MATRIX
 
     ## @var start_scale
-    # Initial scaling factor of the platform.
+    # Initial scaling factor of the navigation.
     self.start_scale = STARTING_SCALE
     
     # create device
@@ -196,10 +194,6 @@ class SteeringNavigation(avango.script.Script):
     self.sf_abs_mat.connect_from(self.inputmapping.sf_abs_mat)
     self.sf_scale.connect_from(self.inputmapping.sf_scale)
 
-    # create device avatar
-    #if AVATAR_TYPE != "None" and AVATAR_TYPE.endswith(".ks") == False:
-    #  self.device.create_device_avatar(self.platform)
-
     # attributes
     ## @var in_dofchange_animation
     # Boolean variable to indicate if a movement animation for a DOF change (realistic/unrealistic) is in progress.
@@ -230,7 +224,7 @@ class SteeringNavigation(avango.script.Script):
     # evaluate every frame
     self.always_evaluate(True)
 
-  ## Resets the platform's matrix to the initial value.
+  ## Resets the navigation's matrix to the initial value.
   def reset(self):
     self.inputmapping.set_abs_mat(self.start_matrix)
     self.inputmapping.set_scale(self.start_scale)
@@ -242,13 +236,13 @@ class SteeringNavigation(avango.script.Script):
   def activate_realistic_mode(self):
 
     # remove pitch and roll from current orientation
-    _current_mat = self.platform.sf_abs_mat.value
+    _current_mat = self.sf_abs_mat.value
     _current_trans = _current_mat.get_translate()
     _current_yaw = Tools.get_yaw(_current_mat)
 
     ## @var start_rot
     # Quaternion representing the start rotation of the animation
-    self.start_rot = self.platform.sf_abs_mat.value.get_rotate()
+    self.start_rot = self.sf_abs_mat.value.get_rotate()
 
     ## @var target_rot
     # Quaternion representing the target rotation of the animation
@@ -313,12 +307,6 @@ class SteeringNavigation(avango.script.Script):
     else:
       #print "GF on"
       self.activate_realistic_mode()
-
-  ## Computes the current world position of the rotation center on the platform ground (y = 0).
-  def get_current_world_pos(self):
-    _station_trans = self.device.sf_station_mat.value.get_translate()
-    _mat = self.platform.sf_abs_mat.value * avango.gua.make_trans_mat(avango.gua.Vec3(_station_trans.x, 0, _station_trans.z) * self.platform.sf_scale.value)
-    return _mat
   
   ## Evaluated every frame.
   def evaluate(self):

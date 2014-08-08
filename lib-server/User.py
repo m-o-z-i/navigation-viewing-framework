@@ -18,16 +18,28 @@ import Tools
 # import math libraries
 import math
 
+## A User instances has UserRepresentations for each display group of his workspace.
+# It handles the selection of the display group's navigations.
 class UserRepresentation:
 
+  ## Custom constructor.
+  # @param NODE A transformation node in which the selected navigation matrix is connected to.
+  # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
   def __init__(self, NODE, DISPLAY_GROUP):
 
+    ## @var NODE
+    # A transformation node in which the selected navigation matrix is connected to.
     self.NODE = NODE
 
+    ## @var DISPLAY_GROUP
+    # Reference to the display group this user representation is responsible for.
     self.DISPLAY_GROUP = DISPLAY_GROUP
 
+    # connect first navigation as default
     self.connect_navigation_of_display_group(0)
 
+  ## Connects a specific navigation of the display group to the user.
+  # @param ID The ID of the navigation to connect with.
   def connect_navigation_of_display_group(self, ID):
 
     if ID < len(self.DISPLAY_GROUP.navigations):
@@ -36,7 +48,8 @@ class UserRepresentation:
     else:
       print_error("Error. Navigation ID does not exist.", False)
 
-
+## Logical representation of a user within a Workspace. Stores the relevant parameters
+# and cares for receiving the headtracking input.
 class User(avango.script.Script):
 
   ## Default constructor.
@@ -50,8 +63,6 @@ class User(avango.script.Script):
   # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param EYE_DISTANCE The eye distance of the user to be applied.
-  # @param PLATFORM_ID Platform ID to which this user should be appended to.
-  # @param ENABLE_BORDER_WARNINGS Boolean indicating if the user wants platform borders to be displayed.
   def my_constructor(self
                    , WORKSPACE_INSTANCE
                    , USER_ID
@@ -59,7 +70,6 @@ class User(avango.script.Script):
                    , GLASSES_ID
                    , HEADTRACKING_TARGET_NAME
                    , EYE_DISTANCE
-                   , ENABLE_BORDER_WARNINGS
                    ):
 
     # flags 
@@ -77,25 +87,20 @@ class User(avango.script.Script):
 
     # variables
     ## @var WORKSPACE_INSTANCE
-    # Workspace instance in which this user is active.
+    # Workspace instance at which this user is registered.
     self.WORKSPACE_INSTANCE = WORKSPACE_INSTANCE
 
     ## @var id
-    # Identification number of the user, starting from 0.
+    # Identification number of the user within the workspace, starting from 0.
     self.id = USER_ID
 
-    ##
-    #
+    ## @var matrices_per_display_group
+    # One transform node per display group in which the UserReperesentation stores the selected navigation matrix.
     self.matrices_per_display_group = [avango.gua.nodes.TransformNode() for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
 
-    ## 
-    # 
+    ## @var user_representations
+    # List of UserRepresentations. One per display group of the workspace.
     self.user_representations = [UserRepresentation(self.matrices_per_display_group[i], self.WORKSPACE_INSTANCE.display_groups[i]) for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
-
-
-    ## @var enable_border_warnings
-    # Boolean indicating if the user wants platform borders to be displayed.
-    self.enable_border_warnings = ENABLE_BORDER_WARNINGS
 
     ## @var headtracking_target_name
     # Name of the headtracking station as registered in daemon.
@@ -105,17 +110,23 @@ class User(avango.script.Script):
     # ID of the shutter glasses worn by the user. Used for frequency updates.
     self.glasses_id = GLASSES_ID
 
+    ## @var headtracking_reader
+    # TrackingTargetReader for the user's glasses.
     self.headtracking_reader = TrackingTargetReader()
     self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
     self.headtracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
     self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
-    # toggles avatar display and activity
+    # toggles activity
     self.toggle_user_activity(self.is_active)
 
     # set evaluation policy
     self.always_evaluate(True)
 
+  ## Switches the navigation for a display group that is stored at the corresponding node in 
+  # matrices_per_display_group.
+  # @param DISPLAY_GROUP_ID Identification number of the display group to switch the navigation for.
+  # @param NAVIGATION_ID Identification number of the navigation to be used within the display group.
   def switch_navigation_at_display_group(self, DISPLAY_GROUP_ID, NAVIGATION_ID):
     
     if DISPLAY_GROUP_ID < len(self.user_representations):
@@ -123,10 +134,8 @@ class User(avango.script.Script):
     else:
       print_error("Error. Display Group ID does not exist.", False)
 
-
   ## Evaluated every frame.
   def evaluate(self):
-
     pass
     
   ## Sets the user's active flag.

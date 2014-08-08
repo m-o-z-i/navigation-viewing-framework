@@ -11,7 +11,6 @@ from   examples_common.GuaVE import GuaVE
 
 # import framework libraries
 from   ConsoleIO        import *
-import Tools
 
 from   scenegraph_config import scenegraphs
 from   workspace_config import workspaces
@@ -21,10 +20,8 @@ import os
 import subprocess
 import time
 
-## Class to manage all navigations and users in the viewing setup.
-#
-# Creates Navigation, OVRUser, PowerWallUser and BorderObserver instances according to the preferences read in from a XML configuration file.
-# Therefore, an instance of ConfigFileParser is created and used.
+## Class to build the scenegraph from the Workspaces, Display Groups and Users created.
+# Builds a server control monitor for debugging purposes.
 
 class ApplicationManager(avango.script.Script):
   

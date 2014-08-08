@@ -24,7 +24,7 @@ import subprocess
 # Creates Navigation, OVRUser, PowerWallUser and BorderObserver instances according to the preferences read in from a XML configuration file.
 # Therefore, an instance of ConfigFileParser is created and used.
 
-class ApplicationManager():
+class ApplicationManager(avango.script.Script):
   
   ## @var viewer
   # The guacamole viewer to be used for rendering.
@@ -34,15 +34,12 @@ class ApplicationManager():
   # The GuaVE shell to be used when the application is running.
   shell = GuaVE()
 
+  def __init__(self):
+    self.super(ApplicationManager).__init__()
+
   ## Custom constructor
-  # @param NET_TRANS_NODE Reference to the net transformation node.
-  # @param SCENEGRAPH Reference to the scenegraph.
-  # @param CONFIG_FILE Path to the XML configuration file.
   # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
-  def __init__(
-      self
-    , START_CLIENTS
-    ):
+  def my_constructor(self, START_CLIENTS):
     
     # parameters
     ## @var background_texture
@@ -69,10 +66,57 @@ class ApplicationManager():
 
       for _workspace in workspaces:
         for _display_group in _workspace.display_groups:
-          for _display in _display_group.display_list:
+          for _display in _display_group.displays:
 
             if _display.hostname != _own_hostname:
               _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
+
+
+    # viewing setup #
+
+    ##
+    #
+    self.navigation_nodes = []
+
+    for _workspace in workspaces:
+
+      _w_id = _workspace.id 
+
+      for _display_group in _workspace.display_groups:
+
+        _dg_id = _display_group.id
+
+        for _display in _display_group.displays:
+ 
+          _s_id = _display_group.displays.index(_display)
+
+          for _user in _workspace.users:
+
+            _u_id = _user.id
+
+            if _u_id < len(_display.displaystrings):
+
+              _nav_node = avango.gua.nodes.TransformNode(Name = "w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id))
+              _nav_node.Transform.value = _user.matrices_per_display_group[_dg_id]
+              self.navigation_nodes.append(_nav_node)
+              self.NET_TRANS_NODE.Children.value.append(_nav_node)
+
+              _screen_node = _display.create_screen_node(Name = "screen")
+              _nav_node.Children.value.append(_screen_node)
+
+              _head_node = avango.gua.nodes.TransformNode(Name = "head")
+              _head_node.Transform.connect_from(_user.headtracking_reader.sf_abs_mat)
+              _nav_node.Children.value.append(_head_node)
+
+              _left_eye_node = avango.gua.nodes.TransformNode(Name = "eyeL")
+              _left_eye_node.Transform.value = avango.gua.make_trans_mat(-_user.eye_distance / 2, 0.0, 0.0)
+              _head_node.Children.value.append(_left_eye_node)
+
+              _right_eye_node = avango.gua.nodes.TransformNode(Name = "eyeR")
+              _right_eye_node.Transform.value = avango.gua.make_trans_mat(_user.eye_distance / 2, 0.0, 0.0)
+              _head_node.Children.value.append(_right_eye_node)
+
+
 
     # server control monitor setup #
 
@@ -139,6 +183,19 @@ class ApplicationManager():
     # add pipeline and scenegraph to viewer
     self.viewer.Pipelines.value = [self.pipeline]
     self.viewer.SceneGraphs.value = [self.SCENEGRAPH]
+
+    self.always_evaluate(True)
+
+
+  def evaluate(self):
+
+    for _nav_node in self.navigation_nodes:
+
+      _w_id = int(_nav_node.Name.value.split("_")[0].replace("w", ""))
+      _dg_id = int(_nav_node.Name.value.split("_")[1].replace("dg", ""))
+      _u_id = int(_nav_node.Name.value.split("_")[3].replace("u", ""))
+
+      _nav_node.Transform.value = workspaces[_w_id].users[_u_id].matrices_per_display_group[_dg_id]
 
 
   ## Starts the shell and the viewer.

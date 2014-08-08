@@ -222,8 +222,8 @@ class InputMapping(avango.script.Script):
         _global_rot_center = self.sf_abs_mat.value * _rot_center
         _global_rot_center = avango.gua.Vec3(_global_rot_center.x, _global_rot_center.y, _global_rot_center.z)
 
-        for _navigation in self.NAVIGATION.coupled_navigations:
-          _navigation.inputmapping.modify_abs_uncorrected_mat(_transformed_trans_vec, _transformed_rot_vec, _global_rot_center)
+        #for _navigation in self.NAVIGATION.coupled_navigations:
+        #  _navigation.inputmapping.modify_abs_uncorrected_mat(_transformed_trans_vec, _transformed_rot_vec, _global_rot_center)
 
       else:
         # the device values are all equal to zero

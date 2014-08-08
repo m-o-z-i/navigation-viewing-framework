@@ -178,11 +178,6 @@ class DisplayGroup(avango.script.Script):
       self.device = GlobefishDevice()
       self.device.my_constructor(INPUT_DEVICE_NAME, NO_TRACKING_MAT)
 
-
-    # init field connections
-    self.sf_reset_trigger.connect_from(self.device.sf_reset_trigger)
-    self.sf_coupling_trigger.connect_from(self.device.sf_coupling_trigger)
-    self.sf_dof_trigger.connect_from(self.device.sf_dof_trigger)
     
     # create ground following
     ## @var groundfollowing
@@ -204,13 +199,20 @@ class DisplayGroup(avango.script.Script):
     else:
       self.inputmapping.deactivate_realistic_mode()
 
+    # init field connections
+    self.sf_reset_trigger.connect_from(self.device.sf_reset_trigger)
+    self.sf_coupling_trigger.connect_from(self.device.sf_coupling_trigger)
+    self.sf_dof_trigger.connect_from(self.device.sf_dof_trigger)
+    self.sf_abs_mat.connect_from(self.inputmapping.sf_abs_mat)
+    self.sf_scale.connect_from(self.inputmapping.sf_scale)
+
     # create device avatar
     #if AVATAR_TYPE != "None" and AVATAR_TYPE.endswith(".ks") == False:
     #  self.device.create_device_avatar(self.platform)
 
     ##
     #
-    self.display_list = DISPLAY_LIST
+    self.displays = DISPLAY_LIST
 
     # attributes
     ## @var in_dofchange_animation

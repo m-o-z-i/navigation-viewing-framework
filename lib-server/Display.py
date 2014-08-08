@@ -119,8 +119,8 @@ class Display:
 
   ## Creates the screen node of this display to be appended to the Platform transformation node.
   # @param name The name of the screen scenegraph node.
-  def create_screen_node(self, name = "screen_node"):
-    _screen = avango.gua.nodes.ScreenNode(Name = name)
+  def create_screen_node(self, Name = "screen_node"):
+    _screen = avango.gua.nodes.ScreenNode(Name = Name)
     _w, _h = self.size
     _screen.Width.value = _w
     _screen.Height.value = _h

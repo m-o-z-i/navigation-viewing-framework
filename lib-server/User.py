@@ -84,10 +84,9 @@ class User(avango.script.Script):
     # Can be either the group matrix or an individual one (switchable in use_group_navigation)
     self.matrices_per_display_group = [avango.gua.make_identity_mat() for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
 
-    ## @var scales_per_platform
-    # 
-    # 
-    self.scales_per_display_group = [1.0 for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
+    ##
+    #
+    self.navigation_nodes_per_display_group = []
 
     ## @var enable_border_warnings
     # Boolean indicating if the user wants platform borders to be displayed.
@@ -112,6 +111,9 @@ class User(avango.script.Script):
     # set evaluation policy
     self.always_evaluate(True)
 
+  def add_navigation_node(self, NODE):
+    self.navigation_nodes.append(NODE)
+
   ## 
   # 
   # 
@@ -134,10 +136,9 @@ class User(avango.script.Script):
     for _display_group_id in range(0, len(self.WORKSPACE_INSTANCE.display_groups)):
 
       if self.use_display_group_navigation[_display_group_id]:
-        self.matrices_per_display_group[_display_group_id] = self.WORKSPACE_INSTANCE.display_groups[_display_group_id].sf_abs_mat.value
-        self.scales_per_display_group[_display_group_id] = self.WORKSPACE_INSTANCE.display_groups[_display_group_id].sf_scale.value
-      
-
+        self.matrices_per_display_group[_display_group_id] = self.WORKSPACE_INSTANCE.display_groups[_display_group_id].sf_abs_mat.value * \
+                                                             avango.gua.make_scale_mat(self.WORKSPACE_INSTANCE.display_groups[_display_group_id].sf_scale.value)
+    
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.
   # @param RESEND_CONFIG Boolean indicating if the shutter configuration should be directly resent.

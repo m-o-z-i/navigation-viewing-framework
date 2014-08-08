@@ -39,7 +39,8 @@ def start():
     start_clients = False
 
   # initialize application manager
-  application_manager = ApplicationManager(START_CLIENTS = start_clients)
+  application_manager = ApplicationManager()
+  application_manager.my_constructor(START_CLIENTS = start_clients)
 
   # initialize scene
   scene_manager = SceneManager()

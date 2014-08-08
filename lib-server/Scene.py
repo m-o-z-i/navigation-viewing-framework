@@ -62,6 +62,7 @@ class SceneMedievalTown(SceneObject):
     self.enable_frustum_culling = True
     self.enable_ssao = False
     self.enable_fxaa = True
+    self.enable_fog = False
 
 
 class ScenePitoti(SceneObject):

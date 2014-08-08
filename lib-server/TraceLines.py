@@ -19,13 +19,12 @@ import time
 class Trace:
 
   ## Default constructor.
-  # @param PARENT_NODE A node in the scene graph to which the line segments are appended.
   # @param ID A numerical ID that is appended to the scene graph name to separate the line segments of multiple instances of this class.
   # @param NUM_LINES The number of line segments to be used.
   # @param LINE_DISTANCE The overall distance of all line segments together. Determines how long the trace lines are kept before they are overwritten.
   # @param INITIAL_MAT This matrix is used as initial position of all line segments.
   # @param TRACE_MATERIAL The material to be used to display the trace.
-  def __init__(self, PARENT_NODE, ID, NUM_LINES, LINE_DISTANCE, INITIAL_MAT, TRACE_MATERIAL):
+  def __init__(self, ID, NUM_LINES, LINE_DISTANCE, INITIAL_MAT, TRACE_MATERIAL):
 
     ## @var num_lines
     # The number of line segments that are used.
@@ -44,9 +43,9 @@ class Trace:
     ## @var transform_node
     # A transform node that is the parent of all line segments. It groups the line segments in the scene graph as the given ID is added to it's name and therefore allows multiple instances of this class.
     self.transform_node = avango.gua.nodes.TransformNode(Name = 'platform_trace_' + str(ID))
-    PARENT_NODE.Children.value.append(self.transform_node)
+    graph["/net"].Children.value.append(self.transform_node)
 
-    # create each line segment node by loading the geometry and appending it to the PARENT_NODE
+    # create each line segment node by loading the geometry and appending it to the parent node
     _loader = avango.gua.nodes.TriMeshLoader()
     for i in range(self.num_lines):
       _line = _loader.create_geometry_from_file('line_geometry_' + str(i), 'data/objects/cube.obj', 'data/materials/' + TRACE_MATERIAL + '.gmd', avango.gua.LoaderFlags.DEFAULTS)

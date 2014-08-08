@@ -404,7 +404,7 @@ class OculusRift(Display):
     # For a HMD, the screens must be appended to the slot node, not to the platform.
     return None
 
-
+'''
 ##################################################
 # STORE ALL DISPLAYS TO BE USED IN THIS LIST
 ##################################################
@@ -425,3 +425,4 @@ displays = [
 # If true, free display slots will be assigned to users, vip and active flags
 # of users are considered and the users' shutter timings are updated.
 INTELLIGENT_SHUTTER_SWITCHING = True
+'''

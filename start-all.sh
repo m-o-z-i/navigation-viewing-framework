@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # kill running python on this machine
-if [ "$2" != false ] ; then
+if [ "$1" != false ] ; then
     killall python
 fi
 
@@ -13,7 +13,6 @@ LOCAL_GUACAMOLE="$DIR/../../../guacamole"
 LOCAL_AVANGO="$DIR/../../../avango"
 
 GUACAMOLE=/opt/guacamole/master
-#GUACAMOLE=/opt/guacamole/gua1806
 AVANGO=/opt/avango/master
 
 # third party libs
@@ -35,10 +34,10 @@ python ./lib-server/Daemon.py > /dev/null &
 
 
 # run program
-if [ "$2" != false ] ; then
-    cd "$DIR" && python ./lib-server/main.py $1 True
+if [ "$1" != false ] ; then
+    cd "$DIR" && python ./lib-server/main.py True
 else 
-	  cd "$DIR" && python ./lib-server/main.py $1 False
+	  cd "$DIR" && python ./lib-server/main.py False
 fi
 
 # kill daemon

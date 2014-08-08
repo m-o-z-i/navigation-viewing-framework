@@ -17,13 +17,14 @@ from PortalCamera import *
 from PortalInteractionSpace import *
 from Device import *
 
+from scenegraph_config import scenegraphs
+
 # import python libraries
 import sys
 import subprocess
 
 # Command line parameters:
-# main.py CONFIG_FILE
-# @param CONFIG_FILE The filname of the configuration file to parse.
+# main.py START_CLIENTS
 # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
 
 ## Main method for the server application
@@ -32,54 +33,20 @@ def start():
   # disable logger warningss
   logger = avango.gua.nodes.Logger(EnableWarning = False)
 
-  # create scenegraph
-  graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
-  #graph.Root.value.GroupNames.value = ["all"]
-
-  # get server ip 
-  server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
-  server_ip = server_ip.strip(" \n")  
-  server_ip = server_ip.rsplit(" ")
-  server_ip = str(server_ip[-1])
-
-  # initialize pseudo nettrans node as client processes are started in Platform class
-  pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
-  graph.Root.value.Children.value = [pseudo_nettrans]
-
-  if sys.argv[2] == "True":
+  if sys.argv[1] == "True":
     start_clients = True 
   else:
     start_clients = False
 
   # initialize application manager
-  application_manager = ApplicationManager(
-      NET_TRANS_NODE = pseudo_nettrans
-    , SCENEGRAPH = graph
-    , CONFIG_FILE = sys.argv[1]
-    , START_CLIENTS = start_clients)
-
-  # create distribution node and sync children from pseudo nettrans
-  nettrans = avango.gua.nodes.NetTransform(
-      Name = "net"
-    , Groupname = "AVSERVER|{0}|7432".format(server_ip)
-  )
-  #nettrans.GroupNames.value = ["all"]
-
-  nettrans.Children.value = pseudo_nettrans.Children.value
-  graph.Root.value.Children.value.remove(pseudo_nettrans)
-  graph.Root.value.Children.value.append(nettrans)
-
-  # update nettrans node on all platforms
-  for _nav in application_manager.navigation_list:
-    _nav.platform.update_nettrans_node(nettrans)
+  application_manager = ApplicationManager(START_CLIENTS = start_clients)
 
   # initialize scene
   scene_manager = SceneManager()
-  scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
   # initialize portal manager
-  portal_manager = PortalManager()
-  portal_manager.my_constructor(graph, application_manager.navigation_list)
+  #portal_manager = PortalManager()
+  #portal_manager.my_constructor(graph, application_manager.navigation_list)
 
   #portal_camera = PortalCamera()
   #portal_camera.my_constructor(0, portal_manager, application_manager.navigation_list[0], "device-portal-camera-32", "tracking-portal-camera-32")
@@ -120,7 +87,7 @@ def start():
   #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
-  distribute_all_nodes(nettrans, nettrans)
+  distribute_all_nodes(scenegraphs[0]["/net"], scenegraphs[0]["/net"])
 
   # run application loop
   application_manager.run(locals(), globals())

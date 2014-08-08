@@ -45,8 +45,6 @@ class ConfigFileParser:
                           avango.gua.make_trans_mat(0.0, 1.5, 1.0),      # notrackingmat,
                           "joseph", [False, 0.75], False, 1.0, False]    # avatartype, ground_following_settings, enable_traces, scale, invert]
     _platform_size = [1.0, 1.0]                                          # [width, depth]
-    _in_user = False
-    _user_attributes = [None, None, False, False, None, None, 0.0]       # [headtrackingstation, startplatform, warnings, vip, glasses, hmd_sensor, eyedist]
     _navs_created = 0
 
     try:
@@ -374,87 +372,6 @@ class ConfigFileParser:
                           avango.gua.make_trans_mat(0.0, 1.5, 1.0),      # notrackingmat,
                           "joseph", [False, 0.75], False, 1.0, False]    # avatartype, groundfollowing_settings, enable_traces, scale, invert]
         _navs_created += 1
-        _current_line = self.get_next_line_in_file(_config_file)
-        continue
-     
-      # detect start of user declaration
-      if _current_line.startswith("<user>"):
-        _in_user = True
-        _current_line = self.get_next_line_in_file(_config_file)
-        continue
-
-      # read user values
-      if _in_user:
-
-        # get headtracking station name
-        if _current_line.startswith("<headtrackingstation>"):
-          _current_line = _current_line.replace("<headtrackingstation>", "")
-          _current_line = _current_line.replace("</headtrackingstation>", "")
-          _current_line = _current_line.rstrip()
-          if _current_line != "None":
-            _user_attributes[0] = _current_line
-
-        # get hmd sensor name
-        if _current_line.startswith("<hmdsensor>"):
-          _current_line = _current_line.replace("<hmdsensor>", "")
-          _current_line = _current_line.replace("</hmdsensor>", "")
-          _current_line = _current_line.rstrip()
-          if _current_line != "None":
-            _user_attributes[5] = _current_line
-
-        # get starting platform name
-        if _current_line.startswith("<eyedist>"):
-          _current_line = _current_line.replace("<eyedist>", "")
-          _current_line = _current_line.replace("</eyedist>", "")
-          _current_line = _current_line.rstrip()
-          _user_attributes[6] = float(_current_line)
-
-        # get glasses id
-        if _current_line.startswith("<glasses>"):
-          _current_line = _current_line.replace("<glasses>", "")
-          _current_line = _current_line.replace("</glasses>", "")
-          _current_line = _current_line.rstrip()
-          _user_attributes[4] = int(_current_line)
-
-        # get starting platform name
-        if _current_line.startswith("<startplatform>"):
-          _current_line = _current_line.replace("<startplatform>", "")
-          _current_line = _current_line.replace("</startplatform>", "")
-          _current_line = _current_line.rstrip()
-          _user_attributes[1] = int(_current_line)
-
-        # get boolean for warning borders
-        if _current_line.startswith("<warnings>"):
-          _current_line = _current_line.replace("<warnings>", "")
-          _current_line = _current_line.replace("</warnings>", "")
-          _current_line = _current_line.rstrip()
-          
-          if _current_line == "True":
-            _user_attributes[2] = True
-
-        # get vip flag
-        if _current_line.startswith("<vip>"):
-          _current_line = _current_line.replace("<vip>", "")
-          _current_line = _current_line.replace("</vip>", "")
-          _current_line = _current_line.rstrip()
-          
-          if _current_line == "True":
-            _user_attributes[3] = True
-
-      # detect end of user declaration
-      if _current_line.startswith("</user>"):
-        _in_user = False
-
-        # error handling
-        if _user_attributes[1] >= _navs_created:
-          print_error("User parsing: Navigation number to append to is too large.", True)
-
-        self.APPLICATION_MANAGER.create_user(_user_attributes[3], _user_attributes[4], _user_attributes[1], _user_attributes[0], _user_attributes[5], _user_attributes[6], _user_attributes[2])
-
-        print_subheadline("User loaded and created")
-        print _user_attributes, "\n"
-
-        _user_attributes = [None, None, False, False, None, None, 0.0]
         _current_line = self.get_next_line_in_file(_config_file)
         continue
 

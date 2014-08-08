@@ -15,6 +15,8 @@ import Tools
 from Scene import *
 from ConsoleIO import *
 
+from scenegraph_config import scenegraphs
+
 # import python libraries
 import math
 import time
@@ -187,6 +189,9 @@ class SceneManager(avango.script.Script):
   def __init__(self):
     self.super(SceneManager).__init__()
 
+    self.SCENEGRAPH = scenegraphs[0]
+    self.NET_TRANS_NODE = self.SCENEGRAPH["/net"]
+
     # parameters
 
     ## @var hierarchy_materials
@@ -220,19 +225,9 @@ class SceneManager(avango.script.Script):
     self.sf_key0.connect_from(self.keyboard_sensor.Button9)  # key 0
     self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
 
-
-  ## Custom constructor
-  # @param NET_TRANS_NODE Scenegraph net matrix transformation node for distribution.
-  # @param SCENEGRAPH Reference to the scenegraph to which the nettrans node is appended.
-  def my_constructor(self, NET_TRANS_NODE, SCENEGRAPH, NAVIGATION_LIST):
-
-    ## @var navigation_list
-    # List of all Navigation instances in the setup.
-    self.navigation_list = NAVIGATION_LIST
-
     # init pipeline value node
     _pipeline_value_node = avango.gua.nodes.TransformNode(Name = "pipeline_values")
-    NET_TRANS_NODE.Children.value.append(_pipeline_value_node)
+    self.NET_TRANS_NODE.Children.value.append(_pipeline_value_node)
 
     ## @var pipeline_info_node
     # Scenegraph node storing the actural pipeline values of the current scene.
@@ -240,19 +235,17 @@ class SceneManager(avango.script.Script):
     _pipeline_value_node.Children.value.append(self.pipeline_info_node)
 
     # init scenes   
-    #self.scene_weimar = SceneWeimar(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_plod = ScenePLOD(self, SCENEGRAPH, NET_TRANS_NODE)      
+    #self.scene_weimar = SceneWeimar(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
+    #self.scene_monkey = SceneMonkey(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
+    self.scene_medieval = SceneMedievalTown(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
+    #self.scene_pitoti = ScenePitoti(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
+    #self.scene_vianden = SceneVianden(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
+    #self.scene_plod = ScenePLOD(self, self.SCENEGRAPH, self.NET_TRANS_NODE)      
     
-    self.scene_vianden_low = SceneViandenLow(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_vianden_high = SceneViandenHigh(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_vianden_low = SceneViandenLow(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
+    #self.scene_vianden_high = SceneViandenHigh(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
 
     self.activate_scene(0) # activate first scene
-
-    #SCENEGRAPH.update_cache()
         
 
   # callbacks
@@ -349,21 +342,21 @@ class SceneManager(avango.script.Script):
       self.pipeline_info_node.Name.value = self.active_scene.get_pipeline_value_string()
 
       # overwrite first Navigation's starting matrix if described in scene.
-      if self.active_scene.starting_matrix != None and len(self.navigation_list) > 0:
+      #if self.active_scene.starting_matrix != None and len(self.navigation_list) > 0:
+      #
+      #  print_warning("Overwriting the platforms' starting matrices by the one given in the scene description.")
+      #
+      #  for _navigation in self.navigation_list:
+      #    _navigation.start_matrix = self.active_scene.starting_matrix
+      #    _navigation.reset()
 
-        print_warning("Overwriting the platforms' starting matrices by the one given in the scene description.")
-
-        for _navigation in self.navigation_list:
-          _navigation.start_matrix = self.active_scene.starting_matrix
-          _navigation.reset()
-
-      if self.active_scene.starting_scale != None and len(self.navigation_list) > 0:
-
-        print_warning("Overwriting the platforms' starting scale factors by the one given in the scene description.")
-
-        for _navigation in self.navigation_list:
-          _navigation.start_scale = self.active_scene.starting_scale
-          _navigation.reset()
+      #if self.active_scene.starting_scale != None and len(self.navigation_list) > 0:
+      #
+      #  print_warning("Overwriting the platforms' starting scale factors by the one given in the scene description.")
+      #
+      #  for _navigation in self.navigation_list:
+      #    _navigation.start_scale = self.active_scene.starting_scale
+      #    _navigation.reset()
   
       print "Switching to Scene: " + self.active_scene.name
   

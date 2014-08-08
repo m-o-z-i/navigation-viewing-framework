@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class User.
+# Contains classes User and UserRepresentation.
 
 # import avango-guacamole libraries
 import avango
@@ -18,16 +18,26 @@ import Tools
 # import math libraries
 import math
 
-## Internal representation of a user.
-#
-# Upon construction, this class appends the necessary nodes to the scenegraph, creates eyes
-# and initializes the headtracking.
+class UserRepresentation:
+
+  def __init__(self, NODE, DISPLAY_GROUP):
+
+    self.NODE = NODE
+
+    self.DISPLAY_GROUP = DISPLAY_GROUP
+
+    self.connect_navigation_of_display_group(0)
+
+  def connect_navigation_of_display_group(self, ID):
+
+    if ID < len(self.DISPLAY_GROUP.navigations):
+      self.NODE.Transform.disconnect()
+      self.NODE.Transform.connect_from(self.DISPLAY_GROUP.navigations[ID].sf_nav_mat)
+    else:
+      print_error("Error. Navigation ID does not exist.", False)
+
 
 class User(avango.script.Script):
-
-  ## @var mf_screen_pick_result
-  # Intersections of the viewing ray with the screens in the setup.
-  mf_screen_pick_result = avango.gua.MFPickResult()
 
   ## Default constructor.
   def __init__(self):
@@ -74,19 +84,14 @@ class User(avango.script.Script):
     # Identification number of the user, starting from 0.
     self.id = USER_ID
 
-    ## @var 
-    # 
-    # 
-    self.use_display_group_navigation = [True for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
-
-    ## @var matrices_per_platform
-    # List of matrices for each platform to be used.
-    # Can be either the group matrix or an individual one (switchable in use_group_navigation)
-    self.matrices_per_display_group = [avango.gua.make_identity_mat() for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
-
     ##
     #
-    self.navigation_nodes_per_display_group = []
+    self.matrices_per_display_group = [avango.gua.nodes.TransformNode() for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
+
+    ## 
+    # 
+    self.user_representations = [UserRepresentation(self.matrices_per_display_group[i], self.WORKSPACE_INSTANCE.display_groups[i]) for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
+
 
     ## @var enable_border_warnings
     # Boolean indicating if the user wants platform borders to be displayed.
@@ -106,43 +111,27 @@ class User(avango.script.Script):
     self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     # toggles avatar display and activity
-    self.toggle_user_activity(self.is_active, False)
+    self.toggle_user_activity(self.is_active)
 
     # set evaluation policy
     self.always_evaluate(True)
 
-  def add_navigation_node(self, NODE):
-    self.navigation_nodes.append(NODE)
+  def switch_navigation_at_display_group(self, DISPLAY_GROUP_ID, NAVIGATION_ID):
+    
+    if DISPLAY_GROUP_ID < len(self.user_representations):
+      self.user_representations[DISPLAY_GROUP_ID].connect_navigation_of_display_group(NAVIGATION_ID)
+    else:
+      print_error("Error. Display Group ID does not exist.", False)
 
-  ## 
-  # 
-  # 
-  # 
-  def individualize_display_group_nav(self, DISPLAY_GROUP_ID, NEW_TRANSFORM, NEW_SCALE):
-
-    self.use_display_group_navigation[DISPLAY_GROUP_ID] = False
-    self.matrices_per_platform[DISPLAY_GROUP_ID] = NEW_TRANSFORM
-    self.scales_per_platform[DISPLAY_GROUP_ID] = NEW_SCALE
-
-  ## Resets an individualized view back to the group view.
-  def reset_view(self, DISPLAY_GROUP_ID):
-
-    self.use_display_group_navigation[DISPLAY_GROUP_ID] = True
 
   ## Evaluated every frame.
   def evaluate(self):
 
-    # update display group matrix array
-    for _display_group_id in range(0, len(self.WORKSPACE_INSTANCE.display_groups)):
-
-      if self.use_display_group_navigation[_display_group_id]:
-        self.matrices_per_display_group[_display_group_id] = self.WORKSPACE_INSTANCE.display_groups[_display_group_id].sf_abs_mat.value * \
-                                                             avango.gua.make_scale_mat(self.WORKSPACE_INSTANCE.display_groups[_display_group_id].sf_scale.value)
+    pass
     
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.
-  # @param RESEND_CONFIG Boolean indicating if the shutter configuration should be directly resent.
-  def toggle_user_activity(self, ACTIVE, RESEND_CONFIG):
+  def toggle_user_activity(self, ACTIVE):
 
     if ACTIVE:
       self.is_active = True

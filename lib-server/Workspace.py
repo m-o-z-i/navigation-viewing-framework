@@ -33,38 +33,11 @@ class Workspace:
     self.size = (3.8, 3.6)
 
   def create_display_group( self
-                          , INPUT_DEVICE_TYPE
-                          , INPUT_DEVICE_NAME
-                          , STARTING_MATRIX
-                          , STARTING_SCALE
-                          , MOVEMENT_TRACES
-                          , INVERT
-                          , NO_TRACKING_MAT
-                          , GROUND_FOLLOWING_SETTINGS
-                          , TRANSMITTER_OFFSET
                           , DISPLAY_LIST
-                          , AVATAR_TYPE
-                          , DEVICE_TRACKING_NAME = None):
+                          , NAVIGATION_LIST):
 
-    _dg = DisplayGroup()
-    _dg.my_constructor( self
-                       , len(self.display_groups)
-                       , STARTING_MATRIX
-                       , STARTING_SCALE
-                       , INPUT_DEVICE_TYPE
-                       , INPUT_DEVICE_NAME
-                       , NO_TRACKING_MAT
-                       , GROUND_FOLLOWING_SETTINGS
-                       , MOVEMENT_TRACES
-                       , INVERT
-                       , TRANSMITTER_OFFSET
-                       , DISPLAY_LIST
-                       , AVATAR_TYPE
-                       , False
-                       , DEVICE_TRACKING_NAME)
+    _dg = DisplayGroup(len(self.display_groups), DISPLAY_LIST, NAVIGATION_LIST)
     self.display_groups.append(_dg)
-
-
 
   def attach_display(self, DISPLAY_INSTANCE):
 

@@ -71,7 +71,8 @@ class ApplicationManager(avango.script.Script):
           for _display in _display_group.displays:
 
             if _display.hostname != _own_hostname:
-              _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
+              print "kill on", _display.hostname
+              _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python -9"])
 
 
     # viewing setup and start of client processes #
@@ -94,9 +95,6 @@ class ApplicationManager(avango.script.Script):
     else:
       print_warning("Start of clients disabled for debugging reasons.")
 
-    ##
-    #
-    self.navigation_nodes = []
 
     for _workspace in workspaces:
 
@@ -119,7 +117,7 @@ class ApplicationManager(avango.script.Script):
               # command line parameters: server ip, platform id, display name, screen number
               print "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
                     str(_dg_id) + " " + str(_s_id) + " " + _display.name
-                    
+
               _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
               "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
               str(_dg_id) + " " + str(_s_id) + " " + _display.name]
@@ -134,8 +132,7 @@ class ApplicationManager(avango.script.Script):
             if _u_id < len(_display.displaystrings):
 
               _nav_node = avango.gua.nodes.TransformNode(Name = "w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id))
-              _nav_node.Transform.value = _user.matrices_per_display_group[_dg_id]
-              self.navigation_nodes.append(_nav_node)
+              _nav_node.Transform.connect_from(_user.matrices_per_display_group[_dg_id].Transform)
               self.NET_TRANS_NODE.Children.value.append(_nav_node)
 
               _screen_node = _display.create_screen_node(Name = "screen")
@@ -221,17 +218,6 @@ class ApplicationManager(avango.script.Script):
     self.viewer.SceneGraphs.value = [self.SCENEGRAPH]
 
     self.always_evaluate(True)
-
-
-  def evaluate(self):
-
-    for _nav_node in self.navigation_nodes:
-
-      _w_id = int(_nav_node.Name.value.split("_")[0].replace("w", ""))
-      _dg_id = int(_nav_node.Name.value.split("_")[1].replace("dg", ""))
-      _u_id = int(_nav_node.Name.value.split("_")[3].replace("u", ""))
-
-      _nav_node.Transform.value = workspaces[_w_id].users[_u_id].matrices_per_display_group[_dg_id]
 
 
   ## Starts the shell and the viewer.

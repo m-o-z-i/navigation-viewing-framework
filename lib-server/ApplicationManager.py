@@ -76,18 +76,23 @@ class ApplicationManager(avango.script.Script):
 
     # viewing setup and start of client processes #
 
-    # get own ip adress
-    _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
-    _server_ip = _server_ip.strip(" \n")
-    _server_ip = _server_ip.rsplit(" ")
-    _server_ip = str(_server_ip[-1])
+    if START_CLIENTS:
 
-    # get own hostname
-    _hostname = open('/etc/hostname', 'r').readline()
-    _hostname = _hostname.strip(" \n")
+      # get own ip adress
+      _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
+      _server_ip = _server_ip.strip(" \n")
+      _server_ip = _server_ip.rsplit(" ")
+      _server_ip = str(_server_ip[-1])
 
-    # get directory name
-    _directory_name = os.path.dirname(os.path.dirname(__file__))
+      # get own hostname
+      _hostname = open('/etc/hostname', 'r').readline()
+      _hostname = _hostname.strip(" \n")
+
+      # get directory name
+      _directory_name = os.path.dirname(os.path.dirname(__file__))
+
+    else:
+      print_warning("Start of clients disabled for debugging reasons.")
 
     ##
     #
@@ -112,11 +117,14 @@ class ApplicationManager(avango.script.Script):
 
               # run client process on host
               # command line parameters: server ip, platform id, display name, screen number
+              print "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
+                    str(_dg_id) + " " + str(_s_id) + " " + _display.name
+                    
               _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
               "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
-              str(_dg_id) + " " + str(_s_id)]
+              str(_dg_id) + " " + str(_s_id) + " " + _display.name]
               , stderr=subprocess.PIPE)
-              print "start process on", _display.hostname
+              print "start client on", _display.hostname
               time.sleep(1)
 
           for _user in _workspace.users:

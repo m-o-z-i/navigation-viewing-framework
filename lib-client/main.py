@@ -13,19 +13,19 @@ import avango.oculus
 import ClientMaterialUpdaters
 from View import *
 from ClientPortal import * 
-from display_config import displays
+from workspace_config import displays
 
 # import python libraries
 import sys
 
 # Command line parameters:
-# main.py SERVER_IP WORKSPACE_ID DISPLAY_GROUP_ID SCREEN_ID
+# main.py SERVER_IP WORKSPACE_ID DISPLAY_GROUP_ID SCREEN_ID DISPLAY_NAME
 
 ## Main method for the client application.
 def start():
 
   # disable logger warningss
-  logger = avango.gua.nodes.Logger(EnableWarning = False)
+  logger = avango.gua.nodes.Logger(EnableWarning = True)
 
   # get the server ip
   server_ip = str(sys.argv[1])
@@ -39,14 +39,15 @@ def start():
   # get the screen id
   screen_id = int(sys.argv[4])
 
+  # get the display name
+  display_name = str(sys.argv[5])
+
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()
   hostname = hostname.strip(" \n")
 
   print "This client is running on", hostname, "and listens to server", server_ip
   print "It is responsible for workspace", workspace_id, ", display group", display_group_id, "and screen", screen_id
-
-  return
 
   # create distribution node
   nettrans = avango.gua.nodes.NetTransform(
@@ -58,10 +59,7 @@ def start():
   # create a dummy scenegraph to be extended by distribution
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
 
-  # create node for local portal updates
-  local_portal_node = avango.gua.nodes.TransformNode(Name = "local_portal_group")
-
-  graph.Root.value.Children.value = [nettrans, local_portal_node]
+  graph.Root.value.Children.value = [nettrans]
 
   # create material updaters as this cannot be distributed
   avango.gua.load_shading_models_from("data/materials")
@@ -87,22 +85,23 @@ def start():
   views = []
 
   for _displaystring in handled_display_instance.displaystrings:
+
     _view = View()
     _view.my_constructor(graph, 
                          viewer,
-                         platform_id, 
-                         _string_num,
                          handled_display_instance, 
-                         screen_num, 
-                         handled_display_instance.stereo)
+                         workspace_id,
+                         display_group_id,
+                         screen_id,
+                         _string_num)
     views.append(_view)
     _string_num += 1
 
   viewer.SceneGraphs.value = [graph]
 
   # create client portal manager
-  portal_manager = ClientPortalManager()
-  portal_manager.my_constructor(graph, views)
+  #portal_manager = ClientPortalManager()
+  #portal_manager.my_constructor(graph, views)
 
   # start rendering process
   viewer.run()

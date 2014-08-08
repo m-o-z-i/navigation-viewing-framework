@@ -403,26 +403,3 @@ class OculusRift(Display):
 
     # For a HMD, the screens must be appended to the slot node, not to the platform.
     return None
-
-'''
-##################################################
-# STORE ALL DISPLAYS TO BE USED IN THIS LIST
-##################################################
-## @var displays A list of Display instances to be used in the framework.
-
-displays = [
-  LargePowerwall() ,
-  #LargePowerwall2() ,  
-  SmallPowerwall() ,
-  #SmallPowerwall2() ,  
-  #OculusRift(hostname = "atalante", name = "oculus_rift_atalante") ,
-  #TouchTable3DStandalone() ,
-  TouchTable3DSecondary(render_mask = "!main_scene") ,  
-  Display(hostname = "daedalos", stereo = False) ,
-]
-
-## @var INTELLIGENT_SHUTTER_SWITCHING
-# If true, free display slots will be assigned to users, vip and active flags
-# of users are considered and the users' shutter timings are updated.
-INTELLIGENT_SHUTTER_SWITCHING = True
-'''

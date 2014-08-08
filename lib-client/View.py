@@ -40,44 +40,30 @@ class View(avango.script.Script):
   ## Custom constructor.
   # @param SCENEGRAPH Reference to the scenegraph to be displayed.
   # @param VIEWER Reference to the viewer to which the created pipeline will be appended to.
-  # @param PLATFORM_ID The platform id on which this user is standing on.
-  # @param SLOT_ID The identification number of the slot to display.
   # @param DISPLAY_INSTANCE An instance of Display to represent the values.
-  # @param SCREEN_NUM The number of the screen node on the platform.
-  # @param STEREO Boolean indicating if the view to be constructed is stereo or mono.
-  def my_constructor(self, SCENEGRAPH, VIEWER, PLATFORM_ID, SLOT_ID, DISPLAY_INSTANCE, SCREEN_NUM, STEREO):
+  # 
+  def my_constructor(self, SCENEGRAPH, VIEWER, DISPLAY_INSTANCE, WORKSPACE_ID, DISPLAY_GROUP_ID, SCREEN_ID, USER_ID):
 
     ## @var SCENEGRAPH
     # Reference to the scenegraph.
     self.SCENEGRAPH = SCENEGRAPH
 
-    ## @var platform_id
-    # The platform id for which this client process is responsible for.
-    self.platform_id = PLATFORM_ID
-
-    ## @var slot_id
-    # User ID of this user within his or her user group.
-    self.slot_id = SLOT_ID
-
-    ## @var screen_num
-    # The number of the screen node on the platform.
-    self.screen_num = SCREEN_NUM
-
     ## @var is_stereo
     # Boolean indicating if the view to be constructed is stereo or mono.
-    self.is_stereo = STEREO
+    self.is_stereo = DISPLAY_INSTANCE.stereo
 
-    ## @var ONLY_TRANSLATION_UPDATE
-    # In case this boolean is true, only the translation values will be locally updated from the tracking system.
-    self.ONLY_TRANSLATION_UPDATE = False
+    self.workspace_id = WORKSPACE_ID
+    self.display_group_id = DISPLAY_GROUP_ID
+    self.screen_id = SCREEN_ID
+    self.user_id = USER_ID
 
     # retrieve the needed values from display
     ## @var display_values
     # Values that are retrieved from the display. Vary for each view on this display.
     self.display_values = DISPLAY_INSTANCE.register_view()
 
-    ##
-    #
+    ## @var display_render_mask
+    # Additional render mask contraints given by the display.
     self.display_render_mask = DISPLAY_INSTANCE.render_mask
 
     # check if no more users allowed at this screen
@@ -98,14 +84,7 @@ class View(avango.script.Script):
     self.camera.Mode.value = DISPLAY_INSTANCE.cameramode
 
     # set render mask for camera
-    _render_mask = "!do_not_display_group && !video_abstraction && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
-
-    for _platform in range(0, 10):
-      for _screen in range(0, 10):
-        for _slot in range(0, 10):
-          if _screen != self.screen_num or _slot != self.slot_id or _platform != self.platform_id:
-            _render_mask = _render_mask + " && !p" + str(_platform) + "_s" + str(_screen) + "_slot" + str(_slot)
-
+    _render_mask = "!do_not_display_group"
     _render_mask = _render_mask + " && " + self.display_render_mask
 
     self.camera.RenderMask.value = _render_mask
@@ -116,124 +95,66 @@ class View(avango.script.Script):
     self.pipeline = avango.gua.nodes.Pipeline()
     self.pipeline.Enabled.value = True
 
-    if DISPLAY_INSTANCE.stereomode == "HMD":
+    '''
+      Standard View
+    '''
 
-      '''
-        HMD View
-      '''
+    self.camera.LeftScreen.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_s" + str(self.screen_id) + "_u" + str(self.user_id) + "/screen"
+    self.camera.RightScreen.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_s" + str(self.screen_id) + "_u" + str(self.user_id) + "/screen"
+    self.camera.LeftEye.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_s" + str(self.screen_id) + "_u" + str(self.user_id) + "/head/eyeL"
+    self.camera.RightEye.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_s" + str(self.screen_id) + "_u" + str(self.user_id) + "/head/eyeR"
 
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/screenL"
-      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/screenR"
-      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/eyeL"
-      self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/eyeR"
+    # create window
+    ## @var window
+    # The window in which this View will be rendered to.
+    self.window = avango.gua.nodes.Window()
+    self.window.Display.value = self.display_values[0] # GPU-ID
+    self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; User: " + str(self.user_id)
+    self.window.LeftResolution.value = self.window_size
+    self.window.RightResolution.value = self.window_size
 
-      # create window
-      ## @var window
-      # The window in which this View will be rendered to.
-      self.window = avango.oculus.nodes.OculusWindow()
-      self.window.Display.value = self.display_values[0] # GPU-ID
-      self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
-      self.window.LeftResolution.value = avango.gua.Vec2ui(self.window_size.x / 2, self.window_size.y)
-      self.window.RightResolution.value = avango.gua.Vec2ui(self.window_size.x / 2, self.window_size.y)
-
-      self.pipeline.EnableStereo.value = True
-      self.pipeline.LeftResolution.value = self.window.LeftResolution.value
-      self.pipeline.RightResolution.value = self.window.RightResolution.value
-
-
-    else:
-
-      '''
-        Standard View
-      '''
-
-      self.camera.LeftScreen.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/screen"
-      self.camera.RightScreen.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/screen"
-      self.camera.LeftEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/eyeL"
-      self.camera.RightEye.value = "/net/platform_" + str(self.platform_id) + "/s" + str(self.screen_num) + "_slot" + str(self.slot_id) + "/scale/head/eyeR"
-
-      # create window
-      ## @var window
-      # The window in which this View will be rendered to.
-      self.window = avango.gua.nodes.Window()
-      self.window.Display.value = self.display_values[0] # GPU-ID
-      self.window.Title.value = "Display: " + str(DISPLAY_INSTANCE.name) + "; Slot: " + str(self.slot_id)
-      self.window.LeftResolution.value = self.window_size
-      self.window.RightResolution.value = self.window_size
-      #self.window.EnableVsync.value = False
-
-      if DISPLAY_INSTANCE.stereomode == "SIDE_BY_SIDE":
-        self.window.Size.value = avango.gua.Vec2ui(self.window_size.x * 2, self.window_size.y)
-        self.window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
-        self.window.RightPosition.value = avango.gua.Vec2ui(self.window_size.x, 0)
-        self.window.StereoMode.value = avango.gua.StereoMode.SIDE_BY_SIDE
+    if DISPLAY_INSTANCE.stereomode == "SIDE_BY_SIDE":
+      self.window.Size.value = avango.gua.Vec2ui(self.window_size.x * 2, self.window_size.y)
+      self.window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
+      self.window.RightPosition.value = avango.gua.Vec2ui(self.window_size.x, 0)
+      self.window.StereoMode.value = avango.gua.StereoMode.SIDE_BY_SIDE
+    
+    elif DISPLAY_INSTANCE.stereomode == "ANAGLYPH_RED_CYAN" or DISPLAY_INSTANCE.stereomode == "CHECKERBOARD":
+      self.window.Size.value = self.window_size
+      self.window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
+      self.window.RightPosition.value = avango.gua.Vec2ui(0, 0)
       
-      elif DISPLAY_INSTANCE.stereomode == "ANAGLYPH_RED_CYAN" or DISPLAY_INSTANCE.stereomode == "CHECKERBOARD":
-        self.window.Size.value = self.window_size
-        self.window.LeftPosition.value = avango.gua.Vec2ui(0, 0)
-        self.window.RightPosition.value = avango.gua.Vec2ui(0, 0)
-        
-        if DISPLAY_INSTANCE.stereomode == "ANAGLYPH_RED_CYAN":
-          self.window.StereoMode.value = avango.gua.StereoMode.ANAGLYPH_RED_CYAN
+      if DISPLAY_INSTANCE.stereomode == "ANAGLYPH_RED_CYAN":
+        self.window.StereoMode.value = avango.gua.StereoMode.ANAGLYPH_RED_CYAN
 
-        elif DISPLAY_INSTANCE.stereomode == "CHECKERBOARD":
-          self.window.StereoMode.value = avango.gua.StereoMode.CHECKERBOARD
+      elif DISPLAY_INSTANCE.stereomode == "CHECKERBOARD":
+        self.window.StereoMode.value = avango.gua.StereoMode.CHECKERBOARD
 
-      self.pipeline.LeftResolution.value = self.window.LeftResolution.value
-      self.pipeline.RightResolution.value = self.window.RightResolution.value
+    self.pipeline.LeftResolution.value = self.window.LeftResolution.value
+    self.pipeline.RightResolution.value = self.window.RightResolution.value
 
-      if self.is_stereo:
-        self.pipeline.EnableStereo.value = True
-      else:
-        self.pipeline.EnableStereo.value = False
+    if self.is_stereo:
+      self.pipeline.EnableStereo.value = True
+    else:
+      self.pipeline.EnableStereo.value = False
 
     self.pipeline.Window.value = self.window
     self.pipeline.Camera.value = self.camera
     self.pipeline.EnableFPSDisplay.value = True
 
-
     '''
       General user settings
     '''
 
-    # add tracking reader to avoid latency
-    self.init_local_tracking_override(None, avango.gua.make_identity_mat(), avango.gua.make_identity_mat())
-
     # set display string and warpmatrices as given by the display
     if len(self.display_values) > 1:
       self.set_warpmatrices(self.window, self.display_values[1])
-    
+
     # append pipeline to the viewer
     VIEWER.Pipelines.value.append(self.pipeline)
 
     self.always_evaluate(True)
   
-  ## Adds a tracking reader to the view instance.
-  # @param TRACKING_TARGET_NAME The target name of the tracked object as chosen in daemon.
-  # @param TRANSMITTER_OFFSET The transmitter offset to be applied.
-  # @param NO_TRACKING_MAT The matrix to be applied if no valid tracking target was specified.
-  def init_local_tracking_override(self, TRACKING_TARGET_NAME, TRANSMITTER_OFFSET, NO_TRACKING_MAT):
-    
-    ## @var TRACKING_TARGET_NAME
-    # The target name of the tracked object as chosen in daemon.
-    self.TRACKING_TARGET_NAME = TRACKING_TARGET_NAME
-
-    ## @var TRANSMITTER_OFFSET
-    # The transmitter offset to be applied.
-    self.TRANSMITTER_OFFSET = TRANSMITTER_OFFSET
-
-    ## @var NO_TRACKING_MAT
-    # Matrix to be applied if no headtracking is available.
-    self.NO_TRACKING_MAT = NO_TRACKING_MAT
-
-    ## @var headtracking_reader
-    # Instance of a child class of ClientTrackingReader to supply translation input.
-    if self.TRACKING_TARGET_NAME != None:
-      self.headtracking_reader = ClientTrackingTargetReader()
-      self.headtracking_reader.my_constructor(TRACKING_TARGET_NAME)
-      self.headtracking_reader.set_transmitter_offset(TRANSMITTER_OFFSET)
-      self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
-      print_message("Client tracking update - Slot " + str(self.slot_id) + ": Connected to tracking reader with target " + str(self.TRACKING_TARGET_NAME))
 
   ## Sets the warp matrices if there is a correct amount of them.
   # @param WINDOW The window instance to apply the warp matrices to.
@@ -350,40 +271,3 @@ class View(avango.script.Script):
     # connect sf_pipeline_string with Name field of info node once
     if _pipeline_info_node != None and self.sf_pipeline_string.value == "":
       self.sf_pipeline_string.connect_from(_pipeline_info_node.Name)
-
-
-    # local tracking update code, does not noticeably increase performance
-    '''
-    _node_to_update = self.SCENEGRAPH["/net/platform_" + str(self.platform_id) + "/scale/s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
-
-    # return when scenegraph is not yet present
-    if _node_to_update == None:
-      return
-
-    # get this slot's information node containing the tracking target and transmitter offset
-    _information_node = _node_to_update.Children.value[0]
-
-    # get this slot's no tracking node containing the no tracking matrix
-    _no_tracking_node = _information_node.Children.value[0]
-
-    _tracking_target_name = _information_node.Name.value
-    
-    if _tracking_target_name == "None":
-      _tracking_target_name = None
-
-    # create new tracking reader when tracking target properties change
-    if _tracking_target_name != self.TRACKING_TARGET_NAME or \
-       self.TRANSMITTER_OFFSET != _information_node.Transform.value or \
-       self.NO_TRACKING_MAT != _no_tracking_node.Transform.value:
-
-      self.init_local_tracking_override(_tracking_target_name, _information_node.Transform.value, _no_tracking_node.Transform.value)
-
-    # when no value is to be updated, stop evaluation
-    if self.TRACKING_TARGET_NAME == None:
-      return
-    
-    # update slot node
-    # TODO: Consider ONLY_TRANSLATION_UPDATE
-    if _node_to_update != None:
-      _node_to_update.Transform.value = self.headtracking_reader.sf_tracking_mat.value
-   '''

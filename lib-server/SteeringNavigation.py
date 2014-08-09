@@ -231,6 +231,10 @@ class SteeringNavigation(avango.script.Script):
   def add_user_representation(self, USER_REPRESENTATION):
     USER_REPRESENTATION.NODE.Transform.disconnect()
     USER_REPRESENTATION.NODE.Transform.connect_from(self.sf_nav_mat)
+
+    if len(self.active_user_representations) == 0 and self.trace != None:
+      self.trace.clear(self.sf_abs_mat.value * self.device.sf_station_mat.value)
+
     self.active_user_representations.append(USER_REPRESENTATION)
   
   ## Removes a UserRepresentation from this navigation.
@@ -241,6 +245,8 @@ class SteeringNavigation(avango.script.Script):
     if USER_REPRESENTATION in self.active_user_representations:
       self.active_user_representations.remove(USER_REPRESENTATION)
 
+      if len(self.active_user_representations) == 0:
+        self.trace.clear(self.sf_abs_mat.value * self.device.sf_station_mat.value)
 
   ## Resets the navigation's matrix to the initial value.
   def reset(self):
@@ -340,7 +346,7 @@ class SteeringNavigation(avango.script.Script):
       self.trace = TraceLines.Trace(str(self), 500, 50.0, self.sf_abs_mat.value * self.device.sf_station_mat.value, self.trace_material + 'Shadeless')    
     
     # draw the traces if enabled
-    elif self.movement_traces:
+    elif self.movement_traces and len(self.active_user_representations) > 0:
       self.trace.update(self.sf_abs_mat.value * self.device.sf_station_mat.value)
 
     # update sf_nav_mat

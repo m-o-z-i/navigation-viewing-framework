@@ -13,7 +13,6 @@ from   examples_common.GuaVE import GuaVE
 from   ConsoleIO        import *
 
 from   scenegraph_config import scenegraphs
-from   workspace_config import workspaces
 
 # import python libraries
 import os
@@ -37,8 +36,13 @@ class ApplicationManager(avango.script.Script):
     self.super(ApplicationManager).__init__()
 
   ## Custom constructor
+  # @param WORKSPACE_CONFIG Filepath of the workspace configuration file to be loaded.
   # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
-  def my_constructor(self, START_CLIENTS):
+  def my_constructor(self, WORKSPACE_CONFIG, START_CLIENTS):
+
+    _workspace_config_file_name = WORKSPACE_CONFIG.replace(".py", "")
+    _workspace_config_file_name = _workspace_config_file_name.replace("/", ".")
+    exec 'from ' + _workspace_config_file_name + ' import workspaces'
     
     # parameters
     ## @var background_texture
@@ -146,6 +150,10 @@ class ApplicationManager(avango.script.Script):
               _right_eye_node = avango.gua.nodes.TransformNode(Name = "eyeR")
               _right_eye_node.Transform.value = avango.gua.make_trans_mat(_user.eye_distance / 2, 0.0, 0.0)
               _head_node.Children.value.append(_right_eye_node)
+
+            else:
+
+              print_warning("Warning: No empty slot left for user " + str(_u_id) + " in workspace " + str(_workspace.name) + " on display " + str(_display.name))
 
 
     # server control monitor setup #

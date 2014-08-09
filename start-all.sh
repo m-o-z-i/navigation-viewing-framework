@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # kill running python on this machine
-if [ "$1" != false ] ; then
+if [ "$2" != false ] ; then
     killall python
 fi
 
@@ -34,10 +34,10 @@ python ./lib-server/Daemon.py > /dev/null &
 
 
 # run program
-if [ "$1" != false ] ; then
-    cd "$DIR" && python ./lib-server/main.py True
+if [ "$2" != false ] ; then
+    cd "$DIR" && python ./lib-server/main.py $1 True
 else 
-	  cd "$DIR" && python ./lib-server/main.py False
+	  cd "$DIR" && python ./lib-server/main.py $1 False
 fi
 
 # kill daemon

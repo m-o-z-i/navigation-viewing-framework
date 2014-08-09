@@ -13,7 +13,7 @@ import avango.oculus
 import ClientMaterialUpdaters
 from View import *
 from ClientPortal import * 
-from workspace_config import displays
+from display_config import displays
 
 # import python libraries
 import sys

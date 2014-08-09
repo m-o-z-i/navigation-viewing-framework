@@ -10,6 +10,8 @@ import avango.gua
 # import framework libraries
 from Display import Display
 
+## Create all displays to be used by the framework in the end of this file. ##
+
 ## Display configuration for the large powerwall in the VR lab.
 class LargePowerwall(Display):
   
@@ -226,60 +228,8 @@ class SmallPowerwall2(Display):
     else:
       return None
 
-
 ## Display configuration for the 3D multiuser touch table in the VR lab.
-class TouchTable3DStandalone(Display):
-
-  ## Default constructor.
-  def __init__(self, render_mask = ""):
-    Display.__init__( self
-                    , hostname = "medusa"
-                    , name = "touch_table_3D"
-                    , resolution = (1400, 1050)
-                    , displaystrings = [":0.0", ":0.1", ":0.2"] 
-                    #, shutter_timings = [  [(100, 200, 2900, 3000), (8330, 8430, 11230, 11330)],
-                    #                       [(2600, 2700, 5700, 5800), (11030, 11130, 14630, 14730)],
-                    #                       [(6000, 6100, 8700, 8800), (14330, 14430, 15900, 16000)]                                          
-                    #                    ]
-                    , shutter_timings = [  [(100, 200, 2900, 3000), (8400, 8500, 11400, 11500)],
-                                           [(2600, 2700, 5700, 5800), (11000, 11100, 14600, 14700)],
-                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]                                          
-                                        ]
-                    , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
-                                           [(20, 80, 40, 10), (2, 8, 4, 1)],
-                                           [(20, 80, 40, 10), (2, 8, 4, 1)]
-                                        ]
-                    , size = (1.17, 0.84)
-                    , transformation = #avango.gua.make_trans_mat(-1.56, 0.953, 2.28) * \
-                                       #avango.gua.make_rot_mat(90, 0, 1, 0) * \
-                                       avango.gua.make_rot_mat(90.0, -1,0, 0)
-                    , max_viewing_distance = 1.0
-                    , stereo = True
-                    , stereomode = "SIDE_BY_SIDE"  
-                    , render_mask = render_mask                  
-                    )
-
-  ## Registers a new view at this display and returns the display string 
-  # and the warp matrices assigned to the new view.
-  def register_view(self):
-    view_num = self.num_views
-    if view_num < 3:
-      warpmatrices = [
-          "/opt/3D43-warpmatrices/3D43_warp_P4.warp"
-        , "/opt/3D43-warpmatrices/3D43_warp_P5.warp"
-        , "/opt/3D43-warpmatrices/3D43_warp_P6.warp"
-        , "/opt/3D43-warpmatrices/3D43_warp_P1.warp"
-        , "/opt/3D43-warpmatrices/3D43_warp_P2.warp"
-        , "/opt/3D43-warpmatrices/3D43_warp_P3.warp"
-      ]
-      self.num_views += 1
-      return (self.displaystrings[view_num], warpmatrices)
-    else:
-      return None
-
-
-## Display configuration for the 3D multiuser touch table in the VR lab.
-class TouchTable3DSecondary(Display):
+class TouchTable3D(Display):
 
   ## Custom constructor.
   # @param hostname The hostname to which this display is connected to.
@@ -403,3 +353,12 @@ class OculusRift(Display):
 
     # For a HMD, the screens must be appended to the slot node, not to the platform.
     return None
+
+
+
+
+## Create all displays to be used by the framework. ##
+large_powerwall = LargePowerwall()
+touch_table_3D = TouchTable3D()
+
+displays = [large_powerwall, touch_table_3D]

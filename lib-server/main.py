@@ -33,14 +33,16 @@ def start():
   # disable logger warningss
   logger = avango.gua.nodes.Logger(EnableWarning = False)
 
-  if sys.argv[1] == "True":
+  workspace_config = sys.argv[1]
+
+  if sys.argv[2] == "True":
     start_clients = True 
   else:
     start_clients = False
 
   # initialize application manager
   application_manager = ApplicationManager()
-  application_manager.my_constructor(START_CLIENTS = start_clients)
+  application_manager.my_constructor(WORKSPACE_CONFIG = workspace_config, START_CLIENTS = start_clients)
 
   # initialize scene
   scene_manager = SceneManager()

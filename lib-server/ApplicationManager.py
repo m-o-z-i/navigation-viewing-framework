@@ -43,6 +43,9 @@ class ApplicationManager(avango.script.Script):
     _workspace_config_file_name = WORKSPACE_CONFIG.replace(".py", "")
     _workspace_config_file_name = _workspace_config_file_name.replace("/", ".")
     exec 'from ' + _workspace_config_file_name + ' import workspaces'
+
+    avango.gua.load_shading_models_from("data/materials")
+    avango.gua.load_materials_from("data/materials")
     
     # parameters
     ## @var background_texture
@@ -198,10 +201,6 @@ class ApplicationManager(avango.script.Script):
     self.camera.Mode.value = 1
 
     _render_mask = "!do_not_display_group && !server_do_not_display_group"
-
-    for i in range(0, 10):
-      _render_mask = _render_mask + " && !platform_group_" + str(i)
-
     self.camera.RenderMask.value = _render_mask
 
     ## @var window

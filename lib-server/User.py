@@ -76,16 +76,6 @@ class UserRepresentation:
         self.body_avatar.GroupNames.value.append("do_not_display_group")
 
       # notice that the user has individual navigation -> avatar representation needed
-      if ID > 0:
-        self.head_avatar.GroupNames.value.remove('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id))
-        self.body_avatar.GroupNames.value.remove('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id))
-        self.head_avatar.GroupNames.value.append('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_individual")
-        self.body_avatar.GroupNames.value.append('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_individual")
-      else:
-        self.head_avatar.GroupNames.value.append('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id))
-        self.body_avatar.GroupNames.value.append('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id))
-        self.head_avatar.GroupNames.value.remove('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_individual")
-        self.body_avatar.GroupNames.value.remove('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_individual")
 
 
     else:

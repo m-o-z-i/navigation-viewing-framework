@@ -160,7 +160,7 @@ class ApplicationManager(avango.script.Script):
                                                                 avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                                                 avango.gua.make_scale_mat(_scale, _scale, _scale)
               self.navigation_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
-              #self.navigation_color_geometry.GroupNames.value = ["p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+              #self.navigation_color_geometry.GroupNames.value = ["w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id)]
               _screen_node.Children.value.append(self.navigation_color_geometry)
 
               _head_node = avango.gua.nodes.TransformNode(Name = "head")

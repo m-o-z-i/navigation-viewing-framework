@@ -145,7 +145,7 @@ class SmallPowerwall(Display):
   ## Default constructor.
   def __init__(self, render_mask = ""):
     Display.__init__( self
-                    , hostname = "eos"
+                    , hostname = "pandora"
                     , name = "small_powerwall"
                     , resolution = (1920, 1200)
                     , displaystrings = [":0.1", ":0.0"]
@@ -190,10 +190,10 @@ class SmallPowerwall2(Display):
   ## Default constructor.
   def __init__(self, render_mask = ""):
     Display.__init__( self
-                    , hostname = "eos"
+                    , hostname = "pandora"
                     , name = "small_powerwall2"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.1"]
+                    , displaystrings = [":0.0"]
                     , size = (3.0, 1.98)
                     , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
                     , stereo = True
@@ -360,5 +360,6 @@ class OculusRift(Display):
 ## Create all displays to be used by the framework. ##
 large_powerwall = LargePowerwall()
 touch_table_3D = TouchTable3D()
+small_powerwall = SmallPowerwall2()
 
-displays = [large_powerwall, touch_table_3D]
+displays = [large_powerwall, touch_table_3D, small_powerwall]

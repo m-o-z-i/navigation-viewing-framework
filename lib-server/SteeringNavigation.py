@@ -233,7 +233,8 @@ class SteeringNavigation(avango.script.Script):
     USER_REPRESENTATION.NODE.Transform.connect_from(self.sf_nav_mat)
 
     if len(self.active_user_representations) == 0 and self.trace != None:
-      self.trace.clear(self.sf_abs_mat.value * self.device.sf_station_mat.value)
+      _device_pos = self.device.sf_station_mat.value.get_translate()
+      self.trace.clear(self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z))
 
     self.active_user_representations.append(USER_REPRESENTATION)
   
@@ -246,7 +247,8 @@ class SteeringNavigation(avango.script.Script):
       self.active_user_representations.remove(USER_REPRESENTATION)
 
       if len(self.active_user_representations) == 0:
-        self.trace.clear(self.sf_abs_mat.value * self.device.sf_station_mat.value)
+        _device_pos = self.device.sf_station_mat.value.get_translate()
+        self.trace.clear(self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z))
 
   ## Resets the navigation's matrix to the initial value.
   def reset(self):
@@ -343,11 +345,13 @@ class SteeringNavigation(avango.script.Script):
       # create trace and add 'Shadeless' to material string to have a nicer line apperance
       ## @var trace
       # Instance of Trace class to handle trace drawing of this navigation's movements.
-      self.trace = TraceLines.Trace(str(self), 500, 50.0, self.sf_abs_mat.value * self.device.sf_station_mat.value, self.trace_material + 'Shadeless')    
+      _device_pos = self.device.sf_station_mat.value.get_translate()
+      self.trace = TraceLines.Trace(str(self), 500, 50.0, self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z), self.trace_material + 'Shadeless')    
     
     # draw the traces if enabled
     elif self.movement_traces and len(self.active_user_representations) > 0:
-      self.trace.update(self.sf_abs_mat.value * self.device.sf_station_mat.value)
+      _device_pos = self.device.sf_station_mat.value.get_translate()
+      self.trace.update(self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z))
 
     # update sf_nav_mat
     self.sf_nav_mat.value = self.sf_abs_mat.value * avango.gua.make_scale_mat(self.sf_scale.value)

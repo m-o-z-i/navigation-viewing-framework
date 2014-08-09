@@ -219,6 +219,10 @@ class SteeringNavigation(avango.script.Script):
     # The trace class that handles the line segment updating.
     self.trace = None
 
+    ## @var active_user_representations
+    # List of UserRepresentation instances which are currently connecting with this navigations matrix.
+    self.active_user_representations = []
+
     if self.movement_traces:
       # create trace and add 'Shadeless' to material string to have a nicer line apperance
       ## @var trace
@@ -227,6 +231,22 @@ class SteeringNavigation(avango.script.Script):
 
     # evaluate every frame
     self.always_evaluate(True)
+
+  ## Adds a UserRepresentation to this navigation.
+  # @param USER_REPRESENTATION The UserRepresentation instance to be added.
+  def add_user_representation(self, USER_REPRESENTATION):
+    USER_REPRESENTATION.NODE.Transform.disconnect()
+    USER_REPRESENTATION.NODE.Transform.connect_from(self.sf_nav_mat)
+    self.active_user_representations.append(USER_REPRESENTATION)
+  
+  ## Removes a UserRepresentation from this navigation.
+  # @param USER_REPRESENTATION The UserRepresentation instance to be removed.
+  def remove_user_representation(self, USER_REPRESENTATION):
+    USER_REPRESENTATION.NODE.Transform.disconnect()
+
+    if USER_REPRESENTATION in self.active_user_representations:
+      self.active_user_representations.remove(USER_REPRESENTATION)
+
 
   ## Resets the navigation's matrix to the initial value.
   def reset(self):

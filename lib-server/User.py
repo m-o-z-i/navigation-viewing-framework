@@ -49,6 +49,10 @@ class UserRepresentation:
     self.create_joseph_avatar_representation(self.USER.headtracking_reader.sf_avatar_head_mat,
                                              self.USER.headtracking_reader.sf_avatar_body_mat)
 
+    ## @var connected_navigation_id
+    # Navigation ID within the display group that is currently used.
+    self.connected_navigation_id = -1
+
     # connect first navigation as default
     self.connect_navigation_of_display_group(0)
 
@@ -56,12 +60,21 @@ class UserRepresentation:
   # @param ID The ID of the navigation to connect with.
   def connect_navigation_of_display_group(self, ID):
 
-    if ID < len(self.DISPLAY_GROUP.navigations):
+    if ID == self.connected_navigation_id:
+      print_message("Already on Navigaton " + str(ID)) 
 
+    elif ID < len(self.DISPLAY_GROUP.navigations):
+
+      _old_navigation = self.DISPLAY_GROUP.navigations[self.connected_navigation_id]
       _new_navigation = self.DISPLAY_GROUP.navigations[ID]
 
-      self.NODE.Transform.disconnect()
-      self.NODE.Transform.connect_from(_new_navigation.sf_nav_mat)
+      if len(_new_navigation.active_user_representations) == 0:
+        _new_navigation.inputmapping.set_abs_mat(_old_navigation.sf_abs_mat.value)
+        _new_navigation.inputmapping.set_scale(_old_navigation.sf_scale.value)
+
+      _old_navigation.remove_user_representation(self)
+      _new_navigation.add_user_representation(self)
+      self.connected_navigation_id = ID
 
       print_message("Switch navigation to " + str(ID) + " (" + _new_navigation.input_device_name + ")")
 

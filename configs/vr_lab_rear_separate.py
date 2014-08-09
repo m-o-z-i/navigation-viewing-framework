@@ -42,7 +42,7 @@ spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_ma
                                     , INVERT = True
                                     , TRANSMITTER_OFFSET = avango.gua.make_trans_mat(0.73, -0.9, 1.97) * \
                                                            avango.gua.make_rot_mat(-90, 0, 1, 0)
-                                    , AVATAR_TYPE = 'joseph'
+                                    , AVATAR_TYPE = None
                                     , DEVICE_TRACKING_NAME = None)
 
 ## Create display groups ##

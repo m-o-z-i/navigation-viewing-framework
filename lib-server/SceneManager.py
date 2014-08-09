@@ -213,16 +213,16 @@ class SceneManager(avango.script.Script):
     self.keyboard_sensor.Station.value = "device-keyboard0"
 
     # init field connections
-    self.sf_key1.connect_from(self.keyboard_sensor.Button10) # key 1
-    self.sf_key2.connect_from(self.keyboard_sensor.Button11) # key 2
-    self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3       
-    self.sf_key4.connect_from(self.keyboard_sensor.Button13) # key 4
-    self.sf_key5.connect_from(self.keyboard_sensor.Button14) # key 5
-    self.sf_key6.connect_from(self.keyboard_sensor.Button15) # key 6
-    self.sf_key7.connect_from(self.keyboard_sensor.Button16) # key 7
-    self.sf_key8.connect_from(self.keyboard_sensor.Button17) # key 8
-    self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
-    self.sf_key0.connect_from(self.keyboard_sensor.Button9)  # key 0
+    #self.sf_key1.connect_from(self.keyboard_sensor.Button10) # key 1
+    #self.sf_key2.connect_from(self.keyboard_sensor.Button11) # key 2
+    #self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3       
+    #self.sf_key4.connect_from(self.keyboard_sensor.Button13) # key 4
+    #self.sf_key5.connect_from(self.keyboard_sensor.Button14) # key 5
+    #self.sf_key6.connect_from(self.keyboard_sensor.Button15) # key 6
+    #self.sf_key7.connect_from(self.keyboard_sensor.Button16) # key 7
+    #self.sf_key8.connect_from(self.keyboard_sensor.Button17) # key 8
+    #self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
+    #self.sf_key0.connect_from(self.keyboard_sensor.Button9)  # key 0
     self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
 
     # init pipeline value node

@@ -108,7 +108,7 @@ class SteeringNavigation(avango.script.Script):
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
   # @param INVERT Boolean indicating if the input values should be inverted.
   # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system..
-  # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used ["joseph", "joseph_table", "kinect"].
+  # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used, e.g. "joseph".
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
   def my_constructor(
       self
@@ -143,6 +143,10 @@ class SteeringNavigation(avango.script.Script):
     ## @var start_scale
     # Initial scaling factor of the navigation.
     self.start_scale = STARTING_SCALE
+
+    ## @var avatar_type
+    # A string that determines what kind of avatar representation is to be used, e.g. "joseph".
+    self.avatar_type = AVATAR_TYPE
     
     # create device
     ## @var device

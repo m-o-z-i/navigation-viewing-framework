@@ -96,8 +96,11 @@ class ApplicationManager(avango.script.Script):
     else:
       print_warning("Start of clients disabled for debugging reasons.")
 
+    ##
+    #
+    self.workspaces = workspaces
 
-    for _workspace in workspaces:
+    for _workspace in self.workspaces:
 
       _w_id = _workspace.id 
 
@@ -150,6 +153,9 @@ class ApplicationManager(avango.script.Script):
               _right_eye_node = avango.gua.nodes.TransformNode(Name = "eyeR")
               _right_eye_node.Transform.value = avango.gua.make_trans_mat(_user.eye_distance / 2, 0.0, 0.0)
               _head_node.Children.value.append(_right_eye_node)
+
+              _nav_node.Children.value.append(_user.user_representations[_dg_id].head_avatar)
+              _nav_node.Children.value.append(_user.user_representations[_dg_id].body_avatar)
 
             else:
 

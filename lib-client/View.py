@@ -97,7 +97,11 @@ class View(avango.script.Script):
 
     # set render mask for camera
     _render_mask = "!do_not_display_group"
-    _render_mask = _render_mask + " && " + self.display_render_mask
+
+    if self.display_render_mask != "":
+      _render_mask = _render_mask + " && " + self.display_render_mask
+
+    _render_mask = _render_mask + " && !w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id)
 
     self.camera.RenderMask.value = _render_mask
 

@@ -24,16 +24,30 @@ class UserRepresentation:
 
   ## Custom constructor.
   # @param NODE A transformation node in which the selected navigation matrix is connected to.
+  # @param WORKSPACE_ID ID of the workspace in which the user is active.
   # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
-  def __init__(self, NODE, DISPLAY_GROUP):
+  # @param USER Reference to the user to be represented.
+  def __init__(self, NODE, WORKSPACE_ID, DISPLAY_GROUP, USER):
 
     ## @var NODE
     # A transformation node in which the selected navigation matrix is connected to.
     self.NODE = NODE
 
+    ## @var WORKSPACE_ID
+    # ID of the workspace in which the user is active.
+    self.WORKSPACE_ID = WORKSPACE_ID
+
     ## @var DISPLAY_GROUP
     # Reference to the display group this user representation is responsible for.
     self.DISPLAY_GROUP = DISPLAY_GROUP
+
+    ## @var USER
+    # Reference to the user to be represented.
+    self.USER = USER
+
+    # create avatar representation
+    self.create_joseph_avatar_representation(self.USER.headtracking_reader.sf_avatar_head_mat,
+                                             self.USER.headtracking_reader.sf_avatar_body_mat)
 
     # connect first navigation as default
     self.connect_navigation_of_display_group(0)
@@ -43,10 +57,73 @@ class UserRepresentation:
   def connect_navigation_of_display_group(self, ID):
 
     if ID < len(self.DISPLAY_GROUP.navigations):
+
+      _new_navigation = self.DISPLAY_GROUP.navigations[ID]
+
       self.NODE.Transform.disconnect()
-      self.NODE.Transform.connect_from(self.DISPLAY_GROUP.navigations[ID].sf_nav_mat)
+      self.NODE.Transform.connect_from(_new_navigation.sf_nav_mat)
+
+      print_message("Switch navigation to " + str(ID) + " (" + _new_navigation.input_device_name + ")")
+
+      # trigger avatar visibility
+      if _new_navigation.avatar_type == 'joseph':
+        self.head_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
+        self.body_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
+        self.head_avatar.GroupNames.value.remove("do_not_display_group")
+        self.body_avatar.GroupNames.value.remove("do_not_display_group")
+      else:
+        self.head_avatar.GroupNames.value.append("do_not_display_group")
+        self.body_avatar.GroupNames.value.append("do_not_display_group")
+
+      # notice that the user has individual navigation -> avatar representation needed
+      if ID > 0:
+        self.head_avatar.GroupNames.value.remove('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id))
+        self.body_avatar.GroupNames.value.remove('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id))
+        self.head_avatar.GroupNames.value.append('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_individual")
+        self.body_avatar.GroupNames.value.append('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_individual")
+      else:
+        self.head_avatar.GroupNames.value.append('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id))
+        self.body_avatar.GroupNames.value.append('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id))
+        self.head_avatar.GroupNames.value.remove('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_individual")
+        self.body_avatar.GroupNames.value.remove('w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_individual")
+
+
     else:
       print_error("Error. Navigation ID does not exist.", False)
+
+  ##
+  # 
+  #
+  def create_joseph_avatar_representation(self, SF_AVATAR_HEAD_MATRIX, SF_AVATAR_BODY_MATRIX):
+    
+    _loader = avango.gua.nodes.TriMeshLoader()
+    
+    # create avatar head
+    ## @var head_avatar
+    # Scenegraph node representing the geometry and transformation of the basic avatar's head.
+    self.head_avatar = _loader.create_geometry_from_file('head_avatar',
+                                                         'data/objects/Joseph/JosephHead.obj',
+                                                         'data/materials/ShadelessWhite.gmd',
+                                                         avango.gua.LoaderFlags.LOAD_MATERIALS)
+
+    self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
+    self.head_avatar.GroupNames.value = ['w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
+    self.NODE.Children.value.append(self.head_avatar)
+
+    # create avatar body
+    ## @var body_avatar
+    # Scenegraph node representing the geometry and transformation of the basic avatar's body.
+    self.body_avatar = _loader.create_geometry_from_file('body_avatar',
+                                                         'data/objects/Joseph/JosephBody.obj',
+                                                         'data/materials/ShadelessWhite.gmd',
+                                                         avango.gua.LoaderFlags.LOAD_MATERIALS)
+    
+    self.body_avatar.GroupNames.value = ['w' + str(self.WORKSPACE_ID) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
+    self.NODE.Children.value.append(self.body_avatar)
+  
+    self.head_avatar.Transform.connect_from(SF_AVATAR_HEAD_MATRIX)
+    self.body_avatar.Transform.connect_from(SF_AVATAR_BODY_MATRIX) 
+
 
 ## Logical representation of a user within a Workspace. Stores the relevant parameters
 # and cares for receiving the headtracking input.
@@ -94,13 +171,20 @@ class User(avango.script.Script):
     # Identification number of the user within the workspace, starting from 0.
     self.id = USER_ID
 
+    ## @var headtracking_reader
+    # TrackingTargetReader for the user's glasses.
+    self.headtracking_reader = TrackingTargetReader()
+    self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
+    self.headtracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
+    self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
+
     ## @var matrices_per_display_group
     # One transform node per display group in which the UserReperesentation stores the selected navigation matrix.
     self.matrices_per_display_group = [avango.gua.nodes.TransformNode() for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
 
     ## @var user_representations
     # List of UserRepresentations. One per display group of the workspace.
-    self.user_representations = [UserRepresentation(self.matrices_per_display_group[i], self.WORKSPACE_INSTANCE.display_groups[i]) for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
+    self.user_representations = [UserRepresentation(self.matrices_per_display_group[i], self.WORKSPACE_INSTANCE.id, self.WORKSPACE_INSTANCE.display_groups[i], self) for i in range(len(self.WORKSPACE_INSTANCE.display_groups))]
 
     ## @var headtracking_target_name
     # Name of the headtracking station as registered in daemon.
@@ -109,13 +193,6 @@ class User(avango.script.Script):
     ## @var glasses_id
     # ID of the shutter glasses worn by the user. Used for frequency updates.
     self.glasses_id = GLASSES_ID
-
-    ## @var headtracking_reader
-    # TrackingTargetReader for the user's glasses.
-    self.headtracking_reader = TrackingTargetReader()
-    self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
-    self.headtracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
-    self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     # toggles activity
     self.toggle_user_activity(self.is_active)

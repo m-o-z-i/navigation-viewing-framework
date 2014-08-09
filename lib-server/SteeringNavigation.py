@@ -223,12 +223,6 @@ class SteeringNavigation(avango.script.Script):
     # List of UserRepresentation instances which are currently connecting with this navigations matrix.
     self.active_user_representations = []
 
-    if self.movement_traces:
-      # create trace and add 'Shadeless' to material string to have a nicer line apperance
-      ## @var trace
-      # Instance of Trace class to handle trace drawing of this navigation's movements.
-      self.trace = TraceLines.Trace(self.platform.platform_id, 500, 50.0, STARTING_MATRIX, self.trace_material + 'Shadeless')    
-
     # evaluate every frame
     self.always_evaluate(True)
 
@@ -339,10 +333,15 @@ class SteeringNavigation(avango.script.Script):
     if self.in_dofchange_animation:
       self.animate_dofchange()
 
+    if self.movement_traces and self.trace == None:
+      # create trace and add 'Shadeless' to material string to have a nicer line apperance
+      ## @var trace
+      # Instance of Trace class to handle trace drawing of this navigation's movements.
+      self.trace = TraceLines.Trace(str(self), 500, 50.0, self.sf_abs_mat.value * self.device.sf_station_mat.value, self.trace_material + 'Shadeless')    
+    
     # draw the traces if enabled
-    if self.movement_traces:
-      _mat = self.get_current_world_pos()
-      self.trace.update(_mat)
+    elif self.movement_traces:
+      self.trace.update(self.sf_abs_mat.value * self.device.sf_station_mat.value)
 
     # update sf_nav_mat
     self.sf_nav_mat.value = self.sf_abs_mat.value * avango.gua.make_scale_mat(self.sf_scale.value)

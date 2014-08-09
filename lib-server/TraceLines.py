@@ -9,6 +9,7 @@ import avango.gua
 
 # import framework libraries
 import Tools
+from scenegraph_config import scenegraphs
 
 # import python libraries
 import time
@@ -19,12 +20,12 @@ import time
 class Trace:
 
   ## Default constructor.
-  # @param ID A numerical ID that is appended to the scene graph name to separate the line segments of multiple instances of this class.
+  # @param IDENTIFIER A string that is appended to the scene graph name to separate the line segments of multiple instances of this class.
   # @param NUM_LINES The number of line segments to be used.
   # @param LINE_DISTANCE The overall distance of all line segments together. Determines how long the trace lines are kept before they are overwritten.
   # @param INITIAL_MAT This matrix is used as initial position of all line segments.
   # @param TRACE_MATERIAL The material to be used to display the trace.
-  def __init__(self, ID, NUM_LINES, LINE_DISTANCE, INITIAL_MAT, TRACE_MATERIAL):
+  def __init__(self, IDENTIFIER, NUM_LINES, LINE_DISTANCE, INITIAL_MAT, TRACE_MATERIAL):
 
     ## @var num_lines
     # The number of line segments that are used.
@@ -41,9 +42,9 @@ class Trace:
     self.line_thickness = 0.1 # in meter
 
     ## @var transform_node
-    # A transform node that is the parent of all line segments. It groups the line segments in the scene graph as the given ID is added to it's name and therefore allows multiple instances of this class.
-    self.transform_node = avango.gua.nodes.TransformNode(Name = 'platform_trace_' + str(ID))
-    graph["/net"].Children.value.append(self.transform_node)
+    # A transform node that is the parent of all line segments. It groups the line segments in the scene graph as the given identifier is added to its name and therefore allows multiple instances of this class.
+    self.transform_node = avango.gua.nodes.TransformNode(Name = 'nav_trace_' + str(IDENTIFIER))
+    scenegraphs[0]["/net"].Children.value.append(self.transform_node)
 
     # create each line segment node by loading the geometry and appending it to the parent node
     _loader = avango.gua.nodes.TriMeshLoader()

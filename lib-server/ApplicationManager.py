@@ -145,6 +145,24 @@ class ApplicationManager(avango.script.Script):
               _screen_node = _display.create_screen_node(Name = "screen")
               _nav_node.Children.value.append(_screen_node)
 
+              _loader = avango.gua.nodes.TriMeshLoader()
+
+              ## @var navigation_color_geometry
+              # Colored plane indicating the associated navigation's color.
+              self.navigation_color_geometry = _loader.create_geometry_from_file('nav_color_plane',
+                                                                                 'data/objects/plane.obj',
+                                                                                 'data/materials/' + _display_group.navigations[0].trace_material + 'Shadeless.gmd',
+                                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
+
+              _trans = avango.gua.Vec3(-0.45 * _screen_node.Width.value, 0.4 * _screen_node.Height.value, 0.0)
+              _scale = 0.05 * _screen_node.Height.value
+              self.navigation_color_geometry.Transform.value =  avango.gua.make_trans_mat(_trans) * \
+                                                                avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                                                avango.gua.make_scale_mat(_scale, _scale, _scale)
+              self.navigation_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
+              #self.navigation_color_geometry.GroupNames.value = ["p" + str(self.PLATFORM.platform_id) + "_s" + str(self.screen_num) + "_slot" + str(self.slot_id)]
+              _screen_node.Children.value.append(self.navigation_color_geometry)
+
               _head_node = avango.gua.nodes.TransformNode(Name = "head")
               _head_node.Transform.connect_from(_user.headtracking_reader.sf_abs_mat)
               _nav_node.Children.value.append(_head_node)

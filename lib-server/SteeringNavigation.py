@@ -14,6 +14,7 @@ from GroundFollowing  import *
 from InputMapping     import InputMapping
 import Tools
 import TraceLines
+from scenegraph_config import scenegraphs
 
 # import python libraries
 import math
@@ -231,6 +232,14 @@ class SteeringNavigation(avango.script.Script):
   def add_user_representation(self, USER_REPRESENTATION):
     USER_REPRESENTATION.NODE.Transform.disconnect()
     USER_REPRESENTATION.NODE.Transform.connect_from(self.sf_nav_mat)
+
+    # set navigation color plane
+    for _s in range(len(USER_REPRESENTATION.DISPLAY_GROUP.displays)):
+      try:
+        scenegraphs[0]["/net/w" + str(USER_REPRESENTATION.WORKSPACE_ID) + "_dg" + str(USER_REPRESENTATION.DISPLAY_GROUP.id) + \
+                       "_s" + str(_s) + "_u" + str(USER_REPRESENTATION.USER.id) + "/screen/nav_color_plane"].Material.value = 'data/materials/' + self.trace_material + "Shadeless.gmd"
+      except:
+        pass
 
     if len(self.active_user_representations) == 0 and self.trace != None:
       _device_pos = self.device.sf_station_mat.value.get_translate()

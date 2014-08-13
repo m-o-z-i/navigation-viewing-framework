@@ -29,15 +29,15 @@ export PYTHONPATH="$LOCAL_AVANGO/lib/python2.7":"$LOCAL_AVANGO/examples":$AVANGO
 export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./lib-server
 
 # run daemon
-python ./lib-server/Daemon.py #> /dev/null &
+python ./lib-server/Daemon.py > /dev/null &
 
 
 # run program
-#if [ "$2" != false ] ; then
-#    cd "$DIR" && python ./lib-server/main.py $1 True
-#else 
-#	  cd "$DIR" && python ./lib-server/main.py $1 False
-#fi
+if [ "$2" != false ] ; then
+    cd "$DIR" && python ./lib-server/main.py $1 True
+else 
+	  cd "$DIR" && python ./lib-server/main.py $1 False
+fi
 
 # kill daemon
 kill %1

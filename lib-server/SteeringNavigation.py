@@ -62,41 +62,24 @@ class SteeringNavigation(avango.script.Script):
   ## @var trace_materials
   # List of material pretexts to choose from when a trace is created. All avatars on this
   # navigation will have this material.
-  trace_materials = ['AvatarBlue', 'AvatarCyan', 'AvatarGreen', 'AvatarMagenta', 'AvatarDarkGreen',
-                     'AvatarOrange', 'AvatarRed', 'AvatarWhite', 'AvatarYellow', 'AvatarGrey']
+  trace_materials = ['AvatarBlue', 'AvatarGreen', 'AvatarRed', 'AvatarYellow', 'AvatarMagenta', 
+                     'AvatarOrange', 'AvatarWhite', 'AvatarGrey', 'AvatarDarkGreen']
 
-  ## @var material_used
-  # List of booleans to indicate if a material in trace_materials was already used.
-  material_used = [False, False, False, False, False,
-                   False, False, False, False, False]
+  ## @var number_of_instances
+  # Number of SteeringNavigation instances already created. Used for trace material assignment.
+  number_of_instances = 0
+
 
   ## Default constructor.
   def __init__(self):
     self.super(SteeringNavigation).__init__()
 
-    # if every material has already been used, reset the pool
-    _reset_pool = True
-
-    for _boolean in SteeringNavigation.material_used:
-      if _boolean == False:
-        _reset_pool = False
-        break
-
-    if _reset_pool:
-      SteeringNavigation.material_used = [False, False, False, False, False, False, False, False, False, False]
-
-    # get a random material from the pool of materials
-    _random_material_number = random.randint(0, len(SteeringNavigation.trace_materials) - 1)
- 
-    # if the material is already used, go further until the first unused one is found
-    while SteeringNavigation.material_used[_random_material_number] == True:
-      _random_material_number = (_random_material_number + 1) % len(SteeringNavigation.material_used)
-
     # get the selected material 
     ## @var trace_material
     # The material to be used for the movement traces.
-    self.trace_material = SteeringNavigation.trace_materials[_random_material_number]
-    SteeringNavigation.material_used[_random_material_number] = True
+    self.trace_material = SteeringNavigation.trace_materials[SteeringNavigation.number_of_instances]
+    SteeringNavigation.number_of_instances += 1
+    SteeringNavigation.number_of_instances = SteeringNavigation.number_of_instances % len(SteeringNavigation.trace_materials)
 
   ## Custom constructor.
   # @param STARTING_MATRIX Initial position matrix of the navigation to be created.

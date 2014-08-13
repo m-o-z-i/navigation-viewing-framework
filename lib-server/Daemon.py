@@ -102,10 +102,10 @@ def init_tuio_input():
 ## Initializes a spacemouse for navigation.
 def init_spacemouse():
 
-  _string = os.popen("python find_device.py 3Dconnexion SpaceNavigator").read()
+  _string = os.popen("python find_device.py 1 3Dconnexion SpaceNavigator").read()
 
   if len(_string) == 0:
-    _string = os.popen("python find_device.py 3Dconnexion SpaceTraveler USB").read()
+    _string = os.popen("python find_device.py 1 3Dconnexion SpaceTraveler USB").read()
 
   _string = _string.split()
   if len(_string) > 0:  
@@ -138,7 +138,7 @@ def init_spacemouse():
 ## Initializes an old spheron for navigation.
 def init_old_spheron():
 
-  _string = os.popen("python find_device.py BUWEIMAR RAPID DEVEL DEVICE").read()
+  _string = os.popen("python find_device.py 1 BUWEIMAR RAPID DEVEL DEVICE").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -165,7 +165,7 @@ def init_old_spheron():
   else:
     print "Old Spheron NOT found !"
     
-  _string = os.popen("python find_device.py PIXART USB OPTICAL MOUSE").read()
+  _string = os.popen("python find_device.py 1 PIXART USB OPTICAL MOUSE").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -191,7 +191,7 @@ def init_old_spheron():
 ## Initializes a new spheron for navigation.
 def init_new_spheron():
 
-  _string = os.popen("python find_device.py BUW Spheron").read()
+  _string = os.popen("python find_device.py 1 BUW Spheron").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -252,7 +252,7 @@ def init_new_spheron():
 ## Initializes a new spheron for navigation.
 def init_new_globefish():
 
-  _string = os.popen("python find_device.py BUW Spheron").read()
+  _string = os.popen("python find_device.py 1 BUW Spheron").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -289,7 +289,7 @@ def init_new_globefish():
 ## Initalizes a mouse for navigation.
 def init_mouse():
 
-  _string = os.popen("python find_device.py Logitech USB").read()
+  _string = os.popen("python find_device.py 1 Logitech USB").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -403,11 +403,9 @@ def init_keyboard():
     print "Keyboard " + str(i) + " started at:", name
 
 ## Initializes a X-Box controller for navigation.
-def xbox_controller():
+def xbox_controller(PLAYER_NUMBER):
 
-  # ToDo: Consider PLAYER_NUMBER
-
-  _string = os.popen("python find_device.py Xbox 360 Wireless Receiver").read()
+  _string = os.popen("python find_device.py " + str(PLAYER_NUMBER) + " Xbox 360 Wireless Receiver").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -448,7 +446,7 @@ def xbox_controller():
 
 def init_august_pointer(ID, DEVICE_STATION_STRING):
 
-  _string = os.popen("python find_device.py MOUSE USB MOUSE").read()
+  _string = os.popen("python find_device.py 1 MOUSE USB MOUSE").read()
   _string = _string.split()
 
   if len(_string) > ID:
@@ -477,7 +475,7 @@ def init_august_pointer(ID, DEVICE_STATION_STRING):
 ## Initializes a portal camera for portal features.
 def init_portal_camera(VERSION_NUMBER):
 
-  _string = os.popen("python find_device.py portalCam " + str(VERSION_NUMBER)).read()
+  _string = os.popen("python find_device.py 1 portalCam " + str(VERSION_NUMBER)).read()
   _string = _string.split()
 
   if len(_string) > 0:  
@@ -528,8 +526,11 @@ device_list = []
 init_lcd_wall_tracking()
 init_dlp_wall_tracking()
 
-# initialize x-box controller
-xbox_controller()
+# initialize x-box controllers
+xbox_controller(1)
+#xbox_controller(2)
+#xbox_controller(3)
+#xbox_controller(4)
 
 # init spherons
 init_old_spheron()

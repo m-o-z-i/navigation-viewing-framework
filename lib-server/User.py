@@ -55,17 +55,30 @@ class UserRepresentation(avango.script.Script):
 
     # create user representation nodes
 
+    _stereo_display_group = True
+
+    for _display in DISPLAY_GROUP.displays:
+
+      if _display.stereo == False:
+        _stereo_display_group = False
+        break
+
+    if _stereo_display_group:
+      _eye_distance = self.USER.eye_distance
+    else:
+      _eye_distance = 0.0
+
     ##
     #
     self.head = avango.gua.nodes.TransformNode(Name = "head")
     self.view_transform_node.Children.value.append(self.head)
 
     self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
-    self.left_eye.Transform.value = avango.gua.make_trans_mat(-self.USER.eye_distance / 2, 0.0, 0.0)
+    self.left_eye.Transform.value = avango.gua.make_trans_mat(-_eye_distance / 2, 0.0, 0.0)
     self.head.Children.value.append(self.left_eye)
 
     self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
-    self.right_eye.Transform.value = avango.gua.make_trans_mat(self.USER.eye_distance / 2, 0.0, 0.0)
+    self.right_eye.Transform.value = avango.gua.make_trans_mat(_eye_distance / 2, 0.0, 0.0)
     self.head.Children.value.append(self.right_eye)
 
     # create avatar representation

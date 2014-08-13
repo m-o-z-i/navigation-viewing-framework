@@ -77,9 +77,7 @@ def start():
 
   # get the display instance
   for _display in displays:
-    print "compare", _display.name, display_name
     if _display.name == display_name:
-      print "Matched"
       handled_display_instance = _display
 
   # create a viewer

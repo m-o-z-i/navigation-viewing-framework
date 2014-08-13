@@ -14,7 +14,7 @@ from GroundFollowing  import *
 from InputMapping     import InputMapping
 import Tools
 import TraceLines
-from scenegraph_config import scenegraphs
+from scene_config import scenegraphs
 
 # import python libraries
 import math
@@ -108,7 +108,6 @@ class SteeringNavigation(avango.script.Script):
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
   # @param INVERT Boolean indicating if the input values should be inverted.
-  # @param TRANSMITTER_OFFSET The matrix offset that is applied to the values delivered by the tracking system..
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used, e.g. "joseph".
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
   def my_constructor(
@@ -121,7 +120,6 @@ class SteeringNavigation(avango.script.Script):
     , GROUND_FOLLOWING_SETTINGS
     , MOVEMENT_TRACES
     , INVERT
-    , TRANSMITTER_OFFSET
     , AVATAR_TYPE
     , DEVICE_TRACKING_NAME = None
     ):
@@ -230,8 +228,6 @@ class SteeringNavigation(avango.script.Script):
   ## Adds a UserRepresentation to this navigation.
   # @param USER_REPRESENTATION The UserRepresentation instance to be added.
   def add_user_representation(self, USER_REPRESENTATION):
-    USER_REPRESENTATION.NODE.Transform.disconnect()
-    USER_REPRESENTATION.NODE.Transform.connect_from(self.sf_nav_mat)
 
     # set navigation color plane
     for _s in range(len(USER_REPRESENTATION.DISPLAY_GROUP.displays)):
@@ -250,7 +246,6 @@ class SteeringNavigation(avango.script.Script):
   ## Removes a UserRepresentation from this navigation.
   # @param USER_REPRESENTATION The UserRepresentation instance to be removed.
   def remove_user_representation(self, USER_REPRESENTATION):
-    USER_REPRESENTATION.NODE.Transform.disconnect()
 
     if USER_REPRESENTATION in self.active_user_representations:
       self.active_user_representations.remove(USER_REPRESENTATION)

@@ -15,7 +15,9 @@ import Tools
 from Scene import *
 from ConsoleIO import *
 
-from scenegraph_config import scenegraphs
+from scene_config import scenegraphs
+from scene_config import scenes
+from scene_config import enable_key_bindings
 
 # import python libraries
 import math
@@ -213,17 +215,18 @@ class SceneManager(avango.script.Script):
     self.keyboard_sensor.Station.value = "device-keyboard0"
 
     # init field connections
-    #self.sf_key1.connect_from(self.keyboard_sensor.Button10) # key 1
-    #self.sf_key2.connect_from(self.keyboard_sensor.Button11) # key 2
-    #self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3       
-    #self.sf_key4.connect_from(self.keyboard_sensor.Button13) # key 4
-    #self.sf_key5.connect_from(self.keyboard_sensor.Button14) # key 5
-    #self.sf_key6.connect_from(self.keyboard_sensor.Button15) # key 6
-    #self.sf_key7.connect_from(self.keyboard_sensor.Button16) # key 7
-    #self.sf_key8.connect_from(self.keyboard_sensor.Button17) # key 8
-    #self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
-    #self.sf_key0.connect_from(self.keyboard_sensor.Button9)  # key 0
-    self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
+    if enable_key_bindings:
+      self.sf_key1.connect_from(self.keyboard_sensor.Button10) # key 1
+      self.sf_key2.connect_from(self.keyboard_sensor.Button11) # key 2
+      self.sf_key3.connect_from(self.keyboard_sensor.Button12) # key 3       
+      self.sf_key4.connect_from(self.keyboard_sensor.Button13) # key 4
+      self.sf_key5.connect_from(self.keyboard_sensor.Button14) # key 5
+      self.sf_key6.connect_from(self.keyboard_sensor.Button15) # key 6
+      self.sf_key7.connect_from(self.keyboard_sensor.Button16) # key 7
+      self.sf_key8.connect_from(self.keyboard_sensor.Button17) # key 8
+      self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
+      self.sf_key0.connect_from(self.keyboard_sensor.Button9)  # key 0
+      self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
 
     # init pipeline value node
     _pipeline_value_node = avango.gua.nodes.TransformNode(Name = "pipeline_values")
@@ -234,16 +237,12 @@ class SceneManager(avango.script.Script):
     self.pipeline_info_node = avango.gua.nodes.TransformNode()
     _pipeline_value_node.Children.value.append(self.pipeline_info_node)
 
-    # init scenes   
-    #self.scene_weimar = SceneWeimar(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
-    #self.scene_monkey = SceneMonkey(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
-    self.scene_medieval = SceneMedievalTown(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
-    #self.scene_pitoti = ScenePitoti(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
-    #self.scene_vianden = SceneVianden(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
-    #self.scene_plod = ScenePLOD(self, self.SCENEGRAPH, self.NET_TRANS_NODE)      
-    
-    #self.scene_vianden_low = SceneViandenLow(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
-    #self.scene_vianden_high = SceneViandenHigh(self, self.SCENEGRAPH, self.NET_TRANS_NODE)
+    # init scenes according to configuration file
+    _scene_id = 0
+
+    for _scene_name in scenes:
+      exec "self.scene_" + str(_scene_id) + " = " + str(_scene_name) + "(self, self.SCENEGRAPH, self.NET_TRANS_NODE)"
+      _scene_id += 1
 
     self.activate_scene(0) # activate first scene
         

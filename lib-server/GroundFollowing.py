@@ -11,7 +11,7 @@ from   avango.script import field_has_changed
 
 # import framework libraries
 from Intersection import *
-from scenegraph_config import scenegraphs
+from scene_config import scenegraphs
 
 # import python libraries
 import math

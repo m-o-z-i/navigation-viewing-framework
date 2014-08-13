@@ -13,13 +13,12 @@ import avango.oculus
 import ClientMaterialUpdaters
 from View import *
 from ClientPortal import * 
-from display_config import displays
 
 # import python libraries
 import sys
 
 # Command line parameters:
-# main.py SERVER_IP WORKSPACE_ID DISPLAY_GROUP_ID SCREEN_ID DISPLAY_NAME
+# main.py SERVER_IP WORKSPACE_CONFIG_FILE WORKSPACE_ID DISPLAY_GROUP_ID SCREEN_ID DISPLAY_NAME
 
 ## Main method for the client application.
 def start():
@@ -30,17 +29,21 @@ def start():
   # get the server ip
   server_ip = str(sys.argv[1])
 
+  # get the workspace config file #
+  workspace_config_file = str(sys.argv[2])
+  exec 'from ' + workspace_config_file + ' import displays'
+
   # get the workspace id
-  workspace_id = int(sys.argv[2])
+  workspace_id = int(sys.argv[3])
 
   # get the display group id
-  display_group_id = int(sys.argv[3])
+  display_group_id = int(sys.argv[4])
 
   # get the screen id
-  screen_id = int(sys.argv[4])
+  screen_id = int(sys.argv[5])
 
   # get the display name
-  display_name = str(sys.argv[5])
+  display_name = str(sys.argv[6])
 
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()

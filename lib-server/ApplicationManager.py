@@ -12,7 +12,7 @@ from   examples_common.GuaVE import GuaVE
 # import framework libraries
 from   ConsoleIO        import *
 
-from   scenegraph_config import scenegraphs
+from   scene_config import scenegraphs
 
 # import python libraries
 import os
@@ -107,76 +107,47 @@ class ApplicationManager(avango.script.Script):
 
       _w_id = _workspace.id 
 
-      for _display_group in _workspace.display_groups:
+      for _user in _workspace.users:
 
-        _dg_id = _display_group.id
+        _u_id = _user.id
 
-        for _display in _display_group.displays:
+        for _display_group in _workspace.display_groups:
 
-          _s_id = _display_group.displays.index(_display)
+          _dg_id = _display_group.id
 
-          # start a client on display host if necessary
-          if START_CLIENTS:
+          # create user representation in display group
+          _user_repr = _user.create_user_representation_for(_display_group)
 
-            if _display.hostname != _hostname:
+          for _display in _display_group.displays:
 
-              # run client process on host
-              # command line parameters: server ip, platform id, display name, screen number
-              print "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
-                    str(_dg_id) + " " + str(_s_id) + " " + _display.name
+            _s_id = _display_group.displays.index(_display)
 
-              _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
-              "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
-              str(_dg_id) + " " + str(_s_id) + " " + _display.name]
-              , stderr=subprocess.PIPE)
-              print "start client on", _display.hostname
-              time.sleep(1)
+            # start a client on display host if necessary
+            if START_CLIENTS:
 
-          for _user in _workspace.users:
+              if _display.hostname != _hostname:
 
-            _u_id = _user.id
+                # run client process on host
+                # command line parameters: server ip, platform id, display name, screen number
+                print "/start-client.sh " + _server_ip + " " + str(WORKSPACE_CONFIG) + " " + str(_w_id) + " " + \
+                      str(_dg_id) + " " + str(_s_id) + " " + _display.name
+
+                _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
+                "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
+                str(_dg_id) + " " + str(_s_id) + " " + _display.name]
+                , stderr=subprocess.PIPE)
+                print "start client on", _display.hostname
+                time.sleep(1)
 
             if _u_id < len(_display.displaystrings):
 
-              _nav_node = avango.gua.nodes.TransformNode(Name = "w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id))
-              _nav_node.Transform.connect_from(_user.matrices_per_display_group[_dg_id].Transform)
-              self.NET_TRANS_NODE.Children.value.append(_nav_node)
+              # create view transform node
+              _view_transform_node = avango.gua.nodes.TransformNode(Name = "w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id))
+              self.NET_TRANS_NODE.Children.value.append(_view_transform_node)
 
-              _screen_node = _display.create_screen_node(Name = "screen")
-              _nav_node.Children.value.append(_screen_node)
-
-              _loader = avango.gua.nodes.TriMeshLoader()
-
-              ## @var navigation_color_geometry
-              # Colored plane indicating the associated navigation's color.
-              self.navigation_color_geometry = _loader.create_geometry_from_file('nav_color_plane',
-                                                                                 'data/objects/plane.obj',
-                                                                                 'data/materials/' + _display_group.navigations[0].trace_material + 'Shadeless.gmd',
-                                                                                 avango.gua.LoaderFlags.LOAD_MATERIALS)
-
-              _trans = avango.gua.Vec3(-0.45 * _screen_node.Width.value, 0.4 * _screen_node.Height.value, 0.0)
-              _scale = 0.05 * _screen_node.Height.value
-              self.navigation_color_geometry.Transform.value =  avango.gua.make_trans_mat(_trans) * \
-                                                                avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                                                avango.gua.make_scale_mat(_scale, _scale, _scale)
-              self.navigation_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
-              #self.navigation_color_geometry.GroupNames.value = ["w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id)]
-              _screen_node.Children.value.append(self.navigation_color_geometry)
-
-              _head_node = avango.gua.nodes.TransformNode(Name = "head")
-              _head_node.Transform.connect_from(_user.headtracking_reader.sf_abs_mat)
-              _nav_node.Children.value.append(_head_node)
-
-              _left_eye_node = avango.gua.nodes.TransformNode(Name = "eyeL")
-              _left_eye_node.Transform.value = avango.gua.make_trans_mat(-_user.eye_distance / 2, 0.0, 0.0)
-              _head_node.Children.value.append(_left_eye_node)
-
-              _right_eye_node = avango.gua.nodes.TransformNode(Name = "eyeR")
-              _right_eye_node.Transform.value = avango.gua.make_trans_mat(_user.eye_distance / 2, 0.0, 0.0)
-              _head_node.Children.value.append(_right_eye_node)
-
-              _nav_node.Children.value.append(_user.user_representations[_dg_id].head_avatar)
-              _nav_node.Children.value.append(_user.user_representations[_dg_id].body_avatar)
+              # create user representation
+              _user_repr.add_nodes_for(_view_transform_node)
+              _user_repr.connect_navigation_of_display_group(0)
 
             else:
 

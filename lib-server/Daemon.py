@@ -531,7 +531,7 @@ def init_portal_camera(VERSION_NUMBER):
 device_list = []
 
 # init oculus rift sensors
-init_oculus()
+#init_oculus()
 
 # initialize trackings
 init_lcd_wall_tracking()

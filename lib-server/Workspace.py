@@ -53,11 +53,13 @@ class Workspace:
   ## Creates a DisplayGroup instance and adds it to this workspace.
   # @param DISPLAY_LIST List of Display instances to be assigned to the new display group.
   # @param NAVIGATION_LIST List of (Steering-)Navigation instances to be assiged to the display group.
+  #
   def create_display_group( self
                           , DISPLAY_LIST
-                          , NAVIGATION_LIST):
+                          , NAVIGATION_LIST
+                          , OFFSET_TO_WORKSPACE):
 
-    _dg = DisplayGroup(len(self.display_groups), DISPLAY_LIST, NAVIGATION_LIST)
+    _dg = DisplayGroup(len(self.display_groups), DISPLAY_LIST, NAVIGATION_LIST, OFFSET_TO_WORKSPACE, self.transmitter_offset)
     self.display_groups.append(_dg)
 
   ## Creates a User instance and adds it to this workspace.

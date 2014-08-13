@@ -9,7 +9,7 @@ import avango.gua
 
 # import framework libraries
 import Tools
-from scenegraph_config import scenegraphs
+from scene_config import scenegraphs
 
 # import python libraries
 import time

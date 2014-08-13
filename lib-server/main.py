@@ -17,7 +17,7 @@ from PortalCamera import *
 from PortalInteractionSpace import *
 from Device import *
 
-from scenegraph_config import scenegraphs
+from scene_config import scenegraphs
 
 # import python libraries
 import sys

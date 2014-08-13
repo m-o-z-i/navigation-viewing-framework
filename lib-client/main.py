@@ -24,14 +24,14 @@ import sys
 def start():
 
   # disable logger warningss
-  logger = avango.gua.nodes.Logger(EnableWarning = False)
+  logger = avango.gua.nodes.Logger(EnableWarning = True)
 
   # get the server ip
   server_ip = str(sys.argv[1])
 
   # get the workspace config file #
   workspace_config_file = str(sys.argv[2])
-  exec 'from ' + workspace_config_file + ' import displays'
+  exec 'from ' + workspace_config_file.replace("/", ".").replace(".py", "") + ' import displays'
 
   # get the workspace id
   workspace_id = int(sys.argv[3])
@@ -77,7 +77,9 @@ def start():
 
   # get the display instance
   for _display in displays:
+    print "compare", _display.name, display_name
     if _display.name == display_name:
+      print "Matched"
       handled_display_instance = _display
 
   # create a viewer

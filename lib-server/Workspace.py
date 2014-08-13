@@ -68,7 +68,8 @@ class Workspace:
                  , VIP
                  , GLASSES_ID
                  , HEADTRACKING_TARGET_NAME
-                 , EYE_DISTANCE):
+                 , EYE_DISTANCE
+                 , NO_TRACKING_MAT = avango.gua.make_trans_mat(0,0,0)):
     
     _user = User()
     _user.my_constructor( self
@@ -76,6 +77,7 @@ class Workspace:
                         , VIP
                         , GLASSES_ID
                         , HEADTRACKING_TARGET_NAME
-                        , EYE_DISTANCE)
+                        , EYE_DISTANCE
+                        , NO_TRACKING_MAT)
 
     self.users.append(_user)

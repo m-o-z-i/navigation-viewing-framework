@@ -90,7 +90,7 @@ class UserRepresentation(avango.script.Script):
     _head_pos = self.head.Transform.value.get_translate()
     _forward_yaw = Tools.get_yaw(self.head.Transform.value)
 
-    self.body_avatar.Transform.value = avango.gua.make_trans_mat(_head_pos.x, _head_pos.y / 2, _head_pos.z) * \
+    self.body_avatar.Transform.value = avango.gua.make_trans_mat(0.0, -_head_pos.y / 2, 0.0) * \
                                        avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
                                        avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
 
@@ -206,6 +206,7 @@ class User(avango.script.Script):
   # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param EYE_DISTANCE The eye distance of the user to be applied.
+  # @param NO_TRACKING_MAT
   def my_constructor(self
                    , WORKSPACE_INSTANCE
                    , USER_ID
@@ -213,6 +214,7 @@ class User(avango.script.Script):
                    , GLASSES_ID
                    , HEADTRACKING_TARGET_NAME
                    , EYE_DISTANCE
+                   , NO_TRACKING_MAT
                    ):
 
     # flags 
@@ -237,16 +239,20 @@ class User(avango.script.Script):
     # Identification number of the user within the workspace, starting from 0.
     self.id = USER_ID
 
-    ## @var headtracking_reader
-    # TrackingTargetReader for the user's glasses.
-    self.headtracking_reader = TrackingTargetReader()
-    self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
-    self.headtracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
-    self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
-
     ## @var headtracking_target_name
     # Name of the headtracking station as registered in daemon.
     self.headtracking_target_name = HEADTRACKING_TARGET_NAME
+
+    ## @var headtracking_reader
+    # TrackingTargetReader for the user's glasses.
+    if self.headtracking_target_name == None:
+      self.headtracking_reader = TrackingDefaultReader()
+      self.headtracking_reader.set_no_tracking_matrix(NO_TRACKING_MAT)
+    else:
+      self.headtracking_reader = TrackingTargetReader()
+      self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
+      self.headtracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
+      self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     ## @var glasses_id
     # ID of the shutter glasses worn by the user. Used for frequency updates.

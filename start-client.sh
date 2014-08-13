@@ -7,12 +7,7 @@ DIR="$( cd "$( dirname "$0" )" && pwd )"
 LOCAL_GUACAMOLE="$DIR/../../../guacamole"
 LOCAL_AVANGO="$DIR/../../../avango"
 
-# if not, this path will be used
-#GUACAMOLE=/opt/guacamole/testing/guacamole
-#AVANGO=/opt/guacamole/testing/avango
-
 GUACAMOLE=/opt/guacamole/master
-#GUACAMOLE=/opt/guacamole/gua1806
 AVANGO=/opt/avango/master
 
 # third party libs
@@ -29,7 +24,7 @@ export PYTHONPATH="$LOCAL_AVANGO/lib/python2.7":"$LOCAL_AVANGO/examples":$AVANGO
 export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./lib-server
 
 # run program
-cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4 $5
+cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4 $5 $6
 
 # kill daemon
 kill %1

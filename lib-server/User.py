@@ -167,17 +167,39 @@ class UserRepresentation(avango.script.Script):
   # @param ID The ID of the navigation to connect with.
   def connect_navigation_of_display_group(self, ID):
 
-    if ID == self.connected_navigation_id:
+    # initialization
+    if self.connected_navigation_id == -1:
+      _new_navigation = self.DISPLAY_GROUP.navigations[ID]
+      self.view_transform_node.Transform.connect_from(_new_navigation.sf_nav_mat)
+      self.connected_navigation_id = ID
+
+      # trigger avatar visibility
+      if _new_navigation.avatar_type == 'joseph':
+        self.head_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
+        self.body_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
+        self.head_avatar.GroupNames.value.remove("do_not_display_group")
+        self.body_avatar.GroupNames.value.remove("do_not_display_group")
+      else:
+        self.head_avatar.GroupNames.value.append("do_not_display_group")
+        self.body_avatar.GroupNames.value.append("do_not_display_group")
+
+    # change is not necessary
+    elif ID == self.connected_navigation_id:
       print_message("Already on Navigaton " + str(ID)) 
 
+    # change is necessary
     elif ID < len(self.DISPLAY_GROUP.navigations):
 
       _old_navigation = self.DISPLAY_GROUP.navigations[self.connected_navigation_id]
       _new_navigation = self.DISPLAY_GROUP.navigations[ID]
 
       if len(_new_navigation.active_user_representations) == 0:
-        _new_navigation.inputmapping.set_abs_mat(_old_navigation.sf_abs_mat.value)
-        _new_navigation.inputmapping.set_scale(_old_navigation.sf_scale.value)
+
+        try:
+          _new_navigation.inputmapping.set_abs_mat(_old_navigation.sf_abs_mat.value)
+          _new_navigation.inputmapping.set_scale(_old_navigation.sf_scale.value)
+        except:
+          pass
 
       _old_navigation.remove_user_representation(self)
       _new_navigation.add_user_representation(self)
@@ -188,7 +210,10 @@ class UserRepresentation(avango.script.Script):
 
       self.connected_navigation_id = ID
 
-      print_message("Switch navigation to " + str(ID) + " (" + _new_navigation.input_device_name + ")")
+      try:
+        print_message("Switch navigation to " + str(ID) + " (" + _new_navigation.input_device_name + ")")
+      except:
+        print_message("Switch navigation to " + str(ID) + " (no input device)")
 
       # trigger avatar visibility
       if _new_navigation.avatar_type == 'joseph':

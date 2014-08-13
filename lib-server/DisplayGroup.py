@@ -39,7 +39,11 @@ class DisplayGroup:
 		self.offset_to_workspace = OFFSET_TO_WORKSPACE
 
 		for _navigation in self.navigations:
-			_navigation.device.tracking_reader.set_transmitter_offset(self.offset_to_workspace * WORKSPACE_TRANSMITTER_OFFSET)
+			
+			try:
+				_navigation.device.tracking_reader.set_transmitter_offset(self.offset_to_workspace * WORKSPACE_TRANSMITTER_OFFSET)
+			except:
+				pass
 
 
   ## Overwrites the navigation matrices of all navigations with the matrix of the first one.

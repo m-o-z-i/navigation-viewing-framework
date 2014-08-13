@@ -167,24 +167,8 @@ class UserRepresentation(avango.script.Script):
   # @param ID The ID of the navigation to connect with.
   def connect_navigation_of_display_group(self, ID):
 
-    # initialization
-    if self.connected_navigation_id == -1:
-      _new_navigation = self.DISPLAY_GROUP.navigations[ID]
-      self.view_transform_node.Transform.connect_from(_new_navigation.sf_nav_mat)
-      self.connected_navigation_id = ID
-
-      # trigger avatar visibility
-      if _new_navigation.avatar_type == 'joseph':
-        self.head_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
-        self.body_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
-        self.head_avatar.GroupNames.value.remove("do_not_display_group")
-        self.body_avatar.GroupNames.value.remove("do_not_display_group")
-      else:
-        self.head_avatar.GroupNames.value.append("do_not_display_group")
-        self.body_avatar.GroupNames.value.append("do_not_display_group")
-
     # change is not necessary
-    elif ID == self.connected_navigation_id:
+    if ID == self.connected_navigation_id:
       print_message("Already on Navigaton " + str(ID)) 
 
     # change is necessary
@@ -193,7 +177,7 @@ class UserRepresentation(avango.script.Script):
       _old_navigation = self.DISPLAY_GROUP.navigations[self.connected_navigation_id]
       _new_navigation = self.DISPLAY_GROUP.navigations[ID]
 
-      if len(_new_navigation.active_user_representations) == 0:
+      if len(_new_navigation.active_user_representations) == 0 and self.connected_navigation_id != -1:
 
         try:
           _new_navigation.inputmapping.set_abs_mat(_old_navigation.sf_abs_mat.value)

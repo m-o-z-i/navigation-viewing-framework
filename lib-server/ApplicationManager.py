@@ -124,6 +124,8 @@ class ApplicationManager(avango.script.Script):
 
           for _display in _display_group.displays:
 
+            _s_id = _display_group.displays.index(_display)
+
             # only add screen node for user when free slot is available
             if _u_id < len(_display.displaystrings):
               _user_repr.add_screen_node_for(_display)

@@ -115,13 +115,23 @@ class ApplicationManager(avango.script.Script):
 
           _dg_id = _display_group.id
 
+          # create view transform node
+          _view_transform_node = avango.gua.nodes.TransformNode(Name = "w" + str(_w_id) + "_dg" + str(_dg_id) + "_u" + str(_u_id))
+          self.NET_TRANS_NODE.Children.value.append(_view_transform_node)
+
           # create user representation in display group
-          _user_repr = _user.create_user_representation_for(_display_group)
+          _user_repr = _user.create_user_representation_for(_display_group, _view_transform_node)
 
           for _display in _display_group.displays:
 
-            _s_id = _display_group.displays.index(_display)
-
+            # only add screen node for user when free slot is available
+            if _u_id < len(_display.displaystrings):
+              _user_repr.add_screen_node_for(_display)
+              _user_repr.connect_navigation_of_display_group(0)
+            else:
+              print_warning("Warning: No empty slot left for user " + str(_u_id) + " in workspace " + str(_workspace.name) + " on display " + str(_display.name))
+              continue
+            
             # start a client on display host if necessary
             if START_CLIENTS:
 
@@ -138,20 +148,6 @@ class ApplicationManager(avango.script.Script):
                 , stderr=subprocess.PIPE)
                 print "start client on", _display.hostname
                 time.sleep(1)
-
-            if _u_id < len(_display.displaystrings):
-
-              # create view transform node
-              _view_transform_node = avango.gua.nodes.TransformNode(Name = "w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id))
-              self.NET_TRANS_NODE.Children.value.append(_view_transform_node)
-
-              # create user representation
-              _user_repr.add_nodes_for(_view_transform_node)
-              _user_repr.connect_navigation_of_display_group(0)
-
-            else:
-
-              print_warning("Warning: No empty slot left for user " + str(_u_id) + " in workspace " + str(_workspace.name) + " on display " + str(_display.name))
 
 
     # server control monitor setup #

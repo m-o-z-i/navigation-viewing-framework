@@ -103,15 +103,6 @@ class View(avango.script.Script):
 
     _render_mask = _render_mask + " && !w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id)
 
-    '''
-    for _w in range(10):
-      for _dg in range(10):
-        for _s in range(10):
-          for _u in range(10):
-
-            if _w != self.workspace_id or _dg != self.display_group_id or _s != self.screen_id or _u != self.user_id:
-              _render_mask = _render_mask + " && !w" + str(_w) + "_dg" + str(_dg) + "_s" + str(_s) + "_u" + str(_u)
-    '''
 
     self.camera.RenderMask.value = _render_mask
 
@@ -125,10 +116,10 @@ class View(avango.script.Script):
       Standard View
     '''
 
-    self.camera.LeftScreen.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_s" + str(self.screen_id) + "_u" + str(self.user_id) + "/screen"
-    self.camera.RightScreen.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_s" + str(self.screen_id) + "_u" + str(self.user_id) + "/screen"
-    self.camera.LeftEye.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_s" + str(self.screen_id) + "_u" + str(self.user_id) + "/head/eyeL"
-    self.camera.RightEye.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_s" + str(self.screen_id) + "_u" + str(self.user_id) + "/head/eyeR"
+    self.camera.LeftScreen.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id) + "/screen_" + str(self.screen_id)
+    self.camera.RightScreen.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id) + "/screen_" + str(self.screen_id)
+    self.camera.LeftEye.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id) + "/head/eyeL"
+    self.camera.RightEye.value = "/net/w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id) + "/head/eyeR"
 
     # create window
     ## @var window

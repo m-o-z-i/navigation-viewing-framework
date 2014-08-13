@@ -9,6 +9,7 @@ import avango.daemon
 # import python libraries
 import os
 import sys
+import subprocess
 
 ## Initizialies Oculus Rift sensors.
 def init_oculus():
@@ -101,10 +102,10 @@ def init_tuio_input():
 ## Initializes a spacemouse for navigation.
 def init_spacemouse():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"3Dconnexion SpaceNavigator\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+  _string = os.popen("python find_device.py 3Dconnexion SpaceNavigator").read()
 
   if len(_string) == 0:
-    _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"3Dconnexion SpaceTraveler USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+    _string = os.popen("python find_device.py 3Dconnexion SpaceTraveler USB").read()
 
   _string = _string.split()
   if len(_string) > 0:  
@@ -137,9 +138,9 @@ def init_spacemouse():
 ## Initializes an old spheron for navigation.
 def init_old_spheron():
 
-  _string = os.popen("./list-ev -s | grep \"BUWEIMAR RAPID DEVEL DEVICE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py BUWEIMAR RAPID DEVEL DEVICE").read()
   _string = _string.split()
+
   if len(_string) > 0:
   
     _string = _string[0]
@@ -164,9 +165,9 @@ def init_old_spheron():
   else:
     print "Old Spheron NOT found !"
     
-  _string = os.popen("./list-ev -s | grep \"PIXART USB OPTICAL MOUSE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py PIXART USB OPTICAL MOUSE").read()
   _string = _string.split()
+
   if len(_string) > 0:
   
     _string = _string[0]
@@ -190,8 +191,7 @@ def init_old_spheron():
 ## Initializes a new spheron for navigation.
 def init_new_spheron():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"BUW Spheron\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py BUW Spheron").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -252,8 +252,7 @@ def init_new_spheron():
 ## Initializes a new spheron for navigation.
 def init_new_globefish():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"BUW Spheron\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py BUW Spheron").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -290,8 +289,7 @@ def init_new_globefish():
 ## Initalizes a mouse for navigation.
 def init_mouse():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"Logitech USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py Logitech USB").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -405,16 +403,11 @@ def init_keyboard():
     print "Keyboard " + str(i) + " started at:", name
 
 ## Initializes a X-Box controller for navigation.
-# @param PLAYER_NUMBER A number from 1 to 4 indicating which of the four possible inputs to use.
-def xbox_controller(PLAYER_NUMBER):
+def xbox_controller():
 
-  _query = "./list-ev -s | grep \"Xbox 360 Wireless Receiver\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4"
-  
-  # Grab one of the four controllers according to PLAYER_NUMBER  
-  for i in range(1, PLAYER_NUMBER):
-    _query = _query + " | sed -n \'1!p\'"
+  # ToDo: Consider PLAYER_NUMBER
 
-  _string = os.popen(_query).read()
+  _string = os.popen("python find_device.py Xbox 360 Wireless Receiver").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -455,37 +448,36 @@ def xbox_controller(PLAYER_NUMBER):
 
 def init_august_pointer(ID, DEVICE_STATION_STRING):
 
-	_string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"MOUSE USB MOUSE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()	
-	_string = _string.split()
+  _string = os.popen("python find_device.py MOUSE USB MOUSE").read()
+  _string = _string.split()
 
-	if len(_string) > ID:
-		
-		_string = _string[ID]
+  if len(_string) > ID:
+    
+    _string = _string[ID]
 
-		_pointer = avango.daemon.HIDInput()
-		_pointer.station = avango.daemon.Station(DEVICE_STATION_STRING) # create a station to propagate the input events
-		_pointer.device = _string
-		#_pointer.timeout = '15'
+    _pointer = avango.daemon.HIDInput()
+    _pointer.station = avango.daemon.Station(DEVICE_STATION_STRING) # create a station to propagate the input events
+    _pointer.device = _string
+    #_pointer.timeout = '15'
 
-		# map incoming events to station values
-		_pointer.buttons[0] = "EV_KEY::KEY_F5" # front button
-		#_pointer.buttons[0] = "EV_KEY::KEY_ESC" # front button
-		_pointer.buttons[1] = "EV_KEY::KEY_PAGEDOWN" # back button
-		_pointer.buttons[2] = "EV_KEY::KEY_PAGEUP" # center button
+    # map incoming events to station values
+    _pointer.buttons[0] = "EV_KEY::KEY_F5" # front button
+    #_pointer.buttons[0] = "EV_KEY::KEY_ESC" # front button
+    _pointer.buttons[1] = "EV_KEY::KEY_PAGEDOWN" # back button
+    _pointer.buttons[2] = "EV_KEY::KEY_PAGEUP" # center button
 
-		device_list.append(_pointer)
-		print 'August Pointer found at:', _string
-		
-		os.system("xinput --set-prop keyboard:'MOUSE USB MOUSE' 'Device Enabled' 0") # disable X-forwarding of events
-		
-	else:
-		print "August Pointer NOT found !"
+    device_list.append(_pointer)
+    print 'August Pointer found at:', _string
+    
+    os.system("xinput --set-prop keyboard:'MOUSE USB MOUSE' 'Device Enabled' 0") # disable X-forwarding of events
+    
+  else:
+    print "August Pointer NOT found !"
 
 ## Initializes a portal camera for portal features.
 def init_portal_camera(VERSION_NUMBER):
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"portalCam " + VERSION_NUMBER + "\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-
+  _string = os.popen("python find_device.py portalCam " + str(VERSION_NUMBER)).read()
   _string = _string.split()
 
   if len(_string) > 0:  
@@ -525,7 +517,6 @@ def init_portal_camera(VERSION_NUMBER):
   else:
     print "Portal Cam " + VERSION_NUMBER + " NOT found !"
 
-
 ## @var device_list
 # List of devices to be handled by daemon.
 device_list = []
@@ -537,11 +528,8 @@ device_list = []
 init_lcd_wall_tracking()
 init_dlp_wall_tracking()
 
-# initialize x-box controllers
-xbox_controller(1)
-#xbox_controller(2)
-#xbox_controller(3)
-#xbox_controller(4)
+# initialize x-box controller
+xbox_controller()
 
 # init spherons
 init_old_spheron()

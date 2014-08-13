@@ -30,7 +30,8 @@ class UserRepresentation(avango.script.Script):
   # 
   # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
   # @param USER Reference to the user to be represented.
-  def my_constructor(self, USER, DISPLAY_GROUP):
+  #
+  def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
 
     ## @var USER
     # Reference to the user to be represented.
@@ -42,7 +43,33 @@ class UserRepresentation(avango.script.Script):
 
     ##
     #
-    self.view_transform_nodes = []
+    self.view_transform_node = VIEW_TRANSFORM_NODE
+
+    ##
+    #
+    self.workspace_id = int(VIEW_TRANSFORM_NODE.Name.value.split("_")[0].replace("w", ""))
+
+    ##
+    #
+    self.screens = []
+
+    # create user representation nodes
+
+    ##
+    #
+    self.head = avango.gua.nodes.TransformNode(Name = "head")
+    self.view_transform_node.Children.value.append(self.head)
+
+    self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
+    self.left_eye.Transform.value = avango.gua.make_trans_mat(-self.USER.eye_distance / 2, 0.0, 0.0)
+    self.head.Children.value.append(self.left_eye)
+
+    self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
+    self.right_eye.Transform.value = avango.gua.make_trans_mat(self.USER.eye_distance / 2, 0.0, 0.0)
+    self.head.Children.value.append(self.right_eye)
+
+    # create avatar representation
+    self.create_joseph_avatar_representation()
 
     ## @var connected_navigation_id
     # Navigation ID within the display group that is currently used.
@@ -53,41 +80,27 @@ class UserRepresentation(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
-
-    for _view_transform_node in self.view_transform_nodes:
       
-      # update head node with respect to workspace offset
-      _head_transform = self.DISPLAY_GROUP.offset_to_workspace * \
-                        self.USER.headtracking_reader.sf_abs_mat.value
-      _head_node = _view_transform_node.Children.value[1]
+    # update head node with respect to workspace offset
+    self.head.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * \
+                                self.USER.headtracking_reader.sf_abs_mat.value
 
-      _head_node.Transform.value = _head_transform
 
-      # update avatar body matrix if present at this view transform node
-      if self.view_transform_nodes.index(_view_transform_node) == 0:
+    # update avatar body matrix if present at this view transform node
+    _head_pos = self.head.Transform.value.get_translate()
+    _forward_yaw = Tools.get_yaw(self.head.Transform.value)
 
-        _head_pos = _head_transform.get_translate()
-        _forward_yaw = Tools.get_yaw(_head_transform)
-
-        self.body_avatar.Transform.value = avango.gua.make_trans_mat(_head_pos.x, _head_pos.y / 2, _head_pos.z) * \
-                                           avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
-                                           avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
+    self.body_avatar.Transform.value = avango.gua.make_trans_mat(_head_pos.x, _head_pos.y / 2, _head_pos.z) * \
+                                       avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
+                                       avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
 
   ##
   #
-  def add_nodes_for(self, VIEW_TRANSFORM_NODE):
+  def add_screen_node_for(self, DISPLAY_INSTANCE):
 
-    # store navigation node
-    self.view_transform_nodes.append(VIEW_TRANSFORM_NODE)
-    _screen_id = int(VIEW_TRANSFORM_NODE.Name.value.split("_")[2].replace("s", ""))
-
-    ##
-    #
-    self.workspace_id = int(VIEW_TRANSFORM_NODE.Name.value.split("_")[0].replace("w", ""))
-
-    # create nodes
-    _screen = self.DISPLAY_GROUP.displays[_screen_id].create_screen_node(Name = "screen")
-    VIEW_TRANSFORM_NODE.Children.value.append(_screen)
+    _screen = DISPLAY_INSTANCE.create_screen_node("screen_" + str(len(self.screens)))
+    self.view_transform_node.Children.value.append(_screen)
+    self.screens.append(_screen)
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
@@ -105,27 +118,11 @@ class UserRepresentation(avango.script.Script):
     #_navigation_color_geometry.GroupNames.value = ["w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id)]
     _screen.Children.value.append(_navigation_color_geometry)
 
-    _head = avango.gua.nodes.TransformNode(Name = "head")
-    VIEW_TRANSFORM_NODE.Children.value.append(_head)
-
-    _left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
-    _left_eye.Transform.value = avango.gua.make_trans_mat(-self.USER.eye_distance / 2, 0.0, 0.0)
-    _head.Children.value.append(_left_eye)
-
-    _right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
-    _right_eye.Transform.value = avango.gua.make_trans_mat(self.USER.eye_distance / 2, 0.0, 0.0)
-    _head.Children.value.append(_right_eye)
-
-    # create avatar representation if first display nodes
-    if len(self.view_transform_nodes) == 1:
-      print "Create avatar"
-      self.create_joseph_avatar_representation(_head)
-
 
   ##
   # 
   #
-  def create_joseph_avatar_representation(self, HEAD_NODE):
+  def create_joseph_avatar_representation(self):
     
     _loader = avango.gua.nodes.TriMeshLoader()
     
@@ -139,7 +136,7 @@ class UserRepresentation(avango.script.Script):
 
     self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
     self.head_avatar.GroupNames.value = ['w' + str(self.workspace_id) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
-    HEAD_NODE.Children.value.append(self.head_avatar)
+    self.head.Children.value.append(self.head_avatar)
 
     # create avatar body
     ## @var body_avatar
@@ -150,7 +147,7 @@ class UserRepresentation(avango.script.Script):
                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
     
     self.body_avatar.GroupNames.value = ['w' + str(self.workspace_id) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
-    HEAD_NODE.Children.value.append(self.body_avatar)
+    self.head.Children.value.append(self.body_avatar)
 
 
   ## Connects a specific navigation of the display group to the user.
@@ -173,9 +170,8 @@ class UserRepresentation(avango.script.Script):
       _new_navigation.add_user_representation(self)
 
       # connect all view transform nodes to this navigation
-      for _view_transform_node in self.view_transform_nodes:
-        _view_transform_node.Transform.disconnect()
-        _view_transform_node.Transform.connect_from(_new_navigation.sf_nav_mat)
+      self.view_transform_node.Transform.disconnect()
+      self.view_transform_node.Transform.connect_from(_new_navigation.sf_nav_mat)
 
       self.connected_navigation_id = ID
 
@@ -268,10 +264,10 @@ class User(avango.script.Script):
 
   ##
   #
-  def create_user_representation_for(self, DISPLAY_GROUP):
+  def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
 
     _user_repr = UserRepresentation()
-    _user_repr.my_constructor(self, DISPLAY_GROUP)
+    _user_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE)
     self.user_representations.append(_user_repr)
     return _user_repr
 

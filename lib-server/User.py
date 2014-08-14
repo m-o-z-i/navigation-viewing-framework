@@ -104,7 +104,9 @@ class UserRepresentation(avango.script.Script):
     except:
       return
 
-    self.body_avatar.Transform.value = avango.gua.make_trans_mat(0.0, -_head_pos.y / 2, 0.0) * \
+    #print "update body"
+    self.body_avatar.Transform.value = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self.head.Transform.value.get_rotate())) * \
+                                       avango.gua.make_trans_mat(0.0, -_head_pos.y / 2, 0.0) * \
                                        avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
                                        avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
 
@@ -112,8 +114,9 @@ class UserRepresentation(avango.script.Script):
   #
   def add_screen_node_for(self, DISPLAY_INSTANCE):
 
-    # create avatar representation
-    self.create_joseph_avatar_representation()
+    # create avatar representation when first screen is added
+    if len(self.screens) == 0:
+      self.create_joseph_avatar_representation()
 
     _screen = DISPLAY_INSTANCE.create_screen_node("screen_" + str(len(self.screens)))
     self.view_transform_node.Children.value.append(_screen)

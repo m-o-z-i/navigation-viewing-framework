@@ -47,9 +47,8 @@ spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_ma
 ## Create Display instances. ##
 large_powerwall = LargePowerwall()
 touch_table_3D = TouchTable3D()
-small_powerwall = SmallPowerwall2()
 
-displays = [large_powerwall, touch_table_3D, small_powerwall]
+displays = [large_powerwall, touch_table_3D]
 
 ## Create display groups ##
 vr_lab_rear.create_display_group( DISPLAY_LIST = [large_powerwall]

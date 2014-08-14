@@ -22,8 +22,8 @@ spheron_navigation = SteeringNavigation()
 spheron_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 0) * \
                                                      avango.gua.make_rot_mat(0, 0, 1, 0)
                                  , STARTING_SCALE = 1.0
-                                 , INPUT_DEVICE_TYPE = 'Spacemouse'
-                                 , INPUT_DEVICE_NAME = 'device-spacemouse'
+                                 , INPUT_DEVICE_TYPE = 'NewSpheron'
+                                 , INPUT_DEVICE_NAME = 'device-new-spheron'
                                  , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 1.75, 1.6)
                                  , GROUND_FOLLOWING_SETTINGS = [True, 0.75]
                                  , MOVEMENT_TRACES = False

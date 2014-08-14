@@ -176,7 +176,8 @@ class UserRepresentation(avango.script.Script):
 
     # change is not necessary
     if ID == self.connected_navigation_id:
-      print_message("Already on Navigaton " + str(ID)) 
+      print_message("User " + str(self.USER.id) + " at display group " + str(self.DISPLAY_GROUP.id) + \
+                    ": Already on Navigaton " + str(ID)) 
 
     # change is necessary
     elif ID < len(self.DISPLAY_GROUP.navigations):
@@ -202,9 +203,11 @@ class UserRepresentation(avango.script.Script):
       self.connected_navigation_id = ID
 
       try:
-        print_message("Switch navigation to " + str(ID) + " (" + _new_navigation.input_device_name + ")")
+        print_message("User " + str(self.USER.id) + " at display group " + str(self.DISPLAY_GROUP.id) + \
+         ": Switch navigation to " + str(ID) + " (" + _new_navigation.input_device_name + ")")
       except:
-        print_message("Switch navigation to " + str(ID) + " (no input device)")
+        print_message("User " + str(self.USER.id) + " at display group " + str(self.DISPLAY_GROUP.id) + \
+         ": Switch navigation to " + str(ID) + " (no input device)")
 
       # trigger avatar visibility
       if _new_navigation.avatar_type == 'joseph':

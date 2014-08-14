@@ -75,7 +75,6 @@ class ApplicationManager(avango.script.Script):
           for _display in _display_group.displays:
 
             if _display.hostname != _own_hostname:
-              print "kill on", _display.hostname
               _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python -9"])
 
 
@@ -129,7 +128,6 @@ class ApplicationManager(avango.script.Script):
             # only add screen node for user when free slot is available
             if _u_id < len(_display.displaystrings):
               _user_repr.add_screen_node_for(_display)
-              _user_repr.connect_navigation_of_display_group(0)
             else:
               print_warning("Warning: No empty slot left for user " + str(_u_id) + " in workspace " + str(_workspace.name) + " on display " + str(_display.name))
               continue
@@ -141,15 +139,14 @@ class ApplicationManager(avango.script.Script):
 
                 # run client process on host
                 # command line parameters: server ip, platform id, display name, screen number
-                print "start client on", _display.hostname
-                print "/start-client.sh " + _server_ip + " " + str(WORKSPACE_CONFIG) + " " + str(_w_id) + " " + \
-                      str(_dg_id) + " " + str(_s_id) + " " + _display.name
-
                 _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
                 "/start-client.sh " + _server_ip + " " + str(WORKSPACE_CONFIG) + " " + str(_w_id) + " " + \
                 str(_dg_id) + " " + str(_s_id) + " " + _display.name]
                 , stderr=subprocess.PIPE)
                 time.sleep(1)
+
+        for _user_representation in _user.user_representations:
+          _user_representation.connect_navigation_of_display_group(0)
 
 
     # server control monitor setup #

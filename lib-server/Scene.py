@@ -55,7 +55,7 @@ class SceneMedievalTown(SceneObject):
       
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
-    self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = False) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+    self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(1.0, 0.9, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = False) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
     # render pipeline parameters
     self.enable_backface_culling = False

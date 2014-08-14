@@ -231,7 +231,7 @@ class SpacemouseDevice(MultiDofDevice):
 
     ## @var translation_factor
     # Factor to modify the device's translation input.
-    self.translation_factor = 0.3
+    self.translation_factor = 0.02
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.

@@ -52,6 +52,10 @@ class UserRepresentation(avango.script.Script):
     # List of screen nodes for each display of the display group.
     self.screens = []
 
+    ## @var screen_visualizations
+    # List of screen visualization nodes for the display group.
+    self.screen_visualizations = []
+
     ## create user representation nodes ##
 
     _stereo_display_group = True
@@ -143,6 +147,11 @@ class UserRepresentation(avango.script.Script):
     _screen.Children.value.append(_navigation_color_geometry)
 
 
+    _screen_visualization = DISPLAY_INSTANCE.create_screen_visualization(_screen.Name.value + "_vis")
+    self.view_transform_node.Children.value.append(_screen_visualization)
+    self.screen_visualizations.append(_screen_visualization)
+
+
   ## Creates a standard 'jospeh' avatar representation for this user representation.
   def create_joseph_avatar_representation(self):
     
@@ -217,9 +226,13 @@ class UserRepresentation(avango.script.Script):
         self.body_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
         self.head_avatar.GroupNames.value.remove("do_not_display_group")
         self.body_avatar.GroupNames.value.remove("do_not_display_group")
+        self.screen_visualizations[ID].GroupNames.value.remove("do_not_display_group")
+        self.screens[ID].Children.value[0].GroupNames.value.remove("do_not_display_group")
       else:
         self.head_avatar.GroupNames.value.append("do_not_display_group")
         self.body_avatar.GroupNames.value.append("do_not_display_group")
+        self.screen_visualizations[ID].GroupNames.value.append("do_not_display_group")
+        self.screens[ID].Children.value[0].GroupNames.value.append("do_not_display_group")
 
     else:
       print_error("Error. Navigation ID does not exist.", False)

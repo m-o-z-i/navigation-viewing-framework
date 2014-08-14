@@ -139,11 +139,11 @@ class Display:
       return "ACTIVE_STEREO"
 
   ## Creates a visualization of the display's screen in the scene (white frame). Returns the scenegraph geometry node.
-  def create_screen_visualization(self):
+  def create_screen_visualization(self, NODE_NAME):
   
     _loader = avango.gua.nodes.TriMeshLoader()
   
-    _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    _node = _loader.create_geometry_from_file(NODE_NAME, "data/objects/screen.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     _w, _h = self.size
@@ -189,7 +189,8 @@ class LargePowerwall(Display):
                     , hostname = "kerberos"
                     , name = "large_powerwall"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
+                    #, displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
+                    , displaystrings = [":0.0", ":0.1", ":0.2"]
                     , size = (4.16, 2.61)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     #, shutter_timings = [ [(0,2400), (100,2500)],
@@ -228,12 +229,18 @@ class LargePowerwall(Display):
     view_num = self.num_views
     if view_num < 4:
       warpmatrices = [
-          "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
-        , "/opt/dlp-warpmatrices/dlp_6_warp_P5.warp"
-        , "/opt/dlp-warpmatrices/dlp_6_warp_P6.warp"
+          "/opt/dlp-warpmatrices/dlp_6_warp_P1.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
         , "/opt/dlp-warpmatrices/dlp_6_warp_P1.warp"
         , "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
         , "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
+        #  "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
+        #, "/opt/dlp-warpmatrices/dlp_6_warp_P5.warp"
+        #, "/opt/dlp-warpmatrices/dlp_6_warp_P6.warp"        
+        #, "/opt/dlp-warpmatrices/dlp_6_warp_P1.warp"
+        #, "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
+        #, "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
       ]
       self.num_views += 1
       return (self.displaystrings[view_num], warpmatrices)

@@ -41,7 +41,7 @@ spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_ma
                                     , GROUND_FOLLOWING_SETTINGS = [False, 0.75]
                                     , MOVEMENT_TRACES = False
                                     , INVERT = True
-                                    , AVATAR_TYPE = None
+                                    , AVATAR_TYPE = 'None'
                                     , DEVICE_TRACKING_NAME = None)
 
 ## Create Display instances. ##
@@ -67,16 +67,11 @@ vr_lab_rear.create_user( VIP = False
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 4
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-4'
+                       , GLASSES_ID = 2
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-2'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 5
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-5'
-                       , EYE_DISTANCE = 0.065)
-
-vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 6
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-6'
+                       , GLASSES_ID = 3
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-3'
                        , EYE_DISTANCE = 0.065)

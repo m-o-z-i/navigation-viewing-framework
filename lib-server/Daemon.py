@@ -191,12 +191,15 @@ def init_old_spheron():
 ## Initializes a new spheron for navigation.
 def init_new_spheron():
 
-  _string = os.popen("python find_device.py 1 BUW Spheron").read()
-  _string = _string.split()
+  _string_right = os.popen("python find_device.py 1 BUW Spheron").read()
+  _string_left = os.popen("python find_device.py 2 BUW Spheron").read()
 
-  if len(_string) > 0:
+  _string_left = _string_left.split()
+  _string_right = _string_right.split()
+
+  if len(_string_right) > 0:
     
-    _string1 = _string[0]
+    _string1 = _string_right[0]
 
     # create a station to propagate the input events
     _spheron1 = avango.daemon.HIDInput()
@@ -223,30 +226,32 @@ def init_new_spheron():
 
     print "New Spheron (right) found at:", _string1
 
-    #'''
-    if len(_string) > 1:
-      
-      _string2 = _string[1]
-
-      # create a station to propagate the input events
-      _spheron2 = avango.daemon.HIDInput()
-      _spheron2.station = avango.daemon.Station("device-new-spheron-left")
-      _spheron2.device = _string2
-      _spheron2.timeout = '30'
-      
-      # map incoming events to station values
-      _spheron2.values[0] = "EV_ABS::ABS_X"            # joystick trans x
-      _spheron2.values[1] = "EV_ABS::ABS_Y"            # joystick trans z
-      _spheron2.values[2] = "EV_ABS::ABS_Z"            # joystick trans y
-      _spheron2.values[3] = "EV_ABS::ABS_THROTTLE"     # joystick rot y      
-          
-      device_list.append(_spheron2)
-
-      print "New Spheron (left) found at:", _string2
-    #'''
-
   else:
-    print "New Spheron NOT found !"
+
+    print "New Spheron (right) NOT found !"
+
+  if len(_string_left) > 0:
+    
+    _string2 = _string_left[0]
+
+    # create a station to propagate the input events
+    _spheron2 = avango.daemon.HIDInput()
+    _spheron2.station = avango.daemon.Station("device-new-spheron-left")
+    _spheron2.device = _string2
+    _spheron2.timeout = '30'
+    
+    # map incoming events to station values
+    _spheron2.values[0] = "EV_ABS::ABS_X"            # joystick trans x
+    _spheron2.values[1] = "EV_ABS::ABS_Y"            # joystick trans z
+    _spheron2.values[2] = "EV_ABS::ABS_Z"            # joystick trans y
+    _spheron2.values[3] = "EV_ABS::ABS_THROTTLE"     # joystick rot y      
+        
+    device_list.append(_spheron2)
+
+    print "New Spheron (left) found at:", _string2
+  
+  else:
+    print "New Spheron (left) NOT found !"
 
 
 ## Initializes a new spheron for navigation.

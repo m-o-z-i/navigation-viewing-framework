@@ -63,8 +63,8 @@ class Navigation(avango.script.Script):
     # List of UserRepresentation instances which are currently connecting with this navigations matrix.
     self.active_user_representations = []
 
-    ##
-    #
+    ## @var avatar_type
+    # Avatar type of this navigation.
     self.avatar_type = "None"
 
     # get the selected material 

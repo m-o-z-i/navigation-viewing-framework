@@ -98,8 +98,8 @@ class ApplicationManager(avango.script.Script):
     else:
       print_warning("Start of clients disabled for debugging reasons.")
 
-    ##
-    #
+    ## @var workspaces
+    # List of all workspace instances loaded from workspace configuration file.
     self.workspaces = workspaces
 
     for _workspace in self.workspaces:

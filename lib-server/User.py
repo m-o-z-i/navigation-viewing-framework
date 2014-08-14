@@ -67,15 +67,19 @@ class UserRepresentation(avango.script.Script):
     else:
       _eye_distance = 0.0
 
-    ##
-    #
+    ## @var head
+    # Head node of the user.
     self.head = avango.gua.nodes.TransformNode(Name = "head")
     self.view_transform_node.Children.value.append(self.head)
 
+    ## @var left_eye
+    # Left eye node of the user.
     self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
     self.left_eye.Transform.value = avango.gua.make_trans_mat(-_eye_distance / 2, 0.0, 0.0)
     self.head.Children.value.append(self.left_eye)
 
+    ## @var right_eye
+    # Right eye node of the user.
     self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
     self.right_eye.Transform.value = avango.gua.make_trans_mat(_eye_distance / 2, 0.0, 0.0)
     self.head.Children.value.append(self.right_eye)
@@ -110,8 +114,8 @@ class UserRepresentation(avango.script.Script):
                                        avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
                                        avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
 
-  ##
-  #
+  ## Appends a screen node for a display instance to the view transformation node.
+  # @param DISPLAY_INSTANCE The Display instance to retrieve the screen node from.
   def add_screen_node_for(self, DISPLAY_INSTANCE):
 
     # create avatar representation when first screen is added
@@ -139,9 +143,7 @@ class UserRepresentation(avango.script.Script):
     _screen.Children.value.append(_navigation_color_geometry)
 
 
-  ##
-  # 
-  #
+  ## Creates a standard 'jospeh' avatar representation for this user representation.
   def create_joseph_avatar_representation(self):
     
     _loader = avango.gua.nodes.TriMeshLoader()
@@ -222,11 +224,6 @@ class UserRepresentation(avango.script.Script):
     else:
       print_error("Error. Navigation ID does not exist.", False)
 
-  ##
-  #
-  def disable_avatars(self):
-    self.head_avatar.GroupNames.value.append("do_not_display_group")
-    self.body_avatar.GroupNames.value.append("do_not_display_group")
 
 ## Logical representation of a user within a Workspace. Stores the relevant parameters
 # and cares for receiving the headtracking input.

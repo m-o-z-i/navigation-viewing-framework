@@ -54,7 +54,6 @@ class UserRepresentation(avango.script.Script):
 
     ## create user representation nodes ##
 
-
     _stereo_display_group = True
 
     for _display in DISPLAY_GROUP.displays:

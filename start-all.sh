@@ -29,7 +29,13 @@ export PYTHONPATH="$LOCAL_AVANGO/lib/python2.7":"$LOCAL_AVANGO/examples":$AVANGO
 export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./lib-server
 
 # run daemon
-python ./lib-server/Daemon.py > /dev/null &
+
+if [ "$2" != "daemon" ] ; then
+		python ./lib-server/Daemon.py > /dev/null &
+else
+		python ./lib-server/Daemon.py
+		exit
+fi
 
 
 # run program

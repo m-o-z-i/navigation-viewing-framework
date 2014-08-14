@@ -134,21 +134,21 @@ class ApplicationManager(avango.script.Script):
               print_warning("Warning: No empty slot left for user " + str(_u_id) + " in workspace " + str(_workspace.name) + " on display " + str(_display.name))
               continue
             
-            # start a client on display host if necessary
-            if START_CLIENTS:
+            # start a client on display host if necessary (only once)
+            if START_CLIENTS and _u_id == 0:
 
               if _display.hostname != _hostname:
 
                 # run client process on host
                 # command line parameters: server ip, platform id, display name, screen number
+                print "start client on", _display.hostname
                 print "/start-client.sh " + _server_ip + " " + str(WORKSPACE_CONFIG) + " " + str(_w_id) + " " + \
                       str(_dg_id) + " " + str(_s_id) + " " + _display.name
 
                 _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
-                "/start-client.sh " + _server_ip + " " + str(_w_id) + " " + \
+                "/start-client.sh " + _server_ip + " " + str(WORKSPACE_CONFIG) + " " + str(_w_id) + " " + \
                 str(_dg_id) + " " + str(_s_id) + " " + _display.name]
                 , stderr=subprocess.PIPE)
-                print "start client on", _display.hostname
                 time.sleep(1)
 
 

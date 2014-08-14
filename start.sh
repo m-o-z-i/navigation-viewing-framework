@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Usage: start.sh WORKSPACE_CONFIG_FILE [OPTION]
+# OPTION = server: just starts server
+# OPTION = daemon: just starts daemon
+
 # kill running python on this machine
 if [ "$2" != false ] ; then
     killall python
@@ -39,7 +43,7 @@ fi
 
 
 # run program
-if [ "$2" != false ] ; then
+if [ "$2" != "server" ] ; then
     cd "$DIR" && python ./lib-server/main.py $1 True
 else 
 	  cd "$DIR" && python ./lib-server/main.py $1 False

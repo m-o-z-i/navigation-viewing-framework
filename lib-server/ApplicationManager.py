@@ -115,7 +115,7 @@ class ApplicationManager(avango.script.Script):
 
           _dg_id = _display_group.id
 
-          # create view transform node
+          # create view transform node only when free slot is availa
           _view_transform_node = avango.gua.nodes.TransformNode(Name = "w" + str(_w_id) + "_dg" + str(_dg_id) + "_u" + str(_u_id))
           self.NET_TRANS_NODE.Children.value.append(_view_transform_node)
 

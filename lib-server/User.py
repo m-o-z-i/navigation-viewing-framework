@@ -80,9 +80,6 @@ class UserRepresentation(avango.script.Script):
     self.right_eye.Transform.value = avango.gua.make_trans_mat(_eye_distance / 2, 0.0, 0.0)
     self.head.Children.value.append(self.right_eye)
 
-    # create avatar representation
-    self.create_joseph_avatar_representation()
-
     ## @var connected_navigation_id
     # Navigation ID within the display group that is currently used.
     self.connected_navigation_id = -1
@@ -102,6 +99,11 @@ class UserRepresentation(avango.script.Script):
     _head_pos = self.head.Transform.value.get_translate()
     _forward_yaw = Tools.get_yaw(self.head.Transform.value)
 
+    try:
+      self.body_avatar
+    except:
+      return
+
     self.body_avatar.Transform.value = avango.gua.make_trans_mat(0.0, -_head_pos.y / 2, 0.0) * \
                                        avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
                                        avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
@@ -109,6 +111,9 @@ class UserRepresentation(avango.script.Script):
   ##
   #
   def add_screen_node_for(self, DISPLAY_INSTANCE):
+
+    # create avatar representation
+    self.create_joseph_avatar_representation()
 
     _screen = DISPLAY_INSTANCE.create_screen_node("screen_" + str(len(self.screens)))
     self.view_transform_node.Children.value.append(_screen)
@@ -211,6 +216,11 @@ class UserRepresentation(avango.script.Script):
     else:
       print_error("Error. Navigation ID does not exist.", False)
 
+  ##
+  #
+  def disable_avatars(self):
+    self.head_avatar.GroupNames.value.append("do_not_display_group")
+    self.body_avatar.GroupNames.value.append("do_not_display_group")
 
 ## Logical representation of a user within a Workspace. Stores the relevant parameters
 # and cares for receiving the headtracking input.

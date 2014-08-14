@@ -67,7 +67,7 @@ class Navigation(avango.script.Script):
     #
     self.avatar_type = "None"
 
-     # get the selected material 
+    # get the selected material 
     ## @var trace_material
     # The material to be used for the movement traces.
     self.trace_material = Navigation.trace_materials[Navigation.number_of_instances]

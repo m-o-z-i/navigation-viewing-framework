@@ -8,9 +8,9 @@ import avango
 import avango.gua
 
 # import framework libraries
+from Display import *
 from Workspace import Workspace
 from SteeringNavigation import SteeringNavigation
-from display_config import *
 
 ## Create Workspaces first ##
 vr_lab_rear = Workspace('VR-Lab-Rear', avango.gua.make_trans_mat(0.0, 0.043, 1.6))
@@ -58,6 +58,13 @@ old_spheron_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_m
                                      , TRANSMITTER_OFFSET = avango.gua.make_trans_mat(0.0, 0.043, 1.6)
                                      , AVATAR_TYPE = 'joseph'
                                      , DEVICE_TRACKING_NAME = 'tracking-old-spheron')
+
+## Create Display instances. ##
+large_powerwall = LargePowerwall()
+touch_table_3D = TouchTable3D()
+small_powerwall = SmallPowerwall2()
+
+displays = [large_powerwall, touch_table_3D, small_powerwall]
 
 ## Create display groups ##
 vr_lab_rear.create_display_group( DISPLAY_LIST = [large_powerwall]

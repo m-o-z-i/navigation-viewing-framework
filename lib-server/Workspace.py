@@ -53,7 +53,7 @@ class Workspace:
   ## Creates a DisplayGroup instance and adds it to this workspace.
   # @param DISPLAY_LIST List of Display instances to be assigned to the new display group.
   # @param NAVIGATION_LIST List of (Steering-)Navigation instances to be assiged to the display group.
-  #
+  # @param OFFSET_TO_WORKSPACE Offset describing the origin of this display group with respect to the origin of the workspace.
   def create_display_group( self
                           , DISPLAY_LIST
                           , NAVIGATION_LIST
@@ -64,6 +64,11 @@ class Workspace:
 
   ## Creates a User instance and adds it to this workspace.
   # To be called after all display groups have been created.
+  # @param VIP Boolean indicating if the user to be created is a vip.
+  # @param GLASSES_ID ID of the shutter glasses worn by the user.
+  # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
+  # @param EYE_DISTANCE The eye distance of the user to be applied.
+  # @param NO_TRACKING_MAT Matrix to be applied when HEADTRACKING_TARGET_NAME is None.
   def create_user( self
                  , VIP
                  , GLASSES_ID

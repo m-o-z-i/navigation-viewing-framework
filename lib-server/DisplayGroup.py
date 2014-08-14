@@ -19,7 +19,8 @@ class DisplayGroup:
   # @param ID Identification number of this DisplayGroup within the workspace.
   # @param DISPLAY_LIST List of Display instances to be assigned to the new display group.
   # @param NAVIGATION_LIST List of (Steering-)Navigation instances to be assigned to the display group.
-  #
+  # @param OFFSET_TO_WORKSPACE Offset describing the origin of this display group with respect to the origin of the workspace.
+  # @param WORKSPACE_TRANSMITTER_OFFSET Transmitter offset applied in the workspace.
   def __init__(self, ID, DISPLAY_LIST, NAVIGATION_LIST, OFFSET_TO_WORKSPACE, WORKSPACE_TRANSMITTER_OFFSET):
 
     ## @var id
@@ -34,10 +35,11 @@ class DisplayGroup:
     # List of (Steering-)Navigation instances assigned to the display group.
     self.navigations = NAVIGATION_LIST
 
-    ##
-    #
+    ## @var offset_to_workspace
+    # Offset describing the origin of this display group with respect to the origin of the workspace.
     self.offset_to_workspace = OFFSET_TO_WORKSPACE
 
+    # update device tracking transmitter offset
     for _navigation in self.navigations:
       
       try:

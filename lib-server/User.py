@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains classes User and UserRepresentation.
+# Contains classes UserRepresentation and User.
 
 # import avango-guacamole libraries
 import avango
@@ -27,10 +27,9 @@ class UserRepresentation(avango.script.Script):
     self.super(UserRepresentation).__init__()
 
   ## Custom constructor.
-  # 
-  # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
   # @param USER Reference to the user to be represented.
-  #
+  # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
+  # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
   def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
 
     ## @var USER
@@ -41,19 +40,20 @@ class UserRepresentation(avango.script.Script):
     # Reference to the display group this user representation is responsible for.
     self.DISPLAY_GROUP = DISPLAY_GROUP
 
-    ##
-    #
+    ## @var view_transform_node
+    # Transform node to be filled by one navigation of the display group.
     self.view_transform_node = VIEW_TRANSFORM_NODE
 
-    ##
-    #
+    ## @var workspace_id
+    # Identification number of the workspace the associated user is belonging to.
     self.workspace_id = int(VIEW_TRANSFORM_NODE.Name.value.split("_")[0].replace("w", ""))
 
-    ##
-    #
+    ## @var screens
+    # List of screen nodes for each display of the display group.
     self.screens = []
 
-    # create user representation nodes
+    ## create user representation nodes ##
+
 
     _stereo_display_group = True
 
@@ -228,7 +228,7 @@ class User(avango.script.Script):
   # @param GLASSES_ID ID of the shutter glasses worn by the user.
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param EYE_DISTANCE The eye distance of the user to be applied.
-  # @param NO_TRACKING_MAT
+  # @param NO_TRACKING_MAT Matrix to be applied when HEADTRACKING_TARGET_NAME is None.
   def my_constructor(self
                    , WORKSPACE_INSTANCE
                    , USER_ID
@@ -280,8 +280,8 @@ class User(avango.script.Script):
     # ID of the shutter glasses worn by the user. Used for frequency updates.
     self.glasses_id = GLASSES_ID
 
-    ##
-    #
+    ## @var user_representations
+    # List of UserRepresentation instances for all display groups in the user's workspace.
     self.user_representations = []
 
     # toggles activity
@@ -290,8 +290,9 @@ class User(avango.script.Script):
     # set evaluation policy
     self.always_evaluate(True)
 
-  ##
-  #
+  ## Creates a UserRepresentation instance for a given display group.
+  # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
+  # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
   def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
 
     _user_repr = UserRepresentation()

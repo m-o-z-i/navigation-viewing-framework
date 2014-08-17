@@ -74,7 +74,10 @@ class Tool(avango.script.Script):
     self.super(Tool).__init__()
 
 
-  def base_constructor(self, WORKSPACE_INSTANCE, TOOL_ID):
+  def base_constructor(self
+                     , WORKSPACE_INSTANCE
+                     , TOOL_ID
+                     , TRACKING_STATION):
 
     # references
     ## @var WORKSPACE_INSTANCE
@@ -89,7 +92,45 @@ class Tool(avango.script.Script):
     #
     self.assigned_user = None
 
+    # init sensors
+    self.tracking_reader = TrackingTargetReader()
+    self.tracking_reader.my_constructor(TRACKING_STATION)
+    self.tracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
+    self.tracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
+
+    self.always_evaluate(True)
+
+  ##
+  def evaluate(self):
+
+    _closest_user = None
+    _closest_distance = 1000
+
+    for _user in self.WORKSPACE_INSTANCE.users:
+      _dist = self.compute_line_distance( self.tracking_reader.sf_abs_vec.value
+                                        , _user.headtracking_reader.sf_abs_vec.value
+                                        , avango.gua.Vec3(0, -1, 0) )
+      if _dist < _closest_distance:
+        _closest_distance = _dist
+        _closest_user = _user
+
+    if _closest_user != self.assigned_user:
+      self.assign_user(_closest_user)
+    
+    print self.assigned_user.id
+
+
   ##
   def assign_user(self, USER_INSTANCE):
 
     self.assigned_user = USER_INSTANCE
+
+  ##
+  #
+  def compute_line_distance(self, POINT_TO_CHECK, LINE_POINT_1, LINE_VEC):
+
+    _point_line_vec = avango.gua.Vec3(LINE_POINT_1.x - POINT_TO_CHECK.x, LINE_POINT_1.y - POINT_TO_CHECK.y, LINE_POINT_1.z - POINT_TO_CHECK.z)
+
+    _dist = (_point_line_vec.cross(LINE_VEC)).length() / LINE_VEC.length()
+
+    return _dist

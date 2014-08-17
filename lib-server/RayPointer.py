@@ -74,7 +74,7 @@ class RayPointer(Tool):
   # @param MANIPULATION_MANAGER Reference to the ManipulationManager instance to which this RayPointer is associated.
   def my_constructor(self, WORKSPACE_INSTANCE, TOOL_ID, POINTER_TRACKING_STATION, POINTER_DEVICE_STATION):
 
-    self.base_constructor(WORKSPACE_INSTANCE, TOOL_ID)
+    self.base_constructor(WORKSPACE_INSTANCE, TOOL_ID, POINTER_TRACKING_STATION)
 
     # parameters
     ## @var ray_length

@@ -110,12 +110,6 @@ class RayPointer(Tool):
     ## @var ray_pointer_representations
     # List of RayPointerRepresentation instances belonging to this RayPointer.
     self.ray_pointer_representations = []
-
-    # init sensors
-    self.tracking_reader = TrackingTargetReader()
-    self.tracking_reader.my_constructor(POINTER_TRACKING_STATION)
-    self.tracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
-    self.tracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
     
     ## @var pointer_device_sensor
     # Device sensor capturing the pointer's button input values.

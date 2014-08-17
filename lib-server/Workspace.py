@@ -11,6 +11,7 @@ import avango.gua
 from ConsoleIO import *
 from Display import *
 from DisplayGroup import *
+from RayPointer import *
 from User import *
 
 ## Representation of the physical space holding several users, tools and display groups.
@@ -45,6 +46,10 @@ class Workspace:
     ## @var display_groups
     # List of DisplayGroups present within this workspace.
     self.display_groups = []
+
+    ## @var tools
+    # List of RayPointer, ... (tool) instances present within this workspace.
+    self.tools = []
 
     ## @var size
     # Physical size of this workspace in meters.
@@ -86,3 +91,16 @@ class Workspace:
                         , NO_TRACKING_MAT)
 
     self.users.append(_user)
+
+  ##
+  #
+  def create_ray_pointer( self
+                        , POINTER_TRACKING_STATION
+                        , POINTER_DEVICE_STATION):
+
+    _ray_pointer = RayPointer()
+    _ray_pointer.my_constructor( self
+                               , len(self.tools)
+                               , POINTER_TRACKING_STATION
+                               , POINTER_DEVICE_STATION)
+    self.tools.append(_ray_pointer)

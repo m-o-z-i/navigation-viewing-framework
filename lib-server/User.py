@@ -226,13 +226,9 @@ class UserRepresentation(avango.script.Script):
         self.body_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
         self.head_avatar.GroupNames.value.remove("do_not_display_group")
         self.body_avatar.GroupNames.value.remove("do_not_display_group")
-        self.screen_visualizations[ID].GroupNames.value.remove("do_not_display_group")
-        self.screens[ID].Children.value[0].GroupNames.value.remove("do_not_display_group")
       else:
         self.head_avatar.GroupNames.value.append("do_not_display_group")
         self.body_avatar.GroupNames.value.append("do_not_display_group")
-        self.screen_visualizations[ID].GroupNames.value.append("do_not_display_group")
-        self.screens[ID].Children.value[0].GroupNames.value.append("do_not_display_group")
 
     else:
       print_error("Error. Navigation ID does not exist.", False)
@@ -312,9 +308,6 @@ class User(avango.script.Script):
     # toggles activity
     self.toggle_user_activity(self.is_active)
 
-    # set evaluation policy
-    self.always_evaluate(True)
-
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
@@ -335,10 +328,6 @@ class User(avango.script.Script):
       self.user_representations[DISPLAY_GROUP_ID].connect_navigation_of_display_group(NAVIGATION_ID)
     else:
       print_error("Error. Display Group ID does not exist.", False)
-
-  ## Evaluated every frame.
-  def evaluate(self):
-    pass
     
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

@@ -121,6 +121,10 @@ class ApplicationManager(avango.script.Script):
           # create user representation in display group
           _user_repr = _user.create_user_representation_for(_display_group, _view_transform_node)
 
+          # create tool representation in display_group
+          for _tool in _workspace.tools:
+            _tool_repr = _tool.create_ray_pointer_representation_for(_display_group, _view_transform_node)
+
           for _display in _display_group.displays:
 
             _s_id = _display_group.displays.index(_display)

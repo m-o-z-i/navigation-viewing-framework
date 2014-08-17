@@ -40,8 +40,20 @@ spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_ma
                                     , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
                                     , GROUND_FOLLOWING_SETTINGS = [False, 0.75]
                                     , MOVEMENT_TRACES = False
-                                    , INVERT = True
+                                    , INVERT = False
                                     , AVATAR_TYPE = 'None'
+                                    , DEVICE_TRACKING_NAME = None)
+
+keyboard_navigation = SteeringNavigation()
+keyboard_navigation.my_constructor(   STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 0)
+                                    , STARTING_SCALE = 1.0
+                                    , INPUT_DEVICE_TYPE = 'KeyboardMouse'
+                                    , INPUT_DEVICE_NAME = None
+                                    , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 1.2, 0.6)
+                                    , GROUND_FOLLOWING_SETTINGS = [True, 0.75]
+                                    , MOVEMENT_TRACES = True
+                                    , INVERT = False
+                                    , AVATAR_TYPE = 'joseph'
                                     , DEVICE_TRACKING_NAME = None)
 
 ## Create Display instances. ##
@@ -52,7 +64,7 @@ displays = [large_powerwall, touch_table_3D]
 
 ## Create display groups ##
 vr_lab_rear.create_display_group( DISPLAY_LIST = [large_powerwall]
-                                , NAVIGATION_LIST = [spheron_navigation]
+                                , NAVIGATION_LIST = [spheron_navigation, keyboard_navigation]
                                 , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0, 0, 1.6) )
 
 vr_lab_rear.create_display_group( DISPLAY_LIST = [touch_table_3D]
@@ -75,3 +87,7 @@ vr_lab_rear.create_user( VIP = False
                        , GLASSES_ID = 3
                        , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-3'
                        , EYE_DISTANCE = 0.065)
+
+## Create tools ##
+vr_lab_rear.create_ray_pointer( POINTER_TRACKING_STATION = 'tracking-dlp-pointer1' 
+                              , POINTER_DEVICE_STATION = 'device-pointer1')

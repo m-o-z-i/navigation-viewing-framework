@@ -119,7 +119,7 @@ class Tool(avango.script.Script):
     pass
 
   ##
-  def evaluate(self):
+  def check_for_user_assignment(self):
 
     _closest_user = None
     _closest_distance = 1000

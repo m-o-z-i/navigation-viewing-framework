@@ -107,6 +107,16 @@ class RayPointer(Tool):
     ## @var dragging_offset
     # Offset to be applied during the dragging process.
     self.dragging_offset = None
+
+    ##
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    self.intersection_point_geometry = _loader.create_geometry_from_file("intersection_point_geometry"
+                                                                       , "data/objects/sphere.obj"
+                                                                       , "data/materials/White.gmd"
+                                                                       , avango.gua.LoaderFlags.DEFAULTS)
+    self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
+    scenegraphs[0]["/net"].Children.value.append(self.intersection_point_geometry)
     
     ## @var pointer_device_sensor
     # Device sensor capturing the pointer's button input values.
@@ -150,16 +160,18 @@ class RayPointer(Tool):
     
     _candidate_list = []
 
-    for _repr in self.tool_representations:
+    if self.assigned_user != None:
 
-      if _repr.user_id == self.assigned_user.id:
-      
-        _world_transform = _repr.get_world_transform()
-        _pick_result = self.compute_pick_result(_world_transform)
+      for _repr in self.tool_representations:
 
-        if len(_pick_result.value) > 0:
-          ## ToDo: check if in visibility range of user
-          _candidate_list.append(_pick_result.value[0])
+        if _repr.user_id == self.assigned_user.id:
+        
+          _world_transform = _repr.get_world_transform()
+          _pick_result = self.compute_pick_result(_world_transform)
+
+          if len(_pick_result.value) > 0:
+            ## ToDo: check if in visibility range of user
+            _candidate_list.append(_pick_result.value[0])
 
     return _candidate_list
 
@@ -200,6 +212,27 @@ class RayPointer(Tool):
       _pick_result = self.get_pick_result()
 
       if _pick_result != None:
-        print self.get_pick_result().Object.value
+        print _pick_result.Object.value
 
 
+  ##
+  #
+  def evaluate(self):
+
+    self.check_for_user_assignment()
+
+    _pick_result = self.get_pick_result()
+
+    if _pick_result != None:
+      
+      _point = _pick_result.Position.value # intersection point in object coordinate system
+      _node = _pick_result.Object.value
+      _point = _node.WorldTransform.value * _point # transform point into world coordinates
+      _point = avango.gua.Vec3(_point.x,_point.y,_point.z) # make Vec3 from Vec4
+      self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(_point) * \
+                                                         avango.gua.make_scale_mat(0.5, 0.5, 0.5)
+      self.intersection_point_geometry.GroupNames.value.remove("do_not_display_group")
+
+    else:
+
+      self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")

@@ -13,6 +13,7 @@ import avango.daemon
 # import framework libraries
 from Tool import *
 from TrackingReader import TrackingTargetReader
+from scene_config import *
 
 ##
 class RayPointerRepresentation(ToolRepresentation):
@@ -106,10 +107,6 @@ class RayPointer(Tool):
     ## @var dragging_offset
     # Offset to be applied during the dragging process.
     self.dragging_offset = None
-
-    ## @var ray_pointer_representations
-    # List of RayPointerRepresentation instances belonging to this RayPointer.
-    self.ray_pointer_representations = []
     
     ## @var pointer_device_sensor
     # Device sensor capturing the pointer's button input values.
@@ -127,5 +124,82 @@ class RayPointer(Tool):
 
     _ray_pointer_repr = RayPointerRepresentation()
     _ray_pointer_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE)
-    self.ray_pointer_representations.append(_ray_pointer_repr)
+    self.tool_representations.append(_ray_pointer_repr)
     return _ray_pointer_repr
+
+  ##
+  #
+  def compute_pick_result(self, MATRIX):
+
+    _ray = avango.gua.nodes.RayNode()
+    _ray.Transform.value = MATRIX * avango.gua.make_scale_mat(1.0, 1.0, self.ray_length)
+
+    _picking_options = avango.gua.PickingOptions.PICK_ONLY_FIRST_OBJECT \
+                     | avango.gua.PickingOptions.GET_POSITIONS \
+                     | avango.gua.PickingOptions.GET_WORLD_POSITIONS \
+                     | avango.gua.PickingOptions.GET_WORLD_NORMALS
+
+    _picking_mask = "man_pick_group"
+
+    _pick_result = scenegraphs[0].ray_test(_ray, _picking_options, _picking_mask)
+    return _pick_result
+
+  ##
+  #
+  def create_candidate_list(self):
+    
+    _candidate_list = []
+
+    for _repr in self.tool_representations:
+
+      if _repr.user_id == self.assigned_user.id:
+      
+        _world_transform = _repr.get_world_transform()
+        _pick_result = self.compute_pick_result(_world_transform)
+
+        if len(_pick_result.value) > 0:
+          ## ToDo: check if in visibility range of user
+          _candidate_list.append(_pick_result.value[0])
+
+    return _candidate_list
+
+  ##
+  #
+  def choose_from_candidate_list(self, CANDIDATE_LIST):
+    
+    _closest_index = -1
+    _closest_distance = 1000
+
+    for _i in range(len(CANDIDATE_LIST)):
+      
+      _pick_result = CANDIDATE_LIST[_i]
+
+      if _pick_result.Distance.value < _closest_distance:
+        _closest_distance = _pick_result.Distance.value
+        _closest_index = _i 
+
+    if _closest_index != -1:
+      return CANDIDATE_LIST[_closest_index]
+    else:
+      return None
+
+  ##
+  #
+  def get_pick_result(self):
+
+    _candidate_representations = self.create_candidate_list()
+    _chosen_pick_result = self.choose_from_candidate_list(_candidate_representations)
+    return _chosen_pick_result
+
+  ## Called whenever sf_pointer_button0 changes.
+  @field_has_changed(sf_pointer_button0)
+  def sf_pointer_button0_changed(self):
+
+    if self.sf_pointer_button0.value == True:
+      
+      _pick_result = self.get_pick_result()
+
+      if _pick_result != None:
+        print self.get_pick_result().Object.value
+
+

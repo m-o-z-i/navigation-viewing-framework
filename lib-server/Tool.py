@@ -46,6 +46,10 @@ class ToolRepresentation(avango.script.Script):
 
     ##
     #
+    self.user_id = int(VIEW_TRANSFORM_NODE.Name.value.split("_")[2].replace("u", ""))
+
+    ##
+    #
     self.transformation_policy = TRANSFORMATION_POLICY
 
     ##
@@ -58,7 +62,7 @@ class ToolRepresentation(avango.script.Script):
     self.always_evaluate(True)
 
   ##
-  def get_world_transformation(self):
+  def get_world_transform(self):
 
     return self.tool_transform_node.WorldTransform.value
 
@@ -92,6 +96,10 @@ class Tool(avango.script.Script):
     #
     self.assigned_user = None
 
+    ##
+    #
+    self.tool_representations = []
+
     # init sensors
     self.tracking_reader = TrackingTargetReader()
     self.tracking_reader.my_constructor(TRACKING_STATION)
@@ -99,6 +107,16 @@ class Tool(avango.script.Script):
     self.tracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
     self.always_evaluate(True)
+
+  ##
+  #
+  def create_candidate_list(self):
+    pass
+
+  ##
+  #
+  def choose_from_candidate_list(self, CANDIDATE_LIST):
+    pass
 
   ##
   def evaluate(self):
@@ -116,8 +134,6 @@ class Tool(avango.script.Script):
 
     if _closest_user != self.assigned_user:
       self.assign_user(_closest_user)
-    
-    print self.assigned_user.id
 
 
   ##

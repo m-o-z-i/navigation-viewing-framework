@@ -121,16 +121,20 @@ class Tool(avango.script.Script):
   ##
   def check_for_user_assignment(self):
 
+    print "arrival"
     _closest_user = None
     _closest_distance = 1000
 
     for _user in self.WORKSPACE_INSTANCE.users:
-      _dist = self.compute_line_distance( self.tracking_reader.sf_abs_vec.value
-                                        , _user.headtracking_reader.sf_abs_vec.value
-                                        , avango.gua.Vec3(0, -1, 0) )
-      if _dist < _closest_distance:
-        _closest_distance = _dist
-        _closest_user = _user
+
+      if _user.is_active:
+
+        _dist = self.compute_line_distance( self.tracking_reader.sf_abs_vec.value
+                                          , _user.headtracking_reader.sf_abs_vec.value
+                                          , avango.gua.Vec3(0, -1, 0) )
+        if _dist < _closest_distance:
+          _closest_distance = _dist
+          _closest_user = _user
 
     if _closest_user != self.assigned_user:
       self.assign_user(_closest_user)

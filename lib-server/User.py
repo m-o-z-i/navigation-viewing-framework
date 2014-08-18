@@ -309,6 +309,25 @@ class User(avango.script.Script):
     # toggles activity
     self.toggle_user_activity(self.is_active)
 
+    self.always_evaluate(True)
+
+  ##
+  def evaluate(self):
+
+    _track_vec = self.headtracking_reader.sf_abs_vec.value
+
+    if _track_vec.x < -1.5 and _track_vec.x > -2.4 and \
+       _track_vec.y < 1.01 and _track_vec.y > 0.98 and \
+       _track_vec.z < 1.35 and _track_vec.z > 0.16:
+
+      #print "user", self.id, " false"
+      self.toggle_user_activity(False)
+
+    else:
+
+      #print "user", self.id, " true"
+      self.toggle_user_activity(True)
+
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.

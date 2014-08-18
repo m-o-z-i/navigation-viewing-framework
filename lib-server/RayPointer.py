@@ -87,8 +87,10 @@ class RayPointerRepresentation(ToolRepresentation):
 
   def disable_highlight(self):
 
+    #print self.TOOL_INSTANCE.hierarchy_selection_level
+
     if self.TOOL_INSTANCE.hierarchy_selection_level >= 0:
-      _material = SceneManager.hierarchy_materials[self.hierarchy_selection_level]
+      _material = SceneManager.hierarchy_materials[self.TOOL_INSTANCE.hierarchy_selection_level]
     else:
       _material = "data/materials/White.gmd"
     
@@ -237,7 +239,7 @@ class RayPointer(Tool):
                                            avango.gua.make_scale_mat(_user_nav_mat.get_scale() * -1))
 
               _dist_from_ray_origin = Tools.euclidean_distance(_user_head_mat.get_translate(), _pick_world_position)
-              print _dist_from_ray_origin
+              #print _dist_from_ray_origin
 
               _candidate_list.append( (_pick_result, _tool_repr, _intersection_in_nav_space, _dist_from_ray_origin) )
 
@@ -437,11 +439,12 @@ class RayPointer(Tool):
   def check_for_user_assignment(self):
 
     _assigned_user_before = self.assigned_user
+    print "want to assign a user"
     self.super(RayPointer).check_for_user_assignment()
     _assigned_user_after = self.assigned_user
 
     '''
-    To be commented in when the visibilites per user work properly.
+    #To be commented in when the visibilites per user work properly.
     if _assigned_user_before != _assigned_user_after:
 
       for _tool_repr in self.tool_representations:

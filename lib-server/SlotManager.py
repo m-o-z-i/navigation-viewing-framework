@@ -7,7 +7,7 @@
 import avango
 import avango.gua
 import avango.script
-import RadioMasterHID
+#import RadioMasterHID
 
 # import framework libraries
 from ConsoleIO   import *
@@ -30,7 +30,7 @@ class SlotManager(avango.script.Script):
     self.always_evaluate(True)
 
     ## @var glasses_slot_status
-    # List containing the number of slots for shutter glasses per display. 
+    # List containing the number of slots for shutter glasses per display.
     # Form: [ [DISPLAY_NAME, [LIST OF SLOTS PER SHUTTER] ], ...  ]
     self.glasses_slot_status = []
 
@@ -92,7 +92,7 @@ class SlotManager(avango.script.Script):
     self.radio_master_hid.set_master_transmit(1)
     self.radio_master_hid.set_master_clock(1) # 0 = use internal sync signal; 1 = use external sync signal
     self.radio_master_hid.set_master_timing(16600,16500)
-    self.radio_master_hid.send_master_config() 
+    self.radio_master_hid.send_master_config()
 
   ## Tells the RadioMasterHID to send the shutter configuration. Formats feedback nicely.
   # @param PRINT_CONFIG Boolean saying if the newly uploaded configuration is to be printed on the console.
@@ -174,7 +174,7 @@ class SlotManager(avango.script.Script):
       if _entry[1] == 0:
         _entries_to_clear.append(_entry)
 
-    
+
     # clear commands when frame counter is zero
     for _i in range(len(_entries_to_clear)):
 
@@ -204,7 +204,7 @@ class SlotManager(avango.script.Script):
   ## Updates the shutter timings and scenegraph slot connections according to the
   # vip / active status, display and platform of users.
   def update_slot_configuration(self):
- 
+
     # List to save for which glasses a configuration was set
     if INTELLIGENT_SHUTTER_SWITCHING:
 
@@ -255,7 +255,7 @@ class SlotManager(avango.script.Script):
       # if vip users are present, distribute the free slots among them
       elif len(_vip_user_list) > 0:
         _i = 0
-        
+
         while _number_free_slots > 0:
           # add slot to vip user _i
           _vip_user_list[_i][1] += 1
@@ -268,7 +268,7 @@ class SlotManager(avango.script.Script):
           _number_free_slots -= 1
 
         _concatenated_user_list = _default_user_list + _vip_user_list + _disabled_user_list
-      
+
       # all users are disabled
       elif _num_users_on_display == len(_disabled_user_list):
         _concatenated_user_list = _disabled_user_list
@@ -292,7 +292,7 @@ class SlotManager(avango.script.Script):
 
       # assign one slot to each user when intelligent switching is off
       _slot_instances = self.slots[_display]
-      
+
       if INTELLIGENT_SHUTTER_SWITCHING == False:
         _i = 0
 
@@ -329,7 +329,7 @@ class SlotManager(avango.script.Script):
       # print and update user / glasses slot assignment
       for _state in _concatenated_user_list:
         print "User", _state[0].id, "(VIP:", str(_state[0].is_vip) + ") was assigned " + str(_state[1]) + " slots."
-        
+
         if _state[0].glasses_id != None:
           _display_slot_assignment[_state[0].glasses_id - 1] = _state[1]
 
@@ -401,10 +401,10 @@ class SlotManager(avango.script.Script):
                 print_error("Error at user " + str(_user.id) + ": Glasses ID (" + str(_user.glasses_id) + ") exceeds the maximum of available glasses (" + str(total_number_of_shutter_glasses) + ")." , True)
               else:
                 _glasses_updated[_user.glasses_id - 1] = True
-              
+
               # if user glasses are closing, do it immediately (slot image already present)
               if _display_slot_assignment[_user.glasses_id - 1] <= _old_display_slot_assignment[_user.glasses_id - 1]:
-                
+
                 # set ids with shutter timings and values properly
                 while _j < len(_left_timings):
                   self.radio_master_hid.set_timer_value(_user.glasses_id, _j, _left_timings[_j])
@@ -445,8 +445,8 @@ class SlotManager(avango.script.Script):
                   _j += 1
 
                 self.queue_commands(_command_list, 9)
-              
-              
+
+
             # assign user to slot instances (headtracking matrix update)
             for _k in range(_start_i, _end_i + 1):
               _slot_instances[_k].assign_user(_user)
@@ -470,7 +470,7 @@ class SlotManager(avango.script.Script):
         if _glasses_updated[_i] == False:
           _display_slot_assignment[_i] = 0
 
- 
+
     # open glasses for which no timings were assigned
     if INTELLIGENT_SHUTTER_SWITCHING:
       print_headline("Send updated shutter configuration")

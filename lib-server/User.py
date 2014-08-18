@@ -118,6 +118,7 @@ class UserRepresentation(avango.script.Script):
                                        avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
                                        avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
 
+
   ## Appends a screen node for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen node from.
   def add_screen_node_for(self, DISPLAY_INSTANCE):
@@ -317,6 +318,11 @@ class User(avango.script.Script):
     _user_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE)
     self.user_representations.append(_user_repr)
     return _user_repr
+
+  ##
+  #
+  def get_user_representation_at(self, DISPLAY_GROUP):
+    return self.user_representations[DISPLAY_GROUP]
 
   ## Switches the navigation for a display group that is stored at the corresponding node in 
   # matrices_per_display_group.

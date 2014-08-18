@@ -12,6 +12,7 @@ import avango.daemon
 
 # import framework libraries
 from Tool import *
+import Tools
 from TrackingReader import TrackingTargetReader
 from scene_config import *
 from SceneManager import *
@@ -110,6 +111,7 @@ class RayPointer(Tool):
     self.dragging_offset = None
 
     ##
+    #'''
     _loader = avango.gua.nodes.TriMeshLoader()
 
     self.intersection_point_geometry = _loader.create_geometry_from_file("intersection_point_geometry"
@@ -118,6 +120,36 @@ class RayPointer(Tool):
                                                                        , avango.gua.LoaderFlags.DEFAULTS)
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
     scenegraphs[0]["/net"].Children.value.append(self.intersection_point_geometry)
+    '''
+
+    ####
+    self.tl_near_geometry = _loader.create_geometry_from_file("tl_near_geometry"
+                                                                       , "data/objects/sphere.obj"
+                                                                       , "data/materials/White.gmd"
+                                                                       , avango.gua.LoaderFlags.DEFAULTS)
+    scenegraphs[0]["/net"].Children.value.append(self.tl_near_geometry)
+
+    self.tr_near_geometry = _loader.create_geometry_from_file("tr_near_geometry"
+                                                                       , "data/objects/sphere.obj"
+                                                                       , "data/materials/White.gmd"
+                                                                       , avango.gua.LoaderFlags.DEFAULTS)
+    scenegraphs[0]["/net"].Children.value.append(self.tr_near_geometry)
+
+    self.bl_near_geometry = _loader.create_geometry_from_file("bl_near_geometry"
+                                                                       , "data/objects/sphere.obj"
+                                                                       , "data/materials/White.gmd"
+                                                                       , avango.gua.LoaderFlags.DEFAULTS)
+    scenegraphs[0]["/net"].Children.value.append(self.bl_near_geometry)
+
+    self.br_near_geometry = _loader.create_geometry_from_file("br_near_geometry"
+                                                                       , "data/objects/sphere.obj"
+                                                                       , "data/materials/White.gmd"
+                                                                       , avango.gua.LoaderFlags.DEFAULTS)
+    scenegraphs[0]["/net"].Children.value.append(self.br_near_geometry)
+    '''
+
+
+    ####
     
     ## @var pointer_device_sensor
     # Device sensor capturing the pointer's button input values.
@@ -163,18 +195,203 @@ class RayPointer(Tool):
 
     if self.assigned_user != None:
 
-      for _repr in self.tool_representations:
+      for _tool_repr in self.tool_representations:
 
-        if _repr.user_id == self.assigned_user.id:
+        if _tool_repr.user_id == self.assigned_user.id:
         
-          _world_transform = _repr.get_world_transform()
+          #print "At ToolRepresentation of display group", _tool_repr.DISPLAY_GROUP.id
+
+          _world_transform = _tool_repr.get_world_transform()
           _pick_result = self.compute_pick_result(_world_transform)
 
           if len(_pick_result.value) > 0:
-            ## ToDo: check if in visibility range of user
-            _candidate_list.append(_pick_result.value[0])
+            
+            # is pick in frustum of user?
+            _user_repr = self.assigned_user.get_user_representation_at(_tool_repr.DISPLAY_GROUP.id)
+            _pick_visible = False
+
+            _user_head_mat = _user_repr.head.WorldTransform.value
+            _user_nav_mat = _user_repr.view_transform_node.WorldTransform.value
+
+            for _screen in _user_repr.screens:
+
+              if self.is_inside_frustum(_pick_result.value[0].WorldPosition.value
+                                      , _user_head_mat
+                                      , _user_nav_mat
+                                      , _tool_repr.DISPLAY_GROUP
+                                      , _screen) == True:
+                _pick_visible = True
+                break
+
+
+            if _pick_visible:
+              _candidate_list.append(_pick_result.value[0])
 
     return _candidate_list
+
+  ##
+  #
+  def is_inside_frustum(self, POINT, USER_HEAD_WORLD_MAT, USER_NAV_WORLD_MAT, DISPLAY_GROUP, SCREEN):
+    
+    _near_clip = 0.1
+    _far_clip = 1000.0
+
+    # compute screen corner points
+    _screen_mat = SCREEN.WorldTransform.value
+    _screen_width = SCREEN.Width.value
+    _screen_height = SCREEN.Height.value
+    
+    _tl_pos = _screen_mat * avango.gua.Vec3(-_screen_width * 0.5, _screen_height * 0.5, 0.0)
+    _tr_pos = _screen_mat * avango.gua.Vec3(_screen_width * 0.5, _screen_height * 0.5, 0.0)
+    _bl_pos = _screen_mat * avango.gua.Vec3(-_screen_width * 0.5, -_screen_height * 0.5, 0.0)
+    _br_pos = _screen_mat * avango.gua.Vec3(_screen_width * 0.5, -_screen_height * 0.5, 0.0)
+
+    _tl_pos = avango.gua.Vec3(_tl_pos.x, _tl_pos.y, _tl_pos.z)
+    _tr_pos = avango.gua.Vec3(_tr_pos.x, _tr_pos.y, _tr_pos.z)    
+    _bl_pos = avango.gua.Vec3(_bl_pos.x, _bl_pos.y, _bl_pos.z)
+    _br_pos = avango.gua.Vec3(_br_pos.x, _br_pos.y, _br_pos.z)
+
+    # sdfsd
+
+    _head_abs_mat = avango.gua.make_trans_mat(USER_HEAD_WORLD_MAT.get_translate()) * \
+                    avango.gua.make_rot_mat(USER_NAV_WORLD_MAT.get_rotate_scale_corrected()) * \
+                    avango.gua.make_rot_mat(SCREEN.Transform.value.get_rotate())
+    _inv_head_abs_mat = avango.gua.make_inverse_mat(_head_abs_mat)
+
+
+    _tl_pos_in_head_space = _inv_head_abs_mat * _tl_pos    
+    _tr_pos_in_head_space = _inv_head_abs_mat * _tr_pos
+    _bl_pos_in_head_space = _inv_head_abs_mat * _bl_pos
+    _br_pos_in_head_space = _inv_head_abs_mat * _br_pos
+
+    #print "!!!", _head_abs_mat
+    #print _tl_pos, _tl_pos_in_head_space
+
+    _tl_pos_in_head_space = avango.gua.Vec3(_tl_pos_in_head_space.x, _tl_pos_in_head_space.y, _tl_pos_in_head_space.z)
+    _tr_pos_in_head_space = avango.gua.Vec3(_tr_pos_in_head_space.x, _tr_pos_in_head_space.y, _tr_pos_in_head_space.z)
+    _bl_pos_in_head_space = avango.gua.Vec3(_bl_pos_in_head_space.x, _bl_pos_in_head_space.y, _bl_pos_in_head_space.z)
+    _br_pos_in_head_space = avango.gua.Vec3(_br_pos_in_head_space.x, _br_pos_in_head_space.y, _br_pos_in_head_space.z)
+
+    _head_to_screen_distance = abs(_tl_pos_in_head_space.z)
+
+    if _head_to_screen_distance == 0.0:
+      _head_to_screen_distance = 0.001
+
+    _tl_near_plane_scale_factor = (_tl_pos_in_head_space.length() * _near_clip) / _head_to_screen_distance
+    _tr_near_plane_scale_factor = (_tr_pos_in_head_space.length() * _near_clip) / _head_to_screen_distance
+    _bl_near_plane_scale_factor = (_bl_pos_in_head_space.length() * _near_clip) / _head_to_screen_distance
+    _br_near_plane_scale_factor = (_br_pos_in_head_space.length() * _near_clip) / _head_to_screen_distance
+    
+    _tl_far_plane_scale_factor = (_tl_pos_in_head_space.length() * _far_clip) / _head_to_screen_distance
+    _tr_far_plane_scale_factor = (_tr_pos_in_head_space.length() * _far_clip) / _head_to_screen_distance
+    _bl_far_plane_scale_factor = (_bl_pos_in_head_space.length() * _far_clip) / _head_to_screen_distance
+    _br_far_plane_scale_factor = (_br_pos_in_head_space.length() * _far_clip) / _head_to_screen_distance 
+    
+    _tl_pos_in_head_space.normalize()
+    _tr_pos_in_head_space.normalize()
+    _bl_pos_in_head_space.normalize()
+    _br_pos_in_head_space.normalize()
+
+    # compute near clip points
+    _tl_near_pos_in_head_space = _tl_pos_in_head_space * _tl_near_plane_scale_factor
+    _tr_near_pos_in_head_space = _tr_pos_in_head_space * _tr_near_plane_scale_factor
+    _bl_near_pos_in_head_space = _bl_pos_in_head_space * _bl_near_plane_scale_factor
+    _br_near_pos_in_head_space = _br_pos_in_head_space * _br_near_plane_scale_factor
+
+    _tl_near_world_pos = _head_abs_mat * _tl_near_pos_in_head_space
+    _tr_near_world_pos = _head_abs_mat * _tr_near_pos_in_head_space
+    _bl_near_world_pos = _head_abs_mat * _bl_near_pos_in_head_space
+    _br_near_world_pos = _head_abs_mat * _br_near_pos_in_head_space
+
+    _tl_near_world_pos = avango.gua.Vec3(_tl_near_world_pos.x, _tl_near_world_pos.y, _tl_near_world_pos.z)
+    _tr_near_world_pos = avango.gua.Vec3(_tr_near_world_pos.x, _tr_near_world_pos.y, _tr_near_world_pos.z)
+    _bl_near_world_pos = avango.gua.Vec3(_bl_near_world_pos.x, _bl_near_world_pos.y, _bl_near_world_pos.z)
+    _br_near_world_pos = avango.gua.Vec3(_br_near_world_pos.x, _br_near_world_pos.y, _br_near_world_pos.z)
+
+    # compute far clip points
+    _tl_far_pos_in_head_space = _tl_pos_in_head_space * _tl_far_plane_scale_factor
+    _tr_far_pos_in_head_space = _tr_pos_in_head_space * _tr_far_plane_scale_factor
+    _bl_far_pos_in_head_space = _bl_pos_in_head_space * _bl_far_plane_scale_factor
+    _br_far_pos_in_head_space = _br_pos_in_head_space * _br_far_plane_scale_factor
+
+    _tl_far_world_pos = _head_abs_mat * _tl_far_pos_in_head_space
+    _tr_far_world_pos = _head_abs_mat * _tr_far_pos_in_head_space
+    _bl_far_world_pos = _head_abs_mat * _bl_far_pos_in_head_space
+    _br_far_world_pos = _head_abs_mat * _br_far_pos_in_head_space
+
+    _tl_far_world_pos = avango.gua.Vec3(_tl_far_world_pos.x, _tl_far_world_pos.y, _tl_far_world_pos.z)
+    _tr_far_world_pos = avango.gua.Vec3(_tr_far_world_pos.x, _tr_far_world_pos.y, _tr_far_world_pos.z)
+    _bl_far_world_pos = avango.gua.Vec3(_bl_far_world_pos.x, _bl_far_world_pos.y, _bl_far_world_pos.z)
+    _br_far_world_pos = avango.gua.Vec3(_br_far_world_pos.x, _br_far_world_pos.y, _br_far_world_pos.z)
+
+    ## compute planes ##
+    _frustum_planes = []
+
+    # near plane
+    _v1 = _bl_near_world_pos - _br_near_world_pos
+    _v2 = _tl_near_world_pos - _bl_near_world_pos
+    _n = _v1.cross(_v2)
+    _n.normalize()
+    _d = - _n.dot(_br_near_world_pos)
+    _near_plane = (_n, _d)
+    _frustum_planes.append(_near_plane)
+
+    # far plane
+    _v1 = _br_far_world_pos - _bl_far_world_pos
+    _v2 = _tr_far_world_pos - _br_far_world_pos
+    _n = _v1.cross(_v2)
+    _n.normalize()
+    _d = - _n.dot(_bl_far_world_pos)
+    _far_plane = (_n, _d)
+    _frustum_planes.append(_far_plane)
+
+    # left plane
+    _v1 = _bl_far_world_pos - _bl_near_world_pos
+    _v2 = _tl_far_world_pos - _bl_far_world_pos
+    _n = _v1.cross(_v2)
+    _n.normalize()
+    _d = - _n.dot(_bl_near_world_pos)
+    _left_plane = (_n, _d)
+    _frustum_planes.append(_left_plane)
+
+    # right plane
+    _v1 = _br_near_world_pos - _br_far_world_pos
+    _v2 = _tr_near_world_pos - _br_near_world_pos
+    _n = _v1.cross(_v2)
+    _n.normalize()
+    _d = - _n.dot(_br_far_world_pos)
+    _right_plane = (_n, _d)
+    _frustum_planes.append(_right_plane)
+
+    # top plane
+    _v1 = _tr_near_world_pos - _tr_far_world_pos
+    _v2 = _tl_near_world_pos - _tr_near_world_pos
+    _n = _v1.cross(_v2)
+    _n.normalize()
+    _d = - _n.dot(_tr_far_world_pos)
+    _top_plane = (_n, _d)
+    _frustum_planes.append(_top_plane)
+
+    # bottom plane
+    _v1 = _bl_near_world_pos - _bl_far_world_pos
+    _v2 = _br_near_world_pos - _bl_near_world_pos
+    _n = _v1.cross(_v2)
+    _n.normalize()
+    _d = - _n.dot(_bl_far_world_pos)
+    _bottom_plane = (_n, _d)
+    _frustum_planes.append(_bottom_plane)
+
+    # determine realtion to planes
+    for _plane in _frustum_planes:
+
+      _n = _plane[0]
+      _d = _plane[1]
+
+      if (_n.x * POINT.x + _n.y * POINT.y + _n.z * POINT.z + _d) < 0:
+        return False
+
+    return True
+
 
   ##
   #
@@ -227,7 +444,7 @@ class RayPointer(Tool):
 
       self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
 
-    self.update_object_highlight(_pick_result)
+    #self.update_object_highlight(_pick_result)
 
   ## Change the hierarchy selection level to a given level.
   # @param HIERARCHY_LEVEL The new hierarchy selection level to be set.

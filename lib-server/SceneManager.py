@@ -190,6 +190,14 @@ class SceneManager(avango.script.Script):
   # List of material strings to be used for representing the bounding box hierarchies.
   hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
 
+  ##
+  #
+  current_near_clip = 0.1
+
+  ##
+  #
+  current_far_clip = 1000.0
+
 
   # Default constructor.
   def __init__(self):
@@ -339,6 +347,9 @@ class SceneManager(avango.script.Script):
       self.active_scene = self.scenes[ID]
       self.active_scene.enable_scene(True)
       self.pipeline_info_node.Name.value = self.active_scene.get_pipeline_value_string()
+
+      SceneManager.current_near_clip = self.active_scene.near_clip
+      SceneManager.current_far_clip = self.active_scene.far_clip
 
       # overwrite first Navigation's starting matrix if described in scene.
       #if self.active_scene.starting_matrix != None and len(self.navigation_list) > 0:

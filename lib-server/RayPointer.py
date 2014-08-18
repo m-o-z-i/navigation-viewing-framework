@@ -220,8 +220,8 @@ class RayPointer(Tool):
   #
   def is_inside_frustum(self, POINT, USER_HEAD_WORLD_MAT, USER_NAV_WORLD_MAT, DISPLAY_GROUP, SCREEN):
     
-    _near_clip = 0.1
-    _far_clip = 1000.0
+    _near_clip = SceneManager.current_near_clip
+    _far_clip = SceneManager.current_far_clip
 
     # compute screen corner points
     _screen_mat = SCREEN.WorldTransform.value

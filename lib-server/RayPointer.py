@@ -24,6 +24,10 @@ class RayPointerRepresentation(ToolRepresentation):
   def __init__(self):
     self.super(RayPointerRepresentation).__init__()
 
+    ## @var intersection_sphere_size
+    # Radius of the intersection sphere in meters.
+    self.intersection_sphere_size = 0.05
+
   ##
   def my_constructor(self, RAY_POINTER_INSTANCE, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
     
@@ -42,11 +46,30 @@ class RayPointerRepresentation(ToolRepresentation):
                                                          , "data/materials/White.gmd"
                                                          , avango.gua.LoaderFlags.DEFAULTS)
     self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, self.TOOL_INSTANCE.ray_length * -0.5) * \
-                                        avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                        avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
                                         avango.gua.make_scale_mat(0.005, self.TOOL_INSTANCE.ray_length, 0.005)
     self.tool_transform_node.Children.value.append(self.ray_geometry)
 
-    self.always_evaluate(True)
+    ##
+    #
+    self.intersection_point_geometry = _loader.create_geometry_from_file("intersection_point_geometry"
+                                                                       , "data/objects/sphere.obj"
+                                                                       , "data/materials/White.gmd"
+                                                                       , avango.gua.LoaderFlags.DEFAULTS)
+    self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
+    self.tool_transform_node.Children.value.append(self.intersection_point_geometry)
+
+    #self.always_evaluate(True)
+
+  def show_intersection_geometry_at(self, MATRIX):
+
+    self.intersection_point_geometry.GroupNames.value.remove("do_not_display_group")
+    self.intersection_point_geometry.Transform.value = MATRIX * avango.gua.make_scale_mat(self.intersection_sphere_size)
+
+  def hide_intersection_geometry(self):
+    self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
+
+
 
 
 ##
@@ -88,10 +111,6 @@ class RayPointer(Tool):
     # Thickness of the pointer's ray in meters.
     self.ray_thickness = 0.0075
 
-    ## @var intersection_sphere_size
-    # Radius of the intersection sphere in meters.
-    self.intersection_sphere_size = 0.5
-
     ## @var hierarchy_selection_level
     # Hierarchy level which is selected by this pointer.
     self.hierarchy_selection_level = 0
@@ -109,47 +128,6 @@ class RayPointer(Tool):
     ## @var dragging_offset
     # Offset to be applied during the dragging process.
     self.dragging_offset = None
-
-    ##
-    #'''
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    self.intersection_point_geometry = _loader.create_geometry_from_file("intersection_point_geometry"
-                                                                       , "data/objects/sphere.obj"
-                                                                       , "data/materials/White.gmd"
-                                                                       , avango.gua.LoaderFlags.DEFAULTS)
-    self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
-    scenegraphs[0]["/net"].Children.value.append(self.intersection_point_geometry)
-    '''
-
-    ####
-    self.tl_near_geometry = _loader.create_geometry_from_file("tl_near_geometry"
-                                                                       , "data/objects/sphere.obj"
-                                                                       , "data/materials/White.gmd"
-                                                                       , avango.gua.LoaderFlags.DEFAULTS)
-    scenegraphs[0]["/net"].Children.value.append(self.tl_near_geometry)
-
-    self.tr_near_geometry = _loader.create_geometry_from_file("tr_near_geometry"
-                                                                       , "data/objects/sphere.obj"
-                                                                       , "data/materials/White.gmd"
-                                                                       , avango.gua.LoaderFlags.DEFAULTS)
-    scenegraphs[0]["/net"].Children.value.append(self.tr_near_geometry)
-
-    self.bl_near_geometry = _loader.create_geometry_from_file("bl_near_geometry"
-                                                                       , "data/objects/sphere.obj"
-                                                                       , "data/materials/White.gmd"
-                                                                       , avango.gua.LoaderFlags.DEFAULTS)
-    scenegraphs[0]["/net"].Children.value.append(self.bl_near_geometry)
-
-    self.br_near_geometry = _loader.create_geometry_from_file("br_near_geometry"
-                                                                       , "data/objects/sphere.obj"
-                                                                       , "data/materials/White.gmd"
-                                                                       , avango.gua.LoaderFlags.DEFAULTS)
-    scenegraphs[0]["/net"].Children.value.append(self.br_near_geometry)
-    '''
-
-
-    ####
     
     ## @var pointer_device_sensor
     # Device sensor capturing the pointer's button input values.
@@ -178,7 +156,6 @@ class RayPointer(Tool):
     _ray.Transform.value = MATRIX * avango.gua.make_scale_mat(1.0, 1.0, self.ray_length)
 
     _picking_options = avango.gua.PickingOptions.PICK_ONLY_FIRST_OBJECT \
-                     | avango.gua.PickingOptions.GET_POSITIONS \
                      | avango.gua.PickingOptions.GET_WORLD_POSITIONS \
                      | avango.gua.PickingOptions.GET_WORLD_NORMALS
 
@@ -202,20 +179,24 @@ class RayPointer(Tool):
           #print "At ToolRepresentation of display group", _tool_repr.DISPLAY_GROUP.id
 
           _world_transform = _tool_repr.get_world_transform()
-          _pick_result = self.compute_pick_result(_world_transform)
+          _mf_pick_result = self.compute_pick_result(_world_transform)
 
-          if len(_pick_result.value) > 0:
+          if len(_mf_pick_result.value) > 0:
+
+            _pick_result = _mf_pick_result.value[0]
+            _pick_world_position = _pick_result.Object.value.WorldTransform.value * _pick_result.Position.value
+            _pick_world_position = avango.gua.Vec3(_pick_world_position.x, _pick_world_position.y, _pick_world_position.z)
             
             # is pick in frustum of user?
             _user_repr = self.assigned_user.get_user_representation_at(_tool_repr.DISPLAY_GROUP.id)
             _pick_visible = False
 
             _user_head_mat = _user_repr.head.WorldTransform.value
-            _user_nav_mat = _user_repr.view_transform_node.WorldTransform.value
+            _user_nav_mat = _user_repr.view_transform_node.Transform.value
 
             for _screen in _user_repr.screens:
 
-              if self.is_inside_frustum(_pick_result.value[0].WorldPosition.value
+              if self.is_inside_frustum(_pick_world_position
                                       , _user_head_mat
                                       , _user_nav_mat
                                       , _tool_repr.DISPLAY_GROUP
@@ -223,9 +204,15 @@ class RayPointer(Tool):
                 _pick_visible = True
                 break
 
-
             if _pick_visible:
-              _candidate_list.append(_pick_result.value[0])
+
+              _tool_world_transform = _tool_repr.tool_transform_node.WorldTransform.value
+
+              _intersection_in_nav_space = avango.gua.make_inverse_mat(_tool_world_transform) * \
+                                           (avango.gua.make_trans_mat(_pick_world_position) * \
+                                           avango.gua.make_scale_mat(_user_nav_mat.get_scale() * -1))
+
+              _candidate_list.append( (_pick_result, _tool_repr, _intersection_in_nav_space) )
 
     return _candidate_list
 
@@ -251,21 +238,16 @@ class RayPointer(Tool):
     _bl_pos = avango.gua.Vec3(_bl_pos.x, _bl_pos.y, _bl_pos.z)
     _br_pos = avango.gua.Vec3(_br_pos.x, _br_pos.y, _br_pos.z)
 
-    # sdfsd
-
+    # transform head matrix and corner points in screen coordinate system
     _head_abs_mat = avango.gua.make_trans_mat(USER_HEAD_WORLD_MAT.get_translate()) * \
                     avango.gua.make_rot_mat(USER_NAV_WORLD_MAT.get_rotate_scale_corrected()) * \
                     avango.gua.make_rot_mat(SCREEN.Transform.value.get_rotate())
     _inv_head_abs_mat = avango.gua.make_inverse_mat(_head_abs_mat)
 
-
     _tl_pos_in_head_space = _inv_head_abs_mat * _tl_pos    
     _tr_pos_in_head_space = _inv_head_abs_mat * _tr_pos
     _bl_pos_in_head_space = _inv_head_abs_mat * _bl_pos
     _br_pos_in_head_space = _inv_head_abs_mat * _br_pos
-
-    #print "!!!", _head_abs_mat
-    #print _tl_pos, _tl_pos_in_head_space
 
     _tl_pos_in_head_space = avango.gua.Vec3(_tl_pos_in_head_space.x, _tl_pos_in_head_space.y, _tl_pos_in_head_space.z)
     _tr_pos_in_head_space = avango.gua.Vec3(_tr_pos_in_head_space.x, _tr_pos_in_head_space.y, _tr_pos_in_head_space.z)
@@ -274,6 +256,7 @@ class RayPointer(Tool):
 
     _head_to_screen_distance = abs(_tl_pos_in_head_space.z)
 
+    # compute scaling factors for corner vectors
     if _head_to_screen_distance == 0.0:
       _head_to_screen_distance = 0.001
 
@@ -381,7 +364,7 @@ class RayPointer(Tool):
     _bottom_plane = (_n, _d)
     _frustum_planes.append(_bottom_plane)
 
-    # determine realtion to planes
+    # determine realtion to planes (in front, behind)
     for _plane in _frustum_planes:
 
       _n = _plane[0]
@@ -402,7 +385,7 @@ class RayPointer(Tool):
 
     for _i in range(len(CANDIDATE_LIST)):
       
-      _pick_result = CANDIDATE_LIST[_i]
+      _pick_result = CANDIDATE_LIST[_i][0]
 
       if _pick_result.Distance.value < _closest_distance:
         _closest_distance = _pick_result.Distance.value
@@ -415,11 +398,11 @@ class RayPointer(Tool):
 
   ##
   #
-  def get_pick_result(self):
+  def get_pick_result_tuple(self):
 
     _candidate_representations = self.create_candidate_list()
-    _chosen_pick_result = self.choose_from_candidate_list(_candidate_representations)
-    return _chosen_pick_result
+    _chosen_pick_result_tuple = self.choose_from_candidate_list(_candidate_representations)
+    return _chosen_pick_result_tuple
 
 
   ##
@@ -428,21 +411,25 @@ class RayPointer(Tool):
 
     self.check_for_user_assignment()
 
-    _pick_result = self.get_pick_result()
+    _pick_result_tuple = self.get_pick_result_tuple()
 
-    if _pick_result != None:
+    if _pick_result_tuple != None:
       
-      _point = _pick_result.Position.value # intersection point in object coordinate system
-      _node = _pick_result.Object.value
-      _point = _node.WorldTransform.value * _point # transform point into world coordinates
-      _point = avango.gua.Vec3(_point.x,_point.y,_point.z) # make Vec3 from Vec4
-      self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(_point) * \
-                                                         avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
-      self.intersection_point_geometry.GroupNames.value.remove("do_not_display_group")
+      _pick_result = _pick_result_tuple[0]
+      _hit_repr = _pick_result_tuple[1]
+      _intersection_in_nav_space = _pick_result_tuple[2]
+
+      for _repr in self.tool_representations:
+      
+        if _repr != _hit_repr:
+          _repr.hide_intersection_geometry()
+        else:
+          _repr.show_intersection_geometry_at(_intersection_in_nav_space)
 
     else:
-
-      self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
+      
+      for _repr in self.tool_representations:
+        _repr.hide_intersection_geometry()
 
     #self.update_object_highlight(_pick_result)
 

@@ -45,9 +45,7 @@ class RayPointerRepresentation(ToolRepresentation):
                                                          , "data/objects/cylinder.obj"
                                                          , "data/materials/White.gmd"
                                                          , avango.gua.LoaderFlags.DEFAULTS)
-    self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, self.TOOL_INSTANCE.ray_length * -0.5) * \
-                                        avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
-                                        avango.gua.make_scale_mat(0.005, self.TOOL_INSTANCE.ray_length, 0.005)
+    self.reset_ray_geometry()
     self.tool_transform_node.Children.value.append(self.ray_geometry)
 
     ##
@@ -61,14 +59,40 @@ class RayPointerRepresentation(ToolRepresentation):
 
     #self.always_evaluate(True)
 
-  def show_intersection_geometry_at(self, MATRIX):
+  ##
+  #
+  def reset_ray_geometry(self):
+
+    self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, self.TOOL_INSTANCE.ray_length * -0.5) * \
+                                        avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
+                                        avango.gua.make_scale_mat(0.005, self.TOOL_INSTANCE.ray_length, 0.005)
+
+  ##
+  #
+  def show_intersection_geometry_at(self, MATRIX, NEW_RAY_DISTANCE):
 
     self.intersection_point_geometry.GroupNames.value.remove("do_not_display_group")
     self.intersection_point_geometry.Transform.value = MATRIX * avango.gua.make_scale_mat(self.intersection_sphere_size)
 
+    #self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, NEW_RAY_DISTANCE * -0.5) * \
+    #                                    avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
+    #                                    avango.gua.make_scale_mat(0.005, NEW_RAY_DISTANCE, 0.005)
+
   def hide_intersection_geometry(self):
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
+    #self.reset_ray_geometry()
 
+  def enable_highlight(self):
+    self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
+
+  def disable_highlight(self):
+
+    if self.TOOL_INSTANCE.hierarchy_selection_level >= 0:
+      _material = SceneManager.hierarchy_materials[self.hierarchy_selection_level]
+    else:
+      _material = "data/materials/White.gmd"
+    
+    self.ray_geometry.Material.value = _material
 
 
 
@@ -212,7 +236,10 @@ class RayPointer(Tool):
                                            (avango.gua.make_trans_mat(_pick_world_position) * \
                                            avango.gua.make_scale_mat(_user_nav_mat.get_scale() * -1))
 
-              _candidate_list.append( (_pick_result, _tool_repr, _intersection_in_nav_space) )
+              _dist_from_ray_origin = Tools.euclidean_distance(_user_head_mat.get_translate(), _pick_world_position)
+              print _dist_from_ray_origin
+
+              _candidate_list.append( (_pick_result, _tool_repr, _intersection_in_nav_space, _dist_from_ray_origin) )
 
     return _candidate_list
 
@@ -407,6 +434,26 @@ class RayPointer(Tool):
 
   ##
   #
+  def check_for_user_assignment(self):
+
+    _assigned_user_before = self.assigned_user
+    self.super(RayPointer).check_for_user_assignment()
+    _assigned_user_after = self.assigned_user
+
+    '''
+    To be commented in when the visibilites per user work properly.
+    if _assigned_user_before != _assigned_user_after:
+
+      for _tool_repr in self.tool_representations:
+
+        if _tool_repr.user_id == self.assigned_user.id:
+          _tool_repr.enable_highlight()
+        else:
+          _tool_repr.disable_highlight()
+    '''
+
+  ##
+  #
   def evaluate(self):
 
     self.check_for_user_assignment()
@@ -418,13 +465,14 @@ class RayPointer(Tool):
       _pick_result = _pick_result_tuple[0]
       _hit_repr = _pick_result_tuple[1]
       _intersection_in_nav_space = _pick_result_tuple[2]
+      _dist_from_ray_origin = _pick_result_tuple[3]
 
       for _repr in self.tool_representations:
       
         if _repr != _hit_repr:
           _repr.hide_intersection_geometry()
         else:
-          _repr.show_intersection_geometry_at(_intersection_in_nav_space)
+          _repr.show_intersection_geometry_at(_intersection_in_nav_space, _dist_from_ray_origin)
 
     else:
       

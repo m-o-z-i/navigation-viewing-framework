@@ -83,13 +83,13 @@ class RayPointerRepresentation(ToolRepresentation):
     self.intersection_point_geometry.GroupNames.value.remove("do_not_display_group")
     self.intersection_point_geometry.Transform.value = MATRIX * avango.gua.make_scale_mat(self.intersection_sphere_size)
 
-    #self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, NEW_RAY_DISTANCE * -0.5) * \
-    #                                    avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
-    #                                    avango.gua.make_scale_mat(0.005, NEW_RAY_DISTANCE, 0.005)
+    self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, NEW_RAY_DISTANCE * -0.5) * \
+                                        avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
+                                        avango.gua.make_scale_mat(0.005, NEW_RAY_DISTANCE, 0.005)
 
   def hide_intersection_geometry(self):
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
-    #self.reset_ray_geometry()
+    self.reset_ray_geometry()
 
   def enable_highlight(self):
     self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
@@ -247,10 +247,7 @@ class RayPointer(Tool):
                                            (avango.gua.make_trans_mat(_pick_world_position) * \
                                            avango.gua.make_scale_mat(_user_nav_mat.get_scale() * -1))
 
-              _dist_from_ray_origin = Tools.euclidean_distance(_user_head_mat.get_translate(), _pick_world_position)
-              #print _dist_from_ray_origin
-
-              _candidate_list.append( (_pick_result, _tool_repr, _intersection_in_nav_space, _dist_from_ray_origin) )
+              _candidate_list.append( (_pick_result, _tool_repr, _intersection_in_nav_space) )
 
     return _candidate_list
 
@@ -476,14 +473,15 @@ class RayPointer(Tool):
       _pick_result = _pick_result_tuple[0]
       _hit_repr = _pick_result_tuple[1]
       _intersection_in_nav_space = _pick_result_tuple[2]
-      _dist_from_ray_origin = _pick_result_tuple[3]
+
+      _hit_display_group = _hit_repr.DISPLAY_GROUP
 
       for _repr in self.tool_representations:
       
-        if _repr != _hit_repr:
+        if _repr.DISPLAY_GROUP != _hit_display_group:
           _repr.hide_intersection_geometry()
         else:
-          _repr.show_intersection_geometry_at(_intersection_in_nav_space, _dist_from_ray_origin)
+          _repr.show_intersection_geometry_at(_intersection_in_nav_space, _pick_result.Distance.value * self.ray_length)
 
     else:
       

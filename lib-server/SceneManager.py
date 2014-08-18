@@ -186,6 +186,10 @@ class SceneManager(avango.script.Script):
   # Boolean field representing the home key.
   sf_key_home = avango.SFBool()
 
+  ## @var hierarchy_materials
+  # List of material strings to be used for representing the bounding box hierarchies.
+  hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
+
 
   # Default constructor.
   def __init__(self):
@@ -195,10 +199,6 @@ class SceneManager(avango.script.Script):
     self.NET_TRANS_NODE = self.SCENEGRAPH["/net"]
 
     # parameters
-
-    ## @var hierarchy_materials
-    # List of material strings to be used for representing the bounding box hierarchies.
-    self.hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
 
     # variables
     ## @var scenes
@@ -383,5 +383,5 @@ class SceneManager(avango.script.Script):
   # @param INDEX The material index / depth to be returned.
   def get_hierarchy_material(self, INDEX):
   
-    return self.hierarchy_materials[INDEX]
+    return SceneManager.hierarchy_materials[INDEX]
     

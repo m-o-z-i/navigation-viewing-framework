@@ -14,6 +14,7 @@ import avango.daemon
 from Tool import *
 from TrackingReader import TrackingTargetReader
 from scene_config import *
+from SceneManager import *
 
 ##
 class RayPointerRepresentation(ToolRepresentation):
@@ -88,7 +89,7 @@ class RayPointer(Tool):
 
     ## @var intersection_sphere_size
     # Radius of the intersection sphere in meters.
-    self.intersection_sphere_size = 0.025
+    self.intersection_sphere_size = 0.5
 
     ## @var hierarchy_selection_level
     # Hierarchy level which is selected by this pointer.
@@ -203,17 +204,6 @@ class RayPointer(Tool):
     _chosen_pick_result = self.choose_from_candidate_list(_candidate_representations)
     return _chosen_pick_result
 
-  ## Called whenever sf_pointer_button0 changes.
-  @field_has_changed(sf_pointer_button0)
-  def sf_pointer_button0_changed(self):
-
-    if self.sf_pointer_button0.value == True:
-      
-      _pick_result = self.get_pick_result()
-
-      if _pick_result != None:
-        print _pick_result.Object.value
-
 
   ##
   #
@@ -230,9 +220,99 @@ class RayPointer(Tool):
       _point = _node.WorldTransform.value * _point # transform point into world coordinates
       _point = avango.gua.Vec3(_point.x,_point.y,_point.z) # make Vec3 from Vec4
       self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(_point) * \
-                                                         avango.gua.make_scale_mat(0.5, 0.5, 0.5)
+                                                         avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
       self.intersection_point_geometry.GroupNames.value.remove("do_not_display_group")
 
     else:
 
       self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
+
+    self.update_object_highlight(_pick_result)
+
+  ## Change the hierarchy selection level to a given level.
+  # @param HIERARCHY_LEVEL The new hierarchy selection level to be set.
+  def set_hierarchy_selection_level(self, HIERARCHY_LEVEL):
+
+    self.hierarchy_selection_level = HIERARCHY_LEVEL
+    
+    print "hierarchy selection level", self.hierarchy_selection_level
+    
+    if self.hierarchy_selection_level >= 0:
+      _material = SceneManager.hierarchy_materials[HIERARCHY_LEVEL]
+     
+      for _ray_pointer_repr in self.tool_representations:
+        _ray_pointer_repr.ray_geometry.Material.value = _material
+      
+      self.intersection_point_geometry.Material.value = _material
+
+    else:
+
+      for _ray_pointer_repr in self.tool_representations:
+        _ray_pointer_repr.ray_geometry.Material.value = "data/materials/White.gmd"
+      
+      self.intersection_point_geometry.Material.value = "data/materials/White.gmd"
+
+  ##
+  #
+  def update_object_highlight(self, PICK_RESULT):
+  
+    if PICK_RESULT != None: # intersection found     
+      
+      _node = PICK_RESULT.Object.value
+      
+      if _node.has_field("InteractiveObject") == True:
+        _object = _node.InteractiveObject.value
+        #print _object
+        
+        if self.hierarchy_selection_level >= 0:          
+          _object = _object.get_higher_hierarchical_object(self.hierarchy_selection_level)
+        
+        if _object == None:
+          # evtl. disable highlight of prior object
+          if self.highlighted_object != None:
+            self.highlighted_object.enable_highlight(False)
+
+        else:
+          if _object != self.highlighted_object: # new object hit
+          
+            # evtl. disable highlight of prior object
+            if self.highlighted_object != None:
+              self.highlighted_object.enable_highlight(False)
+
+            self.highlighted_object = _object
+              
+            # enable highlight of new object
+            self.highlighted_object.enable_highlight(True)
+ 
+    else: # no intersection found
+    
+      # evtl. disable highlight of prior object
+      if self.highlighted_object != None:
+        self.highlighted_object.enable_highlight(False)
+
+        self.highlighted_object = None
+
+  ## Called whenever sf_pointer_button0 changes.
+  @field_has_changed(sf_pointer_button0)
+  def sf_pointer_button0_changed(self):
+
+    if self.sf_pointer_button0.value == True:
+      
+      _pick_result = self.get_pick_result()
+
+      if _pick_result != None:
+        pass
+
+  ## Called whenever sf_pointer_button1 changes.
+  @field_has_changed(sf_pointer_button1)
+  def sf_pointer_button1_changed(self):
+
+    if self.sf_pointer_button1.value == True:
+      self.set_hierarchy_selection_level(min(self.hierarchy_selection_level + 1, 3))
+      
+  ## Called whenever sf_pointer_button2 changes.
+  @field_has_changed(sf_pointer_button2)
+  def sf_pointer_button2_changed(self):
+
+    if self.sf_pointer_button2.value == True:
+      self.set_hierarchy_selection_level(max(self.hierarchy_selection_level - 1, -1))

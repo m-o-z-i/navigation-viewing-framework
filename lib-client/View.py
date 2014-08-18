@@ -98,7 +98,8 @@ class View(avango.script.Script):
     self.camera.Mode.value = DISPLAY_INSTANCE.cameramode
 
     # set render mask for camera
-    _render_mask = "!do_not_display_group && !video_abstraction && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+    #_render_mask = "!do_not_display_group && !video_abstraction && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
+    _render_mask = "!pre_scene1 && !pre_scene2 && !do_not_display_group && !video_abstraction && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
 
     for _i in range(0, 10):
       if _i != self.platform_id:
@@ -193,6 +194,7 @@ class View(avango.script.Script):
     self.pipeline.Window.value = self.window
     self.pipeline.Camera.value = self.camera
     self.pipeline.EnableFPSDisplay.value = True
+    self.pipeline.EnablePreviewDisplay.value = False
 
     _pre_pipes = True   # required for transparent seats
 
@@ -250,7 +252,15 @@ class View(avango.script.Script):
 
 
       self.pipeline.PreRenderPipelines.value = [self.pre_pipeline1]
-
+      self.pipeline.EnableFrustumCulling.value = False
+      self.pipeline.EnableBackfaceCulling.value = False
+      self.pipeline.EnableSsao.value = False
+      self.pipeline.BackgroundTexture.value = "pre_scene1_texture"
+      self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.QUAD_TEXTURE
+      self.pipeline.EnableSsao.value = False
+      self.pipeline.FogStart.value = 850.0
+      self.pipeline.FogEnd.value = 1000.0
+      self.pipeline.EnableFog.value = False
 
     '''
       General user settings
@@ -338,7 +348,7 @@ class View(avango.script.Script):
     _splitted_string = self.sf_pipeline_string.value.split("#")
 
     print "set to", _splitted_string
-
+    '''
     # Note: Calling avango.gua.create_texture during runtime causes the application
     # to crash. All textures have to be preloaded, for example in ClientPipelineValues.py
     # avango.gua.create_texture(_splitted_string[0])
@@ -396,7 +406,7 @@ class View(avango.script.Script):
     self.pipeline.FogEnd.value = float(_splitted_string[14])
     self.pipeline.NearClip.value = float(_splitted_string[15])
     self.pipeline.FarClip.value = float(_splitted_string[16])
-
+    '''
     #avango.gua.reload_materials()
 
   ## Evaluated every frame.

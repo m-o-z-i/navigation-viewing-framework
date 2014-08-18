@@ -121,7 +121,6 @@ class Tool(avango.script.Script):
   ##
   def check_for_user_assignment(self):
 
-    print "arrival"
     _closest_user = None
     _closest_distance = 1000
 

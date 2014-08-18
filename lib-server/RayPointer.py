@@ -57,6 +57,15 @@ class RayPointerRepresentation(ToolRepresentation):
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
     self.tool_transform_node.Children.value.append(self.intersection_point_geometry)
 
+    ##
+    #
+    self.ray_start_geometry = _loader.create_geometry_from_file("intersection_point_geometry"
+                                                               , "data/objects/sphere.obj"
+                                                               , "data/materials/ShadelessBlack.gmd"
+                                                               , avango.gua.LoaderFlags.DEFAULTS)
+    self.ray_start_geometry.Transform.value = avango.gua.make_scale_mat(0.025, 0.025, 0.025)
+    self.tool_transform_node.Children.value.append(self.ray_start_geometry)
+
     #self.always_evaluate(True)
 
   ##
@@ -439,7 +448,6 @@ class RayPointer(Tool):
   def check_for_user_assignment(self):
 
     _assigned_user_before = self.assigned_user
-    print "want to assign a user"
     self.super(RayPointer).check_for_user_assignment()
     _assigned_user_after = self.assigned_user
 

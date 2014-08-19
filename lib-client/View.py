@@ -14,6 +14,7 @@ from avango.script import field_has_changed
 from ClientTrackingReader import *
 from ClientPortal import *
 from ConsoleIO import *
+import hyperspace_config
 
 # import python libraries
 import time
@@ -196,9 +197,7 @@ class View(avango.script.Script):
     self.pipeline.EnableFPSDisplay.value = True
     self.pipeline.EnablePreviewDisplay.value = False
 
-    _pre_pipes = True   # required for transparent seats
-
-    if _pre_pipes:
+    if hyperspace_config.prepipes:
       # pre render setup
       self.pre_camera2 = avango.gua.nodes.Camera()
       self.pre_camera2.SceneGraph.value = SCENEGRAPH.Name.value

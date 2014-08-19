@@ -14,6 +14,7 @@ import ClientMaterialUpdaters
 from View import *
 from ClientPortal import *
 from display_config import displays
+import hyperspace_config
 
 # import python libraries
 import sys
@@ -74,13 +75,10 @@ def start():
 
   timer = avango.nodes.TimeSensor()
 
-  _prepipes = True
-  _stereo = False
-
-  if _prepipes:
+  if hyperspace_config.prepipes:
     avango.gua.load_material("data/materials/bwb/Fog.gmd")
 
-    if not _stereo:
+    if not hyperspace_config.stereo:
       avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_l", "pre_scene2_texture")
       avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_r", "pre_scene2_texture")
       avango.gua.set_material_uniform("data/materials/bwb/Fog.gmd", "background_depth_l", "pre_scene2_texture_depth")
@@ -100,7 +98,7 @@ def start():
 
     avango.gua.load_material("data/materials/bwb/Glass2.gmd")
 
-    if not _stereo:
+    if not hyperspace_config.stereo:
       avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture")
       avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture")
     else:

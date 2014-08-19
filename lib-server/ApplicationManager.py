@@ -157,6 +157,8 @@ class ApplicationManager(avango.script.Script):
         for _user_representation in _user.user_representations:
           _user_representation.connect_navigation_of_display_group(0)
 
+    # set avatar groups properly on all user representations
+    self.init_avatar_group_names()
 
     # server control monitor setup #
 
@@ -177,8 +179,8 @@ class ApplicationManager(avango.script.Script):
     # Screen node representing the server's screen.
     self.screen = avango.gua.nodes.ScreenNode(Name = "server_screen")
     self.screen.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.5)
-    #self.screen.Width.value = 160/1.5 * 0.1
-    #self.screen.Height.value = 100/1.5 * 0.1
+    #self.screen.Width.value = 160/1.5 * 0.85
+    #self.screen.Height.value = 100/1.5 * 0.85
     self.screen.Width.value = 160/1.5 * 0.85
     self.screen.Height.value = 100/1.5 * 0.85    
     self.server_transform.Children.value.append(self.screen)
@@ -193,7 +195,14 @@ class ApplicationManager(avango.script.Script):
     self.camera.RightEye.value = self.eye.Path.value
     self.camera.Mode.value = 1
 
-    _render_mask = "!do_not_display_group && !server_do_not_display_group"
+    # set render mask properly
+    _render_mask = "(main_scene"
+
+    for _user_repr in self.all_user_representations:
+      _render_mask = _render_mask + " | " + _user_repr.view_transform_node.Name.value
+
+    _render_mask = _render_mask + ") && !do_not_display_group"
+
     self.camera.RenderMask.value = _render_mask
 
     ## @var window
@@ -221,6 +230,19 @@ class ApplicationManager(avango.script.Script):
     self.viewer.SceneGraphs.value = [self.SCENEGRAPH]
 
     self.always_evaluate(True)
+
+  ##
+  #
+  def init_avatar_group_names(self):
+
+    for _user_repr_1 in self.all_user_representations:
+
+      for _user_repr_2 in self.all_user_representations:
+
+        if _user_repr_2.DISPLAY_GROUP != _user_repr_1.DISPLAY_GROUP:
+
+          _user_repr_1.append_to_avatar_group_names(_user_repr_2.view_transform_node.Name.value)
+
 
   ##
   #

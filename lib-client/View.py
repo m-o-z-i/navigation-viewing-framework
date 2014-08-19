@@ -96,15 +96,9 @@ class View(avango.script.Script):
     self.camera.Mode.value = DISPLAY_INSTANCE.cameramode
 
     # set render mask for camera
-    _render_mask = "!do_not_display_group"
-
-    if self.display_render_mask != "":
-      _render_mask = _render_mask + " && " + self.display_render_mask
-
-    _render_mask = _render_mask + " && !w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id)
-    #_render_mask = "main_scene"
-
+    _render_mask = "(main_scene | w" + str(WORKSPACE_ID) + "_dg" + str(DISPLAY_GROUP_ID) + "_u" + str(USER_ID) + ") && !do_not_display_group"
     self.camera.RenderMask.value = _render_mask
+    #print repr(self.camera.RenderMask.value)
 
     # create pipeline
     ## @var pipeline
@@ -284,6 +278,8 @@ class View(avango.script.Script):
       _pipeline_info_node = self.SCENEGRAPH["/net/pipeline_values"].Children.value[0]
     except:
       return
+
+    #print repr(self.SCENEGRAPH["/net/w0_dg0_u0/screen_0/nav_color_plane"].GroupNames.value[0])
 
     # connect sf_pipeline_string with Name field of info node once
     if _pipeline_info_node != None and self.sf_pipeline_string.value == "":

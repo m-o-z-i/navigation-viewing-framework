@@ -119,6 +119,20 @@ class UserRepresentation(avango.script.Script):
                                        avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
 
 
+  ##
+  #
+  def set_avatar_group_names(self, LIST_OF_STRINGS):
+
+    self.head_avatar.GroupNames.value = LIST_OF_STRINGS
+    self.body_avatar.GroupNames.value = LIST_OF_STRINGS
+
+  ##
+  #
+  def append_to_avatar_group_names(self, STRING):
+    
+    self.head_avatar.GroupNames.value.append(STRING)
+    self.body_avatar.GroupNames.value.append(STRING)
+
   ## Appends a screen node for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen node from.
   def add_screen_node_for(self, DISPLAY_INSTANCE):
@@ -144,7 +158,7 @@ class UserRepresentation(avango.script.Script):
                                                   avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                                   avango.gua.make_scale_mat(_scale, _scale, _scale)
     _navigation_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
-    #_navigation_color_geometry.GroupNames.value = ["w" + str(_w_id) + "_dg" + str(_dg_id) + "_s" + str(_s_id) + "_u" + str(_u_id)]
+    _navigation_color_geometry.GroupNames.value = ["w" + str(self.workspace_id) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
     _screen.Children.value.append(_navigation_color_geometry)
 
 
@@ -167,7 +181,6 @@ class UserRepresentation(avango.script.Script):
                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
 
     self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
-    self.head_avatar.GroupNames.value = ['w' + str(self.workspace_id) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
     self.head.Children.value.append(self.head_avatar)
 
     # create avatar body
@@ -177,8 +190,6 @@ class UserRepresentation(avango.script.Script):
                                                          'data/objects/Joseph/JosephBody.obj',
                                                          'data/materials/ShadelessWhite.gmd',
                                                          avango.gua.LoaderFlags.LOAD_MATERIALS)
-    
-    self.body_avatar.GroupNames.value = ['w' + str(self.workspace_id) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
     self.head.Children.value.append(self.body_avatar)
 
 

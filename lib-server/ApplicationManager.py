@@ -231,8 +231,8 @@ class ApplicationManager(avango.script.Script):
 
     self.always_evaluate(True)
 
-  ##
-  #
+  ## Initializes the GroupNames field of all UserRepresentation's avatars.
+  # Users cannot see the avatars in own display group, but the ones in others.
   def init_avatar_group_names(self):
 
     for _user_repr_1 in self.all_user_representations:
@@ -243,14 +243,15 @@ class ApplicationManager(avango.script.Script):
 
           _user_repr_1.append_to_avatar_group_names(_user_repr_2.view_transform_node.Name.value)
 
-
-  ##
-  #
+  ## Switches the navigation for a user at a display group. 
+  # @param WORKSPACE_ID The workspace id in which the user is active.
+  # @param DISPLAY_GROUP_ID The display group id to change the navigation for.
+  # @param USER_ID The user id to change the navigation for.
+  # @param NAVIGATION_ID The navigation id to change to.
   def switch_navigation_for(self, WORKSPACE_ID, DISPLAY_GROUP_ID, USER_ID, NAVIGATION_ID):
 
     _user_instance = self.workspaces[WORKSPACE_ID].users[USER_ID]
     _user_instance.switch_navigation_at_display_group(DISPLAY_GROUP_ID, NAVIGATION_ID, self.all_user_representations)
-
 
   ## Starts the shell and the viewer.
   # @param LOCALS Local variables.

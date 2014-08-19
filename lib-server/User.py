@@ -354,8 +354,7 @@ class User(avango.script.Script):
   def get_user_representation_at(self, DISPLAY_GROUP_ID):
     return self.user_representations[DISPLAY_GROUP_ID]
 
-  ## Switches the navigation for a display group that is stored at the corresponding node in 
-  # matrices_per_display_group.
+  ## Switches the navigation for a display group.
   # @param DISPLAY_GROUP_ID Identification number of the display group to switch the navigation for.
   # @param NAVIGATION_ID Identification number of the navigation to be used within the display group.
   # @param ALL_USER_REPRESENTATIONS A list of all UserRepresentation instances in the setup used for avatar visibility triggering.

@@ -32,6 +32,10 @@ class ApplicationManager(avango.script.Script):
   # The GuaVE shell to be used when the application is running.
   shell = GuaVE()
 
+  ## @var all_user_reprsentations
+  # List of all UserRepresentation instances active in the setup.
+  all_user_representations = []
+
   def __init__(self):
     self.super(ApplicationManager).__init__()
 
@@ -80,10 +84,6 @@ class ApplicationManager(avango.script.Script):
 
     # viewing setup and start of client processes #
 
-    ##
-    #
-    self.all_user_representations = []
-
     if START_CLIENTS:
 
       # get own ip adress
@@ -124,7 +124,7 @@ class ApplicationManager(avango.script.Script):
 
           # create user representation in display group
           _user_repr = _user.create_user_representation_for(_display_group, _view_transform_node)
-          self.all_user_representations.append(_user_repr)
+          ApplicationManager.all_user_representations.append(_user_repr)
 
           # create tool representation in display_group
           for _tool in _workspace.tools:
@@ -198,7 +198,7 @@ class ApplicationManager(avango.script.Script):
     # set render mask properly
     _render_mask = "(main_scene"
 
-    for _user_repr in self.all_user_representations:
+    for _user_repr in ApplicationManager.all_user_representations:
       _render_mask = _render_mask + " | " + _user_repr.view_transform_node.Name.value
 
     _render_mask = _render_mask + ") && !do_not_display_group"
@@ -235,9 +235,9 @@ class ApplicationManager(avango.script.Script):
   # Users cannot see the avatars in own display group, but the ones in others.
   def init_avatar_group_names(self):
 
-    for _user_repr_1 in self.all_user_representations:
+    for _user_repr_1 in ApplicationManager.all_user_representations:
 
-      for _user_repr_2 in self.all_user_representations:
+      for _user_repr_2 in ApplicationManager.all_user_representations:
 
         if _user_repr_2.DISPLAY_GROUP != _user_repr_1.DISPLAY_GROUP:
 
@@ -251,7 +251,7 @@ class ApplicationManager(avango.script.Script):
   def switch_navigation_for(self, WORKSPACE_ID, DISPLAY_GROUP_ID, USER_ID, NAVIGATION_ID):
 
     _user_instance = self.workspaces[WORKSPACE_ID].users[USER_ID]
-    _user_instance.switch_navigation_at_display_group(DISPLAY_GROUP_ID, NAVIGATION_ID, self.all_user_representations)
+    _user_instance.switch_navigation_at_display_group(DISPLAY_GROUP_ID, NAVIGATION_ID, ApplicationManager.all_user_representations)
 
   ## Starts the shell and the viewer.
   # @param LOCALS Local variables.

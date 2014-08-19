@@ -8,6 +8,7 @@ import avango
 import avango.gua
 
 # import framework libraries
+from ApplicationManager import *
 from ConsoleIO import *
 from Display import *
 from DisplayGroup import *
@@ -55,8 +56,8 @@ class Workspace:
     # Physical size of this workspace in meters.
     self.size = (3.8, 3.6)
 
-  ##
-  #
+  ## Triggers the correct GroupNames of all ToolRepresentations at a display group.
+  # @param DISPLAY_GROUP_ID The identification number of the DisplayGroup.
   def trigger_tool_visibilities_at(self, DISPLAY_GROUP_ID):
 
     # handle every tool in workspace
@@ -64,12 +65,14 @@ class Workspace:
 
       _tool_reprs_at_display_group = []
       _tool_repr_of_assigned_user = None
+      _display_group_instance = None
 
       for _tool_repr in _tool.tool_representations:
 
         # get all tool representations in display group
         if _tool_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
 
+          _display_group_instance = _tool_repr.DISPLAY_GROUP
           _tool_reprs_at_display_group.append(_tool_repr)
 
           if _tool_repr.USER_REPRESENTATION.USER == _tool.assigned_user:
@@ -88,9 +91,16 @@ class Workspace:
           _tool_repr.append_to_visualization_group_names("do_not_display_group")
           _assigned_user_ray_visible_for.append(_tool_repr.USER_REPRESENTATION.view_transform_node.Name.value)
 
-      # append visibilities of ray holder tool representation to all others on different navigations
+      # check for all user representations outside the handled display group
+      for _user_repr in ApplicationManager.all_user_representations:
+
+        if _user_repr.DISPLAY_GROUP != _display_group_instance:
+          _assigned_user_ray_visible_for.append(_user_repr.view_transform_node.Name.value)
+
+      # make ray holder tool representation visible for all others on different navigations and display groups
       for _string in _assigned_user_ray_visible_for:
         _tool_repr_of_assigned_user.append_to_visualization_group_names(_string)
+
 
 
   ## Creates a DisplayGroup instance and adds it to this workspace.

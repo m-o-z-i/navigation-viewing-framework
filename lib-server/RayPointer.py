@@ -45,7 +45,7 @@ class RayPointerRepresentation(ToolRepresentation):
                                                          , "data/objects/cylinder.obj"
                                                          , "data/materials/White.gmd"
                                                          , avango.gua.LoaderFlags.DEFAULTS)
-    self.reset_ray_geometry()
+    self.set_ray_distance(self.TOOL_INSTANCE.ray_length)
     self.tool_transform_node.Children.value.append(self.ray_geometry)
 
     ##
@@ -59,7 +59,7 @@ class RayPointerRepresentation(ToolRepresentation):
 
     ##
     #
-    self.ray_start_geometry = _loader.create_geometry_from_file("intersection_point_geometry"
+    self.ray_start_geometry = _loader.create_geometry_from_file("ray_start_geometry"
                                                                , "data/objects/sphere.obj"
                                                                , "data/materials/ShadelessBlack.gmd"
                                                                , avango.gua.LoaderFlags.DEFAULTS)
@@ -70,11 +70,11 @@ class RayPointerRepresentation(ToolRepresentation):
 
   ##
   #
-  def reset_ray_geometry(self):
+  def set_ray_distance(self, NEW_RAY_DISTANCE):
 
-    self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, self.TOOL_INSTANCE.ray_length * -0.5) * \
+    self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, NEW_RAY_DISTANCE * -0.5) * \
                                         avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
-                                        avango.gua.make_scale_mat(0.005, self.TOOL_INSTANCE.ray_length, 0.005)
+                                        avango.gua.make_scale_mat(0.005, NEW_RAY_DISTANCE, 0.005)
 
   ##
   #
@@ -82,14 +82,15 @@ class RayPointerRepresentation(ToolRepresentation):
 
     self.intersection_point_geometry.GroupNames.value.remove("do_not_display_group")
     self.intersection_point_geometry.Transform.value = MATRIX * avango.gua.make_scale_mat(self.intersection_sphere_size)
+    self.set_ray_distance(NEW_RAY_DISTANCE)
 
-    self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, NEW_RAY_DISTANCE * -0.5) * \
-                                        avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
-                                        avango.gua.make_scale_mat(0.005, NEW_RAY_DISTANCE, 0.005)
 
   def hide_intersection_geometry(self):
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
-    self.reset_ray_geometry()
+    self.set_ray_distance(self.TOOL_INSTANCE.ray_length)
+
+  def hide_ray(self):
+    self.ray_geometry.GroupNames.value.append("do_not_display_group")
 
   def enable_highlight(self):
     self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
@@ -480,6 +481,7 @@ class RayPointer(Tool):
       
         if _repr.DISPLAY_GROUP != _hit_display_group:
           _repr.hide_intersection_geometry()
+          _repr.set_ray_distance(_pick_result.Distance.value * self.ray_length)
         else:
           _repr.show_intersection_geometry_at(_intersection_in_nav_space, _pick_result.Distance.value * self.ray_length)
 

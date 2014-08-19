@@ -102,7 +102,7 @@ class View(avango.script.Script):
       _render_mask = _render_mask + " && " + self.display_render_mask
 
     _render_mask = _render_mask + " && !w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id)
-
+    #_render_mask = "main_scene"
 
     self.camera.RenderMask.value = _render_mask
 

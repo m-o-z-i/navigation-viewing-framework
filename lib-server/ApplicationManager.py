@@ -80,6 +80,10 @@ class ApplicationManager(avango.script.Script):
 
     # viewing setup and start of client processes #
 
+    ##
+    #
+    self.all_user_representations = []
+
     if START_CLIENTS:
 
       # get own ip adress
@@ -120,6 +124,7 @@ class ApplicationManager(avango.script.Script):
 
           # create user representation in display group
           _user_repr = _user.create_user_representation_for(_display_group, _view_transform_node)
+          self.all_user_representations.append(_user_repr)
 
           # create tool representation in display_group
           for _tool in _workspace.tools:
@@ -216,6 +221,13 @@ class ApplicationManager(avango.script.Script):
     self.viewer.SceneGraphs.value = [self.SCENEGRAPH]
 
     self.always_evaluate(True)
+
+  ##
+  #
+  def switch_navigation_for(self, WORKSPACE_ID, DISPLAY_GROUP_ID, USER_ID, NAVIGATION_ID):
+
+    _user_instance = self.workspaces[WORKSPACE_ID].users[USER_ID]
+    _user_instance.switch_navigation_at_display_group(DISPLAY_GROUP_ID, NAVIGATION_ID)
 
 
   ## Starts the shell and the viewer.

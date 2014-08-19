@@ -7,7 +7,7 @@ DIR="$( cd "$( dirname "$0" )" && pwd )"
 LOCAL_GUACAMOLE="$DIR/../../../guacamole"
 LOCAL_AVANGO="$DIR/../../../avango"
 
-GUACAMOLE=/opt/guacamole/master
+GUACAMOLE=/opt/guacamole/feature_test
 AVANGO=/opt/avango/master
 
 # third party libs

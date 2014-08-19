@@ -24,7 +24,7 @@ class ToolRepresentation(avango.script.Script):
   def base_constructor(self
                    , TOOL_INSTANCE
                    , DISPLAY_GROUP
-                   , VIEW_TRANSFORM_NODE
+                   , USER_REPRESENTATION
                    , TOOL_TRANSFORM_NODE_NAME
                    , TRANSFORMATION_POLICY):
     
@@ -38,15 +38,15 @@ class ToolRepresentation(avango.script.Script):
 
     ##
     #
-    self.view_transform_node = VIEW_TRANSFORM_NODE
+    self.USER_REPRESENTATION = USER_REPRESENTATION
 
     ##
     #
-    self.workspace_id = int(VIEW_TRANSFORM_NODE.Name.value.split("_")[0].replace("w", ""))
+    self.user_id = self.USER_REPRESENTATION.USER.id
 
     ##
     #
-    self.user_id = int(VIEW_TRANSFORM_NODE.Name.value.split("_")[2].replace("u", ""))
+    self.workspace_id = int(self.USER_REPRESENTATION.view_transform_node.Name.value.split("_")[0].replace("w", ""))
 
     ##
     #
@@ -55,7 +55,7 @@ class ToolRepresentation(avango.script.Script):
     ##
     #
     self.tool_transform_node = avango.gua.nodes.TransformNode(Name = TOOL_TRANSFORM_NODE_NAME)
-    VIEW_TRANSFORM_NODE.Children.value.append(self.tool_transform_node)
+    self.USER_REPRESENTATION.view_transform_node.Children.value.append(self.tool_transform_node)
 
 
 

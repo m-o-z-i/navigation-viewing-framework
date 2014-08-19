@@ -29,13 +29,13 @@ class RayPointerRepresentation(ToolRepresentation):
     self.intersection_sphere_size = 0.05
 
   ##
-  def my_constructor(self, RAY_POINTER_INSTANCE, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
+  def my_constructor(self, RAY_POINTER_INSTANCE, DISPLAY_GROUP, USER_REPRESENTATION):
     
     self.base_constructor(RAY_POINTER_INSTANCE
-                                    , DISPLAY_GROUP
-                                    , VIEW_TRANSFORM_NODE
-                                    , "pick_ray_" + str(RAY_POINTER_INSTANCE.id)
-                                    , "self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value")
+                        , DISPLAY_GROUP
+                        , USER_REPRESENTATION
+                        , "pick_ray_" + str(RAY_POINTER_INSTANCE.id)
+                        , "self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value")
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
@@ -45,7 +45,7 @@ class RayPointerRepresentation(ToolRepresentation):
                                                          , "data/objects/cylinder.obj"
                                                          , "data/materials/White.gmd"
                                                          , avango.gua.LoaderFlags.DEFAULTS)
-    self.ray_geometry.GroupNames.value.append(VIEW_TRANSFORM_NODE.Name.value)
+    self.ray_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
     self.set_ray_distance(self.TOOL_INSTANCE.ray_length)
     self.tool_transform_node.Children.value.append(self.ray_geometry)
 
@@ -56,7 +56,7 @@ class RayPointerRepresentation(ToolRepresentation):
                                                                        , "data/materials/White.gmd"
                                                                        , avango.gua.LoaderFlags.DEFAULTS)
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
-    self.intersection_point_geometry.GroupNames.value.append(VIEW_TRANSFORM_NODE.Name.value)
+    self.intersection_point_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
     self.tool_transform_node.Children.value.append(self.intersection_point_geometry)
 
     ##
@@ -66,7 +66,7 @@ class RayPointerRepresentation(ToolRepresentation):
                                                                , "data/materials/ShadelessBlack.gmd"
                                                                , avango.gua.LoaderFlags.DEFAULTS)
     self.ray_start_geometry.Transform.value = avango.gua.make_scale_mat(0.025, 0.025, 0.025)
-    self.ray_start_geometry.GroupNames.value.append(VIEW_TRANSFORM_NODE.Name.value) 
+    self.ray_start_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value) 
     self.tool_transform_node.Children.value.append(self.ray_start_geometry)
 
     #self.always_evaluate(True)
@@ -181,10 +181,10 @@ class RayPointer(Tool):
 
   ##
   #
-  def create_ray_pointer_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
+  def create_ray_pointer_representation_for(self, DISPLAY_GROUP, USER_REPRESENTATION):
 
     _ray_pointer_repr = RayPointerRepresentation()
-    _ray_pointer_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE)
+    _ray_pointer_repr.my_constructor(self, DISPLAY_GROUP, USER_REPRESENTATION)
     self.tool_representations.append(_ray_pointer_repr)
     return _ray_pointer_repr
 

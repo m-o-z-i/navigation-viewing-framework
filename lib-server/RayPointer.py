@@ -45,6 +45,7 @@ class RayPointerRepresentation(ToolRepresentation):
                                                          , "data/objects/cylinder.obj"
                                                          , "data/materials/White.gmd"
                                                          , avango.gua.LoaderFlags.DEFAULTS)
+    self.ray_geometry.GroupNames.value.append(VIEW_TRANSFORM_NODE.Name.value)
     self.set_ray_distance(self.TOOL_INSTANCE.ray_length)
     self.tool_transform_node.Children.value.append(self.ray_geometry)
 
@@ -55,6 +56,7 @@ class RayPointerRepresentation(ToolRepresentation):
                                                                        , "data/materials/White.gmd"
                                                                        , avango.gua.LoaderFlags.DEFAULTS)
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
+    self.intersection_point_geometry.GroupNames.value.append(VIEW_TRANSFORM_NODE.Name.value)
     self.tool_transform_node.Children.value.append(self.intersection_point_geometry)
 
     ##
@@ -64,6 +66,7 @@ class RayPointerRepresentation(ToolRepresentation):
                                                                , "data/materials/ShadelessBlack.gmd"
                                                                , avango.gua.LoaderFlags.DEFAULTS)
     self.ray_start_geometry.Transform.value = avango.gua.make_scale_mat(0.025, 0.025, 0.025)
+    self.ray_start_geometry.GroupNames.value.append(VIEW_TRANSFORM_NODE.Name.value) 
     self.tool_transform_node.Children.value.append(self.ray_start_geometry)
 
     #self.always_evaluate(True)
@@ -99,12 +102,13 @@ class RayPointerRepresentation(ToolRepresentation):
 
     #print self.TOOL_INSTANCE.hierarchy_selection_level
 
-    if self.TOOL_INSTANCE.hierarchy_selection_level >= 0:
-      _material = SceneManager.hierarchy_materials[self.TOOL_INSTANCE.hierarchy_selection_level]
-    else:
-      _material = "data/materials/White.gmd"
+    #if self.TOOL_INSTANCE.hierarchy_selection_level >= 0:
+    #  _material = SceneManager.hierarchy_materials[self.TOOL_INSTANCE.hierarchy_selection_level]
+    #else:
+    #  _material = "data/materials/White.gmd"
     
-    self.ray_geometry.Material.value = _material
+    #self.ray_geometry.Material.value = _material
+    self.ray_geometry.Material.value = "data/materials/White.gmd"
 
 
 
@@ -449,8 +453,7 @@ class RayPointer(Tool):
     self.super(RayPointer).check_for_user_assignment()
     _assigned_user_after = self.assigned_user
 
-    '''
-    #To be commented in when the visibilites per user work properly.
+    # Change material on assigned ray holder
     if _assigned_user_before != _assigned_user_after:
 
       for _tool_repr in self.tool_representations:
@@ -459,7 +462,6 @@ class RayPointer(Tool):
           _tool_repr.enable_highlight()
         else:
           _tool_repr.disable_highlight()
-    '''
 
   ##
   #

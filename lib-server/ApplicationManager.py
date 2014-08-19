@@ -249,7 +249,7 @@ class ApplicationManager(avango.script.Script):
   def switch_navigation_for(self, WORKSPACE_ID, DISPLAY_GROUP_ID, USER_ID, NAVIGATION_ID):
 
     _user_instance = self.workspaces[WORKSPACE_ID].users[USER_ID]
-    _user_instance.switch_navigation_at_display_group(DISPLAY_GROUP_ID, NAVIGATION_ID)
+    _user_instance.switch_navigation_at_display_group(DISPLAY_GROUP_ID, NAVIGATION_ID, self.all_user_representations)
 
 
   ## Starts the shell and the viewer.

@@ -358,10 +358,39 @@ class User(avango.script.Script):
   # matrices_per_display_group.
   # @param DISPLAY_GROUP_ID Identification number of the display group to switch the navigation for.
   # @param NAVIGATION_ID Identification number of the navigation to be used within the display group.
-  def switch_navigation_at_display_group(self, DISPLAY_GROUP_ID, NAVIGATION_ID):
+  #
+  def switch_navigation_at_display_group(self, DISPLAY_GROUP_ID, NAVIGATION_ID, ALL_USER_REPRESENTATIONS):
     
     if DISPLAY_GROUP_ID < len(self.user_representations):
+      
+      # switch navigation to desired one for DISPLAY_GROUP_ID
       self.user_representations[DISPLAY_GROUP_ID].connect_navigation_of_display_group(NAVIGATION_ID)
+
+      # create list of user representations at DISPLAY_GROUP_ID
+      _user_reprs_at_display_group = []
+
+      for _user_repr in ALL_USER_REPRESENTATIONS:
+        if _user_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
+          _user_reprs_at_display_group.append(_user_repr)
+
+      # set avatar GroupNames field in all user representations of DISPLAY_GROUP_ID
+      for _user_repr_1 in _user_reprs_at_display_group:
+
+        _group_names = []
+
+        # iterate over all user representations to find out if it should see avatars of _user_repr_1
+        for _user_repr_2 in ALL_USER_REPRESENTATIONS:
+          
+          # if display groups differ, make avatars visible
+          if _user_repr_2.DISPLAY_GROUP != _user_repr_1.DISPLAY_GROUP:
+            _group_names.append(_user_repr_2.view_transform_node.Name.value)
+
+          # if display groups are identical, make avatars visible when on different navigations
+          elif _user_repr_2.connected_navigation_id != _user_repr_1.connected_navigation_id:
+            _group_names.append(_user_repr_2.view_transform_node.Name.value)
+
+        _user_repr_1.set_avatar_group_names(_group_names)
+
     else:
       print_error("Error. Display Group ID does not exist.", False)
     

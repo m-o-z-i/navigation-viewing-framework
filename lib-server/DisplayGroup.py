@@ -46,3 +46,5 @@ class DisplayGroup:
         _navigation.device.tracking_reader.set_transmitter_offset(self.offset_to_workspace * WORKSPACE_TRANSMITTER_OFFSET)
       except:
         pass
+
+      

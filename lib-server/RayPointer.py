@@ -87,13 +87,33 @@ class RayPointerRepresentation(ToolRepresentation):
     self.intersection_point_geometry.Transform.value = MATRIX * avango.gua.make_scale_mat(self.intersection_sphere_size)
     self.set_ray_distance(NEW_RAY_DISTANCE)
 
-
   def hide_intersection_geometry(self):
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
     self.set_ray_distance(self.TOOL_INSTANCE.ray_length)
 
   def hide_ray(self):
     self.ray_geometry.GroupNames.value.append("do_not_display_group")
+
+  ##
+  #
+  def append_to_visualization_group_names(self, STRING):
+    self.ray_geometry.GroupNames.value.append(STRING)
+    self.intersection_point_geometry.GroupNames.value.append(STRING)
+    self.ray_start_geometry.GroupNames.value.append(STRING)
+
+  ##
+  #
+  def remove_from_visualization_group_names(self, STRING):
+    self.ray_geometry.GroupNames.value.remove(STRING)
+    self.intersection_point_geometry.GroupNames.value.remove(STRING)
+    self.ray_start_geometry.GroupNames.value.remove(STRING)
+
+  ##
+  #
+  def reset_visualization_group_names(self):
+    self.ray_geometry.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
+    self.intersection_point_geometry.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
+    self.ray_start_geometry.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
 
   def enable_highlight(self):
     self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
@@ -471,6 +491,7 @@ class RayPointer(Tool):
 
     _pick_result_tuple = self.get_pick_result_tuple()
 
+    # a pick was found and selected
     if _pick_result_tuple != None:
       
       _pick_result = _pick_result_tuple[0]
@@ -479,14 +500,22 @@ class RayPointer(Tool):
 
       _hit_display_group = _hit_repr.DISPLAY_GROUP
 
+      # iterate over all tool representations
       for _repr in self.tool_representations:
       
-        if _repr.DISPLAY_GROUP != _hit_display_group:
+        # hide intersection point when not at hit display group
+        # or when user does not share the assigned user's navigation
+        if _repr.DISPLAY_GROUP != _hit_display_group or \
+           _repr.USER_REPRESENTATION.connected_navigation_id != self.assigned_user.user_representations[_hit_display_group.id].connected_navigation_id :
+
           _repr.hide_intersection_geometry()
           _repr.set_ray_distance(_pick_result.Distance.value * self.ray_length)
+
+        # otherwise show the intersection geometry
         else:
           _repr.show_intersection_geometry_at(_intersection_in_nav_space, _pick_result.Distance.value * self.ray_length)
 
+    # no pick was found
     else:
       
       for _repr in self.tool_representations:

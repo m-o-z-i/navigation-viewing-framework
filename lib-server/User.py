@@ -391,8 +391,12 @@ class User(avango.script.Script):
 
         _user_repr_1.set_avatar_group_names(_group_names)
 
+      # trigger correct tool visibilities at display group
+      self.WORKSPACE_INSTANCE.trigger_tool_visibilities_at(DISPLAY_GROUP_ID)
+
     else:
       print_error("Error. Display Group ID does not exist.", False)
+
     
   ## Sets the user's active flag.
   # @param ACTIVE Boolean to which the active flag should be set.

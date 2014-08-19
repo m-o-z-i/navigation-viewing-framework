@@ -55,6 +55,44 @@ class Workspace:
     # Physical size of this workspace in meters.
     self.size = (3.8, 3.6)
 
+  ##
+  #
+  def trigger_tool_visibilities_at(self, DISPLAY_GROUP_ID):
+
+    # handle every tool in workspace
+    for _tool in self.tools:
+
+      _tool_reprs_at_display_group = []
+      _tool_repr_of_assigned_user = None
+
+      for _tool_repr in _tool.tool_representations:
+
+        # get all tool representations in display group
+        if _tool_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
+
+          _tool_reprs_at_display_group.append(_tool_repr)
+
+          if _tool_repr.USER_REPRESENTATION.USER == _tool.assigned_user:
+            _tool_repr_of_assigned_user = _tool_repr
+
+      _assigned_user_ray_visible_for = []
+
+      # check for navigation of corresponding user and compare it to assigned user
+      for _tool_repr in _tool_reprs_at_display_group:
+
+        # reset initial GroupName state
+        _tool_repr.reset_visualization_group_names()
+
+        # if user does not share the assigned user's navigation, hide the tool representation
+        if _tool_repr.USER_REPRESENTATION.connected_navigation_id != _tool_repr_of_assigned_user.USER_REPRESENTATION.connected_navigation_id:
+          _tool_repr.append_to_visualization_group_names("do_not_display_group")
+          _assigned_user_ray_visible_for.append(_tool_repr.USER_REPRESENTATION.view_transform_node.Name.value)
+
+      # append visibilities of ray holder tool representation to all others on different navigations
+      for _string in _assigned_user_ray_visible_for:
+        _tool_repr_of_assigned_user.append_to_visualization_group_names(_string)
+
+
   ## Creates a DisplayGroup instance and adds it to this workspace.
   # @param DISPLAY_LIST List of Display instances to be assigned to the new display group.
   # @param NAVIGATION_LIST List of (Steering-)Navigation instances to be assiged to the display group.

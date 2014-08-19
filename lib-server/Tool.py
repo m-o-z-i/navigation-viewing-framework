@@ -67,6 +67,21 @@ class ToolRepresentation(avango.script.Script):
     return self.tool_transform_node.WorldTransform.value
 
   ##
+  #
+  def reset_visualization_group_names(self):
+    pass
+
+  ##
+  #
+  def append_to_visualization_group_names(self, STRING):
+    pass
+
+  ##
+  #
+  def remove_from_visualization_group_names(self, STRING):
+    pass
+
+  ##
   def evaluate(self):
 
     exec self.transformation_policy
@@ -143,6 +158,9 @@ class Tool(avango.script.Script):
   def assign_user(self, USER_INSTANCE):
 
     self.assigned_user = USER_INSTANCE
+
+    for _display_group in self.WORKSPACE_INSTANCE.display_groups:
+      self.WORKSPACE_INSTANCE.trigger_tool_visibilities_at(_display_group.id)
 
   ##
   #

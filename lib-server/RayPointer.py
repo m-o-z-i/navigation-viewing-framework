@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class RayPointer.
+# Contains classes RayPointerRepresentation and RayPointer.
 
 # import guacamole libraries
 import avango
@@ -17,10 +17,11 @@ from TrackingReader import TrackingTargetReader
 from scene_config import *
 from SceneManager import *
 
-##
+
+## Geometric representation of a RayPointer in a DisplayGroup.
 class RayPointerRepresentation(ToolRepresentation):
 
-  ##
+  ## Default constructor.
   def __init__(self):
     self.super(RayPointerRepresentation).__init__()
 
@@ -28,9 +29,13 @@ class RayPointerRepresentation(ToolRepresentation):
     # Radius of the intersection sphere in meters.
     self.intersection_sphere_size = 0.05
 
-  ##
+  ## Custom constructor.
+  # @param RAY_POINTER_INSTANCE An instance of RayPointer to which this RayPointer representation is associated.
+  # @param DISPLAY_GROUP DisplayGroup instance for which this RayPointerRepresentation is responsible for. 
+  # @param USER_REPRESENTATION Corresponding UserRepresentation instance under which's view_transform_node the RayPointerRepresentation is appended.
   def my_constructor(self, RAY_POINTER_INSTANCE, DISPLAY_GROUP, USER_REPRESENTATION):
     
+    # call base class constructor
     self.base_constructor(RAY_POINTER_INSTANCE
                         , DISPLAY_GROUP
                         , USER_REPRESENTATION
@@ -49,8 +54,8 @@ class RayPointerRepresentation(ToolRepresentation):
     self.set_ray_distance(self.TOOL_INSTANCE.ray_length)
     self.tool_transform_node.Children.value.append(self.ray_geometry)
 
-    ##
-    #
+    ## @var intersection_point_geometry
+    # Geometry node representing the intersection point of the ray if any.
     self.intersection_point_geometry = _loader.create_geometry_from_file("intersection_point_geometry"
                                                                        , "data/objects/sphere.obj"
                                                                        , "data/materials/White.gmd"
@@ -59,8 +64,8 @@ class RayPointerRepresentation(ToolRepresentation):
     self.intersection_point_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
     self.tool_transform_node.Children.value.append(self.intersection_point_geometry)
 
-    ##
-    #
+    ## @var ray_start_geometry
+    # Geometry node representing the origin of the ray graphically.
     self.ray_start_geometry = _loader.create_geometry_from_file("ray_start_geometry"
                                                                , "data/objects/sphere.obj"
                                                                , "data/materials/ShadelessBlack.gmd"
@@ -69,55 +74,58 @@ class RayPointerRepresentation(ToolRepresentation):
     self.ray_start_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value) 
     self.tool_transform_node.Children.value.append(self.ray_start_geometry)
 
-    #self.always_evaluate(True)
 
-  ##
-  #
+  ## Sets ray_geometry to a specific length.
+  # @param NEW_RAY_DISTANCE The new distance of the ray to be set.
   def set_ray_distance(self, NEW_RAY_DISTANCE):
 
     self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, NEW_RAY_DISTANCE * -0.5) * \
                                         avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
                                         avango.gua.make_scale_mat(0.005, NEW_RAY_DISTANCE, 0.005)
 
-  ##
-  #
+  ## Shows the intersection geometry at a specific matrix in this coordinate system and sets the ray distance accordingly.
+  # @param MATRIX The position matrix to be set for the intersection geometry.
+  # @param NEW_RAY_DISTANCE The new distance of the ray to be set.
   def show_intersection_geometry_at(self, MATRIX, NEW_RAY_DISTANCE):
 
     self.intersection_point_geometry.GroupNames.value.remove("do_not_display_group")
     self.intersection_point_geometry.Transform.value = MATRIX * avango.gua.make_scale_mat(self.intersection_sphere_size)
     self.set_ray_distance(NEW_RAY_DISTANCE)
 
+  ## Hides the intersection geometry and resets the ray distance.
   def hide_intersection_geometry(self):
     self.intersection_point_geometry.GroupNames.value.append("do_not_display_group")
     self.set_ray_distance(self.TOOL_INSTANCE.ray_length)
 
+  ## Hides the ray geometry.
   def hide_ray(self):
     self.ray_geometry.GroupNames.value.append("do_not_display_group")
 
-  ##
-  #
+  ## Appends a string to the GroupNames field of this RayPointerRepresentation's visualization.
+  # @param STRING The string to be appended.
   def append_to_visualization_group_names(self, STRING):
     self.ray_geometry.GroupNames.value.append(STRING)
     self.intersection_point_geometry.GroupNames.value.append(STRING)
     self.ray_start_geometry.GroupNames.value.append(STRING)
 
-  ##
-  #
+  ## Removes a string from the GroupNames field of this RayPointerRepresentation's visualization.
+  # @param STRING The string to be removed.
   def remove_from_visualization_group_names(self, STRING):
     self.ray_geometry.GroupNames.value.remove(STRING)
     self.intersection_point_geometry.GroupNames.value.remove(STRING)
     self.ray_start_geometry.GroupNames.value.remove(STRING)
 
-  ##
-  #
+  ## Resets the GroupNames field of this RayPointerRepresentation's visualization to the user representation's view_transform_node.
   def reset_visualization_group_names(self):
     self.ray_geometry.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
     self.intersection_point_geometry.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
     self.ray_start_geometry.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
 
+  ## Enables a highlight for this RayPointerRepresentation.
   def enable_highlight(self):
     self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
 
+  ## Disables the highlight for this RayPointerRepresentation.
   def disable_highlight(self):
 
     #print self.TOOL_INSTANCE.hierarchy_selection_level
@@ -130,9 +138,9 @@ class RayPointerRepresentation(ToolRepresentation):
     #self.ray_geometry.Material.value = _material
     self.ray_geometry.Material.value = "data/materials/White.gmd"
 
+###############################################################################################
 
-
-##
+## Logical representation of a RayPointer in a Workspace.
 class RayPointer(Tool):
 
   # internal fields
@@ -157,9 +165,13 @@ class RayPointer(Tool):
     self.super(RayPointer).__init__()
 
   ## Custom constructor.
-  # @param MANIPULATION_MANAGER Reference to the ManipulationManager instance to which this RayPointer is associated.
+  # @param WORKSPACE_INSTANCE The instance of Workspace to which this Tool belongs to.
+  # @param TOOL_ID The identification number of this Tool within the workspace.
+  # @param POINTER_TRACKING_STATION The tracking target name of this RayPointer.
+  # @param POINTER_DEVICE_STATION The device station name of this RayPointer. 
   def my_constructor(self, WORKSPACE_INSTANCE, TOOL_ID, POINTER_TRACKING_STATION, POINTER_DEVICE_STATION):
 
+    # call base class constructor
     self.base_constructor(WORKSPACE_INSTANCE, TOOL_ID, POINTER_TRACKING_STATION)
 
     # parameters
@@ -199,8 +211,9 @@ class RayPointer(Tool):
     self.sf_pointer_button1.connect_from(self.device_sensor.Button1)
     self.sf_pointer_button2.connect_from(self.device_sensor.Button2)
 
-  ##
-  #
+  ## Creates a RayPointerRepresentation for this RayPointer at a DISPLAY_GROUP.
+  # @param DISPLAY_GROUP The DisplayGroup instance to create the representation for.
+  # @param USER_REPRESENTATION The UserRepresentation this representation will belong to.
   def create_ray_pointer_representation_for(self, DISPLAY_GROUP, USER_REPRESENTATION):
 
     _ray_pointer_repr = RayPointerRepresentation()
@@ -208,8 +221,8 @@ class RayPointer(Tool):
     self.tool_representations.append(_ray_pointer_repr)
     return _ray_pointer_repr
 
-  ##
-  #
+  ## Computes the pick result of a matrix with the scene.
+  # @param MATRIX The matrix to shoot the pick ray from.
   def compute_pick_result(self, MATRIX):
 
     _ray = avango.gua.nodes.RayNode()
@@ -224,23 +237,25 @@ class RayPointer(Tool):
     _pick_result = scenegraphs[0].ray_test(_ray, _picking_options, _picking_mask)
     return _pick_result
 
-  ##
-  #
+  ## Selects a list of potentially currently active RayPointerRepresentations by computing picks for them.
   def create_candidate_list(self):
     
     _candidate_list = []
 
+    # only go on if a user is assigned to the ray
     if self.assigned_user != None:
 
+      # iterate over all tool representations of assigned user
       for _tool_repr in self.tool_representations:
 
         if _tool_repr.user_id == self.assigned_user.id:
         
-          #print "At ToolRepresentation of display group", _tool_repr.DISPLAY_GROUP.id
+          # compute pick result for current tool representation
 
           _world_transform = _tool_repr.get_world_transform()
           _mf_pick_result = self.compute_pick_result(_world_transform)
 
+          # if a pick was found
           if len(_mf_pick_result.value) > 0:
 
             _pick_result = _mf_pick_result.value[0]
@@ -254,16 +269,17 @@ class RayPointer(Tool):
             _user_head_mat = _user_repr.head.WorldTransform.value
             _user_nav_mat = _user_repr.view_transform_node.Transform.value
 
+            # pick is visible when visible in one of the display group's screens
             for _screen in _user_repr.screens:
 
               if self.is_inside_frustum(_pick_world_position
                                       , _user_head_mat
                                       , _user_nav_mat
-                                      , _tool_repr.DISPLAY_GROUP
                                       , _screen) == True:
                 _pick_visible = True
                 break
 
+            # append to candidate list if visible
             if _pick_visible:
 
               _tool_world_transform = _tool_repr.tool_transform_node.WorldTransform.value
@@ -276,9 +292,191 @@ class RayPointer(Tool):
 
     return _candidate_list
 
-  ##
-  #
-  def is_inside_frustum(self, POINT, USER_HEAD_WORLD_MAT, USER_NAV_WORLD_MAT, DISPLAY_GROUP, SCREEN):
+
+  ## Chooses one RayPointerRepresentation among the potentially active ones in a candidate list.
+  # @param CANDIDATE_LIST The list of candidates to be checked.
+  def choose_from_candidate_list(self, CANDIDATE_LIST):
+    
+    _closest_index = -1
+    _closest_distance = 1000
+
+    for _i in range(len(CANDIDATE_LIST)):
+      
+      _pick_result = CANDIDATE_LIST[_i][0]
+
+      # check for pick result with closest distance
+      if _pick_result.Distance.value < _closest_distance:
+        _closest_distance = _pick_result.Distance.value
+        _closest_index = _i 
+
+    if _closest_index != -1:
+      return CANDIDATE_LIST[_closest_index]
+    else:
+      return None
+
+
+  ## Create candidate list and select one of the candidates.
+  def get_pick_result_tuple(self):
+
+    _candidate_representations = self.create_candidate_list()
+    _chosen_pick_result_tuple = self.choose_from_candidate_list(_candidate_representations)
+    return _chosen_pick_result_tuple
+
+
+  ## Checks which user is closest to this RayPointer in tracking spaces and makes him the assigned user.
+  # Additionally updates the material of the corresponding RayPointerRepresentation.
+  def check_for_user_assignment(self):
+
+    _assigned_user_before = self.assigned_user
+    self.super(RayPointer).check_for_user_assignment()
+    _assigned_user_after = self.assigned_user
+
+    # Change material on assigned ray holder
+    if _assigned_user_before != _assigned_user_after:
+
+      for _tool_repr in self.tool_representations:
+
+        if _tool_repr.user_id == self.assigned_user.id:
+          _tool_repr.enable_highlight()
+        else:
+          _tool_repr.disable_highlight()
+
+  ## Evaluated every frame.
+  def evaluate(self):
+
+    # update user assignment
+    self.check_for_user_assignment()
+
+    # compute active pick result
+    _pick_result_tuple = self.get_pick_result_tuple()
+
+    # a pick was found and selected
+    if _pick_result_tuple != None:
+      
+      _pick_result = _pick_result_tuple[0]
+      _hit_repr = _pick_result_tuple[1]
+      _intersection_in_nav_space = _pick_result_tuple[2]
+
+      _hit_display_group = _hit_repr.DISPLAY_GROUP
+
+      # iterate over all tool representations
+      for _repr in self.tool_representations:
+      
+        # hide intersection point when not at hit display group
+        # or when user does not share the assigned user's navigation
+        if _repr.DISPLAY_GROUP != _hit_display_group or \
+           _repr.USER_REPRESENTATION.connected_navigation_id != self.assigned_user.user_representations[_hit_display_group.id].connected_navigation_id :
+
+          _repr.hide_intersection_geometry()
+          _repr.set_ray_distance(_pick_result.Distance.value * self.ray_length)
+
+        # otherwise show the intersection geometry
+        else:
+          _repr.show_intersection_geometry_at(_intersection_in_nav_space, _pick_result.Distance.value * self.ray_length)
+
+    # no pick was found
+    else:
+      
+      for _repr in self.tool_representations:
+        _repr.hide_intersection_geometry()
+
+    #self.update_object_highlight(_pick_result)
+
+
+  ## Change the hierarchy selection level to a given level.
+  # @param HIERARCHY_LEVEL The new hierarchy selection level to be set.
+  def set_hierarchy_selection_level(self, HIERARCHY_LEVEL):
+
+    self.hierarchy_selection_level = HIERARCHY_LEVEL
+    
+    print "hierarchy selection level", self.hierarchy_selection_level
+    
+    if self.hierarchy_selection_level >= 0:
+      _material = SceneManager.hierarchy_materials[HIERARCHY_LEVEL]
+     
+      for _ray_pointer_repr in self.tool_representations:
+        _ray_pointer_repr.ray_geometry.Material.value = _material
+      
+      self.intersection_point_geometry.Material.value = _material
+
+    else:
+
+      for _ray_pointer_repr in self.tool_representations:
+        _ray_pointer_repr.ray_geometry.Material.value = "data/materials/White.gmd"
+      
+      self.intersection_point_geometry.Material.value = "data/materials/White.gmd"
+
+  ## Updates the object to be highlighted according to a pick result found.
+  # @param PICK_RESULT The PickResult for which the object should be highlighted.
+  def update_object_highlight(self, PICK_RESULT):
+  
+    if PICK_RESULT != None: # intersection found     
+      
+      _node = PICK_RESULT.Object.value
+      
+      if _node.has_field("InteractiveObject") == True:
+        _object = _node.InteractiveObject.value
+        #print _object
+        
+        if self.hierarchy_selection_level >= 0:          
+          _object = _object.get_higher_hierarchical_object(self.hierarchy_selection_level)
+        
+        if _object == None:
+          # evtl. disable highlight of prior object
+          if self.highlighted_object != None:
+            self.highlighted_object.enable_highlight(False)
+
+        else:
+          if _object != self.highlighted_object: # new object hit
+          
+            # evtl. disable highlight of prior object
+            if self.highlighted_object != None:
+              self.highlighted_object.enable_highlight(False)
+
+            self.highlighted_object = _object
+              
+            # enable highlight of new object
+            self.highlighted_object.enable_highlight(True)
+ 
+    else: # no intersection found
+    
+      # evtl. disable highlight of prior object
+      if self.highlighted_object != None:
+        self.highlighted_object.enable_highlight(False)
+
+        self.highlighted_object = None
+
+  ## Called whenever sf_pointer_button0 changes.
+  @field_has_changed(sf_pointer_button0)
+  def sf_pointer_button0_changed(self):
+
+    if self.sf_pointer_button0.value == True:
+      
+      _pick_result = self.get_pick_result()
+
+      if _pick_result != None:
+        pass
+
+  ## Called whenever sf_pointer_button1 changes.
+  @field_has_changed(sf_pointer_button1)
+  def sf_pointer_button1_changed(self):
+
+    if self.sf_pointer_button1.value == True:
+      self.set_hierarchy_selection_level(min(self.hierarchy_selection_level + 1, 3))
+      
+  ## Called whenever sf_pointer_button2 changes.
+  @field_has_changed(sf_pointer_button2)
+  def sf_pointer_button2_changed(self):
+
+    if self.sf_pointer_button2.value == True:
+      self.set_hierarchy_selection_level(max(self.hierarchy_selection_level - 1, -1))
+
+  ## Checks if a point is inside the viewing frustum of a user.
+  # @param POINT The point to be checked.
+  # @param USER_HEAD_WORLD_MAT The user's headtracking matrix in world coordinates.
+  # @param USER_NAV_WORLD_MAT The user's navigation matrix in world coordinates.
+  # @param SCREEN The screen to create the viewing frustum for. 
+  def is_inside_frustum(self, POINT, USER_HEAD_WORLD_MAT, USER_NAV_WORLD_MAT, SCREEN):
     
     _near_clip = SceneManager.current_near_clip
     _far_clip = SceneManager.current_far_clip
@@ -434,179 +632,3 @@ class RayPointer(Tool):
         return False
 
     return True
-
-
-  ##
-  #
-  def choose_from_candidate_list(self, CANDIDATE_LIST):
-    
-    _closest_index = -1
-    _closest_distance = 1000
-
-    for _i in range(len(CANDIDATE_LIST)):
-      
-      _pick_result = CANDIDATE_LIST[_i][0]
-
-      if _pick_result.Distance.value < _closest_distance:
-        _closest_distance = _pick_result.Distance.value
-        _closest_index = _i 
-
-    if _closest_index != -1:
-      return CANDIDATE_LIST[_closest_index]
-    else:
-      return None
-
-  ##
-  #
-  def get_pick_result_tuple(self):
-
-    _candidate_representations = self.create_candidate_list()
-    _chosen_pick_result_tuple = self.choose_from_candidate_list(_candidate_representations)
-    return _chosen_pick_result_tuple
-
-
-  ##
-  #
-  def check_for_user_assignment(self):
-
-    _assigned_user_before = self.assigned_user
-    self.super(RayPointer).check_for_user_assignment()
-    _assigned_user_after = self.assigned_user
-
-    # Change material on assigned ray holder
-    if _assigned_user_before != _assigned_user_after:
-
-      for _tool_repr in self.tool_representations:
-
-        if _tool_repr.user_id == self.assigned_user.id:
-          _tool_repr.enable_highlight()
-        else:
-          _tool_repr.disable_highlight()
-
-  ##
-  #
-  def evaluate(self):
-
-    self.check_for_user_assignment()
-
-    _pick_result_tuple = self.get_pick_result_tuple()
-
-    # a pick was found and selected
-    if _pick_result_tuple != None:
-      
-      _pick_result = _pick_result_tuple[0]
-      _hit_repr = _pick_result_tuple[1]
-      _intersection_in_nav_space = _pick_result_tuple[2]
-
-      _hit_display_group = _hit_repr.DISPLAY_GROUP
-
-      # iterate over all tool representations
-      for _repr in self.tool_representations:
-      
-        # hide intersection point when not at hit display group
-        # or when user does not share the assigned user's navigation
-        if _repr.DISPLAY_GROUP != _hit_display_group or \
-           _repr.USER_REPRESENTATION.connected_navigation_id != self.assigned_user.user_representations[_hit_display_group.id].connected_navigation_id :
-
-          _repr.hide_intersection_geometry()
-          _repr.set_ray_distance(_pick_result.Distance.value * self.ray_length)
-
-        # otherwise show the intersection geometry
-        else:
-          _repr.show_intersection_geometry_at(_intersection_in_nav_space, _pick_result.Distance.value * self.ray_length)
-
-    # no pick was found
-    else:
-      
-      for _repr in self.tool_representations:
-        _repr.hide_intersection_geometry()
-
-    #self.update_object_highlight(_pick_result)
-
-  ## Change the hierarchy selection level to a given level.
-  # @param HIERARCHY_LEVEL The new hierarchy selection level to be set.
-  def set_hierarchy_selection_level(self, HIERARCHY_LEVEL):
-
-    self.hierarchy_selection_level = HIERARCHY_LEVEL
-    
-    print "hierarchy selection level", self.hierarchy_selection_level
-    
-    if self.hierarchy_selection_level >= 0:
-      _material = SceneManager.hierarchy_materials[HIERARCHY_LEVEL]
-     
-      for _ray_pointer_repr in self.tool_representations:
-        _ray_pointer_repr.ray_geometry.Material.value = _material
-      
-      self.intersection_point_geometry.Material.value = _material
-
-    else:
-
-      for _ray_pointer_repr in self.tool_representations:
-        _ray_pointer_repr.ray_geometry.Material.value = "data/materials/White.gmd"
-      
-      self.intersection_point_geometry.Material.value = "data/materials/White.gmd"
-
-  ##
-  #
-  def update_object_highlight(self, PICK_RESULT):
-  
-    if PICK_RESULT != None: # intersection found     
-      
-      _node = PICK_RESULT.Object.value
-      
-      if _node.has_field("InteractiveObject") == True:
-        _object = _node.InteractiveObject.value
-        #print _object
-        
-        if self.hierarchy_selection_level >= 0:          
-          _object = _object.get_higher_hierarchical_object(self.hierarchy_selection_level)
-        
-        if _object == None:
-          # evtl. disable highlight of prior object
-          if self.highlighted_object != None:
-            self.highlighted_object.enable_highlight(False)
-
-        else:
-          if _object != self.highlighted_object: # new object hit
-          
-            # evtl. disable highlight of prior object
-            if self.highlighted_object != None:
-              self.highlighted_object.enable_highlight(False)
-
-            self.highlighted_object = _object
-              
-            # enable highlight of new object
-            self.highlighted_object.enable_highlight(True)
- 
-    else: # no intersection found
-    
-      # evtl. disable highlight of prior object
-      if self.highlighted_object != None:
-        self.highlighted_object.enable_highlight(False)
-
-        self.highlighted_object = None
-
-  ## Called whenever sf_pointer_button0 changes.
-  @field_has_changed(sf_pointer_button0)
-  def sf_pointer_button0_changed(self):
-
-    if self.sf_pointer_button0.value == True:
-      
-      _pick_result = self.get_pick_result()
-
-      if _pick_result != None:
-        pass
-
-  ## Called whenever sf_pointer_button1 changes.
-  @field_has_changed(sf_pointer_button1)
-  def sf_pointer_button1_changed(self):
-
-    if self.sf_pointer_button1.value == True:
-      self.set_hierarchy_selection_level(min(self.hierarchy_selection_level + 1, 3))
-      
-  ## Called whenever sf_pointer_button2 changes.
-  @field_has_changed(sf_pointer_button2)
-  def sf_pointer_button2_changed(self):
-
-    if self.sf_pointer_button2.value == True:
-      self.set_hierarchy_selection_level(max(self.hierarchy_selection_level - 1, -1))

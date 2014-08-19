@@ -119,15 +119,15 @@ class UserRepresentation(avango.script.Script):
                                        avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
 
 
-  ##
-  #
+  ## Sets the GroupNames field on all avatar parts to a list of strings.
+  # @param LIST_OF_STRINGS A list of group names to be set for the avatar parts.
   def set_avatar_group_names(self, LIST_OF_STRINGS):
 
     self.head_avatar.GroupNames.value = LIST_OF_STRINGS
     self.body_avatar.GroupNames.value = LIST_OF_STRINGS
 
-  ##
-  #
+  ## Appends a string to the GroupNames field of all avatar parts.
+  # @param STRING The string to be appended to the GroupNames field.
   def append_to_avatar_group_names(self, STRING):
     
     self.head_avatar.GroupNames.value.append(STRING)
@@ -349,16 +349,16 @@ class User(avango.script.Script):
     self.user_representations.append(_user_repr)
     return _user_repr
 
-  ##
-  #
-  def get_user_representation_at(self, DISPLAY_GROUP):
-    return self.user_representations[DISPLAY_GROUP]
+  ## Returns the UserRepresentation instance at a diven DISPLAY_GROUP_ID.
+  # @param DISPLAY_GROUP_ID The id of the DisplayGroup to retrieve the UserRepresentation for.
+  def get_user_representation_at(self, DISPLAY_GROUP_ID):
+    return self.user_representations[DISPLAY_GROUP_ID]
 
   ## Switches the navigation for a display group that is stored at the corresponding node in 
   # matrices_per_display_group.
   # @param DISPLAY_GROUP_ID Identification number of the display group to switch the navigation for.
   # @param NAVIGATION_ID Identification number of the navigation to be used within the display group.
-  #
+  # @param ALL_USER_REPRESENTATIONS A list of all UserRepresentation instances in the setup used for avatar visibility triggering.
   def switch_navigation_at_display_group(self, DISPLAY_GROUP_ID, NAVIGATION_ID, ALL_USER_REPRESENTATIONS):
     
     if DISPLAY_GROUP_ID < len(self.user_representations):

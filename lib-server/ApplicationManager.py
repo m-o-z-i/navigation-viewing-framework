@@ -275,7 +275,7 @@ class ApplicationManager(avango.script.Script):
         # trigger coupling
         if _navigation.active_user_representations == []:
           
-          _users_in_range = _workspace.get_all_users_in_range(_navigation.device.tracking_reader.sf_abs_vec.value, 1.5)
+          _users_in_range = _workspace.get_all_users_in_range(avango.gua.make_inverse_mat(_display_group.offset_to_workspace) * _navigation.device.tracking_reader.sf_abs_vec.value, 1.5)
 
           for _user in _users_in_range:
             self.switch_navigation_for(_workspace.id, _display_group.id, _user.id, _display_group.navigations.index(_navigation))

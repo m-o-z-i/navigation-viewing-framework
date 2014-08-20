@@ -210,19 +210,24 @@ class UserRepresentation(avango.script.Script):
       _old_navigation = self.DISPLAY_GROUP.navigations[self.connected_navigation_id]
       _new_navigation = self.DISPLAY_GROUP.navigations[ID]
 
+      self.view_transform_node.Transform.disconnect()
+
       if len(_new_navigation.active_user_representations) == 0 and self.connected_navigation_id != -1:
 
         try:
           _new_navigation.inputmapping.set_abs_mat(_old_navigation.sf_abs_mat.value)
           _new_navigation.inputmapping.set_scale(_old_navigation.sf_scale.value)
+          
+          # avoid field connection frame latency by setting value directly
+          self.view_transform_node.Transform.value = _old_navigation.sf_abs_mat.value * avango.gua.make_scale_mat(_old_navigation.sf_scale.value)
+
         except:
           pass
 
       _old_navigation.remove_user_representation(self)
       _new_navigation.add_user_representation(self)
 
-      # connect all view transform nodes to this navigation
-      self.view_transform_node.Transform.disconnect()
+      # connect view transform node to new navigation
       self.view_transform_node.Transform.connect_from(_new_navigation.sf_nav_mat)
 
       self.connected_navigation_id = ID
@@ -234,7 +239,7 @@ class UserRepresentation(avango.script.Script):
         print_message("User " + str(self.USER.id) + " at display group " + str(self.DISPLAY_GROUP.id) + \
          ": Switch navigation to " + str(ID) + " (no input device)")
 
-      # trigger avatar visibility
+      # trigger avatar and screen geometry visibilities
       if _new_navigation.avatar_type == 'joseph':
         self.head_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
         self.body_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"

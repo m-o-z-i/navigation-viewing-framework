@@ -135,6 +135,10 @@ class Workspace:
 
       if Tools.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT) < DISTANCE:
         _users_in_range.append(_user)
+        print "In range", _user.id, Tools.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT)
+
+      else:
+        print "not in range", _user.id, Tools.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT)
 
     return _users_in_range
 

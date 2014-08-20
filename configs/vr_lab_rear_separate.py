@@ -92,13 +92,14 @@ vr_lab_rear.create_user( VIP = False
 
 ## Create tools ##
 
-# visibility matrix
+
+# visibility table
 # format: A : { B : bool}
-# interpretation: does A see representations of B?
-ray_visibility_mat = {
-                         "wall"  : {"table" : True}
-                       , "table" : {"wall" : False}  
-                     }
+# interpretation: does display with tag A see representation of tool in displays with tag B?
+ray_visibility_table = {
+                          "wall"  : {"table" : False}
+                        , "table" : {"wall" : True}  
+                       }
 
 vr_lab_rear.create_ray_pointer( POINTER_TRACKING_STATION = 'tracking-dlp-pointer1' 
                               , POINTER_DEVICE_STATION = 'device-pointer1'

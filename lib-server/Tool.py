@@ -104,12 +104,12 @@ class Tool(avango.script.Script):
   # @param WORKSPACE_INSTANCE The instance of Workspace to which this Tool belongs to.
   # @param TOOL_ID The identification number of this Tool within the workspace.
   # @param TRACKING_STATION The tracking target name of this Tool.
-  # @param VISIBILITY_MATRIX A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
+  # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
   def base_constructor(self
                      , WORKSPACE_INSTANCE
                      , TOOL_ID
                      , TRACKING_STATION
-                     , VISIBILITY_MATRIX):
+                     , VISIBILITY_TABLE):
 
     # references
     ## @var WORKSPACE_INSTANCE
@@ -128,10 +128,9 @@ class Tool(avango.script.Script):
     # List of ToolRepresentation instances belonging to this Tool.
     self.tool_representations = []
 
-    ## @var visibility_matrix
-    # A matrix containing visibility rules according to the DisplayGroups' visibility tags.
-    # Format: Double dictionary [Which tool representation][Is visible in which display group]
-    self.visibility_matrix = VISIBILITY_MATRIX
+    ## @var visibility_table
+    # A table containing visibility rules according to the DisplayGroups' visibility tags.
+    self.visibility_table = VISIBILITY_TABLE
 
     # init sensors
     self.tracking_reader = TrackingTargetReader()

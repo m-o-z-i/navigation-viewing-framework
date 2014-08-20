@@ -60,6 +60,8 @@ class Workspace:
   # @param DISPLAY_GROUP_ID The identification number of the DisplayGroup.
   def trigger_tool_visibilities_at(self, DISPLAY_GROUP_ID):
 
+    #print "display group", DISPLAY_GROUP_ID
+
     # handle every tool in workspace
     for _tool in self.tools:
 
@@ -104,18 +106,23 @@ class Workspace:
       for _user_repr in ApplicationManager.all_user_representations:
         if _user_repr.DISPLAY_GROUP != _handled_display_group_instance:
 
-          # consider visibility matrix
+          # consider visibility table
           _handled_display_group_tag = _handled_display_group_instance.visibility_tag
           _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
+          
+          _visible = _tool.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
 
-          # does _handled_display_group see representations of _user_repr_display_group_tag?
-          if _tool.visibility_matrix[_handled_display_group_tag][_user_repr_display_group_tag]:
+          #print "Does", _user_repr.view_transform_node.Name.value, "(", _user_repr_display_group_tag, ") see"
+          #, _handled_display_group_tag, "?", _visible
+          if _visible:
             _assigned_user_ray_visible_for.append(_user_repr.view_transform_node.Name.value)
 
       # make ray holder tool representation visible for all others on different navigations and display groups
       for _string in _assigned_user_ray_visible_for:
         _tool_repr_of_assigned_user.append_to_visualization_group_names(_string)
 
+      #print "assigned user is seen by", _assigned_user_ray_visible_for
+      #print
 
 
   ## Creates a DisplayGroup instance and adds it to this workspace.
@@ -160,16 +167,16 @@ class Workspace:
   ## Creates a RayPointer instance and adds it to the tools of this workspace.
   # @param POINTER_TRACKING_STATION The tracking target name of this RayPointer.
   # @param POINTER_DEVICE_STATION The device station name of this RayPointer.
-  # @param VISIBILITY_MATRIX A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
+  # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
   def create_ray_pointer( self
                         , POINTER_TRACKING_STATION
                         , POINTER_DEVICE_STATION
-                        , VISIBILITY_MATRIX):
+                        , VISIBILITY_TABLE):
 
     _ray_pointer = RayPointer()
     _ray_pointer.my_constructor( self
                                , len(self.tools)
                                , POINTER_TRACKING_STATION
                                , POINTER_DEVICE_STATION
-                               , VISIBILITY_MATRIX)
+                               , VISIBILITY_TABLE)
     self.tools.append(_ray_pointer)

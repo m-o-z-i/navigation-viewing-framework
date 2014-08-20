@@ -256,7 +256,7 @@ class SmallPowerwall(Display):
                     , hostname = "pandora"
                     , name = "small_powerwall"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.1", ":0.0"]
+                    , displaystrings = [":0.0", ":0.1"]
                     , size = (3.0, 1.98)
                     , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
                     , stereo = True

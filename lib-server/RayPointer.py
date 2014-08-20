@@ -195,9 +195,13 @@ class RayPointer(Tool):
     # Reference to the currently highlighted object.
     self.highlighted_object = None
 
-    ## @var dragged_object
+    ## @var dragged_interactive_object
     # Reference to the currently dragged object.
-    self.dragged_object = None
+    self.dragged_interactive_object = None
+
+    ##
+    #
+    self.dragging_tool_representation = None
 
     ## @var dragging_offset
     # Offset to be applied during the dragging process.
@@ -346,43 +350,58 @@ class RayPointer(Tool):
   ## Evaluated every frame.
   def evaluate(self):
 
-    # update user assignment
-    self.check_for_user_assignment()
-
-    # compute active pick result
-    _pick_result_tuple = self.get_pick_result_tuple()
-
-    # a pick was found and selected
-    if _pick_result_tuple != None:
+    if self.dragged_interactive_object == None:
       
-      _pick_result = _pick_result_tuple[0]
-      _hit_repr = _pick_result_tuple[1]
-      _intersection_in_nav_space = _pick_result_tuple[2]
+      # update user assignment
+      self.check_for_user_assignment()
 
-      _hit_display_group = _hit_repr.DISPLAY_GROUP
+      # compute active pick result
+      _pick_result_tuple = self.get_pick_result_tuple()
 
-      # iterate over all tool representations
-      for _repr in self.tool_representations:
-      
-        # hide intersection point when not at hit display group
-        # or when user does not share the assigned user's navigation
-        if _repr.DISPLAY_GROUP != _hit_display_group or \
-           _repr.USER_REPRESENTATION.connected_navigation_id != self.assigned_user.user_representations[_hit_display_group.id].connected_navigation_id :
+      # a pick was found and selected
+      if _pick_result_tuple != None:
+        
+        _pick_result = _pick_result_tuple[0]
+        _hit_repr = _pick_result_tuple[1]
+        _intersection_in_nav_space = _pick_result_tuple[2]
 
+        _hit_display_group = _hit_repr.DISPLAY_GROUP
+
+        # iterate over all tool representations
+        for _repr in self.tool_representations:
+        
+          # hide intersection point when not at hit display group
+          # or when user does not share the assigned user's navigation
+          if _repr.DISPLAY_GROUP != _hit_display_group or \
+             _repr.USER_REPRESENTATION.connected_navigation_id != self.assigned_user.user_representations[_hit_display_group.id].connected_navigation_id :
+
+            _repr.hide_intersection_geometry()
+            _repr.set_ray_distance(_pick_result.Distance.value * self.ray_length)
+
+          # otherwise show the intersection geometry
+          else:
+            _repr.show_intersection_geometry_at(_intersection_in_nav_space, _pick_result.Distance.value * self.ray_length)
+
+      # no pick was found
+      else:
+        
+        for _repr in self.tool_representations:
           _repr.hide_intersection_geometry()
-          _repr.set_ray_distance(_pick_result.Distance.value * self.ray_length)
 
-        # otherwise show the intersection geometry
-        else:
-          _repr.show_intersection_geometry_at(_intersection_in_nav_space, _pick_result.Distance.value * self.ray_length)
+      #self.update_object_highlight(_pick_result)
 
-    # no pick was found
+    # an object is dragged
     else:
-      
-      for _repr in self.tool_representations:
-        _repr.hide_intersection_geometry()
 
-    #self.update_object_highlight(_pick_result)
+      self.drag_object()
+
+
+  ##
+  #
+  def drag_object(self):
+
+    _mat = self.dragging_tool_representation.get_world_transform() * self.dragging_offset
+    self.dragged_interactive_object.set_world_transform(_mat)
 
 
   ## Change the hierarchy selection level to a given level.
@@ -453,10 +472,36 @@ class RayPointer(Tool):
   @field_has_changed(sf_pointer_button0)
   def sf_pointer_button0_changed(self):
 
+    # button was pressed
     if self.sf_pointer_button0.value == True:
       
-      print "Dragging button"
-      pass
+      # compute active pick result
+      _pick_result_tuple = self.get_pick_result_tuple()
+
+      # a pick was found and selected
+      if _pick_result_tuple != None:
+      
+        _pick_result = _pick_result_tuple[0]
+        _hit_tool_repr = _pick_result_tuple[1]
+
+        _hit_node = _pick_result.Object.value
+
+        # retrieve InteractiveObject instance
+        if _hit_node.has_field("InteractiveObject"):
+          self.dragged_interactive_object = _hit_node.InteractiveObject.value
+          self.dragging_tool_representation = _hit_tool_repr
+          self.dragging_offset = avango.gua.make_inverse_mat(self.dragging_tool_representation.get_world_transform()) * self.dragged_interactive_object.get_world_transform()
+
+
+    # button was released
+    else:
+
+      # stop dragging
+      if self.dragged_interactive_object != None:
+        self.dragged_interactive_object = None
+        self.dragging_tool_representation = None
+        self.dragging_offset = None
+
 
   ## Called whenever sf_pointer_button1 changes.
   @field_has_changed(sf_pointer_button1)

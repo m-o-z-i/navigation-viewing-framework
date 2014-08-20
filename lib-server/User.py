@@ -242,6 +242,10 @@ class UserRepresentation(avango.script.Script):
         self.head_avatar.GroupNames.value.append("do_not_display_group")
         self.body_avatar.GroupNames.value.append("do_not_display_group")
 
+      # trigger color of screen visualizations
+      for _screen_vis in self.screen_visualizations:
+        _screen_vis.Material.value = 'data/materials/' + _new_navigation.trace_material + "Shadeless.gmd"
+
     else:
       print_error("Error. Navigation ID does not exist.", False)
 

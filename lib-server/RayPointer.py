@@ -68,7 +68,7 @@ class RayPointerRepresentation(ToolRepresentation):
     # Geometry node representing the origin of the ray graphically.
     self.ray_start_geometry = _loader.create_geometry_from_file("ray_start_geometry"
                                                                , "data/objects/sphere.obj"
-                                                               , "data/materials/ShadelessBlack.gmd"
+                                                               , "data/materials/White.gmd"
                                                                , avango.gua.LoaderFlags.DEFAULTS)
     self.ray_start_geometry.Transform.value = avango.gua.make_scale_mat(0.025, 0.025, 0.025)
     self.ray_start_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value) 
@@ -123,20 +123,20 @@ class RayPointerRepresentation(ToolRepresentation):
 
   ## Enables a highlight for this RayPointerRepresentation.
   def enable_highlight(self):
-    
-    if self.TOOL_INSTANCE.hierarchy_selection_level >= 0:
-
-      _material = SceneManager.hierarchy_materials[self.TOOL_INSTANCE.hierarchy_selection_level]
-      self.ray_geometry.Material.value = _material
-
-    else:
-
-      self.ray_geometry.Material.value = "data/materials/ShadelessBlack.gmd"
+  
+    self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
 
   ## Disables the highlight for this RayPointerRepresentation.
   def disable_highlight(self):
 
     self.ray_geometry.Material.value = "data/materials/White.gmd"
+
+  ## Sets a different matrial for the ray's start geometry to visualize the selection level.
+  # @param MATERIAL The material string to be set.
+  def set_ray_start_geometry_material(self, MATERIAL):
+
+    self.ray_start_geometry.Material.value = MATERIAL
+
 
 ###############################################################################################
 
@@ -398,14 +398,14 @@ class RayPointer(Tool):
       for _ray_pointer_repr in self.tool_representations:
 
         if _ray_pointer_repr.USER_REPRESENTATION.USER == self.assigned_user:
-          _ray_pointer_repr.ray_geometry.Material.value = _material
+          _ray_pointer_repr.set_ray_start_geometry_material(_material)
 
     else:
 
       for _ray_pointer_repr in self.tool_representations:
         
         if _ray_pointer_repr.USER_REPRESENTATION.USER == self.assigned_user:
-          _ray_pointer_repr.ray_geometry.Material.value = "data/materials/ShadelessBlack.gmd"
+          _ray_pointer_repr.set_ray_start_geometry_material("data/materials/White.gmd")
 
 
   ## Updates the object to be highlighted according to a pick result found.

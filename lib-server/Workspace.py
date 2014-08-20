@@ -63,25 +63,34 @@ class Workspace:
     # handle every tool in workspace
     for _tool in self.tools:
 
+      # All ToolRepresentation instances at DISPLAY_GROUP_ID
       _tool_reprs_at_display_group = []
-      _tool_repr_of_assigned_user = None
-      _display_group_instance = None
 
+      # ToolRepresentation instance belonging to the assigned user at DISPLAY_GROUP_ID
+      _tool_repr_of_assigned_user = None
+
+      # display group instance belonging to DISPLAY_GROUP_ID
+      _handled_display_group_instance = None
+
+      ## fill the variables ##
       for _tool_repr in _tool.tool_representations:
 
         # get all tool representations in display group
         if _tool_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
 
-          _display_group_instance = _tool_repr.DISPLAY_GROUP
+          _handled_display_group_instance = _tool_repr.DISPLAY_GROUP
           _tool_reprs_at_display_group.append(_tool_repr)
 
+          # find tool representation of assigned user
           if _tool_repr.USER_REPRESENTATION.USER == _tool.assigned_user:
             _tool_repr_of_assigned_user = _tool_repr
 
+      ## determine which group names have to be added to the tool representations ##
       _assigned_user_ray_visible_for = []
 
-      # check for navigation of corresponding user and compare it to assigned user
       for _tool_repr in _tool_reprs_at_display_group:
+
+        # check for navigation of corresponding user and compare it to assigned user
 
         # reset initial GroupName state
         _tool_repr.reset_visualization_group_names()
@@ -93,14 +102,14 @@ class Workspace:
 
       # check for all user representations outside the handled display group
       for _user_repr in ApplicationManager.all_user_representations:
-
-        if _user_repr.DISPLAY_GROUP != _display_group_instance:
+        if _user_repr.DISPLAY_GROUP != _handled_display_group_instance:
 
           # consider visibility matrix
-          _display_group_tag = _display_group_instance.visibility_tag
+          _handled_display_group_tag = _handled_display_group_instance.visibility_tag
           _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
 
-          if _tool.visibility_matrix[_display_group_tag][_user_repr_display_group_tag]:
+          # does _handled_display_group see representations of _user_repr_display_group_tag?
+          if _tool.visibility_matrix[_handled_display_group_tag][_user_repr_display_group_tag]:
             _assigned_user_ray_visible_for.append(_user_repr.view_transform_node.Name.value)
 
       # make ray holder tool representation visible for all others on different navigations and display groups

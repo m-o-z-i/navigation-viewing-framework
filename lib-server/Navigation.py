@@ -41,6 +41,10 @@ class Navigation(avango.script.Script):
   # Boolean field to indicate if the change of the dof mode is to be triggered.
   sf_dof_trigger = avango.SFBool()
 
+  ##
+  #
+  sf_request_trigger = avango.SFBool()
+
   # static class variables
   ## @var trace_materials
   # List of material pretexts to choose from when a trace is created. All avatars on this
@@ -66,6 +70,10 @@ class Navigation(avango.script.Script):
     ## @var avatar_type
     # Avatar type of this navigation.
     self.avatar_type = "None"
+
+    ##
+    #
+    self.is_requestable = False
 
     # get the selected material 
     ## @var trace_material

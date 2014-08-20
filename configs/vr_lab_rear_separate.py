@@ -44,17 +44,20 @@ spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_ma
                                     , AVATAR_TYPE = 'None'
                                     , DEVICE_TRACKING_NAME = None)
 
-keyboard_navigation = SteeringNavigation()
-keyboard_navigation.my_constructor(   STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 0)
+
+xbox_navigation = SteeringNavigation()
+xbox_navigation.my_constructor(       STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 0)
                                     , STARTING_SCALE = 1.0
-                                    , INPUT_DEVICE_TYPE = 'KeyboardMouse'
-                                    , INPUT_DEVICE_NAME = None
+                                    , INPUT_DEVICE_TYPE = 'XBoxController'
+                                    , INPUT_DEVICE_NAME = 'device-xbox-1'
                                     , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 1.2, 0.6)
                                     , GROUND_FOLLOWING_SETTINGS = [True, 0.75]
                                     , MOVEMENT_TRACES = False
                                     , INVERT = False
                                     , AVATAR_TYPE = 'joseph'
-                                    , DEVICE_TRACKING_NAME = None)
+                                    , DEVICE_TRACKING_NAME = 'tracking-xbox-1'
+                                    , IS_REQUESTABLE = True
+                                    , REQUEST_BUTTON_NUM = 3)
 
 ## Create Display instances. ##
 large_powerwall = LargePowerwall()
@@ -64,7 +67,7 @@ displays = [large_powerwall, touch_table_3D]
 
 ## Create display groups ##
 vr_lab_rear.create_display_group( DISPLAY_LIST = [large_powerwall]
-                                , NAVIGATION_LIST = [spheron_navigation, keyboard_navigation]
+                                , NAVIGATION_LIST = [spheron_navigation, xbox_navigation]
                                 , VISIBILITY_TAG = "wall"
                                 , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0, 0, 1.6) )
 

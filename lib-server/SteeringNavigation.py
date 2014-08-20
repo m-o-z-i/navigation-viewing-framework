@@ -45,6 +45,8 @@ class SteeringNavigation(Navigation):
   # @param INVERT Boolean indicating if the input values should be inverted.
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used, e.g. "joseph".
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
+  #
+  #
   def my_constructor(
       self
     , STARTING_MATRIX
@@ -57,6 +59,8 @@ class SteeringNavigation(Navigation):
     , INVERT
     , AVATAR_TYPE
     , DEVICE_TRACKING_NAME = None
+    , IS_REQUESTABLE = False
+    , REQUEST_BUTTON_NUM = None
     ):
 
     ## @var input_device_type
@@ -148,6 +152,14 @@ class SteeringNavigation(Navigation):
     ## @var movement_traces_activated
     # Boolean indicating if the movement traces are generally activated.
     self.movement_traces_activated = self.movement_traces
+
+    ##
+    #
+    self.is_requestable = IS_REQUESTABLE
+
+    # connect request button
+    if self.is_requestable:
+      exec "self.sf_request_trigger.connect_from(self.device.device_sensor.Button" + str(REQUEST_BUTTON_NUM) + ")"
 
     # evaluate every frame
     self.always_evaluate(True)

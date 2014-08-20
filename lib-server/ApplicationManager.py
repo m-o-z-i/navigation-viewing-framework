@@ -106,6 +106,14 @@ class ApplicationManager(avango.script.Script):
     # List of all workspace instances loaded from workspace configuration file.
     self.workspaces = workspaces
 
+    ##
+    #
+    self.requestable_navigations = []
+
+    ##
+    #
+    self.requestable_navigations_last_button_states = []
+
     for _workspace in self.workspaces:
 
       _w_id = _workspace.id 
@@ -117,6 +125,12 @@ class ApplicationManager(avango.script.Script):
         for _display_group in _workspace.display_groups:
 
           _dg_id = _display_group.id
+
+          # fill list of requestable navigations
+          for _navigation in _display_group.navigations:
+            if _navigation.is_requestable == True:
+              self.requestable_navigations.append( (_workspace, _display_group, _navigation) )
+              self.requestable_navigations_last_button_states.append(False)
 
           # create view transform node only when free slot is availa
           _view_transform_node = avango.gua.nodes.TransformNode(Name = "w" + str(_w_id) + "_dg" + str(_dg_id) + "_u" + str(_u_id))
@@ -238,6 +252,53 @@ class ApplicationManager(avango.script.Script):
     self.viewer.SceneGraphs.value = [self.SCENEGRAPH]
 
     self.always_evaluate(True)
+
+  ##
+  def evaluate(self):
+
+    for _requestable_nav in self.requestable_navigations:
+
+      _workspace = _requestable_nav[0]
+      _display_group = _requestable_nav[1]
+      _navigation = _requestable_nav[2]
+      _requestable_nav_index = self.requestable_navigations.index(_requestable_nav)
+      _last_button_state = self.requestable_navigations_last_button_states[_requestable_nav_index]
+
+      # if button change from negative to positive, trigger action
+      #print _navigation.sf_request_trigger.value
+
+      if _navigation.sf_request_trigger.value == True and \
+         _last_button_state == False:
+
+        self.requestable_navigations_last_button_states[_requestable_nav_index] = True
+
+        # trigger coupling
+        if _navigation.active_user_representations == []:
+          
+          _users_in_range = _workspace.get_all_users_in_range(_navigation.device.tracking_reader.sf_abs_vec.value, 1.5)
+
+          for _user in _users_in_range:
+            self.switch_navigation_for(_workspace.id, _display_group.id, _user.id, _display_group.navigations.index(_navigation))
+
+        # reset coupling
+        else:
+
+          _handled_user_ids = []
+
+          for _user_repr in _navigation.active_user_representations:
+
+            if _user_repr.USER.id not in _handled_user_ids:
+              self.switch_navigation_for(_workspace.id, _display_group.id, _user_repr.USER.id, 0)
+              _handled_user_ids.append(_user_repr.USER.id)
+
+      # if button change from positive to negative, reset flag
+      elif _navigation.sf_request_trigger.value == False and \
+           _last_button_state == True:
+
+        self.requestable_navigations_last_button_states[_requestable_nav_index] = False
+
+
+
 
   ## Initializes the GroupNames field of all UserRepresentation's avatars.
   # Users cannot see the avatars in own display group, but the ones in others.

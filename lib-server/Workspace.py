@@ -14,6 +14,7 @@ from Display import *
 from DisplayGroup import *
 from RayPointer import *
 from User import *
+import Tools
 
 ## Representation of the physical space holding several users, tools and display groups.
 class Workspace:
@@ -123,6 +124,19 @@ class Workspace:
 
       #print "assigned user is seen by", _assigned_user_ray_visible_for
       #print
+
+  ##
+  #
+  def get_all_users_in_range(self, POINT, DISTANCE):
+
+    _users_in_range = []
+
+    for _user in self.users:
+
+      if Tools.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT) < DISTANCE:
+        _users_in_range.append(_user)
+
+    return _users_in_range
 
 
   ## Creates a DisplayGroup instance and adds it to this workspace.

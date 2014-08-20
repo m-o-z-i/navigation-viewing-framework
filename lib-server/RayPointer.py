@@ -199,8 +199,8 @@ class RayPointer(Tool):
     # Reference to the currently dragged object.
     self.dragged_interactive_object = None
 
-    ##
-    #
+    ## @var dragging_tool_representation
+    # ToolRepresentation instance from which dragging was initiated.
     self.dragging_tool_representation = None
 
     ## @var dragging_offset
@@ -396,8 +396,7 @@ class RayPointer(Tool):
       self.drag_object()
 
 
-  ##
-  #
+  ## Function called on a framewise basis when dragging is in progress.
   def drag_object(self):
 
     _mat = self.dragging_tool_representation.get_world_transform() * self.dragging_offset
@@ -488,7 +487,13 @@ class RayPointer(Tool):
 
         # retrieve InteractiveObject instance
         if _hit_node.has_field("InteractiveObject"):
-          self.dragged_interactive_object = _hit_node.InteractiveObject.value
+
+          # select interactive object according to hierarchy level
+          if self.hierarchy_selection_level >= 0:
+            self.dragged_interactive_object = _hit_node.InteractiveObject.value.get_higher_hierarchical_object(self.hierarchy_selection_level)
+          else:
+            self.dragged_interactive_object = _hit_node.InteractiveObject.value
+
           self.dragging_tool_representation = _hit_tool_repr
           self.dragging_offset = avango.gua.make_inverse_mat(self.dragging_tool_representation.get_world_transform()) * self.dragged_interactive_object.get_world_transform()
 

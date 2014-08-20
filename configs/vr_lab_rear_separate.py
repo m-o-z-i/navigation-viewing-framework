@@ -65,10 +65,12 @@ displays = [large_powerwall, touch_table_3D]
 ## Create display groups ##
 vr_lab_rear.create_display_group( DISPLAY_LIST = [large_powerwall]
                                 , NAVIGATION_LIST = [spheron_navigation, keyboard_navigation]
+                                , VISIBILITY_TAG = "wall"
                                 , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0, 0, 1.6) )
 
 vr_lab_rear.create_display_group( DISPLAY_LIST = [touch_table_3D]
                                 , NAVIGATION_LIST = [spacemouse_navigation]
+                                , VISIBILITY_TAG = "table"
                                 , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0.79, -0.96, 1.96) * \
                                                         avango.gua.make_rot_mat(-90, 0, 1, 0) )
 
@@ -89,5 +91,11 @@ vr_lab_rear.create_user( VIP = False
                        , EYE_DISTANCE = 0.065)
 
 ## Create tools ##
+ray_visibility_mat = {
+                         "wall"  : {"table" : False}
+                       , "table" : {"wall" : True}  
+                     }
+
 vr_lab_rear.create_ray_pointer( POINTER_TRACKING_STATION = 'tracking-dlp-pointer1' 
-                              , POINTER_DEVICE_STATION = 'device-pointer1')
+                              , POINTER_DEVICE_STATION = 'device-pointer1'
+                              , VISIBILITY_MATRIX = ray_visibility_mat)

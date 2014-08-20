@@ -95,7 +95,13 @@ class Workspace:
       for _user_repr in ApplicationManager.all_user_representations:
 
         if _user_repr.DISPLAY_GROUP != _display_group_instance:
-          _assigned_user_ray_visible_for.append(_user_repr.view_transform_node.Name.value)
+
+          # consider visibility matrix
+          _display_group_tag = _display_group_instance.visibility_tag
+          _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
+
+          if _tool.visibility_matrix[_display_group_tag][_user_repr_display_group_tag]:
+            _assigned_user_ray_visible_for.append(_user_repr.view_transform_node.Name.value)
 
       # make ray holder tool representation visible for all others on different navigations and display groups
       for _string in _assigned_user_ray_visible_for:
@@ -106,13 +112,15 @@ class Workspace:
   ## Creates a DisplayGroup instance and adds it to this workspace.
   # @param DISPLAY_LIST List of Display instances to be assigned to the new display group.
   # @param NAVIGATION_LIST List of (Steering-)Navigation instances to be assiged to the display group.
+  # @param VISIBILITY_TAG Tag used by the Tools' visibility matrices to define if they are visible for this display group.
   # @param OFFSET_TO_WORKSPACE Offset describing the origin of this display group with respect to the origin of the workspace.
   def create_display_group( self
                           , DISPLAY_LIST
                           , NAVIGATION_LIST
+                          , VISIBILITY_TAG
                           , OFFSET_TO_WORKSPACE):
 
-    _dg = DisplayGroup(len(self.display_groups), DISPLAY_LIST, NAVIGATION_LIST, OFFSET_TO_WORKSPACE, self.transmitter_offset)
+    _dg = DisplayGroup(len(self.display_groups), DISPLAY_LIST, NAVIGATION_LIST, VISIBILITY_TAG, OFFSET_TO_WORKSPACE, self.transmitter_offset)
     self.display_groups.append(_dg)
 
   ## Creates a User instance and adds it to this workspace.
@@ -140,15 +148,19 @@ class Workspace:
 
     self.users.append(_user)
 
-  ##
-  #
+  ## Creates a RayPointer instance and adds it to the tools of this workspace.
+  # @param POINTER_TRACKING_STATION The tracking target name of this RayPointer.
+  # @param POINTER_DEVICE_STATION The device station name of this RayPointer.
+  # @param VISIBILITY_MATRIX A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
   def create_ray_pointer( self
                         , POINTER_TRACKING_STATION
-                        , POINTER_DEVICE_STATION):
+                        , POINTER_DEVICE_STATION
+                        , VISIBILITY_MATRIX):
 
     _ray_pointer = RayPointer()
     _ray_pointer.my_constructor( self
                                , len(self.tools)
                                , POINTER_TRACKING_STATION
-                               , POINTER_DEVICE_STATION)
+                               , POINTER_DEVICE_STATION
+                               , VISIBILITY_MATRIX)
     self.tools.append(_ray_pointer)

@@ -169,10 +169,11 @@ class RayPointer(Tool):
   # @param TOOL_ID The identification number of this Tool within the workspace.
   # @param POINTER_TRACKING_STATION The tracking target name of this RayPointer.
   # @param POINTER_DEVICE_STATION The device station name of this RayPointer. 
-  def my_constructor(self, WORKSPACE_INSTANCE, TOOL_ID, POINTER_TRACKING_STATION, POINTER_DEVICE_STATION):
+  # @param VISIBILITY_MATRIX A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
+  def my_constructor(self, WORKSPACE_INSTANCE, TOOL_ID, POINTER_TRACKING_STATION, POINTER_DEVICE_STATION, VISIBILITY_MATRIX):
 
     # call base class constructor
-    self.base_constructor(WORKSPACE_INSTANCE, TOOL_ID, POINTER_TRACKING_STATION)
+    self.base_constructor(WORKSPACE_INSTANCE, TOOL_ID, POINTER_TRACKING_STATION, VISIBILITY_MATRIX)
 
     # parameters
     ## @var ray_length

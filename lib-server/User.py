@@ -133,6 +133,13 @@ class UserRepresentation(avango.script.Script):
     self.head_avatar.GroupNames.value.append(STRING)
     self.body_avatar.GroupNames.value.append(STRING)
 
+  ## Adds a screen visualization for a display instance to the view transformation node.
+  # @param DISPLAY_INSTANCE The Display instance to retrieve the screen visualization from.
+  def add_screen_visualization_for(self, DISPLAY_INSTANCE):
+    _screen_visualization = DISPLAY_INSTANCE.create_screen_visualization(DISPLAY_INSTANCE.name + "_vis")
+    self.view_transform_node.Children.value.append(_screen_visualization)
+    self.screen_visualizations.append(_screen_visualization)
+
   ## Appends a screen node for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen node from.
   def add_screen_node_for(self, DISPLAY_INSTANCE):
@@ -160,11 +167,6 @@ class UserRepresentation(avango.script.Script):
     _navigation_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
     _navigation_color_geometry.GroupNames.value = ["w" + str(self.workspace_id) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
     _screen.Children.value.append(_navigation_color_geometry)
-
-
-    _screen_visualization = DISPLAY_INSTANCE.create_screen_visualization(_screen.Name.value + "_vis")
-    self.view_transform_node.Children.value.append(_screen_visualization)
-    self.screen_visualizations.append(_screen_visualization)
 
 
   ## Creates a standard 'jospeh' avatar representation for this user representation.

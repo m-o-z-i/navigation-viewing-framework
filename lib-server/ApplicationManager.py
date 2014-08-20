@@ -137,6 +137,14 @@ class ApplicationManager(avango.script.Script):
             # only add screen node for user when free slot is available
             if _u_id < len(_display.displaystrings):
               _user_repr.add_screen_node_for(_display)
+              _user_repr.add_screen_visualization_for(_display)
+
+              # add screen visualization for all screens in workspace
+              #for _display_group_2 in _workspace.display_groups:
+              #  for _display_2 in _display_group_2.displays:
+              #    _user_repr.add_screen_visualization_for(_display_group_2, _display_2)
+
+              # add other screen geometries
             else:
               print_warning("Warning: No empty slot left for user " + str(_u_id) + " in workspace " + str(_workspace.name) + " on display " + str(_display.name))
               continue

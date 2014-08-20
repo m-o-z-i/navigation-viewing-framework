@@ -67,10 +67,10 @@ class RayPointerRepresentation(ToolRepresentation):
     ## @var ray_start_geometry
     # Geometry node representing the origin of the ray graphically.
     self.ray_start_geometry = _loader.create_geometry_from_file("ray_start_geometry"
-                                                               , "data/objects/sphere.obj"
+                                                               , "data/objects/cube.obj"
                                                                , "data/materials/White.gmd"
                                                                , avango.gua.LoaderFlags.DEFAULTS)
-    self.ray_start_geometry.Transform.value = avango.gua.make_scale_mat(0.025, 0.025, 0.025)
+    self.ray_start_geometry.Transform.value = avango.gua.make_scale_mat(0.015, 0.015, 0.015)
     self.ray_start_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value) 
     self.tool_transform_node.Children.value.append(self.ray_start_geometry)
 
@@ -81,7 +81,7 @@ class RayPointerRepresentation(ToolRepresentation):
 
     self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, NEW_RAY_DISTANCE * -0.5) * \
                                         avango.gua.make_rot_mat(-90.0, 1, 0, 0) * \
-                                        avango.gua.make_scale_mat(0.005, NEW_RAY_DISTANCE, 0.005)
+                                        avango.gua.make_scale_mat(self.TOOL_INSTANCE.ray_thickness, NEW_RAY_DISTANCE, self.TOOL_INSTANCE.ray_thickness)
 
   ## Shows the intersection geometry at a specific matrix in this coordinate system and sets the ray distance accordingly.
   # @param MATRIX The position matrix to be set for the intersection geometry.
@@ -124,7 +124,8 @@ class RayPointerRepresentation(ToolRepresentation):
   ## Enables a highlight for this RayPointerRepresentation.
   def enable_highlight(self):
   
-    self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
+    #self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
+    self.ray_geometry.Material.value = "data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd"
 
   ## Disables the highlight for this RayPointerRepresentation.
   def disable_highlight(self):
@@ -182,7 +183,7 @@ class RayPointer(Tool):
 
     ## @var ray_thickness
     # Thickness of the pointer's ray in meters.
-    self.ray_thickness = 0.0075
+    self.ray_thickness = 0.01
 
     ## @var hierarchy_selection_level
     # Hierarchy level which is selected by this pointer.

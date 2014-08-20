@@ -103,4 +103,4 @@ ray_visibility_table = {
 
 vr_lab_rear.create_ray_pointer( POINTER_TRACKING_STATION = 'tracking-dlp-pointer1' 
                               , POINTER_DEVICE_STATION = 'device-pointer1'
-                              , VISIBILITY_MATRIX = ray_visibility_table)
+                              , VISIBILITY_TABLE = ray_visibility_table)

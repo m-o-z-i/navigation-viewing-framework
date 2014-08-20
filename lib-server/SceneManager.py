@@ -188,14 +188,14 @@ class SceneManager(avango.script.Script):
 
   ## @var hierarchy_materials
   # List of material strings to be used for representing the bounding box hierarchies.
-  hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarYellowShadeless.gmd"]
+  hierarchy_materials = ["data/materials/AvatarMagentaShadeless.gmd", "data/materials/AvatarGreenShadeless.gmd", "data/materials/AvatarOrangeShadeless.gmd", "data/materials/AvatarRedShadeless.gmd"]
 
-  ##
-  #
+  ## @var current_near_clip
+  # Static attribute holding the near clippling distance of the currently active scene.
   current_near_clip = 0.1
 
-  ##
-  #
+  ## @var current_far_clip
+  # Static attribute holding the far clippling distance of the currently active scene.
   current_far_clip = 1000.0
 
 

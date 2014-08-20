@@ -123,19 +123,19 @@ class RayPointerRepresentation(ToolRepresentation):
 
   ## Enables a highlight for this RayPointerRepresentation.
   def enable_highlight(self):
-    self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
+    
+    if self.TOOL_INSTANCE.hierarchy_selection_level >= 0:
+
+      _material = SceneManager.hierarchy_materials[self.TOOL_INSTANCE.hierarchy_selection_level]
+      self.ray_geometry.Material.value = _material
+
+    else:
+
+      self.ray_geometry.Material.value = "data/materials/ShadelessBlack.gmd"
 
   ## Disables the highlight for this RayPointerRepresentation.
   def disable_highlight(self):
 
-    #print self.TOOL_INSTANCE.hierarchy_selection_level
-
-    #if self.TOOL_INSTANCE.hierarchy_selection_level >= 0:
-    #  _material = SceneManager.hierarchy_materials[self.TOOL_INSTANCE.hierarchy_selection_level]
-    #else:
-    #  _material = "data/materials/White.gmd"
-    
-    #self.ray_geometry.Material.value = _material
     self.ray_geometry.Material.value = "data/materials/White.gmd"
 
 ###############################################################################################
@@ -396,16 +396,17 @@ class RayPointer(Tool):
       _material = SceneManager.hierarchy_materials[HIERARCHY_LEVEL]
      
       for _ray_pointer_repr in self.tool_representations:
-        _ray_pointer_repr.ray_geometry.Material.value = _material
-      
-      self.intersection_point_geometry.Material.value = _material
+
+        if _ray_pointer_repr.USER_REPRESENTATION.USER == self.assigned_user:
+          _ray_pointer_repr.ray_geometry.Material.value = _material
 
     else:
 
       for _ray_pointer_repr in self.tool_representations:
-        _ray_pointer_repr.ray_geometry.Material.value = "data/materials/White.gmd"
-      
-      self.intersection_point_geometry.Material.value = "data/materials/White.gmd"
+        
+        if _ray_pointer_repr.USER_REPRESENTATION.USER == self.assigned_user:
+          _ray_pointer_repr.ray_geometry.Material.value = "data/materials/ShadelessBlack.gmd"
+
 
   ## Updates the object to be highlighted according to a pick result found.
   # @param PICK_RESULT The PickResult for which the object should be highlighted.
@@ -453,10 +454,8 @@ class RayPointer(Tool):
 
     if self.sf_pointer_button0.value == True:
       
-      _pick_result = self.get_pick_result()
-
-      if _pick_result != None:
-        pass
+      print "Dragging button"
+      pass
 
   ## Called whenever sf_pointer_button1 changes.
   @field_has_changed(sf_pointer_button1)

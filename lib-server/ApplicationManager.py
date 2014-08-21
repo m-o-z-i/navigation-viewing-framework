@@ -176,11 +176,12 @@ class ApplicationManager(avango.script.Script):
                 , stderr=subprocess.PIPE)
                 time.sleep(1)
 
-        for _user_representation in _user.user_representations:
-          _user_representation.connect_navigation_of_display_group(0)
+    
+    for _user_representation in ApplicationManager.all_user_representations:
+      _user_representation.connect_navigation_of_display_group(0)
 
     # set avatar groups properly on all user representations
-    self.init_avatar_group_names()
+    #self.init_avatar_group_names()
 
     # server control monitor setup #
 

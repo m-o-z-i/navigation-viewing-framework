@@ -157,7 +157,8 @@ class MultiDofDevice(avango.script.Script):
         try:
           eval(_input_binding)
         except Exception as e:
-          print_error("Error parsing string input binding {} [Message: {}]".format(_input_binding, e), False)
+          pass
+          #print_error("Error parsing string input binding {} [Message: {}]".format(_input_binding, e), False)
       elif type(_input_binding) is types.LambdaType:
         _input_binding()
       else:

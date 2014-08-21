@@ -28,7 +28,6 @@ spheron_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0
                                  , GROUND_FOLLOWING_SETTINGS = [True, 0.75]
                                  , MOVEMENT_TRACES = False
                                  , INVERT = False
-                                 , AVATAR_TYPE = 'joseph'
                                  , DEVICE_TRACKING_NAME = 'tracking-new-spheron')
 
 spacemouse_navigation = SteeringNavigation()
@@ -41,7 +40,6 @@ spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_ma
                                     , GROUND_FOLLOWING_SETTINGS = [False, 0.75]
                                     , MOVEMENT_TRACES = False
                                     , INVERT = False
-                                    , AVATAR_TYPE = 'None'
                                     , DEVICE_TRACKING_NAME = None)
 
 
@@ -54,7 +52,6 @@ xbox_navigation.my_constructor(       STARTING_MATRIX = avango.gua.make_trans_ma
                                     , GROUND_FOLLOWING_SETTINGS = [True, 0.75]
                                     , MOVEMENT_TRACES = False
                                     , INVERT = False
-                                    , AVATAR_TYPE = 'joseph'
                                     , DEVICE_TRACKING_NAME = 'tracking-xbox-1'
                                     , IS_REQUESTABLE = True
                                     , REQUEST_BUTTON_NUM = 3)
@@ -78,18 +75,23 @@ vr_lab_rear.create_display_group( DISPLAY_LIST = [touch_table_3D]
                                                         avango.gua.make_rot_mat(-90, 0, 1, 0) )
 
 ## Create users ##
+avatar_visibility_table = {
+                            "wall"  : {"table" : False}
+                          , "table" : {"wall" : True} 
+                          }
+
 vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 4
+                       , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
                        , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-4'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 5
+                       , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
                        , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-5'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 6
+                       , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
                        , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-6'
                        , EYE_DISTANCE = 0.065)
 

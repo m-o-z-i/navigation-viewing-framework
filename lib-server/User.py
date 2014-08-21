@@ -197,20 +197,13 @@ class UserRepresentation(avango.script.Script):
          ": Switch navigation to " + str(ID) + " (no input device)")
 
       # trigger avatar and screen geometry visibilities
-      if _new_navigation.avatar_type == 'joseph':
-        self.avatar.set_material('data/materials/' + _new_navigation.trace_material + ".gmd")
-        self.avatar.set_visible(False)
+      self.avatar.set_material('data/materials/' + _new_navigation.trace_material + ".gmd")
 
-        for _screen_vis in self.screen_visualizations:
-          _screen_vis.GroupNames.value.remove("do_not_display_group")
-          _screen_vis.Material.value = 'data/materials/' + _new_navigation.trace_material + "Shadeless.gmd"
+      for _screen_vis in self.screen_visualizations:
+        _screen_vis.Material.value = 'data/materials/' + _new_navigation.trace_material + "Shadeless.gmd"
 
-      else:
-        self.avatar.set_visible(False)
-
-        for _screen_vis in self.screen_visualizations:
-          _screen_vis.GroupNames.value.append("do_not_display_group")
-        
+      # handle avatar and screen  visibilities
+      self.USER.handle_correct_visibility_groups_for(self.DISPLAY_GROUP.id)
 
     else:
       print_error("Error. Navigation ID does not exist.", False)
@@ -229,7 +222,7 @@ class User(avango.script.Script):
   # @param WORKSPACE_INSTANCE Workspace instance in which this user is active.
   # @param USER_ID Global user ID to be applied.
   # @param VIP Boolean indicating if the user to be created is a vip.
-  # @param GLASSES_ID ID of the shutter glasses worn by the user.
+  # @param AVATAR_VISIBILITY_TABLE 
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param NO_TRACKING_MAT Matrix to be applied when HEADTRACKING_TARGET_NAME is None.
@@ -237,7 +230,7 @@ class User(avango.script.Script):
                    , WORKSPACE_INSTANCE
                    , USER_ID
                    , VIP
-                   , GLASSES_ID
+                   , AVATAR_VISIBILITY_TABLE
                    , HEADTRACKING_TARGET_NAME
                    , EYE_DISTANCE
                    , NO_TRACKING_MAT
@@ -280,9 +273,9 @@ class User(avango.script.Script):
       self.headtracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
 
-    ## @var glasses_id
-    # ID of the shutter glasses worn by the user. Used for frequency updates.
-    self.glasses_id = GLASSES_ID
+    ## @var visibility_table
+    # 
+    self.visibility_table = AVATAR_VISIBILITY_TABLE
 
     ## @var user_representations
     # List of UserRepresentation instances for all display groups in the user's workspace.
@@ -377,3 +370,56 @@ class User(avango.script.Script):
       self.is_active = True
     else:
       self.is_active = False
+
+  ## Handles the correct GroupNames of all UserRepresentations at a display group.
+  # @param DISPLAY_GROUP_ID The identification number of the DisplayGroup.
+  def handle_correct_visibility_groups_for(self, DISPLAY_GROUP_ID):
+
+    #print "display group", DISPLAY_GROUP_ID
+
+    # All UserRepresentation instances at DISPLAY_GROUP_ID
+    _user_reprs_at_display_group = []
+
+    # display group instance belonging to DISPLAY_GROUP_ID
+    _handled_display_group_instance = None
+
+    ## fill the variables ##
+    for _user_repr in ApplicationManager.all_user_representations:
+
+      # get all tool representations in display group
+      if _user_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
+
+        _handled_display_group_instance = _user_repr.DISPLAY_GROUP
+        _user_reprs_at_display_group.append(_user_repr)
+
+    ## determine which group names have to be added to the tool representations ##
+
+    for _user_repr_1 in _user_reprs_at_display_group:
+
+      _user_visible_for = []
+
+      # append all names of user representations which are not on same navigation
+      for _user_repr_2 in _user_reprs_at_display_group:
+
+        if _user_repr_2.connected_navigation_id != _user_repr_1.connected_navigation_id:
+          _user_visible_for.append(_user_repr_2.view_transform_node.Name.value)
+
+      # check for all user representations outside the handled display group
+      for _user_repr_3 in ApplicationManager.all_user_representations:
+        if _user_repr_3.DISPLAY_GROUP != _handled_display_group_instance:
+
+          # consider visibility table
+          _handled_display_group_tag = _handled_display_group_instance.visibility_tag
+          _user_repr_display_group_tag = _user_repr_3.DISPLAY_GROUP.visibility_tag
+          
+          _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
+
+          if _visible:
+            _user_visible_for.append(_user_repr_3.view_transform_node.Name.value)
+
+      # apply the obtained group names to the user representation
+      for _string in _user_visible_for:
+        _user_repr_1.avatar.set_group_names(_user_visible_for)
+
+        for _screen_vis in _user_repr_1.screen_visualizations:
+          _screen_vis.GroupNames.value = _user_visible_for

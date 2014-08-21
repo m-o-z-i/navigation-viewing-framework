@@ -21,12 +21,7 @@ class StaticNavigation(Navigation):
   ## Custom constructor.
   # @param STATIC_ABS_MAT Static value to be set for sf_abs_mat.
   # @param STATIC_SCALE Static value to be set for sf_scale.
-  # @param AVATAR_TYPE Avatar type of this navigation instance.
-  def my_constructor(self, STATIC_ABS_MAT, STATIC_SCALE, AVATAR_TYPE):
-
-    ## @var avatar_type
-    # A string that determines what kind of avatar representation is to be used, e.g. "joseph".
-    self.avatar_type = AVATAR_TYPE
+  def my_constructor(self, STATIC_ABS_MAT, STATIC_SCALE):
 
     self.sf_abs_mat.value = STATIC_ABS_MAT
     self.sf_scale.value = STATIC_SCALE

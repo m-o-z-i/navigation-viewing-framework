@@ -242,6 +242,3 @@ class Tool(avango.script.Script):
     # make ray holder tool representation visible for all others on different navigations and display groups
     for _string in _assigned_user_ray_visible_for:
       _tool_repr_of_assigned_user.append_to_visualization_group_names(_string)
-
-    #print "assigned user is seen by", _assigned_user_ray_visible_for
-    #print

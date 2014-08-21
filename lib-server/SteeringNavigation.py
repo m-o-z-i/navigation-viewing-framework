@@ -43,7 +43,6 @@ class SteeringNavigation(Navigation):
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
   # @param INVERT Boolean indicating if the input values should be inverted.
-  # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used, e.g. "joseph".
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
   # @param IS_REQUESTABLE Boolean saying if this Navigation is a requestable one. Requestable navigations can be switched to using a special button on the device.
   # @param REQUEST_BUTTON_NUM Button number of the device's sensor which should be used for the request mechanism.
@@ -57,7 +56,6 @@ class SteeringNavigation(Navigation):
     , GROUND_FOLLOWING_SETTINGS
     , MOVEMENT_TRACES
     , INVERT
-    , AVATAR_TYPE
     , DEVICE_TRACKING_NAME = None
     , IS_REQUESTABLE = False
     , REQUEST_BUTTON_NUM = None
@@ -81,10 +79,6 @@ class SteeringNavigation(Navigation):
     ## @var start_scale
     # Initial scaling factor of the navigation.
     self.start_scale = STARTING_SCALE
-
-    ## @var avatar_type
-    # A string that determines what kind of avatar representation is to be used, e.g. "joseph".
-    self.avatar_type = AVATAR_TYPE
     
     # create device
     ## @var device

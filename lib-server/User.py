@@ -10,6 +10,7 @@ import avango.script
 from avango.script import field_has_changed
 
 # import framework libraries
+from Avatar import *
 from Intersection import *
 from TrackingReader import *
 from ConsoleIO import *
@@ -92,6 +93,11 @@ class UserRepresentation(avango.script.Script):
     # Navigation ID within the display group that is currently used.
     self.connected_navigation_id = -1
 
+    ##
+    #
+    self.avatar = Avatar()
+    self.avatar.my_constructor(self)
+
     # set evaluation policy
     self.always_evaluate(True)
 
@@ -102,36 +108,17 @@ class UserRepresentation(avango.script.Script):
     self.head.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * \
                                 self.USER.headtracking_reader.sf_abs_mat.value
 
-
-    # update avatar body matrix if present at this view transform node
-    _head_pos = self.head.Transform.value.get_translate()
-    _forward_yaw = Utilities.get_yaw(self.head.Transform.value)
-
-    try:
-      self.body_avatar
-    except:
-      return
-
-    #print "update body"
-    self.body_avatar.Transform.value = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self.head.Transform.value.get_rotate())) * \
-                                       avango.gua.make_trans_mat(0.0, -_head_pos.y / 2, 0.0) * \
-                                       avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
-                                       avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)
-
-
   ## Sets the GroupNames field on all avatar parts to a list of strings.
   # @param LIST_OF_STRINGS A list of group names to be set for the avatar parts.
   def set_avatar_group_names(self, LIST_OF_STRINGS):
 
-    self.head_avatar.GroupNames.value = LIST_OF_STRINGS
-    self.body_avatar.GroupNames.value = LIST_OF_STRINGS
+    self.avatar.set_group_names(LIST_OF_STRINGS)
 
   ## Appends a string to the GroupNames field of all avatar parts.
   # @param STRING The string to be appended to the GroupNames field.
   def append_to_avatar_group_names(self, STRING):
     
-    self.head_avatar.GroupNames.value.append(STRING)
-    self.body_avatar.GroupNames.value.append(STRING)
+    self.avatar.append_to_group_names(STRING)
 
   ## Adds a screen visualization for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen visualization from.
@@ -143,10 +130,6 @@ class UserRepresentation(avango.script.Script):
   ## Appends a screen node for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen node from.
   def add_screen_node_for(self, DISPLAY_INSTANCE):
-
-    # create avatar representation when first screen is added
-    if len(self.screens) == 0:
-      self.create_joseph_avatar_representation()
 
     _screen = DISPLAY_INSTANCE.create_screen_node("screen_" + str(len(self.screens)))
     self.view_transform_node.Children.value.append(_screen)
@@ -167,32 +150,6 @@ class UserRepresentation(avango.script.Script):
     _navigation_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
     _navigation_color_geometry.GroupNames.value = ["w" + str(self.workspace_id) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
     _screen.Children.value.append(_navigation_color_geometry)
-
-
-  ## Creates a standard 'jospeh' avatar representation for this user representation.
-  def create_joseph_avatar_representation(self):
-    
-    _loader = avango.gua.nodes.TriMeshLoader()
-    
-    # create avatar head
-    ## @var head_avatar
-    # Scenegraph node representing the geometry and transformation of the basic avatar's head.
-    self.head_avatar = _loader.create_geometry_from_file('head_avatar',
-                                                         'data/objects/Joseph/JosephHead.obj',
-                                                         'data/materials/ShadelessWhite.gmd',
-                                                         avango.gua.LoaderFlags.LOAD_MATERIALS)
-
-    self.head_avatar.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
-    self.head.Children.value.append(self.head_avatar)
-
-    # create avatar body
-    ## @var body_avatar
-    # Scenegraph node representing the geometry and transformation of the basic avatar's body.
-    self.body_avatar = _loader.create_geometry_from_file('body_avatar',
-                                                         'data/objects/Joseph/JosephBody.obj',
-                                                         'data/materials/ShadelessWhite.gmd',
-                                                         avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.head.Children.value.append(self.body_avatar)
 
 
   ## Connects a specific navigation of the display group to the user.
@@ -241,18 +198,15 @@ class UserRepresentation(avango.script.Script):
 
       # trigger avatar and screen geometry visibilities
       if _new_navigation.avatar_type == 'joseph':
-        self.head_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
-        self.body_avatar.Material.value = 'data/materials/' + _new_navigation.trace_material + ".gmd"
-        self.head_avatar.GroupNames.value.remove("do_not_display_group")
-        self.body_avatar.GroupNames.value.remove("do_not_display_group")
+        self.avatar.set_material('data/materials/' + _new_navigation.trace_material + ".gmd")
+        self.avatar.set_visible(False)
 
         for _screen_vis in self.screen_visualizations:
           _screen_vis.GroupNames.value.remove("do_not_display_group")
           _screen_vis.Material.value = 'data/materials/' + _new_navigation.trace_material + "Shadeless.gmd"
 
       else:
-        self.head_avatar.GroupNames.value.append("do_not_display_group")
-        self.body_avatar.GroupNames.value.append("do_not_display_group")
+        self.avatar.set_visible(False)
 
         for _screen_vis in self.screen_visualizations:
           _screen_vis.GroupNames.value.append("do_not_display_group")
@@ -261,6 +215,7 @@ class UserRepresentation(avango.script.Script):
     else:
       print_error("Error. Navigation ID does not exist.", False)
 
+###############################################################################################
 
 ## Logical representation of a user within a Workspace. Stores the relevant parameters
 # and cares for receiving the headtracking input.

@@ -9,6 +9,7 @@ import avango.daemon
 # import python libraries
 import os
 import sys
+import subprocess
 
 ## Initizialies Oculus Rift sensors.
 def init_oculus():
@@ -18,6 +19,7 @@ def init_oculus():
   _oculus.stations[1] = avango.daemon.Station('oculus-1')
   _oculus.stations[2] = avango.daemon.Station('oculus-2')
 
+  print "Initialized 3 Oculus Rifts"
   device_list.append(_oculus)
 
 ## Initializes AR Track on LCD wall.
@@ -31,8 +33,8 @@ def init_lcd_wall_tracking():
   _dtrack.stations[17] = avango.daemon.Station('tracking-oculus-front')    # oculus rift tracking
   _dtrack.stations[16] = avango.daemon.Station('tracking-oculus-stag')     # oculus rift tracking
 
-  _dtrack.stations[4] = avango.daemon.Station('tracking-lcd-glasses-1')        # glasses powerwall user one
-  _dtrack.stations[3] = avango.daemon.Station('tracking-lcd-glasses-2')        # glasses powerwall user two
+  _dtrack.stations[3] = avango.daemon.Station('tracking-lcd-glasses-1')    # glasses powerwall user one
+  _dtrack.stations[4] = avango.daemon.Station('tracking-lcd-glasses-2')    # glasses powerwall user two
 
   _dtrack.stations[7] = avango.daemon.Station('tracking-old-spheron')      # old spheron device
 
@@ -48,7 +50,7 @@ def init_dlp_wall_tracking():
   
   # glasses
   _dtrack.stations[1] = avango.daemon.Station('tracking-dlp-glasses-1')
-  #_dtrack.stations[9] = avango.daemon.Station('tracking-dlp-glasses-1') # camera shutter
+  #_dtrack.stations[9] = avango.daemon.Station('tracking-dlp-glasses-1')   # camera shutter
   _dtrack.stations[2] = avango.daemon.Station('tracking-dlp-glasses-2')
   _dtrack.stations[3] = avango.daemon.Station('tracking-dlp-glasses-3')
   _dtrack.stations[4] = avango.daemon.Station('tracking-dlp-glasses-4')
@@ -56,9 +58,11 @@ def init_dlp_wall_tracking():
   _dtrack.stations[6] = avango.daemon.Station('tracking-dlp-glasses-6')
 
   # devices
-  _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron') # new spheron device
+  _dtrack.stations[19] = avango.daemon.Station('tracking-new-spheron')     # new spheron device
 
-  _dtrack.stations[23] = avango.daemon.Station('tracking-dlp-pointer1') # AUGUST1 pointer
+  _dtrack.stations[23] = avango.daemon.Station('tracking-dlp-pointer1')    # AUGUST1 pointer
+  _dtrack.stations[26] = avango.daemon.Station('tracking-portal-camera-32')   # portal camera 3.2
+  _dtrack.stations[25] = avango.daemon.Station('tracking-portal-camera-31')   # portal camera 3.1
 
 
   device_list.append(_dtrack)
@@ -98,10 +102,10 @@ def init_tuio_input():
 ## Initializes a spacemouse for navigation.
 def init_spacemouse():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"3Dconnexion SpaceNavigator\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+  _string = os.popen("python find_device.py 1 3Dconnexion SpaceNavigator").read()
 
   if len(_string) == 0:
-    _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"3Dconnexion SpaceTraveler USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+    _string = os.popen("python find_device.py 1 3Dconnexion SpaceTraveler USB").read()
 
   _string = _string.split()
   if len(_string) > 0:  
@@ -134,9 +138,9 @@ def init_spacemouse():
 ## Initializes an old spheron for navigation.
 def init_old_spheron():
 
-  _string = os.popen("./list-ev -s | grep \"BUWEIMAR RAPID DEVEL DEVICE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py 1 BUWEIMAR RAPID DEVEL DEVICE").read()
   _string = _string.split()
+
   if len(_string) > 0:
   
     _string = _string[0]
@@ -161,9 +165,9 @@ def init_old_spheron():
   else:
     print "Old Spheron NOT found !"
     
-  _string = os.popen("./list-ev -s | grep \"PIXART USB OPTICAL MOUSE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py 1 PIXART USB OPTICAL MOUSE").read()
   _string = _string.split()
+
   if len(_string) > 0:
   
     _string = _string[0]
@@ -187,8 +191,7 @@ def init_old_spheron():
 ## Initializes a new spheron for navigation.
 def init_new_spheron():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"BUW Spheron\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py 1 BUW Spheron").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -249,8 +252,7 @@ def init_new_spheron():
 ## Initializes a new spheron for navigation.
 def init_new_globefish():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"BUW Spheron\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py 1 BUW Spheron").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -287,8 +289,7 @@ def init_new_globefish():
 ## Initalizes a mouse for navigation.
 def init_mouse():
 
-  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"Logitech USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+  _string = os.popen("python find_device.py 1 Logitech USB").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -402,16 +403,9 @@ def init_keyboard():
     print "Keyboard " + str(i) + " started at:", name
 
 ## Initializes a X-Box controller for navigation.
-# @param PLAYER_NUMBER A number from 1 to 4 indicating which of the four possible inputs to use.
 def xbox_controller(PLAYER_NUMBER):
 
-  _query = "./list-ev -s | grep \"Xbox 360 Wireless Receiver\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4"
-  
-  # Grab one of the four controllers according to PLAYER_NUMBER  
-  for i in range(1, PLAYER_NUMBER):
-    _query = _query + " | sed -n \'1!p\'"
-
-  _string = os.popen(_query).read()
+  _string = os.popen("python find_device.py " + str(PLAYER_NUMBER) + " Xbox 360 Wireless Receiver").read()
   _string = _string.split()
 
   if len(_string) > 0:
@@ -452,36 +446,81 @@ def xbox_controller(PLAYER_NUMBER):
 
 def init_august_pointer(ID, DEVICE_STATION_STRING):
 
-	_string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"MOUSE USB MOUSE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()	
-	_string = _string.split()
+  _string = os.popen("python find_device.py 1 MOUSE USB MOUSE").read()
+  _string = _string.split()
 
-	if len(_string) > ID:
-		
-		_string = _string[ID]
+  if len(_string) > ID:
+    
+    _string = _string[ID]
 
-		_pointer = avango.daemon.HIDInput()
-		_pointer.station = avango.daemon.Station(DEVICE_STATION_STRING) # create a station to propagate the input events
-		_pointer.device = _string
-		#_pointer.timeout = '15'
+    _pointer = avango.daemon.HIDInput()
+    _pointer.station = avango.daemon.Station(DEVICE_STATION_STRING) # create a station to propagate the input events
+    _pointer.device = _string
+    #_pointer.timeout = '15'
 
-		# map incoming events to station values
-		_pointer.buttons[0] = "EV_KEY::KEY_F5" # front button
-		#_pointer.buttons[0] = "EV_KEY::KEY_ESC" # front button
-		_pointer.buttons[1] = "EV_KEY::KEY_PAGEDOWN" # back button
-		_pointer.buttons[2] = "EV_KEY::KEY_PAGEUP" # center button
+    # map incoming events to station values
+    _pointer.buttons[0] = "EV_KEY::KEY_F5" # front button
+    #_pointer.buttons[0] = "EV_KEY::KEY_ESC" # front button
+    _pointer.buttons[1] = "EV_KEY::KEY_PAGEDOWN" # back button
+    _pointer.buttons[2] = "EV_KEY::KEY_PAGEUP" # center button
 
-		device_list.append(_pointer)
-		print 'August Pointer found at:', _string
-		
-		os.system("xinput --set-prop keyboard:'MOUSE USB MOUSE' 'Device Enabled' 0") # disable X-forwarding of events
-		
-	else:
-		print "August Pointer NOT found !"
+    device_list.append(_pointer)
+    print 'August Pointer found at:', _string
+    
+    os.system("xinput --set-prop keyboard:'MOUSE USB MOUSE' 'Device Enabled' 0") # disable X-forwarding of events
+    
+  else:
+    print "August Pointer NOT found !"
 
+## Initializes a portal camera for portal features.
+def init_portal_camera(VERSION_NUMBER):
+
+  _string = os.popen("python find_device.py 1 portalCam " + str(VERSION_NUMBER)).read()
+  _string = _string.split()
+
+  if len(_string) > 0:  
+
+    _string = _string[0]
+  
+    # create a station to propagate the input events
+    _portal_camera = avango.daemon.HIDInput()
+    _splitted_number = VERSION_NUMBER.split(".")
+    _portal_camera.station = avango.daemon.Station('device-portal-camera-' + _splitted_number[0] + _splitted_number[1])
+    _portal_camera.device = _string
+
+    print 'device-portal-camera' + _splitted_number[0] + _splitted_number[1]
+
+    # map incoming portal camera buttons to station
+    _portal_camera.buttons[0] = "EV_KEY::BTN_START"  # trigger button half step
+    _portal_camera.buttons[1] = "EV_KEY::BTN_MODE"   # trigger button full step
+    _portal_camera.buttons[2] = "EV_KEY::BTN_X"      # top left of trigger
+    _portal_camera.buttons[3] = "EV_KEY::BTN_C"      # top right of trigger
+    _portal_camera.buttons[4] = "EV_KEY::BTN_TL"     # top left button left
+    _portal_camera.buttons[5] = "EV_KEY::BTN_Y"      # top left button right
+    _portal_camera.buttons[6] = "EV_KEY::BTN_Z"      # top left button center
+    _portal_camera.buttons[7] = "EV_KEY::BTN_TR2"    # left thumb left button
+    _portal_camera.buttons[8] = "EV_KEY::BTN_SELECT" # left thumb right button
+    _portal_camera.buttons[9] = "EV_KEY::BTN_B"      # top right button top
+    _portal_camera.buttons[10] = "EV_KEY::BTN_DEAD"  # top right button bottom
+    _portal_camera.buttons[11] = "EV_KEY::BTN_A"     # top right button center
+    _portal_camera.buttons[12] = "EV_KEY::BTN_THUMBR"# right thumb left button
+    _portal_camera.buttons[13] = "EV_KEY::BTN_THUMBL"# right thumb right button
+    _portal_camera.buttons[14] = "EV_KEY::BTN_TL2"   # left and right head button
+    _portal_camera.buttons[15] = "EV_KEY::BTN_TR"    # center head button
+
+
+    device_list.append(_portal_camera)
+    print "Portal Cam " + VERSION_NUMBER + " started at:", _string
+
+  else:
+    print "Portal Cam " + VERSION_NUMBER + " NOT found !"
 
 ## @var device_list
 # List of devices to be handled by daemon.
 device_list = []
+
+# init oculus rift sensors
+#init_oculus()
 
 # initialize trackings
 init_lcd_wall_tracking()
@@ -503,11 +542,12 @@ init_august_pointer(0, "device-pointer1")
 
 # init desktop devices
 init_keyboard()
-init_mouse()
+#init_mouse()
 init_spacemouse()
 
-# init oculus rift sensors
-#init_oculus()
+# init portal camera
+init_portal_camera("3.1")
+init_portal_camera("3.2")
 
 # init touch input
 init_tuio_input() # crash ???

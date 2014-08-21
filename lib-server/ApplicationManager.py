@@ -106,12 +106,12 @@ class ApplicationManager(avango.script.Script):
     # List of all workspace instances loaded from workspace configuration file.
     self.workspaces = workspaces
 
-    ##
-    #
+    ## @var requestable_navigations
+    # Navigation instances which are switchable to by a button press on the device.
     self.requestable_navigations = []
 
-    ##
-    #
+    ## @var requestable_navigations_last_button_states
+    # Last button states of the request buttons of requestable navigations to detect changes.
     self.requestable_navigations_last_button_states = []
 
     for _workspace in self.workspaces:
@@ -253,7 +253,7 @@ class ApplicationManager(avango.script.Script):
 
     self.always_evaluate(True)
 
-  ##
+  ## Evaluated every frame.
   def evaluate(self):
 
     for _requestable_nav in self.requestable_navigations:
@@ -275,7 +275,7 @@ class ApplicationManager(avango.script.Script):
         # trigger coupling
         if _navigation.active_user_representations == []:
           
-          _users_in_range = _workspace.get_all_users_in_range(avango.gua.make_inverse_mat(_display_group.offset_to_workspace) * _navigation.device.tracking_reader.sf_abs_vec.value, 1.5)
+          _users_in_range = _workspace.get_all_users_in_range(avango.gua.make_inverse_mat(_display_group.offset_to_workspace) * _navigation.device.tracking_reader.sf_abs_vec.value, 1.0)
 
           for _user in _users_in_range:
             self.switch_navigation_for(_workspace.id, _display_group.id, _user.id, _display_group.navigations.index(_navigation))
@@ -283,13 +283,15 @@ class ApplicationManager(avango.script.Script):
         # reset coupling
         else:
 
-          _handled_user_ids = []
+          # get user ids to be reset to navigation 0
+          _active_user_ids = []
 
           for _user_repr in _navigation.active_user_representations:
+            _active_user_ids.append(_user_repr.USER.id)
 
-            if _user_repr.USER.id not in _handled_user_ids:
-              self.switch_navigation_for(_workspace.id, _display_group.id, _user_repr.USER.id, 0)
-              _handled_user_ids.append(_user_repr.USER.id)
+          # switch navigation for 
+          for _user_id in _active_user_ids:
+            self.switch_navigation_for(_workspace.id, _display_group.id, _user_id, 0)
 
       # if button change from positive to negative, reset flag
       elif _navigation.sf_request_trigger.value == False and \

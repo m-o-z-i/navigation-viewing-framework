@@ -125,8 +125,9 @@ class Workspace:
       #print "assigned user is seen by", _assigned_user_ray_visible_for
       #print
 
-  ##
-  #
+  ## Computes a list of users whose tracking targets are not farer away than DISTANCE from a POINT.
+  # @param POINT The point to compute the proximity to.
+  # @param DISTANCE The tolerance distance to be applied.
   def get_all_users_in_range(self, POINT, DISTANCE):
 
     _users_in_range = []

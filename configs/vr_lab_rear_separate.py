@@ -79,18 +79,18 @@ vr_lab_rear.create_display_group( DISPLAY_LIST = [touch_table_3D]
 
 ## Create users ##
 vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 1
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-1'
+                       , GLASSES_ID = 4
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-4'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 2
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-2'
+                       , GLASSES_ID = 5
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-5'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
-                       , GLASSES_ID = 3
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-3'
+                       , GLASSES_ID = 6
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-6'
                        , EYE_DISTANCE = 0.065)
 
 ## Create tools ##

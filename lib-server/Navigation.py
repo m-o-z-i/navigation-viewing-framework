@@ -41,8 +41,8 @@ class Navigation(avango.script.Script):
   # Boolean field to indicate if the change of the dof mode is to be triggered.
   sf_dof_trigger = avango.SFBool()
 
-  ##
-  #
+  ## @var sf_request_trigger
+  # Boolean field to indicate if the request mechanism is to be triggered.
   sf_request_trigger = avango.SFBool()
 
   # static class variables
@@ -71,8 +71,9 @@ class Navigation(avango.script.Script):
     # Avatar type of this navigation.
     self.avatar_type = "None"
 
-    ##
-    #
+    ## @var is_requestable
+    # Boolean saying if this Navigation is a requestable one. Requestable navigations
+    # can be switched to using a special button on the device.
     self.is_requestable = False
 
     # get the selected material 

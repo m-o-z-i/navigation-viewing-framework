@@ -45,8 +45,8 @@ class SteeringNavigation(Navigation):
   # @param INVERT Boolean indicating if the input values should be inverted.
   # @param AVATAR_TYPE A string that determines what kind of avatar representation is to be used, e.g. "joseph".
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
-  #
-  #
+  # @param IS_REQUESTABLE Boolean saying if this Navigation is a requestable one. Requestable navigations can be switched to using a special button on the device.
+  # @param REQUEST_BUTTON_NUM Button number of the device's sensor which should be used for the request mechanism.
   def my_constructor(
       self
     , STARTING_MATRIX
@@ -153,8 +153,9 @@ class SteeringNavigation(Navigation):
     # Boolean indicating if the movement traces are generally activated.
     self.movement_traces_activated = self.movement_traces
 
-    ##
-    #
+    ## @var is_requestable
+    # Boolean saying if this Navigation is a requestable one. Requestable navigations
+    # can be switched to using a special button on the device.
     self.is_requestable = IS_REQUESTABLE
 
     # connect request button

@@ -77,16 +77,16 @@ class ToolRepresentation(avango.script.Script):
   ## Appends a string to the GroupNames field of this ToolRepresentation's visualization.
   # @param STRING The string to be appended.
   def append_to_visualization_group_names(self, STRING):
-    pass
+    raise NotImplementedError( "To be implemented by a subclass." )
 
   ## Removes a string from the GroupNames field of this ToolRepresentation's visualization.
   # @param STRING The string to be removed.
   def remove_from_visualization_group_names(self, STRING):
-    pass
+    raise NotImplementedError( "To be implemented by a subclass." )
 
   ## Resets the GroupNames field of this ToolRepresentation's visualization to the user representation's view_transform_node.
   def reset_visualization_group_names(self):
-    pass
+    raise NotImplementedError( "To be implemented by a subclass." )
 
   ## Evaluated every frame.
   def evaluate(self):

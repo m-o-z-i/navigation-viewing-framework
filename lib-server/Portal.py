@@ -102,15 +102,20 @@ class PortalManager(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
-    return
-
     # check every user representation for portal intersections
     for _user_repr in ApplicationManager.all_user_representations:
 
       _nav = _user_repr.DISPLAY_GROUP.navigations[_user_repr.connected_navigation_id]
 
-      _nav_device_mat = _nav.platform.platform_transform_node.Transform.value * \
-                        avango.gua.make_scale_mat(_nav.platform.sf_scale.value) * \
+      # if navigation has no device (e.g. static navigation), do not allow transit
+      try:
+        _nav.device
+      except:
+        continue
+
+
+      _nav_device_mat = _nav.sf_abs_mat.value * \
+                        avango.gua.make_scale_mat(_nav.sf_scale.value) * \
                         avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate())
 
 

@@ -9,7 +9,7 @@ import avango.script
 from avango.script import field_has_changed
 import subprocess
 import math
-import _avango.gua.guajacum
+import avango.utils
 
 class MultiTouchDevice(avango.script.Script):
     """

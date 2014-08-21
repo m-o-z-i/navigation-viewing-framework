@@ -407,7 +407,8 @@ class User(avango.script.Script):
         _user_repr_1.set_avatar_group_names(_group_names)
 
       # trigger correct tool visibilities at display group
-      self.WORKSPACE_INSTANCE.trigger_tool_visibilities_at(DISPLAY_GROUP_ID)
+      for _tool in self.WORKSPACE_INSTANCE.tools:
+        _tool.handle_correct_visibility_groups_for(DISPLAY_GROUP_ID)
 
     else:
       print_error("Error. Display Group ID does not exist.", False)

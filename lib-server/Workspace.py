@@ -8,7 +8,6 @@ import avango
 import avango.gua
 
 # import framework libraries
-from ApplicationManager import *
 from ConsoleIO import *
 from Display import *
 from DisplayGroup import *
@@ -57,73 +56,6 @@ class Workspace:
     # Physical size of this workspace in meters.
     self.size = (3.8, 3.6)
 
-  ## Triggers the correct GroupNames of all ToolRepresentations at a display group.
-  # @param DISPLAY_GROUP_ID The identification number of the DisplayGroup.
-  def trigger_tool_visibilities_at(self, DISPLAY_GROUP_ID):
-
-    #print "display group", DISPLAY_GROUP_ID
-
-    # handle every tool in workspace
-    for _tool in self.tools:
-
-      # All ToolRepresentation instances at DISPLAY_GROUP_ID
-      _tool_reprs_at_display_group = []
-
-      # ToolRepresentation instance belonging to the assigned user at DISPLAY_GROUP_ID
-      _tool_repr_of_assigned_user = None
-
-      # display group instance belonging to DISPLAY_GROUP_ID
-      _handled_display_group_instance = None
-
-      ## fill the variables ##
-      for _tool_repr in _tool.tool_representations:
-
-        # get all tool representations in display group
-        if _tool_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
-
-          _handled_display_group_instance = _tool_repr.DISPLAY_GROUP
-          _tool_reprs_at_display_group.append(_tool_repr)
-
-          # find tool representation of assigned user
-          if _tool_repr.USER_REPRESENTATION.USER == _tool.assigned_user:
-            _tool_repr_of_assigned_user = _tool_repr
-
-      ## determine which group names have to be added to the tool representations ##
-      _assigned_user_ray_visible_for = []
-
-      for _tool_repr in _tool_reprs_at_display_group:
-
-        # check for navigation of corresponding user and compare it to assigned user
-
-        # reset initial GroupName state
-        _tool_repr.reset_visualization_group_names()
-
-        # if user does not share the assigned user's navigation, hide the tool representation
-        if _tool_repr.USER_REPRESENTATION.connected_navigation_id != _tool_repr_of_assigned_user.USER_REPRESENTATION.connected_navigation_id:
-          _tool_repr.append_to_visualization_group_names("do_not_display_group")
-          _assigned_user_ray_visible_for.append(_tool_repr.USER_REPRESENTATION.view_transform_node.Name.value)
-
-      # check for all user representations outside the handled display group
-      for _user_repr in ApplicationManager.all_user_representations:
-        if _user_repr.DISPLAY_GROUP != _handled_display_group_instance:
-
-          # consider visibility table
-          _handled_display_group_tag = _handled_display_group_instance.visibility_tag
-          _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
-          
-          _visible = _tool.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
-
-          #print "Does", _user_repr.view_transform_node.Name.value, "(", _user_repr_display_group_tag, ") see"
-          #, _handled_display_group_tag, "?", _visible
-          if _visible:
-            _assigned_user_ray_visible_for.append(_user_repr.view_transform_node.Name.value)
-
-      # make ray holder tool representation visible for all others on different navigations and display groups
-      for _string in _assigned_user_ray_visible_for:
-        _tool_repr_of_assigned_user.append_to_visualization_group_names(_string)
-
-      #print "assigned user is seen by", _assigned_user_ray_visible_for
-      #print
 
   ## Computes a list of users whose tracking targets are not farer away than DISTANCE from a user, taking the line to ground.
   # @param POINT The point to compute the proximity to.

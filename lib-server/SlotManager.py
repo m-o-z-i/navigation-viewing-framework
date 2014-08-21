@@ -7,7 +7,7 @@
 import avango
 import avango.gua
 import avango.script
-import RadioMasterHID
+#import RadioMasterHID
 
 # import framework libraries
 from ConsoleIO   import *

@@ -12,7 +12,8 @@ import avango.oculus
 # import framework libraries
 import ClientMaterialUpdaters
 from View import *
-from ClientPortal import * 
+from ClientPortal import *
+from examples_common.GuaVE import GuaVE
 
 # import python libraries
 import sys
@@ -103,8 +104,11 @@ def start():
   viewer.SceneGraphs.value = [graph]
 
   # create client portal manager
-  #portal_manager = ClientPortalManager()
-  #portal_manager.my_constructor(graph, views)
+  portal_manager = ClientPortalManager()
+  portal_manager.my_constructor(graph, views)
+
+  shell = GuaVE()
+  shell.start(locals(), globals())
 
   # start rendering process
   viewer.run()

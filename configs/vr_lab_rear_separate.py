@@ -19,7 +19,7 @@ workspaces = [vr_lab_rear]
 
 ## Create Navigation instances ##
 spheron_navigation = SteeringNavigation()
-spheron_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 0) * \
+spheron_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 15) * \
                                                      avango.gua.make_rot_mat(0, 0, 1, 0)
                                  , STARTING_SCALE = 1.0
                                  , INPUT_DEVICE_TYPE = 'NewSpheron'

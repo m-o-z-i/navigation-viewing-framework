@@ -48,8 +48,9 @@ def start():
   scene_manager = SceneManager()
 
   # initialize portal manager
-  #portal_manager = PortalManager()
-  #portal_manager.my_constructor(graph, application_manager.navigation_list)
+  portal_manager = PortalManager()
+  portal_manager.my_constructor()
+  #portal_manager.my_constructor(application_manager.navigation_list)
 
   #portal_camera = PortalCamera()
   #portal_camera.my_constructor(0, portal_manager, application_manager.navigation_list[0], "device-portal-camera-32", "tracking-portal-camera-32")

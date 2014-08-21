@@ -12,7 +12,7 @@ from avango.script import field_has_changed
 
 # import framework libraries
 from GroundFollowing import *
-import Tools
+import Utilities
 
 # import of other libraries
 import time
@@ -194,7 +194,7 @@ class InputMapping(avango.script.Script):
           _platform_rot_mat = avango.gua.make_rot_mat(self.lf_quat_angle, _platform_quat.get_axis())
 
         # global rotation of the device in the world
-        _device_forward_yaw = Tools.get_yaw(self.sf_station_mat.value)
+        _device_forward_yaw = Utilities.get_yaw(self.sf_station_mat.value)
         _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
 
         # combined platform and device rotation

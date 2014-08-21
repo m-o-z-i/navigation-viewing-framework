@@ -8,7 +8,7 @@ import avango
 import avango.gua
 
 # import framework libraries
-import Tools
+import Utilities
 from scene_config import scenegraphs
 
 # import python libraries
@@ -79,7 +79,7 @@ class Trace:
     _scale  = 0.5 * _vec.length()
 
     # calc the rotation according negative z-axis
-    _rotation_mat = Tools.get_rotation_between_vectors(avango.gua.Vec3(0, 0, -1), _vec)
+    _rotation_mat = Utilities.get_rotation_between_vectors(avango.gua.Vec3(0, 0, -1), _vec)
 
     # build the complete matrix
     return avango.gua.make_trans_mat(_center) * _rotation_mat * avango.gua.make_scale_mat(self.line_thickness, self.line_thickness, _scale * 2.0)
@@ -97,7 +97,7 @@ class Trace:
   def update(self, ABS_MAT):
 
     # only update when time_offset is reached
-    if Tools.euclidean_distance(ABS_MAT.get_translate(), self.crrnt_point) > self.distance_trigger:
+    if Utilities.euclidean_distance(ABS_MAT.get_translate(), self.crrnt_point) > self.distance_trigger:
 
       # increase index counter
       self.crrnt_idx = (self.crrnt_idx + 1) % self.num_lines

@@ -11,7 +11,7 @@ from avango.script import field_has_changed
 
 # import framework libraries
 from ConsoleIO import *
-import Tools
+import Utilities
 
 # import python libraries
 import time
@@ -446,7 +446,7 @@ class RecorderPlayer(avango.script.Script):
       for _i in range(1, len(self.mod_recording_list)):
         _pos_last = self.mod_recording_list[_i-1][1]
         _pos_curr = self.mod_recording_list[_i][1]
-        _distance = Tools.euclidean_distance(_pos_last, _pos_curr)
+        _distance = Utilities.euclidean_distance(_pos_last, _pos_curr)
         self.mod_recording_list[_i][0] = _current_time + (_distance * 1/_velocity)
         _current_time += (_distance * 1/_velocity)
     

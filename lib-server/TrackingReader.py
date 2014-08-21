@@ -11,7 +11,7 @@ import avango.daemon
 from avango.script import field_has_changed
 
 # import framework libraries
-import Tools
+import Utilities
 
 # import python libraries
 import math
@@ -70,7 +70,7 @@ class TrackingTargetReader(TrackingReader):
     self.sf_abs_mat.value = self.tracking_sensor.Matrix.value
     self.sf_global_mat.value = avango.gua.make_inverse_mat(self.tracking_sensor.TransmitterOffset.value) * self.tracking_sensor.Matrix.value
     self.sf_abs_vec.value = self.sf_abs_mat.value.get_translate()
-    _yaw = Tools.get_yaw(self.sf_abs_mat.value)
+    _yaw = Utilities.get_yaw(self.sf_abs_mat.value)
 
   ## Sets the transmitter offset for this tracking reader.
   # @param TRANSMITTER_OFFSET The transmitter offset to be set.

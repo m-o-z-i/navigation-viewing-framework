@@ -13,7 +13,7 @@ from Device           import *
 from GroundFollowing  import *
 from InputMapping     import InputMapping
 from Navigation       import *
-import Tools
+import Utilities
 import TraceLines
 from scene_config import scenegraphs
 
@@ -179,7 +179,7 @@ class SteeringNavigation(Navigation):
     # remove pitch and roll from current orientation
     _current_mat = self.sf_abs_mat.value
     _current_trans = _current_mat.get_translate()
-    _current_yaw = Tools.get_yaw(_current_mat)
+    _current_yaw = Utilities.get_yaw(_current_mat)
 
     ## @var start_rot
     # Quaternion representing the start rotation of the animation

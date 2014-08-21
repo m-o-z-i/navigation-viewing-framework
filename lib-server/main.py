@@ -49,7 +49,6 @@ def start():
 
   # initialize portal manager
   portal_manager = PortalManager()
-  portal_manager.my_constructor()
   #portal_manager.my_constructor(application_manager.navigation_list)
 
   #portal_camera = PortalCamera()

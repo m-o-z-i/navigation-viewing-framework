@@ -12,7 +12,7 @@ import avango.daemon
 
 # import framework libraries
 from Tool import *
-import Tools
+import Utilities
 from TrackingReader import TrackingTargetReader
 from scene_config import *
 from SceneManager import *

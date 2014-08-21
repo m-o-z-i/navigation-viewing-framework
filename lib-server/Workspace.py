@@ -14,7 +14,7 @@ from Display import *
 from DisplayGroup import *
 from RayPointer import *
 from User import *
-import Tools
+import Utilities
 
 ## Representation of the physical space holding several users, tools and display groups.
 class Workspace:
@@ -134,12 +134,12 @@ class Workspace:
 
     for _user in self.users:
 
-      if Tools.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT) < DISTANCE:
+      if Utilities.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT) < DISTANCE:
         _users_in_range.append(_user)
-        print "In range", _user.id, Tools.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT)
+        print "In range", _user.id, Utilities.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT)
 
       else:
-        print "not in range", _user.id, Tools.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT)
+        print "not in range", _user.id, Utilities.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT)
 
     return _users_in_range
 

@@ -11,7 +11,7 @@ from avango.script import field_has_changed
 import avango.daemon
 
 # import framework libraries
-import Tools
+import Utilities
 from Scene import *
 from ConsoleIO import *
 

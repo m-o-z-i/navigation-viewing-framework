@@ -13,7 +13,7 @@ from avango.script import field_has_changed
 from Intersection import *
 from TrackingReader import *
 from ConsoleIO import *
-import Tools
+import Utilities
 
 # import math libraries
 import math
@@ -105,7 +105,7 @@ class UserRepresentation(avango.script.Script):
 
     # update avatar body matrix if present at this view transform node
     _head_pos = self.head.Transform.value.get_translate()
-    _forward_yaw = Tools.get_yaw(self.head.Transform.value)
+    _forward_yaw = Utilities.get_yaw(self.head.Transform.value)
 
     try:
       self.body_avatar

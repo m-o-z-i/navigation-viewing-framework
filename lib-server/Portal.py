@@ -10,9 +10,10 @@ import avango.script
 from avango.script import field_has_changed
 
 # import framework libraries
+from ApplicationManager import *
 from ConsoleIO import *
 from scene_config import scenegraphs
-import Tools
+import Utilities
 
 # import python libraries
 import time
@@ -25,17 +26,9 @@ class PortalManager(avango.script.Script):
   def __init__(self):
     self.super(PortalManager).__init__()
 
-  ## Custom constructor.
-  # @param NAVIGATION_LIST List of all Navigation instances checked for portal updates.
-  def my_constructor(self, NAVIGATION_LIST = None):
-
     ## @var SCENEGRAPH
     # Reference to the scenegraph.
     self.SCENEGRAPH = scenegraphs[0]
-
-    ## @var NAVIGATION_LIST
-    # List of all Navigation instances checked for portal updates.
-    self.NAVIGATION_LIST = NAVIGATION_LIST
 
     ## @var portal_group_node
     # Scenegraph grouping node for portals on server side.
@@ -109,12 +102,12 @@ class PortalManager(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
-    # to fix
-    if self.NAVIGATION_LIST == None:
-      return
+    return
 
-    # check every navigation instance for portal intersections
-    for _nav in self.NAVIGATION_LIST:
+    # check every user representation for portal intersections
+    for _user_repr in ApplicationManager.all_user_representations:
+
+      _nav = _user_repr.DISPLAY_GROUP.navigations[_user_repr.connected_navigation_id]
 
       _nav_device_mat = _nav.platform.platform_transform_node.Transform.value * \
                         avango.gua.make_scale_mat(_nav.platform.sf_scale.value) * \

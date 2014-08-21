@@ -12,7 +12,7 @@ from avango.script import field_has_changed
 # import framework libraries
 from Portal import *
 from TrackingReader import *
-import Tools
+import Utilities
 
 # import python libraries
 import time
@@ -957,7 +957,7 @@ class PortalCamera(avango.script.Script):
             _shot.sf_negative_parallax.value = "True"
 
             # set correct forward angle in interaction space
-            _camera_forward = math.degrees(Tools.get_yaw(self.tracking_reader.sf_abs_mat.value))
+            _camera_forward = math.degrees(Utilities.get_yaw(self.tracking_reader.sf_abs_mat.value))
 
             if _camera_forward < 135.0 and _camera_forward > 45.0:
               _interaction_space.maximize_forward_angle = _interaction_space.forward_angle

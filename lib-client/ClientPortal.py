@@ -287,7 +287,7 @@ class PortalPreView(avango.script.Script):
     # The pipeline used to render this PortalPreView. 
     self.pipeline = avango.gua.nodes.Pipeline()
     self.pipeline.Enabled.value = True
-    #self.pipeline.EnableGlobalClippingPlane.value = True
+    self.pipeline.EnableGlobalClippingPlane.value = True
     self.pipeline.Camera.value = self.camera
 
     # init pipline value connections
@@ -467,8 +467,7 @@ class PortalPreView(avango.script.Script):
     if self.mf_portal_modes.value[2] == "2-True":
       self.pipeline.EnableGlobalClippingPlane.value = False
     else:
-      pass
-      #self.pipeline.EnableGlobalClippingPlane.value = True
+      self.pipeline.EnableGlobalClippingPlane.value = True
 
     # set correct border material
     if self.portal_border.Material.value != self.mf_portal_modes.value[3].replace("3-", ""):
@@ -501,7 +500,7 @@ class PortalPreView(avango.script.Script):
 
     # update global clipping plane when negative parallax is false
     if self.mf_portal_modes.value[2] == "2-False":
-      _portal_scene_mat = self.PORTAL_NODE.Children.value[1].Transform.value
+      _portal_scene_mat = self.PORTAL_NODE.Children.value[2].Transform.value
       _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
       _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec        
       _vec2 = _portal_scene_mat.get_translate()

@@ -13,6 +13,7 @@ from avango.script import field_has_changed
 from Avatar import *
 from Intersection import *
 from TrackingReader import *
+from RegulatableVisibility import *
 from ConsoleIO import *
 import Utilities
 
@@ -209,7 +210,7 @@ class UserRepresentation(avango.script.Script):
 
 ## Logical representation of a user within a Workspace. Stores the relevant parameters
 # and cares for receiving the headtracking input.
-class User(avango.script.Script):
+class User(RegulatableVisibility):
 
   ## Default constructor.
   def __init__(self):
@@ -232,6 +233,8 @@ class User(avango.script.Script):
                    , EYE_DISTANCE
                    , NO_TRACKING_MAT
                    ):
+
+    self.table_constructor(AVATAR_VISIBILITY_TABLE)
 
     # flags 
     ## @var is_vip
@@ -269,10 +272,6 @@ class User(avango.script.Script):
       self.headtracking_reader.my_constructor(HEADTRACKING_TARGET_NAME)
       self.headtracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)
       self.headtracking_reader.set_receiver_offset(avango.gua.make_identity_mat())
-
-    ## @var visibility_table
-    # 
-    self.visibility_table = AVATAR_VISIBILITY_TABLE
 
     ## @var user_representations
     # List of UserRepresentation instances for all display groups in the user's workspace.

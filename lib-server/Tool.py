@@ -12,6 +12,7 @@ import avango.daemon
 
 # import framework libraries
 from ApplicationManager import *
+from RegulatableVisibility import *
 from TrackingReader import TrackingTargetReader
 import Utilities
 
@@ -96,7 +97,7 @@ class ToolRepresentation(avango.script.Script):
 
 ## Logical representation of a Tool in a Workspace.
 # Base class. Not to be instantiated.
-class Tool(avango.script.Script):
+class Tool(RegulatableVisibility):
 
   ## Default constructor.
   def __init__(self):
@@ -112,6 +113,8 @@ class Tool(avango.script.Script):
                      , TOOL_ID
                      , TRACKING_STATION
                      , VISIBILITY_TABLE):
+
+    self.table_constructor(VISIBILITY_TABLE)
 
     # references
     ## @var WORKSPACE_INSTANCE
@@ -129,10 +132,6 @@ class Tool(avango.script.Script):
     ## @var tool_representations
     # List of ToolRepresentation instances belonging to this Tool.
     self.tool_representations = []
-
-    ## @var visibility_table
-    # A table containing visibility rules according to the DisplayGroups' visibility tags.
-    self.visibility_table = VISIBILITY_TABLE
 
     # init sensors
     self.tracking_reader = TrackingTargetReader()
@@ -210,7 +209,7 @@ class Tool(avango.script.Script):
           _tool_repr_of_assigned_user = _tool_repr
 
     ## determine which group names have to be added to the tool representations ##
-    _assigned_user_ray_visible_for = []
+    _assigned_user_tool_visible_for = []
 
     for _tool_repr in _tool_reprs_at_display_group:
 
@@ -222,7 +221,7 @@ class Tool(avango.script.Script):
       # if user does not share the assigned user's navigation, hide the tool representation
       if _tool_repr.USER_REPRESENTATION.connected_navigation_id != _tool_repr_of_assigned_user.USER_REPRESENTATION.connected_navigation_id:
         _tool_repr.append_to_visualization_group_names("do_not_display_group")
-        _assigned_user_ray_visible_for.append(_tool_repr.USER_REPRESENTATION.view_transform_node.Name.value)
+        _assigned_user_tool_visible_for.append(_tool_repr.USER_REPRESENTATION.view_transform_node.Name.value)
 
     # check for all user representations outside the handled display group
     for _user_repr in ApplicationManager.all_user_representations:
@@ -237,8 +236,8 @@ class Tool(avango.script.Script):
         #print "Does", _user_repr.view_transform_node.Name.value, "(", _user_repr_display_group_tag, ") see"
         #, _handled_display_group_tag, "?", _visible
         if _visible:
-          _assigned_user_ray_visible_for.append(_user_repr.view_transform_node.Name.value)
+          _assigned_user_tool_visible_for.append(_user_repr.view_transform_node.Name.value)
 
-    # make ray holder tool representation visible for all others on different navigations and display groups
-    for _string in _assigned_user_ray_visible_for:
+    # make tool holder tool representation visible for all others on different navigations and display groups
+    for _string in _assigned_user_tool_visible_for:
       _tool_repr_of_assigned_user.append_to_visualization_group_names(_string)

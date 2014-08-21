@@ -12,6 +12,7 @@ import avango.daemon
 
 # import framework libraries
 from TrackingReader import TrackingTargetReader
+import Utilities
 
 ## Geometric representation of a Tool in a DisplayGroup. 
 # Base class. Not to be instantiated.
@@ -160,9 +161,9 @@ class Tool(avango.script.Script):
 
       if _user.is_active:
 
-        _dist = self.compute_line_distance( self.tracking_reader.sf_abs_vec.value
-                                          , _user.headtracking_reader.sf_abs_vec.value
-                                          , avango.gua.Vec3(0, -1, 0) )
+        _dist = Utilities.compute_point_to_line_distance( self.tracking_reader.sf_abs_vec.value
+                                                        , _user.headtracking_reader.sf_abs_vec.value
+                                                        , avango.gua.Vec3(0, -1, 0) )
         if _dist < _closest_distance:
           _closest_distance = _dist
           _closest_user = _user
@@ -178,15 +179,3 @@ class Tool(avango.script.Script):
 
     for _display_group in self.WORKSPACE_INSTANCE.display_groups:
       self.WORKSPACE_INSTANCE.trigger_tool_visibilities_at(_display_group.id)
-
-  ## Computes the distance between a Point and a 3D-line.
-  # @param POINT_TO_CHECK The point to compute the distance for.
-  # @param LINE_POINT_1 One point lying on the line.
-  # @param LINE_VEC Direction vector of the line.
-  def compute_line_distance(self, POINT_TO_CHECK, LINE_POINT_1, LINE_VEC):
-
-    _point_line_vec = avango.gua.Vec3(LINE_POINT_1.x - POINT_TO_CHECK.x, LINE_POINT_1.y - POINT_TO_CHECK.y, LINE_POINT_1.z - POINT_TO_CHECK.z)
-
-    _dist = (_point_line_vec.cross(LINE_VEC)).length() / LINE_VEC.length()
-
-    return _dist

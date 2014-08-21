@@ -125,7 +125,7 @@ class Workspace:
       #print "assigned user is seen by", _assigned_user_ray_visible_for
       #print
 
-  ## Computes a list of users whose tracking targets are not farer away than DISTANCE from a POINT.
+  ## Computes a list of users whose tracking targets are not farer away than DISTANCE from a user, taking the line to ground.
   # @param POINT The point to compute the proximity to.
   # @param DISTANCE The tolerance distance to be applied.
   def get_all_users_in_range(self, POINT, DISTANCE):
@@ -134,12 +134,13 @@ class Workspace:
 
     for _user in self.users:
 
-      if Utilities.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT) < DISTANCE:
+      if Utilities.compute_point_to_line_distance(POINT, _user.headtracking_reader.sf_abs_vec.value, avango.gua.Vec3(0, -1, 0)) < DISTANCE:
         _users_in_range.append(_user)
-        print "In range", _user.id, Utilities.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT)
+        #print "In range", _user.id, Utilities.compute_point_to_line_distance(POINT, _user.headtracking_reader.sf_abs_vec.value, avango.gua.Vec3(0, -1, 0))
 
       else:
-        print "not in range", _user.id, Utilities.euclidean_distance(_user.headtracking_reader.sf_abs_vec.value, POINT)
+        pass
+        #print "not in range", _user.id, Utilities.compute_point_to_line_distance(POINT, _user.headtracking_reader.sf_abs_vec.value, avango.gua.Vec3(0, -1, 0))
 
     return _users_in_range
 

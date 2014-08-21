@@ -89,3 +89,15 @@ def euclidean_distance(POINT1, POINT2):
   _diff_z = POINT2.z - POINT1.z
 
   return math.sqrt(math.pow(_diff_x, 2) + math.pow(_diff_y, 2) + math.pow(_diff_z, 2))
+
+## Computes the distance between a Point and a 3D-line.
+# @param POINT_TO_CHECK The point to compute the distance for.
+# @param LINE_POINT_1 One point lying on the line.
+# @param LINE_VEC Direction vector of the line.
+def compute_point_to_line_distance(POINT_TO_CHECK, LINE_POINT_1, LINE_VEC):
+
+  _point_line_vec = avango.gua.Vec3(LINE_POINT_1.x - POINT_TO_CHECK.x, LINE_POINT_1.y - POINT_TO_CHECK.y, LINE_POINT_1.z - POINT_TO_CHECK.z)
+
+  _dist = (_point_line_vec.cross(LINE_VEC)).length() / LINE_VEC.length()
+
+  return _dist

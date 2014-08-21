@@ -144,12 +144,12 @@ class Tool(RegulatableVisibility):
 
   ## Selects a list of potentially currently active ToolRepresentations.
   def create_candidate_list(self):
-    pass
+    raise NotImplementedError( "To be implemented by a subclass." )
 
   ## Chooses one ToolReprsentation among the potentially active one in a candidate list.
   # @param CANDIDATE_LIST The list of ToolRepresentation candidates to be checked.
   def choose_from_candidate_list(self, CANDIDATE_LIST):
-    pass
+    raise NotImplementedError( "To be implemented by a subclass." )
 
   ## Checks which user is closest to this Tool in tracking spaces and makes him the assigned user.
   def check_for_user_assignment(self):

@@ -80,17 +80,6 @@ class Avatar(avango.script.Script):
     self.body_geometry.Material.value = MATERIAL_STRING
 
   ##
-  def set_visible(self, VISIBILITY_BOOL):
-
-    if VISIBILITY_BOOL:
-      self.head_geometry.GroupNames.value.remove("do_not_display_group")
-      self.body_geometry.GroupNames.value.remove("do_not_display_group")
-    else:
-      self.head_geometry.GroupNames.value.append("do_not_display_group")
-      self.body_geometry.GroupNames.value.append("do_not_display_group")
-
-
-  ##
   def evaluate(self):
 
     # update avatar body matrix if present at this view transform node

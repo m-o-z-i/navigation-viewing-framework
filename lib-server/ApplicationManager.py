@@ -177,8 +177,14 @@ class ApplicationManager(avango.script.Script):
                 time.sleep(1)
 
     
-    for _user_representation in ApplicationManager.all_user_representations:
-      _user_representation.connect_navigation_of_display_group(0)
+        for _user_representation in _user.user_representations:
+          _user_representation.connect_navigation_of_display_group(0)
+
+    # initialize avatar group names
+    for _workspace in self.workspaces:
+      for _display_group in _workspace.display_groups:
+        for _user in _workspace.users:
+          _user.handle_correct_visibility_groups_for(_display_group.id)
 
     # set avatar groups properly on all user representations
     #self.init_avatar_group_names()
@@ -323,7 +329,7 @@ class ApplicationManager(avango.script.Script):
   def switch_navigation_for(self, WORKSPACE_ID, DISPLAY_GROUP_ID, USER_ID, NAVIGATION_ID):
 
     _user_instance = self.workspaces[WORKSPACE_ID].users[USER_ID]
-    _user_instance.switch_navigation_at_display_group(DISPLAY_GROUP_ID, NAVIGATION_ID, ApplicationManager.all_user_representations)
+    _user_instance.switch_navigation_at_display_group(DISPLAY_GROUP_ID, NAVIGATION_ID, self.workspaces[WORKSPACE_ID].users)
 
   ## Starts the shell and the viewer.
   # @param LOCALS Local variables.

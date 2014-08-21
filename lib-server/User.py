@@ -202,9 +202,6 @@ class UserRepresentation(avango.script.Script):
       for _screen_vis in self.screen_visualizations:
         _screen_vis.Material.value = 'data/materials/' + _new_navigation.trace_material + "Shadeless.gmd"
 
-      # handle avatar and screen  visibilities
-      self.USER.handle_correct_visibility_groups_for(self.DISPLAY_GROUP.id)
-
     else:
       print_error("Error. Navigation ID does not exist.", False)
 
@@ -321,38 +318,17 @@ class User(avango.script.Script):
   ## Switches the navigation for a display group.
   # @param DISPLAY_GROUP_ID Identification number of the display group to switch the navigation for.
   # @param NAVIGATION_ID Identification number of the navigation to be used within the display group.
-  # @param ALL_USER_REPRESENTATIONS A list of all UserRepresentation instances in the setup used for avatar visibility triggering.
-  def switch_navigation_at_display_group(self, DISPLAY_GROUP_ID, NAVIGATION_ID, ALL_USER_REPRESENTATIONS):
+  # @param WORKSPACE_USERS A list of all Users active in the workspace.
+  def switch_navigation_at_display_group(self, DISPLAY_GROUP_ID, NAVIGATION_ID, WORKSPACE_USERS):
     
     if DISPLAY_GROUP_ID < len(self.user_representations):
       
       # switch navigation to desired one for DISPLAY_GROUP_ID
       self.user_representations[DISPLAY_GROUP_ID].connect_navigation_of_display_group(NAVIGATION_ID)
 
-      # create list of user representations at DISPLAY_GROUP_ID
-      _user_reprs_at_display_group = []
-
-      for _user_repr in ALL_USER_REPRESENTATIONS:
-        if _user_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
-          _user_reprs_at_display_group.append(_user_repr)
-
-      # set avatar GroupNames field in all user representations of DISPLAY_GROUP_ID
-      for _user_repr_1 in _user_reprs_at_display_group:
-
-        _group_names = []
-
-        # iterate over all user representations to find out if it should see avatars of _user_repr_1
-        for _user_repr_2 in ALL_USER_REPRESENTATIONS:
-          
-          # if display groups differ, make avatars visible
-          if _user_repr_2.DISPLAY_GROUP != _user_repr_1.DISPLAY_GROUP:
-            _group_names.append(_user_repr_2.view_transform_node.Name.value)
-
-          # if display groups are identical, make avatars visible when on different navigations
-          elif _user_repr_2.connected_navigation_id != _user_repr_1.connected_navigation_id:
-            _group_names.append(_user_repr_2.view_transform_node.Name.value)
-
-        _user_repr_1.set_avatar_group_names(_group_names)
+      # trigger correct avatar and screen visibilities
+      for _user in WORKSPACE_USERS:
+        _user.handle_correct_visibility_groups_for(DISPLAY_GROUP_ID)
 
       # trigger correct tool visibilities at display group
       for _tool in self.WORKSPACE_INSTANCE.tools:
@@ -375,51 +351,51 @@ class User(avango.script.Script):
   # @param DISPLAY_GROUP_ID The identification number of the DisplayGroup.
   def handle_correct_visibility_groups_for(self, DISPLAY_GROUP_ID):
 
-    #print "display group", DISPLAY_GROUP_ID
-
     # All UserRepresentation instances at DISPLAY_GROUP_ID
-    _user_reprs_at_display_group = []
+    _user_repr_at_display_group = self.user_representations[DISPLAY_GROUP_ID]
 
     # display group instance belonging to DISPLAY_GROUP_ID
-    _handled_display_group_instance = None
+    _handled_display_group_instance = _user_repr_at_display_group.DISPLAY_GROUP
 
-    ## fill the variables ##
+    _all_user_reprs_at_display_group = []
+
     for _user_repr in ApplicationManager.all_user_representations:
+      if _user_repr.DISPLAY_GROUP == _handled_display_group_instance:
+        _all_user_reprs_at_display_group.append(_user_repr)
 
-      # get all tool representations in display group
-      if _user_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
+    ## determine which group names have to be added to the user representations ##
+    _user_visible_for = []
 
-        _handled_display_group_instance = _user_repr.DISPLAY_GROUP
-        _user_reprs_at_display_group.append(_user_repr)
+    # append all names of user representations which are not on same navigation
+    for _user_repr in _all_user_reprs_at_display_group:
 
-    ## determine which group names have to be added to the tool representations ##
+      if _user_repr.connected_navigation_id != _user_repr_at_display_group.connected_navigation_id:
+        _user_visible_for.append(_user_repr.view_transform_node.Name.value)
 
-    for _user_repr_1 in _user_reprs_at_display_group:
+    # check for all user representations outside the handled display group
+    for _user_repr in ApplicationManager.all_user_representations:
+      if _user_repr.DISPLAY_GROUP != _handled_display_group_instance:
 
-      _user_visible_for = []
+        # consider visibility table
+        _handled_display_group_tag = _handled_display_group_instance.visibility_tag
+        _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
+        
+        _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
+        
+        if _visible:
+          _user_visible_for.append(_user_repr.view_transform_node.Name.value)
 
-      # append all names of user representations which are not on same navigation
-      for _user_repr_2 in _user_reprs_at_display_group:
+    # apply the obtained group names to the user representation
+    if len(_user_visible_for) == 0:
+      _user_repr_at_display_group.avatar.set_group_names(["do_not_display_group"])
 
-        if _user_repr_2.connected_navigation_id != _user_repr_1.connected_navigation_id:
-          _user_visible_for.append(_user_repr_2.view_transform_node.Name.value)
+      for _screen_vis in _user_repr_at_display_group.screen_visualizations:
+        _screen_vis.GroupNames.value = ["do_not_display_group"]
 
-      # check for all user representations outside the handled display group
-      for _user_repr_3 in ApplicationManager.all_user_representations:
-        if _user_repr_3.DISPLAY_GROUP != _handled_display_group_instance:
+    else:
 
-          # consider visibility table
-          _handled_display_group_tag = _handled_display_group_instance.visibility_tag
-          _user_repr_display_group_tag = _user_repr_3.DISPLAY_GROUP.visibility_tag
-          
-          _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
-
-          if _visible:
-            _user_visible_for.append(_user_repr_3.view_transform_node.Name.value)
-
-      # apply the obtained group names to the user representation
       for _string in _user_visible_for:
-        _user_repr_1.avatar.set_group_names(_user_visible_for)
+        _user_repr_at_display_group.avatar.set_group_names(_user_visible_for)
 
-        for _screen_vis in _user_repr_1.screen_visualizations:
+        for _screen_vis in _user_repr_at_display_group.screen_visualizations:
           _screen_vis.GroupNames.value = _user_visible_for

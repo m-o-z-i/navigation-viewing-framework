@@ -9,6 +9,9 @@ import avango.gua
 import avango.script
 from avango.script import field_has_changed
 
+# import framework libraries
+from ConsoleIO import *
+
 # import python libraries
 import math
 
@@ -233,9 +236,6 @@ class PortalPreView(avango.script.Script):
   # @param PORTAL_NODE The portal scenegraph node on client side to be associated with this instance.
   # @param VIEW The View instance to be associated with this instance.
   def my_constructor(self, PORTAL_NODE, VIEW):
-
-    print "constructor portal pre view for " + PORTAL_NODE.Name.value + " and w" + \
-    str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)
     
     ## @var PORTAL_NODE
     # The portal scenegraph node on client side to be associated with this instance.
@@ -245,15 +245,24 @@ class PortalPreView(avango.script.Script):
     # The View instance to be associated with this instance.
     self.VIEW = VIEW
 
+    ## @var left_eye_node
+    # Scenegraph node representing the left eye's position in the portal's exit space.
+    _user_left_eye = VIEW.SCENEGRAPH["/net/w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id) + "/head/eyeL"]
+
+    # if no node is present, this view is not occupied, stop pre view creation
+    if _user_left_eye == None:
+      print_warning("No user nodes present for " + "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
+      return
+    else:
+      print_message("Construct PortalPreView for " + PORTAL_NODE.Name.value + " and w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
+
     ## @var view_node
     # Scenegraph node representing the head position in the portal's exit space.
     self.view_node = avango.gua.nodes.TransformNode(Name = "head_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id) )
     self.portal_matrix_node = self.PORTAL_NODE.Children.value[1]
     self.PORTAL_NODE.Children.value[2].Children.value.append(self.view_node)
 
-    ## @var left_eye_node
-    # Scenegraph node representing the left eye's position in the portal's exit space.
-    _user_left_eye = VIEW.SCENEGRAPH["/net/w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id) + "/head/eyeL"]
+    # handle left eye node
     self.sf_left_eye_transform.connect_from(_user_left_eye.Transform)
     self.left_eye_node = avango.gua.nodes.TransformNode(Name = "eyeL")
     self.left_eye_node.Transform.connect_from(self.sf_left_eye_transform)

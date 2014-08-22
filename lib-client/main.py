@@ -108,8 +108,8 @@ def start():
   viewer.SceneGraphs.value = [graph]
 
   # create client portal manager
-  #portal_manager = ClientPortalManager()
-  #portal_manager.my_constructor(graph, views)
+  portal_manager = ClientPortalManager()
+  portal_manager.my_constructor(graph, views)
 
   shell = GuaVE()
   shell.start(locals(), globals())

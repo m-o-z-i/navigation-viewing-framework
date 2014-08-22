@@ -81,7 +81,7 @@ class View(avango.script.Script):
     # check if no more users allowed at this screen
     if not self.display_values:
       # TODO better handling of this case?
-      print 'Error: no more users allowed at display "' + DISPLAY_INSTANCE.name + '"!'
+      print_error('Error: no more users allowed at display "' + DISPLAY_INSTANCE.name + '"!', False)
       return
 
     ## @var window_size
@@ -181,13 +181,15 @@ class View(avango.script.Script):
       WINDOW.WarpMatrixGreenLeft.value   = WARPMATRICES[4]
       WINDOW.WarpMatrixBlueLeft.value    = WARPMATRICES[5]
 
-  ##
+  ## Creates a PortalPreView instance for the portal copied at LOCAL_PORTAL_NODE.
+  # @param LOCAL_PORTAL_NODE The client portal node to create the PreView for.
   def create_portal_preview(self, LOCAL_PORTAL_NODE):
     _pre_view = PortalPreView()
     _pre_view.my_constructor(LOCAL_PORTAL_NODE, self)
     self.portal_pre_views.append(_pre_view)
 
-  ##
+  ## Removes the PortalPreView instance of LOCAL_PORTAL_NODE.
+  # @param LOCAL_PORTAL_NODE The client portal node to remove the PreView for.
   def remove_portal_preview(self, LOCAL_PORTAL_NODE):
 
     _pre_views_to_remove = []
@@ -209,7 +211,7 @@ class View(avango.script.Script):
       
     _splitted_string = self.sf_pipeline_string.value.split("#")
 
-    print "set to", _splitted_string
+    print_message("w" + str(self.workspace_id) + "_dg" + str(self.display_group_id) + "_u" + str(self.user_id) + ": Set pipeline values to " + str(_splitted_string))
 
     # Note: Calling avango.gua.create_texture during runtime causes the application
     # to crash. All textures have to be preloaded, for example in ClientPipelineValues.py

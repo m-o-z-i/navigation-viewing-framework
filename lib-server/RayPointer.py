@@ -488,12 +488,8 @@ class RayPointer(Tool):
         # retrieve InteractiveObject instance
         if _hit_node.has_field("InteractiveObject"):
 
-          # select interactive object according to hierarchy level
-          if self.hierarchy_selection_level >= 0:
-            self.dragged_interactive_object = _hit_node.InteractiveObject.value.get_higher_hierarchical_object(self.hierarchy_selection_level)
-          else:
-            self.dragged_interactive_object = _hit_node.InteractiveObject.value
-
+          _object = _hit_node.InteractiveObject.value
+          self.dragged_interactive_object = _object
           self.dragging_tool_representation = _hit_tool_repr
           self.dragging_offset = avango.gua.make_inverse_mat(self.dragging_tool_representation.get_world_transform()) * self.dragged_interactive_object.get_world_transform()
 

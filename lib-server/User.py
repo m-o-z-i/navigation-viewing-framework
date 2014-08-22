@@ -54,10 +54,6 @@ class UserRepresentation(avango.script.Script):
     # List of screen nodes for each display of the display group.
     self.screens = []
 
-    ## @var screen_visualizations
-    # List of screen visualization nodes for the display group.
-    self.screen_visualizations = []
-
     ## create user representation nodes ##
 
     _stereo_display_group = True
@@ -121,12 +117,11 @@ class UserRepresentation(avango.script.Script):
     
     self.avatar.append_to_group_names(STRING)
 
-  ## Adds a screen visualization for a display instance to the view transformation node.
+  ## Adds a screen visualization for a display instance to the avatar.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen visualization from.
   def add_screen_visualization_for(self, DISPLAY_INSTANCE):
-    _screen_visualization = DISPLAY_INSTANCE.create_screen_visualization(DISPLAY_INSTANCE.name + "_vis")
-    self.view_transform_node.Children.value.append(_screen_visualization)
-    self.screen_visualizations.append(_screen_visualization)
+
+    self.avatar.add_screen_visualization_for(DISPLAY_INSTANCE)
 
   ## Appends a screen node for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen node from.
@@ -198,10 +193,9 @@ class UserRepresentation(avango.script.Script):
          ": Switch navigation to " + str(ID) + " (no input device)")
 
       # trigger avatar and screen geometry visibilities
-      self.avatar.set_material('data/materials/' + _new_navigation.trace_material + ".gmd")
+      self.avatar.set_material('data/materials/' + _new_navigation.trace_material + ".gmd"
+                             , 'data/materials/' + _new_navigation.trace_material + "Shadeless.gmd")
 
-      for _screen_vis in self.screen_visualizations:
-        _screen_vis.Material.value = 'data/materials/' + _new_navigation.trace_material + "Shadeless.gmd"
 
     else:
       print_error("Error. Navigation ID does not exist.", False)
@@ -386,15 +380,11 @@ class User(RegulatableVisibility):
 
     # apply the obtained group names to the user representation
     if len(_user_visible_for) == 0:
-      _user_repr_at_display_group.avatar.set_group_names(["do_not_display_group"])
 
-      for _screen_vis in _user_repr_at_display_group.screen_visualizations:
-        _screen_vis.GroupNames.value = ["do_not_display_group"]
+      # prevent wildcard from rendering the avatar
+      _user_repr_at_display_group.set_avatar_group_names(["do_not_display_group"])
 
     else:
 
       for _string in _user_visible_for:
-        _user_repr_at_display_group.avatar.set_group_names(_user_visible_for)
-
-        for _screen_vis in _user_repr_at_display_group.screen_visualizations:
-          _screen_vis.GroupNames.value = _user_visible_for
+        _user_repr_at_display_group.set_avatar_group_names(_user_visible_for)

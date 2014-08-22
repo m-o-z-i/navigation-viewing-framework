@@ -53,8 +53,19 @@ class Avatar(avango.script.Script):
                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.USER_REPRESENTATION.head.Children.value.append(self.body_geometry)
 
+    ##
+    #
+    self.screen_visualizations = []
+
     # set evaluation policy
     self.always_evaluate(True)
+
+  ## Adds a screen visualization for a display instance to the view transformation node.
+  # @param DISPLAY_INSTANCE The Display instance to retrieve the screen visualization from.
+  def add_screen_visualization_for(self, DISPLAY_INSTANCE):
+    _screen_visualization = DISPLAY_INSTANCE.create_screen_visualization(DISPLAY_INSTANCE.name + "_vis")
+    self.USER_REPRESENTATION.view_transform_node.Children.value.append(_screen_visualization)
+    self.screen_visualizations.append(_screen_visualization)
 
 
   ## Sets the GroupNames field on all avatar parts to a list of strings.
@@ -64,6 +75,9 @@ class Avatar(avango.script.Script):
     self.head_geometry.GroupNames.value = LIST_OF_STRINGS
     self.body_geometry.GroupNames.value = LIST_OF_STRINGS
 
+    for _screen_vis in self.screen_visualizations:
+      _screen_vis.GroupNames.value = LIST_OF_STRINGS
+
 
   ## Appends a string to the GroupNames field of all avatar parts.
   # @param STRING The string to be appended to the GroupNames field.
@@ -72,12 +86,18 @@ class Avatar(avango.script.Script):
     self.head_geometry.GroupNames.value.append(STRING)
     self.body_geometry.GroupNames.value.append(STRING)
 
+    for _screen_vis in self.screen_visualizations:
+      _screen_vis.GroupNames.value.append(STRING)
+
   ##
   #
-  def set_material(self, MATERIAL_STRING):
+  def set_material(self, JOSEPH_MATERIAL, SCREEN_MATERIAL):
 
-    self.head_geometry.Material.value = MATERIAL_STRING
-    self.body_geometry.Material.value = MATERIAL_STRING
+    self.head_geometry.Material.value = JOSEPH_MATERIAL
+    self.body_geometry.Material.value = JOSEPH_MATERIAL
+
+    for _screen_vis in self.screen_visualizations:
+      _screen_vis.Material.value = SCREEN_MATERIAL
 
   ##
   def evaluate(self):

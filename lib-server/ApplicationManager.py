@@ -36,6 +36,10 @@ class ApplicationManager(avango.script.Script):
   # List of all UserRepresentation instances active in the setup.
   all_user_representations = []
 
+  ## @var all_workspaces
+  # List of all Workspace instances active in the setup.
+  all_workspaces = []
+
   def __init__(self):
     self.super(ApplicationManager).__init__()
 
@@ -102,6 +106,7 @@ class ApplicationManager(avango.script.Script):
     ## @var workspaces
     # List of all workspace instances loaded from workspace configuration file.
     self.workspaces = workspaces
+    ApplicationManager.all_workspaces = workspaces
 
     ## @var requestable_navigations
     # Navigation instances which are switchable to by a button press on the device.

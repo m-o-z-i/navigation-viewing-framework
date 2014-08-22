@@ -11,6 +11,7 @@ from avango.script import field_has_changed
 import avango.daemon
 
 # import framework libraries
+from ApplicationManager import *
 import Utilities
 from Scene import *
 from ConsoleIO import *
@@ -351,22 +352,18 @@ class SceneManager(avango.script.Script):
       SceneManager.current_near_clip = self.active_scene.near_clip
       SceneManager.current_far_clip = self.active_scene.far_clip
 
-      # overwrite first Navigation's starting matrix if described in scene.
-      #if self.active_scene.starting_matrix != None and len(self.navigation_list) > 0:
-      #
-      #  print_warning("Overwriting the platforms' starting matrices by the one given in the scene description.")
-      #
-      #  for _navigation in self.navigation_list:
-      #    _navigation.start_matrix = self.active_scene.starting_matrix
-      #    _navigation.reset()
+      # reset all navigations to starting position
+      for _workspace in ApplicationManager.all_workspaces:
+        for _display_group in _workspace.display_groups:
+          for _nav in _display_group.navigations:
 
-      #if self.active_scene.starting_scale != None and len(self.navigation_list) > 0:
-      #
-      #  print_warning("Overwriting the platforms' starting scale factors by the one given in the scene description.")
-      #
-      #  for _navigation in self.navigation_list:
-      #    _navigation.start_scale = self.active_scene.starting_scale
-      #    _navigation.reset()
+            if self.active_scene.starting_matrix != None:
+              _nav.start_matrix = self.active_scene.starting_matrix
+              _nav.reset()
+
+            if self.active_scene.starting_scale != None:
+              _nav.start_scale = self.active_scene.starting_scale
+              _nav.reset()
   
       print "Switching to Scene: " + self.active_scene.name
   

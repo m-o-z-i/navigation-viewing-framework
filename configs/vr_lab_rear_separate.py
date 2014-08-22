@@ -18,6 +18,14 @@ vr_lab_rear = Workspace('VR-Lab-Rear', avango.gua.make_trans_mat(0.0, 0.043, 0.0
 workspaces = [vr_lab_rear]
 
 ## Create Navigation instances ##
+trace_visibility_list_wall_nav = {  "wall"  : False
+                                  , "table" : True 
+                                 }
+
+trace_visibility_list_table_nav = {  "wall"  : False
+                                   , "table" : False 
+                                  }
+
 spheron_navigation = SteeringNavigation()
 spheron_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 15) * \
                                                      avango.gua.make_rot_mat(0, 0, 1, 0)
@@ -26,8 +34,8 @@ spheron_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0
                                  , INPUT_DEVICE_NAME = 'device-new-spheron'
                                  , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 1.75, 1.6)
                                  , GROUND_FOLLOWING_SETTINGS = [True, 0.75]
-                                 , MOVEMENT_TRACES = False
                                  , INVERT = False
+                                 , TRACE_VISIBILITY_LIST = trace_visibility_list_wall_nav
                                  , DEVICE_TRACKING_NAME = 'tracking-new-spheron')
 
 spacemouse_navigation = SteeringNavigation()
@@ -38,8 +46,8 @@ spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_ma
                                     , INPUT_DEVICE_NAME = 'device-spacemouse'
                                     , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
                                     , GROUND_FOLLOWING_SETTINGS = [False, 0.75]
-                                    , MOVEMENT_TRACES = False
                                     , INVERT = True
+                                    , TRACE_VISIBILITY_LIST = trace_visibility_list_table_nav
                                     , DEVICE_TRACKING_NAME = None)
 
 
@@ -50,8 +58,8 @@ xbox_navigation.my_constructor(       STARTING_MATRIX = avango.gua.make_trans_ma
                                     , INPUT_DEVICE_NAME = 'device-xbox-1'
                                     , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 1.2, 0.6)
                                     , GROUND_FOLLOWING_SETTINGS = [True, 0.75]
-                                    , MOVEMENT_TRACES = False
                                     , INVERT = False
+                                    , TRACE_VISIBILITY_LIST = trace_visibility_list_wall_nav
                                     , DEVICE_TRACKING_NAME = 'tracking-xbox-1'
                                     , IS_REQUESTABLE = True
                                     , REQUEST_BUTTON_NUM = 3)

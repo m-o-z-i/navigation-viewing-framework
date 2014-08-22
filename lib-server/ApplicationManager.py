@@ -177,14 +177,17 @@ class ApplicationManager(avango.script.Script):
         for _user_representation in _user.user_representations:
           _user_representation.connect_navigation_of_display_group(0)
 
-    # initialize avatar group names
+    # initialize group names
     for _workspace in self.workspaces:
       for _display_group in _workspace.display_groups:
+
+        # trigger correct group names of navigation trace
+        for _nav in _display_group.navigations:
+          _nav.handle_correct_visibility_groups()
+
+        # trigger correct groups for all users at display
         for _user in _workspace.users:
           _user.handle_correct_visibility_groups_for(_display_group.id)
-
-    # set avatar groups properly on all user representations
-    #self.init_avatar_group_names()
 
     # server control monitor setup #
 

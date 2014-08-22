@@ -14,7 +14,6 @@ from GroundFollowing  import *
 from InputMapping     import InputMapping
 from Navigation       import *
 import Utilities
-import TraceLines
 from scene_config import scenegraphs
 
 # import python libraries
@@ -41,8 +40,8 @@ class SteeringNavigation(Navigation):
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param GROUND_FOLLOWING_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
   # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
-  # @param MOVEMENT_TRACES Boolean indicating if the device should leave traces behind.
   # @param INVERT Boolean indicating if the input values should be inverted.
+  # @param TRACE_VISIBILITY_LIST A list containing visibility rules according to the DisplayGroups' visibility tags. 
   # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
   # @param IS_REQUESTABLE Boolean saying if this Navigation is a requestable one. Requestable navigations can be switched to using a special button on the device.
   # @param REQUEST_BUTTON_NUM Button number of the device's sensor which should be used for the request mechanism.
@@ -54,12 +53,14 @@ class SteeringNavigation(Navigation):
     , INPUT_DEVICE_NAME
     , NO_TRACKING_MAT
     , GROUND_FOLLOWING_SETTINGS
-    , MOVEMENT_TRACES
     , INVERT
+    , TRACE_VISIBILITY_LIST
     , DEVICE_TRACKING_NAME = None
     , IS_REQUESTABLE = False
     , REQUEST_BUTTON_NUM = None
     ):
+
+    self.list_constructor(TRACE_VISIBILITY_LIST)
 
     ## @var input_device_type
     # String indicating the type of input device to be created, e.g. "XBoxController" or "OldSpheron"
@@ -139,14 +140,6 @@ class SteeringNavigation(Navigation):
     # Instance of TimeSensor to handle the duration of animations.
     self.timer = avango.nodes.TimeSensor()
 
-    ## @var movement_traces
-    # Boolean indicating if the movement traces are currently visualized by line segments.
-    self.movement_traces = MOVEMENT_TRACES
-
-    ## @var movement_traces_activated
-    # Boolean indicating if the movement traces are generally activated.
-    self.movement_traces_activated = self.movement_traces
-
     ## @var is_requestable
     # Boolean saying if this Navigation is a requestable one. Requestable navigations
     # can be switched to using a special button on the device.
@@ -164,8 +157,7 @@ class SteeringNavigation(Navigation):
     self.inputmapping.set_abs_mat(self.start_matrix)
     self.inputmapping.set_scale(self.start_scale)
 
-    if self.movement_traces_activated:
-      self.trace.clear(self.start_matrix)
+    self.trace.clear(self.start_matrix)
 
   ## Activates 3-DOF (realistic) navigation mode.
   def activate_realistic_mode(self):
@@ -250,15 +242,8 @@ class SteeringNavigation(Navigation):
     if self.in_dofchange_animation:
       self.animate_dofchange()
 
-    if self.movement_traces and self.trace == None:
-      # create trace and add 'Shadeless' to material string to have a nicer line apperance
-      ## @var trace
-      # Instance of Trace class to handle trace drawing of this navigation's movements.
-      _device_pos = self.device.sf_station_mat.value.get_translate()
-      self.trace = TraceLines.Trace(str(self), 500, 50.0, self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z), self.trace_material + 'Shadeless')    
-    
     # draw the traces if enabled
-    elif self.movement_traces and len(self.active_user_representations) > 0:
+    if len(self.active_user_representations) > 0:
       _device_pos = self.device.sf_station_mat.value.get_translate()
       self.trace.update(self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z))
 

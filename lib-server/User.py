@@ -13,7 +13,7 @@ from avango.script import field_has_changed
 from Avatar import *
 from Intersection import *
 from TrackingReader import *
-from RegulatableVisibility import *
+from VisibilityHandler import *
 from ConsoleIO import *
 import Utilities
 
@@ -204,7 +204,7 @@ class UserRepresentation(avango.script.Script):
 
 ## Logical representation of a user within a Workspace. Stores the relevant parameters
 # and cares for receiving the headtracking input.
-class User(RegulatableVisibility):
+class User(VisibilityHandler2D):
 
   ## Default constructor.
   def __init__(self):

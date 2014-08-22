@@ -21,7 +21,10 @@ class StaticNavigation(Navigation):
   ## Custom constructor.
   # @param STATIC_ABS_MAT Static value to be set for sf_abs_mat.
   # @param STATIC_SCALE Static value to be set for sf_scale.
-  def my_constructor(self, STATIC_ABS_MAT, STATIC_SCALE):
+  # @param TRACE_VISIBILITY_LIST A list containing visibility rules according to the DisplayGroups' visibility tags. 
+  def my_constructor(self, STATIC_ABS_MAT, STATIC_SCALE, TRACE_VISIBILITY_LIST):
+
+    self.list_constructor(TRACE_VISIBILITY_LIST)
 
     self.sf_abs_mat.value = STATIC_ABS_MAT
     self.sf_scale.value = STATIC_SCALE

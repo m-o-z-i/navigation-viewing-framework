@@ -12,7 +12,7 @@ import avango.daemon
 
 # import framework libraries
 from ApplicationManager import *
-from RegulatableVisibility import *
+from VisibilityHandler import *
 from TrackingReader import TrackingTargetReader
 import Utilities
 
@@ -97,7 +97,7 @@ class ToolRepresentation(avango.script.Script):
 
 ## Logical representation of a Tool in a Workspace.
 # Base class. Not to be instantiated.
-class Tool(RegulatableVisibility):
+class Tool(VisibilityHandler2D):
 
   ## Default constructor.
   def __init__(self):

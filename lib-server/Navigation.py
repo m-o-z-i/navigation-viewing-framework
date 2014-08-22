@@ -8,8 +8,13 @@ import avango
 import avango.gua
 from avango.script import field_has_changed
 
+# import framework libraries
+from ApplicationManager import *
+from VisibilityHandler import *
+from TraceLines import *
+
 ## Base class. Not to be instantiated.
-class Navigation(avango.script.Script):
+class Navigation(VisibilityHandler1D):
 
   # output field
   ## @var sf_nav_mat
@@ -67,10 +72,6 @@ class Navigation(avango.script.Script):
     # List of UserRepresentation instances which are currently connecting with this navigations matrix.
     self.active_user_representations = []
 
-    ## @var avatar_type
-    # Avatar type of this navigation.
-    self.avatar_type = "None"
-
     ## @var is_requestable
     # Boolean saying if this Navigation is a requestable one. Requestable navigations
     # can be switched to using a special button on the device.
@@ -82,6 +83,17 @@ class Navigation(avango.script.Script):
     self.trace_material = Navigation.trace_materials[Navigation.number_of_instances]
     Navigation.number_of_instances += 1
     Navigation.number_of_instances = Navigation.number_of_instances % len(Navigation.trace_materials)
+
+    # create trace and add 'Shadeless' to material string to have a nicer line apperance
+    try:
+      _device_pos = self.device.sf_station_mat.value.get_translate()
+    except:
+      _device_pos = avango.gua.Vec3(0.0, 0.0, 0.0)
+
+    ## @var trace
+    # Instance of Trace class to handle trace drawing of this navigation's movements.  
+    self.trace = Trace(str(self), 500, 50.0, self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z), self.trace_material + 'Shadeless')
+
 
   ## Adds a UserRepresentation to this navigation.
   # @param USER_REPRESENTATION The UserRepresentation instance to be added.
@@ -112,6 +124,24 @@ class Navigation(avango.script.Script):
           _device_pos = avango.gua.make_trans_mat(0,0,0)
 
         self.trace.clear(self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z))
+
+  ## Triggers the correct GroupNames for the different DisplayGroups.
+  def handle_correct_visibility_groups(self):
+
+    _trace_visible_for = []
+
+    for _user_repr in ApplicationManager.all_user_representations:
+
+      if self.visibility_list[_user_repr.DISPLAY_GROUP.visibility_tag]:
+        _trace_visible_for.append(_user_repr.view_transform_node.Name.value)
+
+    if len(_trace_visible_for) == 0:
+      self.trace.append_to_group_names("do_not_display_group")
+    
+    else:  
+      for _string in _trace_visible_for:
+        self.trace.append_to_group_names(_string)
+
 
   ## Evaluated when value changes.
   @field_has_changed(sf_reset_trigger)

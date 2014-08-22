@@ -54,7 +54,6 @@ class Trace:
       _line = _loader.create_geometry_from_file('line_geometry_' + str(i), 'data/objects/cube.obj', 'data/materials/' + TRACE_MATERIAL + '.gmd', avango.gua.LoaderFlags.DEFAULTS)
       _line.Transform.value = avango.gua.make_scale_mat(0, 0, 0)
       _line.ShadowMode.value = avango.gua.ShadowMode.OFF
-      _line.GroupNames.value = ["main_scene"]
       scenegraphs[0]["/net"].distribute_object(_line)
       self.lines.append(_line)
 
@@ -68,6 +67,12 @@ class Trace:
     ## @var crrnt_point
     # The end point of the last drawn line segment that is used as start point for the next line segment. It is initialized with the translation of the INITIAL_MATRIX parameter.
     self.crrnt_point = INITIAL_MAT.get_translate()
+
+  ## Appends a string to the GroupNames field of all line segments.
+  def append_to_group_names(self, STRING):
+
+    for _line in self.lines:
+      _line.GroupNames.value.append(STRING)
 
 
   ## Calculates the transformation matrix of a line segment node in the scene graph.

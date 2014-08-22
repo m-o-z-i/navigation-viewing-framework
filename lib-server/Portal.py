@@ -61,7 +61,7 @@ class PortalManager(avango.script.Script):
                     "3D",
                     "PERSPECTIVE",
                     "False",
-                    "data/materials/ShadelessBlack.gmd")
+                    "data/materials/White.gmd")
     '''
     ''' Vianden Mirror
     self.add_portal(avango.gua.make_trans_mat(118.730, -3.571, -40.000) * avango.gua.make_rot_mat(225, 0, 1, 0),
@@ -72,7 +72,7 @@ class PortalManager(avango.script.Script):
                     "3D",
                     "PERSPECTIVE",
                     "False",
-                    "data/materials/ShadelessBlack.gmd")
+                    "data/materials/White.gmd")
     '''
 
     '''
@@ -84,7 +84,7 @@ class PortalManager(avango.script.Script):
                     "3D",
                     "PERSPECTIVE",
                     "False",
-                    "data/materials/ShadelessBlue.gmd")
+                    "data/materials/White.gmd")
     '''
     
     # tower portal
@@ -184,13 +184,13 @@ class PortalManager(avango.script.Script):
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   def add_bidirectional_portal(self, FIRST_MATRIX, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX):
-    self.add_portal(FIRST_MATRIX, 1.0, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessBlue.gmd", True)
+    self.add_portal(FIRST_MATRIX, 1.0, SECOND_MATRIX, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/White.gmd", True)
 
     # mirror matrices for opposite portal
     _mirrored_scene_matrix = SECOND_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
     _mirrored_portal_matrix = FIRST_MATRIX * avango.gua.make_rot_mat(180, 0, 1, 0)
 
-    self.add_portal(_mirrored_scene_matrix, 1.0, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/ShadelessOrange.gmd", True)
+    self.add_portal(_mirrored_scene_matrix, 1.0, _mirrored_portal_matrix, WIDTH, HEIGHT, VIEWING_MODE, CAMERA_MODE, NEGATIVE_PARALLAX, "data/materials/White.gmd", True)
 
   ## Gets an active Portal instance by its ID. Returns None when no matching instance was found.
   # @param The Portal ID to be searched for.

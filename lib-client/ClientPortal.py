@@ -498,11 +498,13 @@ class PortalPreView(avango.script.Script):
     
     _head_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/w" + str(self.VIEW.workspace_id) + "_dg" + \
                       str(self.VIEW.display_group_id) + "_u" + str(self.VIEW.user_id) + "/head"])
+    _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
+                            _head_world_mat
 
     # update view_node in 3D portal mode
     if self.mf_portal_modes.value[0] == "0-3D":
-      self.view_node.Transform.value = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
-                                       _head_world_mat
+      self.view_node.Transform.value = _view_in_portal_space
+
       #if self.VIEW.user_id == 0:
       #  print self.view_node.Transform.value
 
@@ -518,10 +520,7 @@ class PortalPreView(avango.script.Script):
       self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
 
     # determine view in portal space and decide if renering is necessary
-    _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.WorldTransform.value) * \
-                            _head_world_mat
-
-    _view_vec = avango.gua.make_rot_mat(_head_world_mat.get_rotate()) * avango.gua.Vec3(0, 0, -1)
+    _view_vec = avango.gua.make_rot_mat(_head_world_mat.get_rotate_scale_corrected()) * avango.gua.Vec3(0, 0, -1)
     _view_vec = avango.gua.Vec3(_view_vec.x, _view_vec.y, _view_vec.z)
     _portal_vec = avango.gua.make_rot_mat(self.portal_matrix_node.Transform.value.get_rotate()) * avango.gua.Vec3(0, 0, -1)
     _portal_vec = avango.gua.Vec3(_portal_vec.x, _portal_vec.y, _portal_vec.z)

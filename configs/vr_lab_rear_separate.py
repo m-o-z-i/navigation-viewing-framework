@@ -39,7 +39,7 @@ spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_ma
                                     , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
                                     , GROUND_FOLLOWING_SETTINGS = [False, 0.75]
                                     , MOVEMENT_TRACES = False
-                                    , INVERT = False
+                                    , INVERT = True
                                     , DEVICE_TRACKING_NAME = None)
 
 

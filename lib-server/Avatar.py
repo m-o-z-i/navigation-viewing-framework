@@ -16,24 +16,24 @@ import Utilities
 import math
 
 
-##
+## Representation of an Avatar belonging to a UserRepresentation.
+# Contains of several parts of geometry.
 class Avatar(avango.script.Script):
 
-  ##
+  ## Default constructor.
   def __init__(self):
     self.super(Avatar).__init__()
 
-
+  ## Custom constructor.
+  # @param USER_REPRESENTATION The UserRepresentation instance to create the avatar for.
   def my_constructor(self, USER_REPRESENTATION):
     
-    ##
-    #
+    ## @var USER_REPRESENTATION
+    # The UserRepresentation instance to which this Avatar belongs to.
     self.USER_REPRESENTATION = USER_REPRESENTATION
 
-    
     _loader = avango.gua.nodes.TriMeshLoader()
     
-    # create avatar head
     ## @var head_geometry
     # Scenegraph node representing the geometry and transformation of the basic avatar's head.
     self.head_geometry = _loader.create_geometry_from_file('head_avatar',
@@ -44,8 +44,7 @@ class Avatar(avango.script.Script):
     self.head_geometry.Transform.value = avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_scale_mat(0.4, 0.4, 0.4)
     self.USER_REPRESENTATION.head.Children.value.append(self.head_geometry)
 
-    # create avatar body
-    ## @var body_avatar
+    ## @var body_geometry
     # Scenegraph node representing the geometry and transformation of the basic avatar's body.
     self.body_geometry = _loader.create_geometry_from_file('body_avatar',
                                                            'data/objects/Joseph/JosephBody.obj',
@@ -53,8 +52,8 @@ class Avatar(avango.script.Script):
                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.USER_REPRESENTATION.head.Children.value.append(self.body_geometry)
 
-    ##
-    #
+    ## @var screen_visualizations
+    # Geometry nodes representing all the screens at the DisplayGroup the UserRepresentation belongs to.
     self.screen_visualizations = []
 
     # set evaluation policy
@@ -89,8 +88,9 @@ class Avatar(avango.script.Script):
     for _screen_vis in self.screen_visualizations:
       _screen_vis.GroupNames.value.append(STRING)
 
-  ##
-  #
+  ## Sets a material for all avatar parts.
+  # @param JOSEPH_MATERIAL Material string to be applied to head_geometry and body_geometry.
+  # @param SCREEN_MATERIAL Material string to be applied to all screen visualizations.
   def set_material(self, JOSEPH_MATERIAL, SCREEN_MATERIAL):
 
     self.head_geometry.Material.value = JOSEPH_MATERIAL
@@ -99,7 +99,7 @@ class Avatar(avango.script.Script):
     for _screen_vis in self.screen_visualizations:
       _screen_vis.Material.value = SCREEN_MATERIAL
 
-  ##
+  ## Evaluated every frame.
   def evaluate(self):
 
     # update avatar body matrix if present at this view transform node

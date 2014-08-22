@@ -90,8 +90,8 @@ class UserRepresentation(avango.script.Script):
     # Navigation ID within the display group that is currently used.
     self.connected_navigation_id = -1
 
-    ##
-    #
+    ## @var avatar
+    # Avatar instance belonging to this UserRepresentation.
     self.avatar = Avatar()
     self.avatar.my_constructor(self)
 
@@ -276,7 +276,7 @@ class User(RegulatableVisibility):
 
     self.always_evaluate(True)
 
-  ##
+  ## Evaluated every frame.
   def evaluate(self):
 
     _track_vec = self.headtracking_reader.sf_abs_vec.value

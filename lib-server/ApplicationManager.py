@@ -47,9 +47,6 @@ class ApplicationManager(avango.script.Script):
     _workspace_config_file_name = WORKSPACE_CONFIG.replace(".py", "")
     _workspace_config_file_name = _workspace_config_file_name.replace("/", ".")
     exec 'from ' + _workspace_config_file_name + ' import workspaces'
-
-    avango.gua.load_shading_models_from("data/materials")
-    avango.gua.load_materials_from("data/materials")
     
     # parameters
     ## @var background_texture

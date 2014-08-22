@@ -40,6 +40,10 @@ def start():
   else:
     start_clients = False
 
+  # preload materials and shading models
+  avango.gua.load_shading_models_from("data/materials")
+  avango.gua.load_materials_from("data/materials")
+
   # initialize application manager
   application_manager = ApplicationManager()
   application_manager.my_constructor(WORKSPACE_CONFIG = workspace_config, START_CLIENTS = start_clients)

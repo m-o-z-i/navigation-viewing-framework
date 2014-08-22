@@ -53,6 +53,10 @@ def start():
   print "This client is running on", hostname, "and listens to server", server_ip
   print "It is responsible for workspace", workspace_id, ", display group", display_group_id, "and screen", screen_id
 
+  # preload materials and shading models
+  avango.gua.load_shading_models_from("data/materials")
+  avango.gua.load_materials_from("data/materials")
+  
   # create distribution node
   nettrans = avango.gua.nodes.NetTransform(
                 Name = "net",

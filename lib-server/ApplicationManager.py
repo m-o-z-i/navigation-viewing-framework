@@ -204,9 +204,15 @@ class ApplicationManager(avango.script.Script):
           # create user representations
           for _physical_user_repr in ApplicationManager.all_user_representations:
 
+            _complex = True
+            if _display.viewing_mode == "2D":
+              _complex = False
+
             _virtual_user_repr = _physical_user_repr.USER.create_user_representation_for(_display_group, _display.scene_matrix_node,
               'self.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value'
-            , 'head_' + _physical_user_repr.view_transform_node.Name.value)
+            , 'head_' + _physical_user_repr.view_transform_node.Name.value
+            , _complex)
+
             _virtual_user_repr.add_dependent_node(_physical_user_repr.head)
             _virtual_user_repr.add_existing_screen_node(_display.portal_screen_node)
             _virtual_user_representations.append(_virtual_user_repr)

@@ -94,6 +94,8 @@ class Portal(Display):
     # Boolean saying if teleportation for is portal is enabled.
     self.transitable = TRANSITABLE
 
+    print "PRESENT"
+
   ## Switches viewing_mode to the other state.
   def switch_viewing_mode(self):
     if self.viewing_mode == "2D":
@@ -215,7 +217,13 @@ class Portal(Display):
 
   ## Removes this portal from the portal group and destroys all the scenegraph nodes.
   def deactivate(self):
-    
-    self.PORTAL_MANAGER.portal_group_node.Children.value.remove(self.portal_node)
+
+    Portal.portal_group_node.Children.value.remove(self.portal_node)
+
+    for _user_repr in ApplicationManager.all_user_representations:
+      if _user_repr.DISPLAY_GROUP.displays[0] == self:
+        ApplicationManager.all_user_representations.remove(_user_repr)
+        del _user_repr
+
     self.delete_downwards_from(self.portal_node)
     del self.portal_node

@@ -146,12 +146,6 @@ class ClientPortal:
     self.portal_node = avango.gua.nodes.TransformNode(Name = SERVER_PORTAL_NODE.Name.value)
     LOCAL_PORTAL_GROUP_NODE.Children.value.append(self.portal_node)
 
-    ## @var settings_node
-    # Node whose group names store information about the portal settings, such as viewing mode, etc.
-    self.settings_node = avango.gua.nodes.TransformNode(Name = "settings_node")
-    self.settings_node.GroupNames.connect_from(SERVER_PORTAL_NODE.Children.value[0].GroupNames)
-    self.portal_node.Children.value.append(self.settings_node)
-
     ## @var portal_matrix_node
     # Scenegraph node representing the location where the portal display is located (entry).
     self.portal_matrix_node = avango.gua.nodes.TransformNode(Name = "portal_matrix")
@@ -162,12 +156,10 @@ class ClientPortal:
   ## Disconnects all scenegraph node fields and deletes the nodes except portal_node.
   def deactivate(self):
     # disconnect fields
-    self.settings_node.GroupNames.disconnect()
     self.portal_matrix_node.Transform.disconnect()
 
     # object destruction
     del self.portal_matrix_node
-    del self.settings_node
 
   ## Checks if a given server portal node matches with the server portal node of this instance.
   # @param SERVER_PORTAL_NODE The server portal node to be checked for.
@@ -238,6 +230,10 @@ class PortalPreView(avango.script.Script):
     ##
     #
     self.portal_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/portal_matrix/"]
+
+    ##
+    #
+    self.client_portal_matrix_node = self.PORTAL_NODE.Children.value[0]
 
     ##
     #
@@ -330,7 +326,7 @@ class PortalPreView(avango.script.Script):
 
     #
     #self.textured_quad.GroupNames.value = ["main_scene"]
-    self.portal_matrix_node.Children.value.append(self.textured_quad)
+    self.client_portal_matrix_node.Children.value.append(self.textured_quad)
 
 
     ## @var back_geometry
@@ -338,22 +334,22 @@ class PortalPreView(avango.script.Script):
     #self.back_geometry = _loader.create_geometry_from_file("back_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/plane.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS)
     #self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
     #self.back_geometry.GroupNames.value = ["do_not_display_groupasdf", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-    #self.portal_matrix_node.Children.value.append(self.back_geometry)
+    #self.client_portal_matrix_node.Children.value.append(self.back_geometry)
 
     ## @var portal_border
     # Geometry node containing the portal's frame.
     self.portal_border = _loader.create_geometry_from_file("border_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/screen.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.portal_border.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.portal_border.GroupNames.value = ["do_not_display_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-    #self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
-    self.portal_matrix_node.Children.value.append(self.portal_border)
+    self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
+    self.client_portal_matrix_node.Children.value.append(self.portal_border)
 
     ## @var frame_trigger
     # Triggers framewise evaluation of frame_callback method.
     self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
 
     # init field connections
-    self.mf_portal_modes.connect_from(PORTAL_NODE.Children.value[0].GroupNames)
+    self.mf_portal_modes.connect_from(VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/settings"].GroupNames)
     self.sf_screen_width.connect_from(self.screen_node.Width)
     self.sf_screen_height.connect_from(self.screen_node.Height)
 
@@ -378,7 +374,7 @@ class PortalPreView(avango.script.Script):
     self.textured_quad.Width.value = self.screen_node.Width.value
     self.textured_quad.Height.value = self.screen_node.Height.value
     #self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.0001) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
-    #self.portal_border.Transform.value = self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
+    self.portal_border.Transform.value = self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
 
   ## Removes this portal from the local portal group and destroys all the scenegraph nodes.
   def deactivate(self):
@@ -416,21 +412,19 @@ class PortalPreView(avango.script.Script):
     except:
       return
 
-    print "portal modes", self.mf_portal_modes.value[0], self.mf_portal_modes.value[1], self.mf_portal_modes.value[2], self.mf_portal_modes.value[3], self.mf_portal_modes.value[4]
-
     # check for visibility
     if self.mf_portal_modes.value[4] == "4-False":
       self.frame_trigger.Active.value = False
       self.pipeline.Enabled.value = False
-      #self.textured_quad.GroupNames.value.append("do_not_display_group")
-      #self.portal_border.GroupNames.value.append("do_not_display_group")
+      self.textured_quad.GroupNames.value.append("do_not_display_group")
+      self.portal_border.GroupNames.value.append("do_not_display_group")
       #self.back_geometry.GroupNames.value.append("do_not_display_group")
       return
     else:
       self.frame_trigger.Active.value = True
       self.pipeline.Enabled.value = True
-      #self.textured_quad.GroupNames.value.remove("do_not_display_group")
-      #self.portal_border.GroupNames.value.remove("do_not_display_group")
+      self.textured_quad.GroupNames.value.remove("do_not_display_group")
+      self.portal_border.GroupNames.value.remove("do_not_display_group")
 
     # check for camera mode
     if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
@@ -452,14 +446,12 @@ class PortalPreView(avango.script.Script):
       if _material != "None":
         self.portal_border.Material.value = _material
         #self.back_geometry.Material.value = _material
-        #self.portal_border.GroupNames.value.remove("do_not_display_group")
+        self.portal_border.GroupNames.value.remove("do_not_display_group")
         #self.back_geometry.GroupNames.value.remove("do_not_display_group")
       else:
-        pass
-        #self.portal_border.GroupNames.value.append("do_not_display_group")
+        
+        self.portal_border.GroupNames.value.append("do_not_display_group")
         #self.back_geometry.GroupNames.value.append("do_not_display_group")
-
-    print self.frame_trigger.Active.value
 
 
   ## Evaluated every frame when active.

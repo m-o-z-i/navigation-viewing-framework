@@ -33,7 +33,8 @@ class UserRepresentation(avango.script.Script):
   # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
   #
-  def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = 'head'):
+  #
+  def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = 'head', COMPLEX_SETUP = True):
 
     ## @var USER
     # Reference to the user to be represented.
@@ -59,20 +60,22 @@ class UserRepresentation(avango.script.Script):
     # A string command to be evaluated every frame.
     self.transformation_policy = TRANSFORMATION_POLICY
 
+    ##
+    #
+    self.execute_transformation_policy = True
+
     ## create user representation nodes ##
 
-    _stereo_display_group = True
+    ##
+    #
+    self.stereo_display_group = True
 
     for _display in DISPLAY_GROUP.displays:
 
       if _display.stereo == False:
-        _stereo_display_group = False
+        self.stereo_display_group = False
         break
 
-    if _stereo_display_group:
-      _eye_distance = self.USER.eye_distance
-    else:
-      _eye_distance = 0.0
 
     ## @var head
     # Head node of the user.
@@ -82,14 +85,17 @@ class UserRepresentation(avango.script.Script):
     ## @var left_eye
     # Left eye node of the user.
     self.left_eye = avango.gua.nodes.TransformNode(Name = "eyeL")
-    self.left_eye.Transform.value = avango.gua.make_trans_mat(-_eye_distance / 2, 0.0, 0.0)
     self.head.Children.value.append(self.left_eye)
 
     ## @var right_eye
     # Right eye node of the user.
     self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
-    self.right_eye.Transform.value = avango.gua.make_trans_mat(_eye_distance / 2, 0.0, 0.0)
     self.head.Children.value.append(self.right_eye)
+
+    if COMPLEX_SETUP:
+      self.make_complex_viewing_setup()
+    else:
+      self.make_default_viewing_setup()
 
     ## @var connected_navigation_id
     # Navigation ID within the display group that is currently used.
@@ -105,8 +111,35 @@ class UserRepresentation(avango.script.Script):
 
   ## Evaluated every frame.
   def evaluate(self):
-      
-    exec self.transformation_policy
+    
+    if self.execute_transformation_policy:  
+      exec self.transformation_policy
+
+
+  ##
+  #
+  def make_default_viewing_setup(self):
+
+    self.execute_transformation_policy = False
+    self.head.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
+    self.left_eye.Transform.value = avango.gua.make_identity_mat()
+    self.right_eye.Transform.value = avango.gua.make_identity_mat()
+
+  ##
+  #
+  def make_complex_viewing_setup(self):
+
+    if self.stereo_display_group:
+      _eye_distance = self.USER.eye_distance
+    else:
+      _eye_distance = 0.0
+
+    self.execute_transformation_policy = True
+    self.left_eye.Transform.value = avango.gua.make_trans_mat(-_eye_distance / 2, 0.0, 0.0)
+    self.right_eye.Transform.value = avango.gua.make_trans_mat(_eye_distance / 2, 0.0, 0.0)
+
+
+
 
   ## Sets the GroupNames field on all avatar parts to a list of strings.
   # @param LIST_OF_STRINGS A list of group names to be set for the avatar parts.
@@ -317,10 +350,10 @@ class User(VisibilityHandler2D):
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
-  def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = "head"):
+  def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = "head", COMPLEX_SETUP = True):
 
     _user_repr = UserRepresentation()
-    _user_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME)
+    _user_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME, COMPLEX_SETUP)
     self.user_representations.append(_user_repr)
     return _user_repr
 

@@ -51,8 +51,6 @@ def start():
   # initialize scene
   scene_manager = SceneManager()
 
-  # initialize portal manager
-  #portal_manager = PortalManager()
 
   #portal_camera = PortalCamera()
   #portal_camera.my_constructor(0, portal_manager, application_manager.navigation_list[0], "device-portal-camera-32", "tracking-portal-camera-32")
@@ -89,8 +87,6 @@ def start():
   #animation_manager = AnimationManager()
   #animation_manager.my_constructor([ graph["/net/platform_0"]]
   #                               , [ application_manager.navigation_list[0]])
-
-  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(scenegraphs[0]["/net"], scenegraphs[0]["/net"])

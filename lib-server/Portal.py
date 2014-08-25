@@ -24,8 +24,12 @@ import math
 ## A Portal is the display of another location on a virtual display.
 class Portal(Display):
 
+  ## @var num_instances_created
+  # Static intance counter to assign proper IDs to the portals.
   num_instances_created = 0
 
+  ## @var portal_group_node
+  # Scenegraph node on server side to which all portal relevant nodes are appended to.
   portal_group_node = avango.gua.nodes.TransformNode(Name = "portal_group")
 
   ## Custom constructor.
@@ -36,7 +40,7 @@ class Portal(Display):
   # @param CAMERA_MODE Projection mode of the portal camera, can be either "PERSPECTIVE" or "ORTHOGRAPHIC".
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   # @param BORDER_MATERIAL The material string to be used for the portal's border.
-  # @param TRANSITABLE Boolean saying if teleportation for is portal is enabled.
+  # @param TRANSITABLE Boolean saying if teleportation for this portal is enabled.
   def __init__(self
              , PORTAL_MATRIX
              , WIDTH
@@ -44,9 +48,10 @@ class Portal(Display):
              , VIEWING_MODE
              , CAMERA_MODE
              , NEGATIVE_PARALLAX
-             , BORDER_MATRIAL
+             , BORDER_MATERIAL
              , TRANSITABLE):
 
+    # set stereo flag depending on viewing mode
     if VIEWING_MODE == "2D":
       _stereo = False
     else:
@@ -84,7 +89,7 @@ class Portal(Display):
 
     ## @var border_material
     # The material string to be used for the portal's border.
-    self.border_material = BORDER_MATRIAL
+    self.border_material = BORDER_MATERIAL
 
     ## @var visible
     # Boolean string variable indicating if the portal is currently visible.
@@ -202,7 +207,8 @@ class Portal(Display):
     self.scene_matrix_node.Children.value.append(self.portal_screen_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)
 
-
+  ## Deletes all nodes below a given node.
+  # @param NODE The node to start deleting from.
   def delete_downwards_from(self, NODE):
 
     for _child in NODE.Children.value:

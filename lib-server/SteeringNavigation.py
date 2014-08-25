@@ -39,10 +39,9 @@ class SteeringNavigation(Navigation):
   # @param INPUT_DEVICE_NAME Name of the input device sensor as chosen in daemon.
   # @param NO_TRACKING_MAT Matrix which should be applied if no tracking is available.
   # @param GROUND_FOLLOWING_SETTINGS Setting list for the GroundFollowing instance: [activated, ray_start_height]
-  # @param ANIMATE_COUPLING Boolean indicating if an animation should be done when a coupling of navigations is initiated.
   # @param INVERT Boolean indicating if the input values should be inverted.
   # @param TRACE_VISIBILITY_LIST A list containing visibility rules according to the DisplayGroups' visibility tags. 
-  # @param TRACKING_TARGET_NAME Name of the device's tracking target name as chosen in daemon.
+  # @param DEVICE_TRACKING_NAME Name of the device's tracking target name as chosen in daemon.
   # @param IS_REQUESTABLE Boolean saying if this Navigation is a requestable one. Requestable navigations can be switched to using a special button on the device.
   # @param REQUEST_BUTTON_NUM Button number of the device's sensor which should be used for the request mechanism.
   def my_constructor(

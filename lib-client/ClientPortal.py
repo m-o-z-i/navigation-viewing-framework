@@ -34,6 +34,7 @@ class ClientPortalManager(avango.script.Script):
     # List of currently active ClientPortal instances.
     self.portals = []
 
+    # set evaluation policy
     self.always_evaluate(True)
 
   ## Custom constructor.
@@ -186,7 +187,6 @@ class PortalPreView(avango.script.Script):
   # Field containing the GroupNames of the associated portal node. Used for transferring portal mode settings.
   mf_portal_modes = avango.MFString()
 
-
   # Default constructor.
   def __init__(self):
     self.super(PortalPreView).__init__()
@@ -204,8 +204,6 @@ class PortalPreView(avango.script.Script):
     # The View instance to be associated with this instance.
     self.VIEW = VIEW
 
-    ## @var left_eye_node
-    # Scenegraph node representing the left eye's position in the portal's exit space.
     _user_left_eye = VIEW.SCENEGRAPH["/net/w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id) + "/head/eyeL"]
 
     # if no node is present, this view is not occupied, stop pre view creation
@@ -215,28 +213,28 @@ class PortalPreView(avango.script.Script):
     else:
       print_message("Construct PortalPreView for " + PORTAL_NODE.Name.value + " and w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
 
-    ##
-    #
+    ## @var transformed_head_node
+    # view_transform_node of the corresponding UserRepresentation in the portal on server side.
     self.transformed_head_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/head_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
 
-    ##
-    #
+    ## @var left_eye_node
+    # Scenegraph node representing the left eye's position in the portal's exit space.
     self.left_eye_node = self.transformed_head_node.Children.value[0]
 
-    ##
-    #
+    ## @var right_eye_node
+    # Scenegraph node representing the left eye's position in the portal's exit space.
     self.right_eye_node = self.transformed_head_node.Children.value[1]
 
-    ##
-    #
+    ## @var portal_matrix_node
+    # Server portal node containing the portal matrix (entry transformation).
     self.portal_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/portal_matrix/"]
 
-    ##
-    #
+    ## @var client_portal_matrix_node
+    # Local copy of the portal_matrix_node in order to append textures to.
     self.client_portal_matrix_node = self.PORTAL_NODE.Children.value[0]
 
-    ##
-    #
+    ## @var scene_matrix_node
+    # Server portal node containing the scene matrix (exit transformation).
     self.scene_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/"]
 
     ## @var screen_node
@@ -253,7 +251,8 @@ class PortalPreView(avango.script.Script):
     self.camera.LeftEye.value = self.left_eye_node.Path.value
     self.camera.RightEye.value = self.right_eye_node.Path.value
 
-    self.camera.RenderMask.value = "main_scene"
+    self.camera.RenderMask.value = "(main_scene | " + PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ")" && !do_not_display_group"
+    print "Portal render mask", self.camera.RenderMask.value
 
     ## @var pipeline
     # The pipeline used to render this PortalPreView. 

@@ -7,13 +7,15 @@
 import avango
 import avango.gua
 
-# import framework libraries
-from ConsoleIO import *
 
-## 
+## Abstract base class combining attributes of all displays.
 class Display:
 
-  ##
+  ## Base constructor.
+  # @param name A name to be associated to that display.
+  # @param resolution The display's resolution to be used.
+  # @param size A list of strings on which the windows for each user will pop up.
+  # @param stereo Boolean indicating if the stereo mode is to be used.
   def base_constructor( self
                       , name
                       , resolution
@@ -21,7 +23,7 @@ class Display:
                       , stereo):
 
     ## @var name
-    # A name to be associated to that display. Will be used in XML configuration file.
+    # A name to be associated to that display.
     self.name = name
 
     ## @var resolution

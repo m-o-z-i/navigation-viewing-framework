@@ -181,7 +181,7 @@ class Tool(VisibilityHandler2D):
       self.handle_correct_visibility_groups_for(_display_group)
 
   ## Handles the correct GroupNames of all ToolRepresentations at a display group.
-  # @param DISPLAY_GROUP_ID The DisplayGroup to be handled.
+  # @param DISPLAY_GROUP The DisplayGroup to be handled.
   def handle_correct_visibility_groups_for(self, DISPLAY_GROUP):
 
     #print "display group", DISPLAY_GROUP

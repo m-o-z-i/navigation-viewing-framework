@@ -93,7 +93,7 @@ class Workspace:
   ## Creates a User instance and adds it to this workspace.
   # To be called after all display groups have been created.
   # @param VIP Boolean indicating if the user to be created is a vip.
-  # @param 
+  # @param AVATAR_VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param NO_TRACKING_MAT Matrix to be applied when HEADTRACKING_TARGET_NAME is None.

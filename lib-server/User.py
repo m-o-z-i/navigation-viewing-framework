@@ -32,8 +32,10 @@ class UserRepresentation(avango.script.Script):
   # @param USER Reference to the user to be represented.
   # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
-  #
-  #
+  # @param TRANSFORMATION_POLICY A string command to be evaluated every frame.
+  # @param HEAD_NODE_NAME Name of the UserRepresentation's head node in the scenegraph.
+  # @param COMPLEX_SETUP If activated, the transformation policy is evaluated every frame to update head. If deactivated,
+  #                      a standard mono viewing setup is assumed.
   def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = 'head', COMPLEX_SETUP = True):
 
     ## @var USER
@@ -52,22 +54,22 @@ class UserRepresentation(avango.script.Script):
     # List of screen nodes for each display of the display group.
     self.screens = []
 
-    ##
-    #
+    ## @var dependent_nodes
+    # Placeholder for scenegraph nodes which are relevant for the transformation policy.
     self.dependent_nodes = []
 
     ## @var transformation_policy
     # A string command to be evaluated every frame.
     self.transformation_policy = TRANSFORMATION_POLICY
 
-    ##
-    #
+    ## @var execute_transformation_policy
+    # Boolean indicating if the transformation policy is evaluated every frame.
     self.execute_transformation_policy = True
 
     ## create user representation nodes ##
 
-    ##
-    #
+    ## @var stereo_display_group
+    # Boolean saying if this DisplayGroup contains of only stereo displays.
     self.stereo_display_group = True
 
     for _display in DISPLAY_GROUP.displays:
@@ -92,6 +94,7 @@ class UserRepresentation(avango.script.Script):
     self.right_eye = avango.gua.nodes.TransformNode(Name = "eyeR")
     self.head.Children.value.append(self.right_eye)
 
+    # assign correct transformations to nodes
     if COMPLEX_SETUP:
       self.make_complex_viewing_setup()
     else:
@@ -116,8 +119,8 @@ class UserRepresentation(avango.script.Script):
       exec self.transformation_policy
 
 
-  ##
-  #
+  ## Deactivates the evaluation of the transformation policy and assigns fixed matrices
+  # for the eye and head nodes.
   def make_default_viewing_setup(self):
 
     self.execute_transformation_policy = False
@@ -125,8 +128,8 @@ class UserRepresentation(avango.script.Script):
     self.left_eye.Transform.value = avango.gua.make_identity_mat()
     self.right_eye.Transform.value = avango.gua.make_identity_mat()
 
-  ##
-  #
+  ## Activates the evaluation of the transformation policy and sets the eye
+  # distance properly.
   def make_complex_viewing_setup(self):
 
     if self.stereo_display_group:
@@ -137,8 +140,6 @@ class UserRepresentation(avango.script.Script):
     self.execute_transformation_policy = True
     self.left_eye.Transform.value = avango.gua.make_trans_mat(-_eye_distance / 2, 0.0, 0.0)
     self.right_eye.Transform.value = avango.gua.make_trans_mat(_eye_distance / 2, 0.0, 0.0)
-
-
 
 
   ## Sets the GroupNames field on all avatar parts to a list of strings.
@@ -189,14 +190,14 @@ class UserRepresentation(avango.script.Script):
     _screen.Children.value.append(_navigation_color_geometry)
 
 
-  ##
-  #
+  ## Adds an already existing screen node to this UserRepresentation.
+  # @param SCREEN_NODE The screen node to be added.
   def add_existing_screen_node(self, SCREEN_NODE):
 
     self.screens.append(SCREEN_NODE)
 
-  ##
-  #
+  ## Adds a scenegraph node to the list of dependent nodes.
+  # @param NODE The node to be added.
   def add_dependent_node(self, NODE):
 
     self.dependent_nodes.append(NODE)
@@ -268,7 +269,7 @@ class User(VisibilityHandler2D):
   # @param WORKSPACE_INSTANCE Workspace instance in which this user is active.
   # @param USER_ID Global user ID to be applied.
   # @param VIP Boolean indicating if the user to be created is a vip.
-  # @param AVATAR_VISIBILITY_TABLE 
+  # @param AVATAR_VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
   # @param HEADTRACKING_TARGET_NAME Name of the headtracking station as registered in daemon.
   # @param EYE_DISTANCE The eye distance of the user to be applied.
   # @param NO_TRACKING_MAT Matrix to be applied when HEADTRACKING_TARGET_NAME is None.
@@ -350,6 +351,10 @@ class User(VisibilityHandler2D):
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
+  # @param TRANSFORMATION_POLICY A string command to be evaluated every frame.
+  # @param HEAD_NODE_NAME Name of the UserRepresentation's head node in the scenegraph.
+  # @param COMPLEX_SETUP If activated, the transformation policy is evaluated every frame to update head. If deactivated,
+  #                      a standard mono viewing setup is assumed.
   def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = "head", COMPLEX_SETUP = True):
 
     _user_repr = UserRepresentation()

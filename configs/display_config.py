@@ -12,7 +12,7 @@ from Display import Display
 
 ## Display configuration for the large powerwall in the VR lab.
 class LargePowerwall(Display):
-  
+
   ## Default constructor.
   def __init__(self, render_mask = ""):
     Display.__init__( self
@@ -88,7 +88,7 @@ class LargePowerwall2(Display):
                     , displaystrings = [":0.0"]
                     , size = (4.16, 2.61)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
-                    #, shutter_timings = [ [(0,2400), (100,2500)], 
+                    #, shutter_timings = [ [(0,2400), (100,2500)],
                     #                      [(3000,4600),(3100,4700)],
                     #                      [(5700,8175), (5800,8275)],
                     #                      [(8200,10700), (8300,10800)],
@@ -115,7 +115,7 @@ class LargePowerwall2(Display):
                     , max_viewing_distance = 5.0
                     , stereo = True
                     , stereomode = "SIDE_BY_SIDE"
-                    , render_mask = render_mask                    
+                    , render_mask = render_mask
                     )
 
   ## Registers a new view at this display and returns the display string
@@ -143,10 +143,11 @@ class SmallPowerwall(Display):
   ## Default constructor.
   def __init__(self, render_mask = ""):
     Display.__init__( self
-                    , hostname = "eos"
+                    , hostname = "pandora"
                     , name = "small_powerwall"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.1", ":0.0"]
+                    , displaystrings = [":0.0", ":0.1"]
+                    #, displaystrings = [":0.0"]
                     , size = (3.0, 1.98)
                     , transformation = avango.gua.make_trans_mat(0, 1.42, 0)
                     , stereo = True
@@ -158,7 +159,7 @@ class SmallPowerwall(Display):
                     , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
-                                        ]                    
+                                        ]
                     , render_mask = render_mask
                     )
 
@@ -203,7 +204,7 @@ class SmallPowerwall2(Display):
                     , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
-                                        ]                    
+                                        ]
                     , render_mask = render_mask
                     )
 
@@ -237,14 +238,14 @@ class TouchTable3DStandalone(Display):
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
                     #, displaystrings = [":0.0", ":0.1", ":0.2"]
-                    , displaystrings = [":0.2", ":0.1"] 
+                    , displaystrings = [":0.2", ":0.1"]
                     #, shutter_timings = [  [(100, 200, 2900, 3000), (8330, 8430, 11230, 11330)],
                     #                       [(2600, 2700, 5700, 5800), (11030, 11130, 14630, 14730)],
-                    #                       [(6000, 6100, 8700, 8800), (14330, 14430, 15900, 16000)]                                          
+                    #                       [(6000, 6100, 8700, 8800), (14330, 14430, 15900, 16000)]
                     #                    ]
                     , shutter_timings = [  [(100, 200, 2900, 3000), (8400, 8500, 11400, 11500)],
                                            [(2600, 2700, 5700, 5800), (11000, 11100, 14600, 14700)],
-                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]                                          
+                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]
                                         ]
                     , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)],
@@ -254,11 +255,11 @@ class TouchTable3DStandalone(Display):
                     , transformation = avango.gua.make_rot_mat(90.0, -1,0, 0)
                     , max_viewing_distance = 1.0
                     , stereo = True
-                    , stereomode = "SIDE_BY_SIDE"  
-                    , render_mask = render_mask                  
+                    , stereomode = "SIDE_BY_SIDE"
+                    , render_mask = render_mask
                     )
 
-  ## Registers a new view at this display and returns the display string 
+  ## Registers a new view at this display and returns the display string
   # and the warp matrices assigned to the new view.
   def register_view(self):
     view_num = self.num_views
@@ -292,10 +293,10 @@ class TouchTable3DSecondary(Display):
                     , hostname = "medusa"
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
-                    , displaystrings = [":0.0", ":0.1", ":0.2"] 
+                    , displaystrings = [":0.0", ":0.1", ":0.2"]
                     , shutter_timings = [  [(100, 200, 2900, 3000), (8400, 8500, 11400, 11500)],
                                            [(2600, 2700, 5700, 5800), (11000, 11100, 14600, 14700)],
-                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]                                          
+                                           [(6000, 6100, 8200, 8300), (14300, 14400, 15900, 16000)]
                                         ]
 
                     , shutter_values =  [  [(20, 80, 40, 10), (2, 8, 4, 1)],
@@ -309,10 +310,10 @@ class TouchTable3DSecondary(Display):
                     , max_viewing_distance = 1.0
                     , stereo = True
                     , stereomode = "SIDE_BY_SIDE"
-                    , render_mask = render_mask                   
+                    , render_mask = render_mask
                     )
 
-  ## Registers a new view at this display and returns the display string 
+  ## Registers a new view at this display and returns the display string
   # and the warp matrices assigned to the new view.
   def register_view(self):
     view_num = self.num_views
@@ -410,15 +411,16 @@ class OculusRift(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  #LargePowerwall() ,
-  #LargePowerwall2() ,  
-  #SmallPowerwall() ,
-  #SmallPowerwall2() ,  
-  #OculusRift(hostname = "atalante", name = "oculus_rift_atalante") ,  
-  TouchTable3DStandalone() ,
-  #TouchTable3DSecondary(render_mask = "!main_scene") ,  
-  Display(hostname = "agenor", stereo = False) ,
-
+  #LargePowerwall(),
+  #LargePowerwall2() ,
+  SmallPowerwall(),
+  #SmallPowerwall2() ,
+  #OculusRift(hostname = "atalante", name = "oculus_rift_atalante") ,
+  #TouchTable3DStandalone() ,
+  #TouchTable3DSecondary(render_mask = "!main_scene") ,
+  # Display(hostname = "orestes", stereo = False),
+  # Display(hostname = "artemis", stereo = False)
+  Display(hostname = "atalante", stereo = False)
 ]
 
 ## @var INTELLIGENT_SHUTTER_SWITCHING

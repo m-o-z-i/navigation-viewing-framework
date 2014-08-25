@@ -38,10 +38,18 @@ class SceneVRHyperspace0(SceneObject):
     self.init_geometry("bwb_inner_right_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
-    # lights   
+    tex_quad = avango.gua.nodes.TexturedQuadNode(
+        Texture = "pre_scene2_texture",
+        IsStereoTexture = True
+    )
+    tex_quad.Transform.value = avango.gua.make_scale_mat(100.0)
+    NET_TRANS_NODE.Children.value.append(tex_quad)
+
+
+    # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-49.0, 7.74, 6.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light2", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -56,7 +64,7 @@ class SceneVRHyperspace0(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-64.412, 7.819, -3.626)
     self.init_light(TYPE = 1, NAME = "ceiling_light6", COLOR = avango.gua.Color(0.6, 0.8, 0.6), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,5.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-47.647, 6.413, 0.121)
     self.init_light(TYPE = 1, NAME = "toilet_light", COLOR = avango.gua.Color(0.3, 0.3, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,3.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -70,14 +78,14 @@ class SceneVRHyperspace0(SceneObject):
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
 
-    # render pipeline parameters   
+    # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = True
     self.enable_ssao = True
     self.enable_ffxa = True
     #self.ambient_color = avango.gua.Vec3(0.25,0.25,0.25)
 
-   
+
 
 class SceneVRHyperspace1(SceneObject):
 
@@ -108,10 +116,10 @@ class SceneVRHyperspace1(SceneObject):
     self.init_geometry("bwb_map", "data/objects/demo_models/vr_hyperspace/props/map.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
-    # lights   
+    # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-49.0, 7.74, 6.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light2", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -126,10 +134,10 @@ class SceneVRHyperspace1(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-64.412, 7.819, -3.626)
     self.init_light(TYPE = 1, NAME = "ceiling_light6", COLOR = avango.gua.Color(0.6, 0.8, 0.6), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,5.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-47.647, 6.413, 0.121)
     self.init_light(TYPE = 1, NAME = "toilet_light", COLOR = avango.gua.Color(0.3, 0.3, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,3.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_rot_mat(-45.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light1", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -138,7 +146,7 @@ class SceneVRHyperspace1(SceneObject):
 
     _mat = avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-65.355, 6.95, -6.310)
     self.init_light(TYPE = 1, NAME = "map_light", COLOR = avango.gua.Color(1.5, 1.5, 1.5), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(1.0,1.0,1.0), ENABLE_SPECULAR_SHADING = False, MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -152,11 +160,11 @@ class SceneVRHyperspace1(SceneObject):
     self.init_light(TYPE = 1, NAME = "guiding_light3", COLOR = avango.gua.Color(0.9, 0.9, 0.1), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(2.5,2.5,2.5), MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
 
-    # render pipeline parameters   
+    # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = True
     self.enable_ssao = True
-    self.enable_ffxa = True     
+    self.enable_ffxa = True
     #self.ambient_color = avango.gua.Vec3(0.25,0.25,0.25)
 
 
@@ -200,13 +208,13 @@ class SceneVRHyperspace2(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-49.0, 5.35, 5.85) * avango.gua.make_rot_mat(90.0,0,-1,0) * avango.gua.make_rot_mat(90.0,-1,0,0)
     self.init_geometry("flight_instruction4", "/opt/3d_models/Avatars/smooth/VR_Hyperspace_pose_steward_010000000000.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
- 
+
 
 
     # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-49.0, 7.74, 6.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light2", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -221,10 +229,10 @@ class SceneVRHyperspace2(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-64.412, 7.819, -3.626)
     self.init_light(TYPE = 1, NAME = "ceiling_light6", COLOR = avango.gua.Color(0.6, 0.8, 0.6), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,5.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-47.647, 6.413, 0.121)
     self.init_light(TYPE = 1, NAME = "toilet_light", COLOR = avango.gua.Color(0.3, 0.3, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,3.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_rot_mat(-45.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light1", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -233,15 +241,15 @@ class SceneVRHyperspace2(SceneObject):
 
     _mat = avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
 
-    # render pipeline parameters   
+
+    # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = True
     self.enable_ssao = False
-    self.enable_ffxa = True     
+    self.enable_ffxa = True
     #self.ambient_color = avango.gua.Vec3(0.25,0.25,0.25)
-    
+
 
 class SceneVRHyperspace3(SceneObject):
 
@@ -266,12 +274,19 @@ class SceneVRHyperspace3(SceneObject):
     self.init_geometry("bwb_inner_right_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_right_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
+    #tex_quad = avango.gua.nodes.TexturedQuadNode(
+    #    Texture = "pre_scene2_texture",
+    #    IsStereoTexture = True
+    #)
+    #tex_quad.Transform.value = avango.gua.make_trans_mat(0.0, 20.0, 0.0) * avango.gua.make_scale_mat(30.0)
+    #NET_TRANS_NODE.Children.value.append(tex_quad)
 
-    _mat = avango.gua.make_rot_mat(90.0, 1, 0, 0) * avango.gua.make_scale_mat(5.0)
+
+    _mat = avango.gua.make_rot_mat(90.0, 1, 0, 0) * avango.gua.make_scale_mat(0.1)
     _parent_node = SCENEGRAPH["/net/platform_0/scale/screen_0"]
     self.init_geometry("clouds", "data/objects/plane.obj", _mat, "data/materials/bwb/Fog.gmd", False, False, _parent_node, "pre_scene1")
 
-
+    #'''
     _mat = avango.gua.make_identity_mat()
     self.init_group("terrain_group", _mat, False, False, self.scene_root, "pre_scene2")
 
@@ -279,18 +294,18 @@ class SceneVRHyperspace3(SceneObject):
 
     _tile_scale = 2.0
     _tile_height = -150.0
-    
+
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile1", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("terrain_tile1", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile2", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("terrain_tile2", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile3", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("terrain_tile3", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile4", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("terrain_tile4", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
@@ -330,12 +345,12 @@ class SceneVRHyperspace3(SceneObject):
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
     self.init_geometry("terrain_tile16", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
+    #'''
 
     # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-49.0, 7.74, 6.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light2", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -350,7 +365,7 @@ class SceneVRHyperspace3(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-64.412, 7.819, -3.626)
     self.init_light(TYPE = 1, NAME = "ceiling_light6", COLOR = avango.gua.Color(0.6, 0.8, 0.6), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,5.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_rot_mat(-45.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light1", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -359,19 +374,19 @@ class SceneVRHyperspace3(SceneObject):
 
     _mat = avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
-    _mat = avango.gua.make_rot_mat(-148, 0, 1, 0) * avango.gua.make_rot_mat(-15.0, 1.0, 0.0, 0.0)
-    self.init_light(TYPE = 0, NAME = "mountain_sun", COLOR = avango.gua.Color(1.1, 1.1, 1.1), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "pre_scene2", ENABLE_SHADOW = True) # TYPE: 0 = sun light; 1 = point light; 2 = spot light    
-    
 
-    # render pipeline parameters   
+    _mat = avango.gua.make_rot_mat(-148, 0, 1, 0) * avango.gua.make_rot_mat(-15.0, 1.0, 0.0, 0.0)
+    self.init_light(TYPE = 0, NAME = "mountain_sun", COLOR = avango.gua.Color(1.1, 1.1, 1.1), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "pre_scene2", ENABLE_SHADOW = True) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
+
+
+    # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = True
     self.enable_ssao = True
     self.enable_fxaa = True
     #self.ambient_color = avango.gua.Vec3(0.25,0.25,0.25)
-    self.background_texture = "pre_scene1_texture"
-    
+    #self.background_texture = "pre_scene1_texture"
+
 
 class SceneVRHyperspace4(SceneObject):
 
@@ -379,7 +394,7 @@ class SceneVRHyperspace4(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "SceneVRHyperspace4", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
- 
+
     # navigation parameters
     self.starting_matrix = avango.gua.make_trans_mat(-57.937, 5.563, 7.599) * avango.gua.make_rot_mat(135.0,0,1,0)
     self.starting_scale = 1.0
@@ -409,18 +424,18 @@ class SceneVRHyperspace4(SceneObject):
 
     _tile_scale = 2.0
     _tile_height = -150.0
-    
+
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile1", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("terrain_tile1", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile2", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("terrain_tile2", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile3", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("terrain_tile3", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile4", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE    
+    self.init_geometry("terrain_tile4", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
@@ -462,10 +477,10 @@ class SceneVRHyperspace4(SceneObject):
     self.init_geometry("terrain_tile16", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
-    # lights   
+    # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-49.0, 7.74, 6.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light2", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -480,7 +495,7 @@ class SceneVRHyperspace4(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-64.412, 7.819, -3.626)
     self.init_light(TYPE = 1, NAME = "ceiling_light6", COLOR = avango.gua.Color(0.6, 0.8, 0.6), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,5.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-47.647, 6.413, 0.121)
     self.init_light(TYPE = 1, NAME = "toilet_light", COLOR = avango.gua.Color(0.3, 0.3, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,3.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -492,19 +507,19 @@ class SceneVRHyperspace4(SceneObject):
 
     _mat = avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
-    _mat = avango.gua.make_rot_mat(-148, 0, 1, 0) * avango.gua.make_rot_mat(-15.0, 1.0, 0.0, 0.0)
-    self.init_light(TYPE = 0, NAME = "mountain_sun", COLOR = avango.gua.Color(1.1, 1.1, 1.1), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "pre_scene2", ENABLE_SHADOW = True) # TYPE: 0 = sun light; 1 = point light; 2 = spot light    
-    
 
-    # render pipeline parameters   
+    _mat = avango.gua.make_rot_mat(-148, 0, 1, 0) * avango.gua.make_rot_mat(-15.0, 1.0, 0.0, 0.0)
+    self.init_light(TYPE = 0, NAME = "mountain_sun", COLOR = avango.gua.Color(1.1, 1.1, 1.1), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "pre_scene2", ENABLE_SHADOW = True) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
+
+
+    # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = True
     self.enable_ssao = True
-    self.enable_fxaa = True    
+    self.enable_fxaa = True
     #self.ambient_color = avango.gua.Vec3(0.25,0.25,0.25)
     self.background_texture = "pre_scene1_texture"
- 
+
 
 class SceneVRHyperspace5(SceneObject):
 
@@ -532,10 +547,10 @@ class SceneVRHyperspace5(SceneObject):
     _mat = avango.gua.make_trans_mat(-60.8, 5.5, 9.5)# * avango.gua.make_scale_mat(0.95)
     self.init_kinect("office_call", "/opt/kinect-resources/kinect_surfaceLCD.ks", _mat, self.scene_root, "main_scene")
 
-    # lights   
+    # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-49.0, 7.74, 6.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light2", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -550,7 +565,7 @@ class SceneVRHyperspace5(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-64.412, 7.819, -3.626)
     self.init_light(TYPE = 1, NAME = "ceiling_light6", COLOR = avango.gua.Color(0.6, 0.8, 0.6), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,5.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-47.647, 6.413, 0.121)
     self.init_light(TYPE = 1, NAME = "toilet_light", COLOR = avango.gua.Color(0.3, 0.3, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,3.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -562,7 +577,7 @@ class SceneVRHyperspace5(SceneObject):
 
     _mat = avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-64.239, 7.322, 20.381)
     self.init_light(TYPE = 1, NAME = "office_light1", COLOR = avango.gua.Color(0.8, 0.8, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -584,19 +599,19 @@ class SceneVRHyperspace5(SceneObject):
     _mat = avango.gua.make_trans_mat(-67.000, 7.369, 35.103)
     self.init_light(TYPE = 1, NAME = "office_light7", COLOR = avango.gua.Color(0.8, 0.8, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
-    _mat = avango.gua.make_trans_mat(-58.700, 7.469, 40.703) 
+    _mat = avango.gua.make_trans_mat(-58.700, 7.469, 40.703)
     self.init_light(TYPE = 1, NAME = "office_light8", COLOR = avango.gua.Color(0.8, 0.8, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
 
-    # render pipeline parameters   
+
+    # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = False
     self.enable_ssao = False
-    self.enable_fxaa = False    
+    self.enable_fxaa = False
     #self.ambient_color = avango.gua.Vec3(0.25,0.25,0.25)
     self.background_texture = "/opt/guacamole/resources/skymaps/DH211SN.png"
 
-   
+
 
 class SceneVRHyperspace6(SceneObject):
 
@@ -628,10 +643,10 @@ class SceneVRHyperspace6(SceneObject):
     self.init_kinect("office_call", "/opt/kinect-resources/kinect_surfaceLCD.ks", _mat, self.scene_root, "main_scene")
 
 
-    # lights   
+    # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-49.0, 7.74, 6.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light2", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -646,7 +661,7 @@ class SceneVRHyperspace6(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-64.412, 7.819, -3.626)
     self.init_light(TYPE = 1, NAME = "ceiling_light6", COLOR = avango.gua.Color(0.6, 0.8, 0.6), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,5.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-47.647, 6.413, 0.121)
     self.init_light(TYPE = 1, NAME = "toilet_light", COLOR = avango.gua.Color(0.3, 0.3, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,3.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -658,7 +673,7 @@ class SceneVRHyperspace6(SceneObject):
 
     _mat = avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-64.239, 7.322, 20.381)
     self.init_light(TYPE = 1, NAME = "office_light1", COLOR = avango.gua.Color(0.8, 0.8, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -680,11 +695,11 @@ class SceneVRHyperspace6(SceneObject):
     _mat = avango.gua.make_trans_mat(-67.000, 7.369, 35.103)
     self.init_light(TYPE = 1, NAME = "office_light7", COLOR = avango.gua.Color(0.8, 0.8, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
-    _mat = avango.gua.make_trans_mat(-58.700, 7.469, 40.703) 
+    _mat = avango.gua.make_trans_mat(-58.700, 7.469, 40.703)
     self.init_light(TYPE = 1, NAME = "office_light8", COLOR = avango.gua.Color(0.8, 0.8, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
 
-    # render pipeline parameters   
+
+    # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = False
     self.enable_ssao = False
@@ -731,10 +746,10 @@ class SceneVRHyperspace7(SceneObject):
     self.init_kinect("home_call3", "/opt/kinect-resources/kinect_surfaceLCD.ks", _mat, self.scene_root, "main_scene")
     '''
 
-    # lights   
+    # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-49.0, 7.74, 6.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light2", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -749,7 +764,7 @@ class SceneVRHyperspace7(SceneObject):
 
     _mat = avango.gua.make_trans_mat(-64.412, 7.819, -3.626)
     self.init_light(TYPE = 1, NAME = "ceiling_light6", COLOR = avango.gua.Color(0.6, 0.8, 0.6), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,5.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-    
+
     _mat = avango.gua.make_trans_mat(-47.647, 6.413, 0.121)
     self.init_light(TYPE = 1, NAME = "toilet_light", COLOR = avango.gua.Color(0.3, 0.3, 1.0), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,3.0)) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
 
@@ -761,14 +776,14 @@ class SceneVRHyperspace7(SceneObject):
 
     _mat = avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, RENDER_GROUP = "main_scene", ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
- 
 
-    # render pipeline parameters   
+
+    # render pipeline parameters
     self.enable_backface_culling = False
     self.enable_frustum_culling = True
     self.enable_ssao = False
-    self.enable_fxaa = True    
+    self.enable_fxaa = True
     #self.ambient_color = avango.gua.Vec3(0.25,0.25,0.25)
     #self.background_texture = "/opt/guacamole/resources/skymaps/DH211SN.png"
-  
+
 

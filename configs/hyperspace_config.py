@@ -16,10 +16,11 @@ scenes = {
   , 7: "SceneVRHyperspace7(self, SCENEGRAPH, NET_TRANS_NODE)" # avatar call
 }
 
-active_scenes = [1]
+active_scenes = [3]
 
-stereo = False
+stereo = True
 
 
 # this flag is set automatically, nothing to do here
 prepipes = (3 in active_scenes) or (4 in active_scenes)
+#prepipes = False

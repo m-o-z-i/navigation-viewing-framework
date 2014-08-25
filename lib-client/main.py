@@ -75,6 +75,9 @@ def start():
 
   timer = avango.nodes.TimeSensor()
 
+  print "hyperspace_config:prepipes = ", hyperspace_config.prepipes
+  print "hyperspace_config:stereo   = ", hyperspace_config.stereo
+
   if hyperspace_config.prepipes:
     avango.gua.load_material("data/materials/bwb/Fog.gmd")
 

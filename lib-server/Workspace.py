@@ -9,7 +9,6 @@ import avango.gua
 
 # import framework libraries
 from ConsoleIO import *
-from Display import *
 from DisplayGroup import *
 from RayPointer import *
 from User import *

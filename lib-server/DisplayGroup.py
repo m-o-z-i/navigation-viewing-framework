@@ -7,9 +7,6 @@
 import avango
 import avango.gua
 
-# import framework libraries
-from   Display import *
-from   SteeringNavigation import *
 
 ## Collection of displays that are semantically one navigational unit, although users
 # might have individual navigations assigned.

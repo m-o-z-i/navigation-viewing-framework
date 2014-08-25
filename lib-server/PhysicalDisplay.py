@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ## @file
-# Contains class Display.
+# Contains class PhysicalDisplay.
 
 # import avango-guacamole libraries
 import avango
@@ -10,11 +10,10 @@ import avango.gua
 # import framework libraries
 from ConsoleIO import *
 
-## Class representing a display. A display is a physical projection medium
+## Class representing a physical display. A physical display is a projection medium
 # running on a host and having certain resolution, size and transformation. It
-# supports a specific amount of users. In the Platform class, a screen node 
-# is associated for each display.
-class Display:
+# supports a specific amount of users.
+class PhysicalDisplay:
   
   ## Custom constructor
   # @param hostname The hostname to which this display is connected to.
@@ -181,11 +180,11 @@ class Display:
 # specialized display setups #
 
 ## Display configuration for the large powerwall in the VR lab.
-class LargePowerwall(Display):
+class LargePowerwall(PhysicalDisplay):
   
   ## Default constructor.
   def __init__(self, render_mask = ""):
-    Display.__init__( self
+    PhysicalDisplay.__init__( self
                     , hostname = "kerberos"
                     , name = "large_powerwall"
                     , resolution = (1920, 1200)
@@ -248,11 +247,11 @@ class LargePowerwall(Display):
       return None
 
 ## Display configuration for the small powerwall in the VR lab.
-class SmallPowerwall(Display):
+class SmallPowerwall(PhysicalDisplay):
 
   ## Default constructor.
   def __init__(self, render_mask = ""):
-    Display.__init__( self
+    PhysicalDisplay.__init__( self
                     , hostname = "pandora"
                     , name = "small_powerwall"
                     , resolution = (1920, 1200)
@@ -293,11 +292,11 @@ class SmallPowerwall(Display):
 
 
 ## Display configuration for the small powerwall in the VR lab.
-class SmallPowerwall2(Display):
+class SmallPowerwall2(PhysicalDisplay):
 
   ## Default constructor.
   def __init__(self, render_mask = ""):
-    Display.__init__( self
+    PhysicalDisplay.__init__( self
                     , hostname = "pandora"
                     , name = "small_powerwall2"
                     , resolution = (1920, 1200)
@@ -337,7 +336,7 @@ class SmallPowerwall2(Display):
       return None
 
 ## Display configuration for the 3D multiuser touch table in the VR lab.
-class TouchTable3D(Display):
+class TouchTable3D(PhysicalDisplay):
 
   ## Custom constructor.
   # @param hostname The hostname to which this display is connected to.
@@ -347,7 +346,7 @@ class TouchTable3D(Display):
   # @param size Physical size of the display medium in meters.
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
   def __init__(self, render_mask = ""):
-    Display.__init__( self
+    PhysicalDisplay.__init__( self
                     , hostname = "medusa"
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
@@ -388,11 +387,11 @@ class TouchTable3D(Display):
       return None
 
 
-class SamsungStereoTV(Display):
+class SamsungStereoTV(PhysicalDisplay):
 
   ## Default constructor.
   def __init__(self, render_mask = ""):
-    Display.__init__( self
+    PhysicalDisplay.__init__( self
                     , hostname = "apollo"
                     , name = "samsung_tv"
                     , resolution = (1920, 1080)
@@ -405,11 +404,11 @@ class SamsungStereoTV(Display):
                     )
 
 
-class MitsubishiStereoTV(Display):
+class MitsubishiStereoTV(PhysicalDisplay):
 
   ## Default constructor.
   def __init__(self, render_mask = ""):
-    Display.__init__( self
+    PhysicalDisplay.__init__( self
                     , hostname = "demeter"
                     , name = "mitsubishi_tv"
                     , resolution = (1920, 1080)
@@ -421,7 +420,7 @@ class MitsubishiStereoTV(Display):
                     , render_mask = render_mask
                     )
 
-class OculusRift(Display):
+class OculusRift(PhysicalDisplay):
 
   ## Custom constructor.
   # @param hostname The hostname to which this display is connected to.
@@ -442,7 +441,7 @@ class OculusRift(Display):
               , stereomode = "HMD"
               , render_mask = ""
               ):
-    Display.__init__( self
+    PhysicalDisplay.__init__( self
                     , hostname = hostname
                     , name = name
                     , resolution = resolution

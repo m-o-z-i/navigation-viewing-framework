@@ -8,7 +8,7 @@ import avango
 import avango.gua
 
 # import framework libraries
-from Display import *
+from PhysicalDisplay import *
 from Workspace import Workspace
 from SteeringNavigation import SteeringNavigation
 

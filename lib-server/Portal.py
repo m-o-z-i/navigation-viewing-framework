@@ -11,6 +11,7 @@ from avango.script import field_has_changed
 
 # import framework libraries
 from ApplicationManager import *
+from Display import *
 from ConsoleIO import *
 from scene_config import scenegraphs
 import Utilities
@@ -134,12 +135,12 @@ class PortalManager(avango.script.Script):
         _nav_device_portal_space_pos = avango.gua.Vec3(_nav_device_portal_space_pos.x, _nav_device_portal_space_pos.y, _nav_device_portal_space_pos.z)
 
         # do a teleportation if navigation enters portal
-        if  _nav_device_portal_space_pos.x > -_portal.width/2     and \
-            _nav_device_portal_space_pos.x <  _portal.width/2     and \
-            _nav_device_portal_space_pos.y > -_portal.height/2    and \
-            _nav_device_portal_space_pos.y <  _portal.height/2    and \
-            _nav_device_portal_space_pos.z < 0.0                  and \
-            _nav_device_portal_space_pos2.z >= 0.0                and \
+        if  _nav_device_portal_space_pos.x > -_portal.size[0]/2     and \
+            _nav_device_portal_space_pos.x <  _portal.size[0]/2     and \
+            _nav_device_portal_space_pos.y > -_portal.size[1]/2     and \
+            _nav_device_portal_space_pos.y <  _portal.size[1]/2     and \
+            _nav_device_portal_space_pos.z < 0.0                    and \
+            _nav_device_portal_space_pos2.z >= 0.0                  and \
             _portal.viewing_mode == "3D":
 
           _nav.inputmapping.set_abs_mat(_portal.platform_matrix * \
@@ -220,7 +221,7 @@ class PortalManager(avango.script.Script):
 
 
 ## A Portal is the display of another location on a virtual display.
-class Portal:
+class Portal(Display):
 
   ## Custom constructor.
   # @param PORTAL_MANAGER Reference to the PortalManager to be used.
@@ -247,6 +248,8 @@ class Portal:
              , NEGATIVE_PARALLAX
              , BORDER_MATRIAL):
 
+    self.base_constructor("portal_" + str(ID), (1000, 1000), (WIDTH, HEIGHT))
+
     ## @var PORTAL_MANAGER
     # Reference to the PortalManager to be used.
     self.PORTAL_MANAGER = PORTAL_MANAGER
@@ -263,14 +266,6 @@ class Portal:
     ## @var portal_matrix
     # Matrix where the portal display is located (entry).
     self.portal_matrix = PORTAL_MATRIX
-
-    ## @var width
-    # Width of the portal in meters.
-    self.width = WIDTH
-
-    ## @var height
-    # Height of the portal in meters.
-    self.height = HEIGHT
 
     ## @var NET_TRANS_NODE
     # Reference to the nettrans node used for distribution.
@@ -378,10 +373,9 @@ class Portal:
   # @param WIDTH The new portal width to be set.
   # @param HEIGHT The new portal height to be set.
   def set_size(self, WIDTH, HEIGHT):
-    self.width = WIDTH
-    self.height = HEIGHT
-    self.portal_screen_node.Width.value = self.width
-    self.portal_screen_node.Height.value = self.height
+    self.size = (WIDTH, HEIGHT)
+    self.portal_screen_node.Width.value = WIDTH
+    self.portal_screen_node.Height.value = HEIGHT
 
   ## Appends the necessary portal scenegraph nodes on server side.
   def append_portal_nodes(self):
@@ -416,8 +410,8 @@ class Portal:
     ## @var portal_screen_node
     # Screen node representing the portal's screen in the scene.
     self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
-    self.portal_screen_node.Width.value = self.width
-    self.portal_screen_node.Height.value = self.height
+    self.portal_screen_node.Width.value = self.size[0]
+    self.portal_screen_node.Height.value = self.size[1]
     self.scene_matrix_node.Children.value.append(self.portal_screen_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)
 

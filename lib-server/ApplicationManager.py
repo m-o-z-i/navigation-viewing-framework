@@ -11,7 +11,6 @@ from   examples_common.GuaVE import GuaVE
 
 # import framework libraries
 from   ConsoleIO        import *
-
 from   scene_config import scenegraphs
 
 # import python libraries
@@ -51,6 +50,7 @@ class ApplicationManager(avango.script.Script):
     _workspace_config_file_name = WORKSPACE_CONFIG.replace(".py", "")
     _workspace_config_file_name = _workspace_config_file_name.replace("/", ".")
     exec 'from ' + _workspace_config_file_name + ' import workspaces'
+    exec 'from ' + _workspace_config_file_name + ' import virtual_workspaces'
     
     # parameters
     ## @var background_texture
@@ -116,6 +116,8 @@ class ApplicationManager(avango.script.Script):
     # Last button states of the request buttons of requestable navigations to detect changes.
     self.requestable_navigations_last_button_states = []
 
+    ## Handle physical viewing setups ##
+
     for _workspace in self.workspaces:
 
       _w_id = _workspace.id 
@@ -139,7 +141,8 @@ class ApplicationManager(avango.script.Script):
           self.NET_TRANS_NODE.Children.value.append(_view_transform_node)
 
           # create user representation in display group
-          _user_repr = _user.create_user_representation_for(_display_group, _view_transform_node)
+          _user_repr = _user.create_user_representation_for(_display_group, _view_transform_node
+                     , 'self.head.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.USER.headtracking_reader.sf_abs_mat.value')
           ApplicationManager.all_user_representations.append(_user_repr)
 
           # create tool representation in display_group
@@ -182,7 +185,40 @@ class ApplicationManager(avango.script.Script):
         for _user_representation in _user.user_representations:
           _user_representation.connect_navigation_of_display_group(0)
 
-    # initialize group names
+    ## Handle virtual viewing setups ##
+
+
+    ## @var virtual_workspaces
+    # List of all workspace instances containing portals loaded from workspace configuration file.
+    self.virtual_workspaces = virtual_workspaces
+
+    for _virtual_workspace in self.virtual_workspaces:
+
+      for _display_group in _virtual_workspace.display_groups:
+
+        for _display in _display_group.displays:
+
+          # create portal nodes
+          _display.append_portal_nodes()
+
+          _virtual_user_representations = []
+
+          # create user representations
+          for _physical_user_repr in ApplicationManager.all_user_representations:
+
+            _virtual_user_repr = _user.create_user_representation_for(_display_group, _display.scene_matrix_node,
+              'self.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value'
+            , 'head_' + _physical_user_repr.view_transform_node.Name.value)
+            _virtual_user_repr.add_dependent_node(_physical_user_repr.head)
+            _virtual_user_repr.add_existing_screen_node(_display.portal_screen_node)
+            _virtual_user_representations.append(_virtual_user_repr)
+
+    for _virtual_user_representation in _virtual_user_representations:
+      ApplicationManager.all_user_representations.append(_virtual_user_representation)
+
+
+    ## Initialize group names ##
+
     for _workspace in self.workspaces:
       for _display_group in _workspace.display_groups:
 
@@ -194,7 +230,19 @@ class ApplicationManager(avango.script.Script):
         for _user in _workspace.users:
           _user.handle_correct_visibility_groups_for(_display_group.id)
 
-    # server control monitor setup #
+    '''
+    for _workspace in self.virtual_workspaces:
+      for _display_group in _workspace.display_groups:
+
+        for _nav in _display_group.navigations:
+          _nav.handle_correct_visibility_groups()
+
+        for _workspace2 in self.workspaces:
+          for _user in _workspace2.users:
+            _user.handle_correct_visibility_groups_for(_display_group)
+    '''
+
+    ## Server Control Monitor Setup #
 
     ## @var server_transform
     # Transform node representing the position and orientation of the server control monitor.

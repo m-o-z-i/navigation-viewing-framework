@@ -32,7 +32,8 @@ class UserRepresentation(avango.script.Script):
   # @param USER Reference to the user to be represented.
   # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
-  def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
+  #
+  def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = 'head'):
 
     ## @var USER
     # Reference to the user to be represented.
@@ -46,13 +47,17 @@ class UserRepresentation(avango.script.Script):
     # Transform node to be filled by one navigation of the display group.
     self.view_transform_node = VIEW_TRANSFORM_NODE
 
-    ## @var workspace_id
-    # Identification number of the workspace the associated user is belonging to.
-    self.workspace_id = int(VIEW_TRANSFORM_NODE.Name.value.split("_")[0].replace("w", ""))
-
     ## @var screens
     # List of screen nodes for each display of the display group.
     self.screens = []
+
+    ##
+    #
+    self.dependent_nodes = []
+
+    ## @var transformation_policy
+    # A string command to be evaluated every frame.
+    self.transformation_policy = TRANSFORMATION_POLICY
 
     ## create user representation nodes ##
 
@@ -71,7 +76,7 @@ class UserRepresentation(avango.script.Script):
 
     ## @var head
     # Head node of the user.
-    self.head = avango.gua.nodes.TransformNode(Name = "head")
+    self.head = avango.gua.nodes.TransformNode(Name = HEAD_NODE_NAME)
     self.view_transform_node.Children.value.append(self.head)
 
     ## @var left_eye
@@ -101,9 +106,7 @@ class UserRepresentation(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
       
-    # update head node with respect to workspace offset
-    self.head.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * \
-                                self.USER.headtracking_reader.sf_abs_mat.value
+    exec self.transformation_policy
 
   ## Sets the GroupNames field on all avatar parts to a list of strings.
   # @param LIST_OF_STRINGS A list of group names to be set for the avatar parts.
@@ -123,9 +126,14 @@ class UserRepresentation(avango.script.Script):
 
     self.avatar.add_screen_visualization_for(DISPLAY_INSTANCE)
 
+
   ## Appends a screen node for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen node from.
   def add_screen_node_for(self, DISPLAY_INSTANCE):
+
+    ## @var workspace_id
+    # Identification number of the workspace the associated user is belonging to.
+    self.workspace_id = int(self.view_transform_node.Name.value.split("_")[0].replace("w", ""))
 
     _screen = DISPLAY_INSTANCE.create_screen_node("screen_" + str(len(self.screens)))
     self.view_transform_node.Children.value.append(_screen)
@@ -146,6 +154,19 @@ class UserRepresentation(avango.script.Script):
     _navigation_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
     _navigation_color_geometry.GroupNames.value = ["w" + str(self.workspace_id) + "_dg" + str(self.DISPLAY_GROUP.id) + "_u" + str(self.USER.id)]
     _screen.Children.value.append(_navigation_color_geometry)
+
+
+  ##
+  #
+  def add_existing_screen_node(self, SCREEN_NODE):
+
+    self.screens.append(SCREEN_NODE)
+
+  ##
+  #
+  def add_dependent_node(self, NODE):
+
+    self.dependent_nodes.append(NODE)
 
 
   ## Connects a specific navigation of the display group to the user.
@@ -296,10 +317,10 @@ class User(VisibilityHandler2D):
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
-  def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE):
+  def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = "head"):
 
     _user_repr = UserRepresentation()
-    _user_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE)
+    _user_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME)
     self.user_representations.append(_user_repr)
     return _user_repr
 

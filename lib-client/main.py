@@ -111,8 +111,8 @@ def start():
   portal_manager = ClientPortalManager()
   portal_manager.my_constructor(graph, views)
 
-  #shell_client = GuaVE()
-  #shell_client.start(locals(), globals())
+  shell_client = GuaVE()
+  shell_client.start(locals(), globals())
 
   # start rendering process
   viewer.run()

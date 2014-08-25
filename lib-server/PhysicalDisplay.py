@@ -52,7 +52,7 @@ class PhysicalDisplay(Display):
     else:
       _name = name
 
-    self.base_constructor(_name, resolution, size)
+    self.base_constructor(_name, resolution, size, stereo)
 
     # save values in members
     ## @var hostname
@@ -82,10 +82,6 @@ class PhysicalDisplay(Display):
     ## @var num_views
     # Number of views which are already registered with this display.
     self.num_views = 0
-
-    ## @var stereo
-    # Boolean indicating if the stereo mode is to be used.
-    self.stereo = stereo
    
     ## @var stereomode
     # A string indicating the stereo mode that is used by this display.

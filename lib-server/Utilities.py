@@ -63,8 +63,11 @@ def get_euler_angles(MATRIX):
 # @param MATRIX The rotation matrix to extract the angle from.
 def get_yaw(MATRIX):
 
-  _yaw, _, _ = get_euler_angles(MATRIX)
-  return _yaw
+  try:
+    _yaw, _, _ = get_euler_angles(MATRIX)
+    return _yaw
+  except:
+    return 0
 
 
 ## Returns the rotation matrix of the rotation between two input vectors.

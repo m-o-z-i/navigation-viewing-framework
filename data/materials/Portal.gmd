@@ -1,0 +1,10 @@
+
+{
+	"shading_model" : "Portal",
+	"uniforms" : 
+	{
+		"liquid_texture" : "data/textures/stones_diffuse.jpg",
+		"portal_texture" : "data/textures/stones_diffuse.jpg",
+		"time" : "0"
+	}
+}

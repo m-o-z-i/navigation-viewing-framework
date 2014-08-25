@@ -258,21 +258,23 @@ class PortalPreView(avango.script.Script):
 
     ##
     #
-    self.view_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/head_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-    #print "/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/head_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)
+    self.transformed_head_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/head_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
 
     ##
     #
-    self.portal_matrix_node = self.PORTAL_NODE.Children.value[1]
+    self.left_eye_node = self.transformed_head_node.Children.value[0]
 
     ##
     #
-    self.left_eye_node = self.view_node.Children.value[0]
+    self.right_eye_node = self.transformed_head_node.Children.value[1]
 
     ##
     #
-    self.right_eye_node = self.view_node.Children.value[1]
+    self.portal_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/portal_matrix/"]
 
+    ##
+    #
+    self.scene_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/"]
 
     ## @var screen_node
     # Screen node representing the screen position in the portal's exit space.
@@ -341,27 +343,27 @@ class PortalPreView(avango.script.Script):
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
-    self.textured_plane = _loader.create_geometry_from_file('textured_plane',
-                                                            'data/objects/plane.obj',
-                                                            'data/materials/Portal.gmd',
-                                                            avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.textured_plane.Transform.value =  avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                           avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
-    self.textured_plane.GroupNames.value = ["main_scene"]
+    #self.textured_plane = _loader.create_geometry_from_file('textured_plane',
+    #                                                        'data/objects/plane.obj',
+    #                                                        'data/materials/Stones.gmd',
+    #                                                        avango.gua.LoaderFlags.LOAD_MATERIALS)
+    #self.textured_plane.Transform.value =  avango.gua.make_rot_mat(90, 1, 0, 0) * \
+    #                                       avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    #self.textured_plane.GroupNames.value = ["w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
     #avango.gua.set_material_uniform('data/materials/Portal.gmd', "portal_texture", self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
     #print repr(self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
-    self.portal_matrix_node.Children.value.append(self.textured_plane)
+    #self.portal_matrix_node.Children.value.append(self.textured_plane)
 
-    #self.textured_quad = avango.gua.nodes.TexturedQuadNode(Name = "texture_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
-    #                                                       Texture = "data/textures/tiles_diffuse.jpg",
-    #                                                       IsStereoTexture = False,#self.VIEW.is_stereo,
-    #                                                       Width = self.screen_node.Width.value,
-    #                                                       Height = self.screen_node.Height.value)
-    #self.textured_quad.GroupNames.value = ["w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
+    self.textured_quad = avango.gua.nodes.TexturedQuadNode(Name = "texture_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
+                                                           Texture = self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
+                                                           IsStereoTexture = self.VIEW.is_stereo,
+                                                           Width = self.screen_node.Width.value,
+                                                           Height = self.screen_node.Height.value)
+    self.textured_quad.GroupNames.value = ["w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
 
-    #Texture = self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
+    #
     #self.textured_quad.GroupNames.value = ["main_scene"]
-    #self.portal_matrix_node.Children.value.append(self.textured_quad)
+    self.portal_matrix_node.Children.value.append(self.textured_quad)
 
 
     ## @var back_geometry
@@ -452,6 +454,8 @@ class PortalPreView(avango.script.Script):
     except:
       return
 
+    print "portal modes", self.mf_portal_modes.value[0], self.mf_portal_modes.value[1], self.mf_portal_modes.value[2], self.mf_portal_modes.value[3], self.mf_portal_modes.value[4]
+
     # check for visibility
     if self.mf_portal_modes.value[4] == "4-False":
       self.frame_trigger.Active.value = False
@@ -506,32 +510,29 @@ class PortalPreView(avango.script.Script):
         #self.portal_border.GroupNames.value.append("do_not_display_group")
         #self.back_geometry.GroupNames.value.append("do_not_display_group")
 
+    print self.frame_trigger.Active.value
+
 
   ## Evaluated every frame when active.
   def frame_callback(self):
     
-    _head_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/w" + str(self.VIEW.workspace_id) + "_dg" + \
-                      str(self.VIEW.display_group_id) + "_u" + str(self.VIEW.user_id) + "/head"])
-    _view_in_portal_space = avango.gua.make_inverse_mat(self.portal_matrix_node.Transform.value) * \
-                            _head_world_mat
-
-    # update view_node in 3D portal mode
-    #if self.mf_portal_modes.value[0] == "0-3D":
-      #self.view_node.Transform.value = _view_in_portal_space
-
-      #if self.VIEW.user_id == 0:
-      #  print self.view_node.Transform.value
-
+    print "frame callback"
 
     # update global clipping plane when negative parallax is false
     if self.mf_portal_modes.value[2] == "2-False":
-      _portal_scene_mat = self.PORTAL_NODE.Children.value[2].Transform.value
+      _portal_scene_mat = self.scene_matrix_node.Transform.value
       _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
-      _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec        
+      _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec
       _vec2 = _portal_scene_mat.get_translate()
       _vec2 = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected())) * _vec2
       _dist = _vec2.z
       self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
+
+    _head_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/w" + str(self.VIEW.workspace_id) + "_dg" + \
+                      str(self.VIEW.display_group_id) + "_u" + str(self.VIEW.user_id) + "/head"])
+
+    _view_in_portal_space = self.compute_world_transform(self.transformed_head_node)
+    print "Cat"
 
     # determine view in portal space and decide if renering is necessary
     _view_vec = avango.gua.make_rot_mat(_head_world_mat.get_rotate_scale_corrected()) * avango.gua.Vec3(0, 0, -1)
@@ -539,6 +540,8 @@ class PortalPreView(avango.script.Script):
     _portal_vec = avango.gua.make_rot_mat(self.portal_matrix_node.Transform.value.get_rotate()) * avango.gua.Vec3(0, 0, -1)
     _portal_vec = avango.gua.Vec3(_portal_vec.x, _portal_vec.y, _portal_vec.z)
     _angle = math.acos(_view_vec.dot(_portal_vec))
+
+    print "still Cat"
 
     if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 100.0:
 
@@ -553,6 +556,8 @@ class PortalPreView(avango.script.Script):
         self.pipeline.Enabled.value = True
         #self.textured_quad.GroupNames.value.remove("do_not_display_group")
         #self.back_geometry.GroupNames.value.append("do_not_display_group")
+
+    print "complete Cat"
 
 
   ## Called whenever sf_screen_width changes.

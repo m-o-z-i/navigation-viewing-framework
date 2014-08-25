@@ -282,7 +282,7 @@ class SceneVRHyperspace3(SceneObject):
     #NET_TRANS_NODE.Children.value.append(tex_quad)
 
 
-    _mat = avango.gua.make_rot_mat(90.0, 1, 0, 0) * avango.gua.make_scale_mat(0.1)
+    _mat = avango.gua.make_rot_mat(90.0, 1, 0, 0) * avango.gua.make_scale_mat(7.0)
     _parent_node = SCENEGRAPH["/net/platform_0/scale/screen_0"]
     self.init_geometry("clouds", "data/objects/plane.obj", _mat, "data/materials/bwb/Fog.gmd", False, False, _parent_node, "pre_scene1")
 

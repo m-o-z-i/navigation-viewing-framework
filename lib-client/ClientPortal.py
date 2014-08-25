@@ -251,9 +251,6 @@ class PortalPreView(avango.script.Script):
     self.camera.LeftEye.value = self.left_eye_node.Path.value
     self.camera.RightEye.value = self.right_eye_node.Path.value
 
-    self.camera.RenderMask.value = "(main_scene | " + PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ")" && !do_not_display_group"
-    print "Portal render mask", self.camera.RenderMask.value
-
     ## @var pipeline
     # The pipeline used to render this PortalPreView. 
     self.pipeline = avango.gua.nodes.Pipeline()
@@ -298,7 +295,8 @@ class PortalPreView(avango.script.Script):
     self.VIEW.pipeline.PreRenderPipelines.value.append(self.pipeline)
 
     # set render mask
-    self.camera.RenderMask.value = "main_scene"
+    self.camera.RenderMask.value = "(main_scene | " + PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ")" && "!do_not_display_group"
+    print "Portal render mask", self.camera.RenderMask.value
 
     ## @var textured_quad
     # The textured quad instance in which the portal view will be rendered.

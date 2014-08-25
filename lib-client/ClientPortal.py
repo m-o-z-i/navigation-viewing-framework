@@ -158,40 +158,14 @@ class ClientPortal:
     self.portal_matrix_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Transform)
     self.portal_node.Children.value.append(self.portal_matrix_node)
 
-    ## @var scene_matrix_node
-    # Scenegraph node representing the location where the portal looks from (exit).
-    #self.scene_matrix_node = avango.gua.nodes.TransformNode(Name = "scene_matrix")
-    #self.scene_matrix_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[2].Transform)
-    #self.portal_node.Children.value.append(self.scene_matrix_node)
-
-    ## @var portal_screen_node
-    # Screen node representing the portal's screen in the scene.
-    #self.portal_screen_node = avango.gua.nodes.ScreenNode(Name = "portal_screen")
-    #self.portal_screen_node.Width.connect_from(SERVER_PORTAL_NODE.Children.value[2].Children.value[0].Width)
-    #self.portal_screen_node.Height.connect_from(SERVER_PORTAL_NODE.Children.value[2].Children.value[0].Height)
-    #self.portal_screen_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[2].Children.value[0].Transform)
-    #self.scene_matrix_node.Children.value.append(self.portal_screen_node)
-
-    # debug screen visualization
-    #_loader = avango.gua.nodes.TriMeshLoader()
-    #_node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
-    #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
-    #_node.Transform.value = self.portal_screen_node.Transform.value * \
-    #                        avango.gua.make_scale_mat(self.portal_screen_node.Width.value, self.portal_screen_node.Height.value, 1.0)
-    #self.scene_matrix_node.Children.value.append(_node)
 
   ## Disconnects all scenegraph node fields and deletes the nodes except portal_node.
   def deactivate(self):
     # disconnect fields
     self.settings_node.GroupNames.disconnect()
     self.portal_matrix_node.Transform.disconnect()
-    self.scene_matrix_node.Transform.disconnect()
-    self.portal_screen_node.Width.disconnect()
-    self.portal_screen_node.Height.disconnect()
 
     # object destruction
-    del self.portal_screen_node
-    del self.scene_matrix_node
     del self.portal_matrix_node
     del self.settings_node
 
@@ -220,13 +194,6 @@ class PortalPreView(avango.script.Script):
   # Field containing the GroupNames of the associated portal node. Used for transferring portal mode settings.
   mf_portal_modes = avango.MFString()
 
-  ## @var sf_left_eye_transform
-  # Transformation of the view's left eye.
-  sf_left_eye_transform = avango.gua.SFMatrix4()
-
-  ## @var sf_right_eye_transform
-  # Transformation of the view's right eye.
-  sf_right_eye_transform = avango.gua.SFMatrix4()
 
   # Default constructor.
   def __init__(self):
@@ -411,7 +378,7 @@ class PortalPreView(avango.script.Script):
     self.textured_quad.Width.value = self.screen_node.Width.value
     self.textured_quad.Height.value = self.screen_node.Height.value
     #self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.0001) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
-    self.portal_border.Transform.value = self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
+    #self.portal_border.Transform.value = self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
 
   ## Removes this portal from the local portal group and destroys all the scenegraph nodes.
   def deactivate(self):
@@ -429,11 +396,6 @@ class PortalPreView(avango.script.Script):
 
     del self.pipeline
     del self.camera
-
-    self.PORTAL_NODE.Children.value[1].Children.value[0].Children.value.remove(self.view_node)
-    del self.left_eye_node
-    del self.right_eye_node
-    del self.view_node
 
   ## Computes the WorldTransform of a scenegraph node manually without using the pre-defined field.
   # @param NODE The scenegraph node to compute the world transformation for.
@@ -470,19 +432,6 @@ class PortalPreView(avango.script.Script):
       #self.textured_quad.GroupNames.value.remove("do_not_display_group")
       #self.portal_border.GroupNames.value.remove("do_not_display_group")
 
-    # check for viewing mode
-    if self.mf_portal_modes.value[0] == "0-3D":
-      self.left_eye_node.Transform.disconnect()
-      self.right_eye_node.Transform.disconnect()
-      self.left_eye_node.Transform.connect_from(self.sf_left_eye_transform)
-      self.right_eye_node.Transform.connect_from(self.sf_right_eye_transform)
-    else:
-      self.view_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
-      self.left_eye_node.Transform.disconnect()
-      self.right_eye_node.Transform.disconnect()
-      self.left_eye_node.Transform.value = avango.gua.make_identity_mat()
-      self.right_eye_node.Transform.value = avango.gua.make_identity_mat()
-
     # check for camera mode
     if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
       self.camera.Mode.value = avango.gua.ProjectionMode.ORTHOGRAPHIC
@@ -516,7 +465,7 @@ class PortalPreView(avango.script.Script):
   ## Evaluated every frame when active.
   def frame_callback(self):
     
-    print "frame callback"
+    #print "frame callback"
 
     # update global clipping plane when negative parallax is false
     if self.mf_portal_modes.value[2] == "2-False":
@@ -532,7 +481,8 @@ class PortalPreView(avango.script.Script):
                       str(self.VIEW.display_group_id) + "_u" + str(self.VIEW.user_id) + "/head"])
 
     _view_in_portal_space = self.compute_world_transform(self.transformed_head_node)
-    print "Cat"
+    
+    #print "Cat"
 
     # determine view in portal space and decide if renering is necessary
     _view_vec = avango.gua.make_rot_mat(_head_world_mat.get_rotate_scale_corrected()) * avango.gua.Vec3(0, 0, -1)
@@ -541,7 +491,7 @@ class PortalPreView(avango.script.Script):
     _portal_vec = avango.gua.Vec3(_portal_vec.x, _portal_vec.y, _portal_vec.z)
     _angle = math.acos(_view_vec.dot(_portal_vec))
 
-    print "still Cat"
+    #print "still Cat"
 
     if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 100.0:
 
@@ -557,7 +507,7 @@ class PortalPreView(avango.script.Script):
         #self.textured_quad.GroupNames.value.remove("do_not_display_group")
         #self.back_geometry.GroupNames.value.append("do_not_display_group")
 
-    print "complete Cat"
+    #print "complete Cat"
 
 
   ## Called whenever sf_screen_width changes.

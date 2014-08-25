@@ -207,12 +207,15 @@ class Portal(Display):
     self.NET_TRANS_NODE.distribute_object(self.portal_screen_node)
 
 
+  def delete_downwards_from(self, NODE):
+
+    for _child in NODE.Children.value:
+      self.delete_downwards_from(_child)
+      del _child
+
   ## Removes this portal from the portal group and destroys all the scenegraph nodes.
   def deactivate(self):
+    
     self.PORTAL_MANAGER.portal_group_node.Children.value.remove(self.portal_node)
-
-    del self.portal_screen_node
-    del self.scene_matrix_node
-    del self.portal_matrix_node
-    del self.settigns_node
+    self.delete_downwards_from(self.portal_node)
     del self.portal_node

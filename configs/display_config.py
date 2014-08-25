@@ -379,7 +379,7 @@ class OculusRift(Display):
 class PerseusTouchTable(Display):
     def __init__(self):
         Display.__init__(self
-                        , hostname = "perseus"
+                        , hostname = "nohra"
                         , name = "touch_table"
                         , resolution = (1920 * 2, 1080 * 2)
                         , displaystrings = [":0.0"]
@@ -404,7 +404,7 @@ displays = [
   TouchTable3D() ,
   #Display(hostname = "daedalos", stereo = False) ,
 
-  #PerseusTouchTable() ,
+  PerseusTouchTable() ,
 
   #Display(hostname = "apollo"
   #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)

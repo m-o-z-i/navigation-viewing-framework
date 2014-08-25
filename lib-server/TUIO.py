@@ -23,7 +23,10 @@ class MultiTouchDevice(avango.script.Script):
         self._transMat   = avango.gua.make_identity_mat()
         self._rotMat     = avango.gua.make_identity_mat()
         self._scaleMat   = avango.gua.make_identity_mat()
+        self._head_matrix = avango.gua.make_identity_mat()
+
         self.always_evaluate(True)
+
 
     def my_constructor(self, graph, display):
         """
@@ -35,6 +38,7 @@ class MultiTouchDevice(avango.script.Script):
         self._sceneGraph = graph
         self._display    = display
         self._origMat    = graph.Root.value.Transform.value
+        self._head_matrix = self._sceneGraph["/net/platform_0/scale/s0_slot0/eye"].WorldTransform.value
 
     def evaluate(self):
         self.applyTransformations()
@@ -74,6 +78,9 @@ class MultiTouchDevice(avango.script.Script):
         Apply calculated world matrix to scene graph.
         Requires the scene graph to have a transform node as root node.
         """
+        # TODD: Medieval knoten mit dem inversen der fingerposition in den Nullpunkt verschieben; diesen knoten verschieben, scalieren, rotieren und wieder zurueck verschieben
+        # avango.gua.make_inverse_mat(self._head_matrix)
+
         self._sceneGraph["/net/MedievalTown"].Transform.value = self._transMat * self._sceneGraph["/net/MedievalTown"].Transform.value * self._rotMat * self._scaleMat
         self._transMat   = avango.gua.make_identity_mat()
         self._rotMat     = avango.gua.make_identity_mat()
@@ -120,6 +127,7 @@ class TUIODevice(MultiTouchDevice):
         self.registerGesture(RotationGesture())
         self.registerGesture(DragGesture())
         self.registerGesture(PinchGesture())
+        self.registerGesture(RollGesture())
 
 
     @field_has_changed(PosChanged)
@@ -338,6 +346,67 @@ class RotationGesture(MultiTouchGesture):
 
         return True
 
+# todo class viewgesture(MultiTouchGesture):
+#  3 finger um den mittelpunit objekt drehen..
+
+class RollGesture(MultiTouchGesture):
+    def __init__(self):
+        super(RollGesture, self).__init__()
+        self._distances12 = []
+        self._distances23 = []
+        self._positions = []
+
+
+    def processGesture(self, activePoints, touchDevice):
+        if len(activePoints) != 3:
+            self._distances = []
+            return False
+        vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
+        vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+        vec3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[1].PosY.value, 0)
+
+        distance12 = vec2 - vec1
+        distance23 = vec3 - vec1
+
+        #check if all distances are nearly the same
+        if 2 == len(self._distances12):
+            self._distances12.append(distance12)
+            self._distances12.pop(0)
+        else:
+            self._distances12.append(distance12)
+            return False
+
+        # save old distance2
+        if 2 == len(self._distances23):
+            self._distances23.append(distance23)
+            self._distances23.pop(0)
+        else:
+            self._distances23.append(distance23)
+            return False
+
+        # save positions from vec2
+        if 2 == len(self._positions):
+            self._positions.append(vec2)
+            self._positions.pop(0)
+        else:
+            self._positions.append(vec2)
+            return False
+
+        distanceDiff12 = self._distances12[0] - self._distances12[-1]
+        distanceDiff23 = self._distances23[0] - self._distances23[-1]
+
+        if (math.fabs(distanceDiff12.length()) > 0.01 or math.fabs(distanceDiff23.length()) > 0.01):
+            return False
+
+        directionVec = self._positions[0] - self._positions[-1]
+        rotationalAxis = avango.gua.Vec3(directionVec.y, 0, directionVec.x)
+
+        angle = directionVec.length() * 360
+        touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, rotationalAxis))
+
+        return True
+
+
 class TUIOCursor(avango.script.Script):
     PosX = avango.SFFloat()
     PosY = avango.SFFloat()
@@ -379,6 +448,8 @@ class TUIOCursor(avango.script.Script):
         Call whenever some touch input data has changed. This method will update self.IsTouched accordingly.
         """
         self.IsTouched.value = (self.PosX.value != -1.0 and self.PosY.value != -1.0)
+
+
 
     @field_has_changed(CursorID)
     def set_station(self):

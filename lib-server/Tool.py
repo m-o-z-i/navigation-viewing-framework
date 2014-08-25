@@ -178,28 +178,28 @@ class Tool(VisibilityHandler2D):
     self.assigned_user = USER_INSTANCE
 
     for _display_group in self.WORKSPACE_INSTANCE.display_groups:
-      self.handle_correct_visibility_groups_for(_display_group.id)
+      self.handle_correct_visibility_groups_for(_display_group)
 
   ## Handles the correct GroupNames of all ToolRepresentations at a display group.
-  # @param DISPLAY_GROUP_ID The identification number of the DisplayGroup.
-  def handle_correct_visibility_groups_for(self, DISPLAY_GROUP_ID):
+  # @param DISPLAY_GROUP_ID The DisplayGroup to be handled.
+  def handle_correct_visibility_groups_for(self, DISPLAY_GROUP):
 
-    #print "display group", DISPLAY_GROUP_ID
+    #print "display group", DISPLAY_GROUP
 
-    # All ToolRepresentation instances at DISPLAY_GROUP_ID
+    # All ToolRepresentation instances at DISPLAY_GROUP
     _tool_reprs_at_display_group = []
 
-    # ToolRepresentation instance belonging to the assigned user at DISPLAY_GROUP_ID
+    # ToolRepresentation instance belonging to the assigned user at DISPLAY_GROUP
     _tool_repr_of_assigned_user = None
 
-    # display group instance belonging to DISPLAY_GROUP_ID
+    # display group instance belonging to DISPLAY_GROUP
     _handled_display_group_instance = None
 
     ## fill the variables ##
     for _tool_repr in self.tool_representations:
 
       # get all tool representations in display group
-      if _tool_repr.DISPLAY_GROUP.id == DISPLAY_GROUP_ID:
+      if _tool_repr.DISPLAY_GROUP == DISPLAY_GROUP:
 
         _handled_display_group_instance = _tool_repr.DISPLAY_GROUP
         _tool_reprs_at_display_group.append(_tool_repr)
@@ -236,7 +236,10 @@ class Tool(VisibilityHandler2D):
         #print "Does", _user_repr.view_transform_node.Name.value, "(", _user_repr_display_group_tag, ") see"
         #, _handled_display_group_tag, "?", _visible
         if _visible:
-          _assigned_user_tool_visible_for.append(_user_repr.view_transform_node.Name.value)
+          if _user_repr.view_transform_node.Name.value == "scene_matrix":
+            _assigned_user_tool_visible_for.append(_user_repr.view_transform_node.Parent.value.Name.value + "_" + _user_repr.head.Name.value)
+          else:
+            _assigned_user_tool_visible_for.append(_user_repr.view_transform_node.Name.value)
 
     # make tool holder tool representation visible for all others on different navigations and display groups
     for _string in _assigned_user_tool_visible_for:

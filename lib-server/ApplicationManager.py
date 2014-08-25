@@ -181,9 +181,7 @@ class ApplicationManager(avango.script.Script):
                 , stderr=subprocess.PIPE)
                 time.sleep(1)
 
-    
-        for _user_representation in _user.user_representations:
-          _user_representation.connect_navigation_of_display_group(0)
+
 
     ## Handle virtual viewing setups ##
 
@@ -206,7 +204,7 @@ class ApplicationManager(avango.script.Script):
           # create user representations
           for _physical_user_repr in ApplicationManager.all_user_representations:
 
-            _virtual_user_repr = _user.create_user_representation_for(_display_group, _display.scene_matrix_node,
+            _virtual_user_repr = _physical_user_repr.USER.create_user_representation_for(_display_group, _display.scene_matrix_node,
               'self.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value'
             , 'head_' + _physical_user_repr.view_transform_node.Name.value)
             _virtual_user_repr.add_dependent_node(_physical_user_repr.head)
@@ -216,9 +214,10 @@ class ApplicationManager(avango.script.Script):
     for _virtual_user_representation in _virtual_user_representations:
       ApplicationManager.all_user_representations.append(_virtual_user_representation)
 
-
     ## Initialize group names ##
 
+
+    # physical workspaces
     for _workspace in self.workspaces:
       for _display_group in _workspace.display_groups:
 
@@ -228,19 +227,16 @@ class ApplicationManager(avango.script.Script):
 
         # trigger correct groups for all users at display
         for _user in _workspace.users:
-          _user.handle_correct_visibility_groups_for(_display_group.id)
+          _user.handle_correct_visibility_groups_for(_display_group)
 
-    '''
-    for _workspace in self.virtual_workspaces:
-      for _display_group in _workspace.display_groups:
+          for _virtual_workspace in self.virtual_workspaces:
+            for _virtual_display_group in _virtual_workspace.display_groups:
+              _user.handle_correct_visibility_groups_for(_virtual_display_group)
 
-        for _nav in _display_group.navigations:
-          _nav.handle_correct_visibility_groups()
 
-        for _workspace2 in self.workspaces:
-          for _user in _workspace2.users:
-            _user.handle_correct_visibility_groups_for(_display_group)
-    '''
+    for _user_representation in ApplicationManager.all_user_representations:
+      _user_representation.connect_navigation_of_display_group(0)
+
 
     ## Server Control Monitor Setup #
 

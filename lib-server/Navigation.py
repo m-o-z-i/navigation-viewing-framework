@@ -101,11 +101,19 @@ class Navigation(VisibilityHandler1D):
 
     # set navigation color plane
     for _screen in USER_REPRESENTATION.screens:
-      _screen.Children.value[0].Material.value = 'data/materials/' + self.trace_material + 'Shadeless.gmd'
+
+      try:
+        _screen.Children.value[0].Material.value = 'data/materials/' + self.trace_material + 'Shadeless.gmd'
+      except:
+        pass
 
     if len(self.active_user_representations) == 0 and self.trace != None:
-      _device_pos = self.device.sf_station_mat.value.get_translate()
-      self.trace.clear(self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z))
+
+      try:
+        _device_pos = self.device.sf_station_mat.value.get_translate()
+        self.trace.clear(self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z))
+      except:
+        pass
 
     self.active_user_representations.append(USER_REPRESENTATION)
   

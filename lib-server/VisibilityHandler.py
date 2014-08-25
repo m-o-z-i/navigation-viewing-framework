@@ -34,7 +34,7 @@ class VisibilityHandler2D(avango.script.Script):
     self.visibility_table = VISIBILITY_TABLE
 
   ## Triggers the correct GroupNames of all instances at a display group.
-  # @param DISPLAY_GROUP The display group id to set new GroupNames for.
-  def handle_correct_visibility_groups_for(self, DISPLAY_GROUP_ID):
+  # @param DISPLAY_GROUP The display group to set new GroupNames for.
+  def handle_correct_visibility_groups_for(self, DISPLAY_GROUP):
 
     raise NotImplementedError( "To be implemented by a subclass." )

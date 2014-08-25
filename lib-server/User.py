@@ -362,50 +362,63 @@ class User(VisibilityHandler2D):
       self.is_active = False
 
   ## Handles the correct GroupNames of all UserRepresentations at a display group.
-  # @param DISPLAY_GROUP_ID The identification number of the DisplayGroup.
-  def handle_correct_visibility_groups_for(self, DISPLAY_GROUP_ID):
+  # @param DISPLAY_GROUP The DisplayGroup to be handled.
+  def handle_correct_visibility_groups_for(self, DISPLAY_GROUP):
 
-    # All UserRepresentation instances at DISPLAY_GROUP_ID
-    _user_repr_at_display_group = self.user_representations[DISPLAY_GROUP_ID]
+    # All UserRepresentation instances at DISPLAY_GROUP
+    # normally, this list should just contain one user representation
+    # in case of portals, however, a display group may have more than one user representation
+    _user_representations_at_display_group = []
 
-    # display group instance belonging to DISPLAY_GROUP_ID
-    _handled_display_group_instance = _user_repr_at_display_group.DISPLAY_GROUP
-
-    _all_user_reprs_at_display_group = []
-
-    for _user_repr in ApplicationManager.all_user_representations:
-      if _user_repr.DISPLAY_GROUP == _handled_display_group_instance:
-        _all_user_reprs_at_display_group.append(_user_repr)
-
-    ## determine which group names have to be added to the user representations ##
-    _user_visible_for = []
-
-    # append all names of user representations which are not on same navigation
-    for _user_repr in _all_user_reprs_at_display_group:
-
-      if _user_repr.connected_navigation_id != _user_repr_at_display_group.connected_navigation_id:
-        _user_visible_for.append(_user_repr.view_transform_node.Name.value)
-
-    # check for all user representations outside the handled display group
-    for _user_repr in ApplicationManager.all_user_representations:
-      if _user_repr.DISPLAY_GROUP != _handled_display_group_instance:
-
-        # consider visibility table
-        _handled_display_group_tag = _handled_display_group_instance.visibility_tag
-        _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
+    for _user_repr in self.user_representations:
+      
+      if _user_repr.DISPLAY_GROUP == DISPLAY_GROUP:
+        _user_representations_at_display_group.append(_user_repr)
         
-        _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
-        
-        if _visible:
+    # for all found user representations in the given display group
+    for _user_repr_at_display_group in _user_representations_at_display_group:
+
+      # display group instance belonging to DISPLAY_GROUP
+      _handled_display_group_instance = _user_repr_at_display_group.DISPLAY_GROUP
+
+      _all_user_reprs_at_display_group = []
+
+      for _user_repr in ApplicationManager.all_user_representations:
+        if _user_repr.DISPLAY_GROUP == _handled_display_group_instance:
+          _all_user_reprs_at_display_group.append(_user_repr)
+
+      ## determine which group names have to be added to the user representations ##
+      _user_visible_for = []
+
+      # append all names of user representations which are not on same navigation
+      for _user_repr in _all_user_reprs_at_display_group:
+
+        if _user_repr.connected_navigation_id != _user_repr_at_display_group.connected_navigation_id:
           _user_visible_for.append(_user_repr.view_transform_node.Name.value)
 
-    # apply the obtained group names to the user representation
-    if len(_user_visible_for) == 0:
+      # check for all user representations outside the handled display group
+      for _user_repr in ApplicationManager.all_user_representations:
+        if _user_repr.DISPLAY_GROUP != _handled_display_group_instance:
 
-      # prevent wildcard from rendering the avatar
-      _user_repr_at_display_group.set_avatar_group_names(["do_not_display_group"])
+          # consider visibility table
+          _handled_display_group_tag = _handled_display_group_instance.visibility_tag
+          _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
+          
+          _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
+          
+          if _visible:
+            if _user_repr.view_transform_node.Name.value == "scene_matrix":
+              _user_visible_for.append(_user_repr.view_transform_node.Parent.value.Name.value + "_" + _user_repr.head.Name.value)
+            else:
+              _user_visible_for.append(_user_repr.view_transform_node.Name.value)
 
-    else:
+      # apply the obtained group names to the user representation
+      if len(_user_visible_for) == 0:
 
-      for _string in _user_visible_for:
-        _user_repr_at_display_group.set_avatar_group_names(_user_visible_for)
+        # prevent wildcard from rendering the avatar
+        _user_repr_at_display_group.set_avatar_group_names(["do_not_display_group"])
+
+      else:
+
+        for _string in _user_visible_for:
+          _user_repr_at_display_group.set_avatar_group_names(_user_visible_for)

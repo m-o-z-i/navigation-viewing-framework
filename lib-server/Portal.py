@@ -94,7 +94,6 @@ class Portal(Display):
     # Boolean saying if teleportation for is portal is enabled.
     self.transitable = TRANSITABLE
 
-    print "PRESENT"
 
   ## Switches viewing_mode to the other state.
   def switch_viewing_mode(self):
@@ -102,6 +101,14 @@ class Portal(Display):
       self.viewing_mode = "3D"
     else:
       self.viewing_mode = "2D"
+
+    for _user_repr in ApplicationManager.all_user_representations:
+      if _user_repr.DISPLAY_GROUP.displays[0] == self:
+
+        if self.viewing_mode == "2D":
+          _user_repr.make_default_viewing_setup()
+        else:
+          _user_repr.make_complex_viewing_setup()
 
     self.settings_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
@@ -123,19 +130,6 @@ class Portal(Display):
 
     self.settings_node.GroupNames.value = ["0-" + self.viewing_mode, "1-" + self.camera_mode, "2-" + self.negative_parallax, "3-" + self.border_material, "4-" + self.visible]
 
-  ## Sets a new value for platform_matrix and updates scene_matrix.
-  # @param PLATFORM_MATRIX The new platform transformation matrix to be set.
-  def set_platform_matrix(self, PLATFORM_MATRIX):
-    self.platform_matrix = PLATFORM_MATRIX
-    self.scene_matrix_node.Transform.value = self.platform_matrix * \
-                                             avango.gua.make_scale_mat(self.platform_scale)
-
-  ## Sets a new value for platform_scale and updates scene_matrix.
-  # @param SCALE The new platform scale factor to be set.
-  def set_platform_scale(self, SCALE):
-    self.platform_scale = SCALE
-    self.scene_matrix_node.Transform.value = self.platform_matrix * \
-                                             avango.gua.make_scale_mat(self.platform_scale)
 
   ## Connects the portal matrix node to a field or disconnects it if None is given.
   # @param SF_PORTAL_MATRIX The field to connect the portal matrix node with. None if disconnection is required.

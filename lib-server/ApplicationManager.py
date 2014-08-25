@@ -223,7 +223,7 @@ class ApplicationManager(avango.script.Script):
     ## Initialize group names ##
 
 
-    # physical workspaces
+    # physical and virtual workspaces
     for _workspace in self.workspaces:
       for _display_group in _workspace.display_groups:
 
@@ -240,6 +240,13 @@ class ApplicationManager(avango.script.Script):
               _user.handle_correct_visibility_groups_for(_virtual_display_group)
 
 
+    # workaround to start viewing mode correctly
+    for _virtual_workspace in self.virtual_workspaces:
+      for _virtual_display_group in _virtual_workspace.display_groups:
+        _virtual_display_group.displays[0].switch_viewing_mode()
+        _virtual_display_group.displays[0].switch_viewing_mode()
+
+    # connect proper navigations
     for _user_representation in ApplicationManager.all_user_representations:
       _user_representation.connect_navigation_of_display_group(0)
 

@@ -8,12 +8,13 @@ import avango
 import avango.gua
 
 # import framework libraries
+from Display import *
 from ConsoleIO import *
 
 ## Class representing a physical display. A physical display is a projection medium
 # running on a host and having certain resolution, size and transformation. It
 # supports a specific amount of users.
-class PhysicalDisplay:
+class PhysicalDisplay(Display):
   
   ## Custom constructor
   # @param hostname The hostname to which this display is connected to.
@@ -45,22 +46,18 @@ class PhysicalDisplay:
               , render_mask = ""
               ):
 
+    # default naming for desktop setups
+    if not name:
+      _name = hostname + "_display"
+    else:
+      _name = name
+
+    self.base_constructor(_name, resolution, size)
+
     # save values in members
     ## @var hostname
     # The hostname to which this display is connected to.
     self.hostname = hostname
-    
-    # default naming for desktop setups
-    ## @var name
-    # A name to be associated to that display. Will be used in XML configuration file.
-    if not name:
-      self.name = hostname + "_display"
-    else:
-      self.name = name
-
-    ## @var resolution
-    # The display's resolution to be used.
-    self.resolution = resolution
     
     ## @var displaystrings
     # A list of strings on which the windows for each user will pop up.
@@ -73,10 +70,6 @@ class PhysicalDisplay:
     ## @var shutter_values
     # A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring.
     self.shutter_values = shutter_values
-    
-    ## @var size
-    # A list of strings on which the windows for each user will pop up.
-    self.size = size
     
     ## @var transformation
     # A matrix specifying the display's transformation with respect to the platform coordinate system.

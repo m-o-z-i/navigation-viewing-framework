@@ -50,24 +50,19 @@ class ClientPortalManager(avango.script.Script):
     # List of all View instances in the scene.
     self.VIEW_LIST = VIEW_LIST
 
-    ## @var local_portal_node
-    # Scenegraph node to which the portal viewing nodes are copied and appended.
-    self.local_portal_node = avango.gua.nodes.TransformNode(Name = "local_portal_group")
-    self.SCENEGRAPH.Root.value.Children.value.append(self.local_portal_node)
-
   ## Tells all view instances that a new portal was added to the scene.
-  # @param LOCAL_PORTAL_NODE Local copied portal node that was added.
-  def notify_views_on_added_portal(self, LOCAL_PORTAL_NODE):
+  # @param SERVER_PORTAL_NODE Server portal grouping node.
+  def notify_views_on_added_portal(self, SERVER_PORTAL_NODE):
 
     for _view in self.VIEW_LIST:
-      _view.create_portal_preview(LOCAL_PORTAL_NODE)
+      _view.create_portal_preview(SERVER_PORTAL_NODE)
 
   ## Tells all view instances that a new portal was removed from the scene.
-  # @param LOCAL_PORTAL_NODE Local copied portal node that was added.
-  def notify_views_on_removed_portal(self, LOCAL_PORTAL_NODE):
+  # @param SERVER_PORTAL_NODE Server portal grouping node.
+  def notify_views_on_removed_portal(self, SERVER_PORTAL_NODE):
 
     for _view in self.VIEW_LIST:
-      _view.remove_portal_preview(LOCAL_PORTAL_NODE)
+      _view.remove_portal_preview(SERVER_PORTAL_NODE)
 
   ## Evaluated every frame.
   def evaluate(self):
@@ -107,9 +102,9 @@ class ClientPortalManager(avango.script.Script):
 
       # if no matching instance was found, add a new ClientPortal for the node
       if _portal_instance_found == False:
-        _portal = ClientPortal(self.SCENEGRAPH["/local_portal_group"], _node)
+        _portal = ClientPortal(_node)
         self.portals.append(_portal)
-        self.notify_views_on_added_portal(_portal.portal_node)
+        self.notify_views_on_added_portal(_node)
 
     # check for instances that have not been matched (removed on server side)
     for _i in range(len(_instances_matched)):
@@ -118,15 +113,11 @@ class ClientPortalManager(avango.script.Script):
       if _bool == False:
 
         _portal_to_delete = self.portals[_i]
-        self.notify_views_on_removed_portal(_portal_to_delete.portal_node)
+        self.notify_views_on_removed_portal(_portal_to_delete.SERVER_PORTAL_NODE)
 
-        self.SCENEGRAPH["/local_portal_group"].Children.value.remove(_portal_to_delete.portal_node)
-
-        _portal_to_delete.deactivate()
         self.portals.remove(_portal_to_delete)
 
         # object destruction
-        del _portal_to_delete.portal_node
         del _portal_to_delete
 
 
@@ -134,33 +125,12 @@ class ClientPortalManager(avango.script.Script):
 class ClientPortal:
 
   ## Custom constructor.
-  # @param LOCAL_PORTAL_GROUP_NODE Local scenegraph node for grouping portal nodes.
   # @param SERVER_PORTAL_NODE New portal scenegraph node that was added on server side.
-  def __init__(self, LOCAL_PORTAL_GROUP_NODE, SERVER_PORTAL_NODE):
+  def __init__(self, SERVER_PORTAL_NODE):
 
     ## @var SERVER_PORTAL_NODE
     # New portal scenegraph node that was added on server side.
     self.SERVER_PORTAL_NODE = SERVER_PORTAL_NODE
-
-    ## @var portal_node
-    # Grouping node for this portal below the group node for all portals.
-    self.portal_node = avango.gua.nodes.TransformNode(Name = SERVER_PORTAL_NODE.Name.value)
-    LOCAL_PORTAL_GROUP_NODE.Children.value.append(self.portal_node)
-
-    ## @var portal_matrix_node
-    # Scenegraph node representing the location where the portal display is located (entry).
-    self.portal_matrix_node = avango.gua.nodes.TransformNode(Name = "portal_matrix")
-    self.portal_matrix_node.Transform.connect_from(SERVER_PORTAL_NODE.Children.value[1].Transform)
-    self.portal_node.Children.value.append(self.portal_matrix_node)
-
-
-  ## Disconnects all scenegraph node fields and deletes the nodes except portal_node.
-  def deactivate(self):
-    # disconnect fields
-    self.portal_matrix_node.Transform.disconnect()
-
-    # object destruction
-    del self.portal_matrix_node
 
   ## Checks if a given server portal node matches with the server portal node of this instance.
   # @param SERVER_PORTAL_NODE The server portal node to be checked for.
@@ -192,13 +162,13 @@ class PortalPreView(avango.script.Script):
     self.super(PortalPreView).__init__()
 
   # Custom constructor.
-  # @param PORTAL_NODE The portal scenegraph node on client side to be associated with this instance.
+  # @param SERVER_PORTAL_NODE The portal scenegraph node on server side to be associated with this instance.
   # @param VIEW The View instance to be associated with this instance.
-  def my_constructor(self, PORTAL_NODE, VIEW):
+  def my_constructor(self, SERVER_PORTAL_NODE, VIEW):
     
-    ## @var PORTAL_NODE
-    # The portal scenegraph node on client side to be associated with this instance.
-    self.PORTAL_NODE = PORTAL_NODE
+    ## @var SERVER_PORTAL_NODE
+    # The portal scenegraph node on server side to be associated with this instance.
+    self.SERVER_PORTAL_NODE = SERVER_PORTAL_NODE
 
     # @var VIEW
     # The View instance to be associated with this instance.
@@ -211,11 +181,11 @@ class PortalPreView(avango.script.Script):
       print_warning("No user nodes present for " + "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
       return
     else:
-      print_message("Construct PortalPreView for " + PORTAL_NODE.Name.value + " and w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
+      print_message("Construct PortalPreView for " + SERVER_PORTAL_NODE.Name.value + " and w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
 
     ## @var transformed_head_node
     # view_transform_node of the corresponding UserRepresentation in the portal on server side.
-    self.transformed_head_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/head_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
+    self.transformed_head_node = VIEW.SCENEGRAPH["/net/portal_group/" + SERVER_PORTAL_NODE.Name.value + "/scene_matrix/head_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
 
     ## @var left_eye_node
     # Scenegraph node representing the left eye's position in the portal's exit space.
@@ -227,19 +197,15 @@ class PortalPreView(avango.script.Script):
 
     ## @var portal_matrix_node
     # Server portal node containing the portal matrix (entry transformation).
-    self.portal_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/portal_matrix/"]
-
-    ## @var client_portal_matrix_node
-    # Local copy of the portal_matrix_node in order to append textures to.
-    self.client_portal_matrix_node = self.PORTAL_NODE.Children.value[0]
+    self.portal_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + SERVER_PORTAL_NODE.Name.value + "/portal_matrix/"]
 
     ## @var scene_matrix_node
     # Server portal node containing the scene matrix (exit transformation).
-    self.scene_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/"]
+    self.scene_matrix_node = VIEW.SCENEGRAPH["/net/portal_group/" + SERVER_PORTAL_NODE.Name.value + "/scene_matrix/"]
 
     ## @var screen_node
     # Screen node representing the screen position in the portal's exit space.
-    self.screen_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/portal_screen"]
+    self.screen_node = VIEW.SCENEGRAPH["/net/portal_group/" + SERVER_PORTAL_NODE.Name.value + "/scene_matrix/portal_screen"]
 
     # debug screen visualization
     #_loader = avango.gua.nodes.TriMeshLoader()
@@ -258,7 +224,7 @@ class PortalPreView(avango.script.Script):
     self.camera.LeftEye.value = self.left_eye_node.Path.value
     self.camera.RightEye.value = self.right_eye_node.Path.value
 
-    self.camera.RenderMask.value = "(main_scene | " + self.PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ") && !do_not_display_group"
+    self.camera.RenderMask.value = "(main_scene | " + self.SERVER_PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ") && !do_not_display_group"
 
     ## @var pipeline
     # The pipeline used to render this PortalPreView. 
@@ -296,7 +262,7 @@ class PortalPreView(avango.script.Script):
     else:
       self.pipeline.EnableStereo.value = False
 
-    self.pipeline.OutputTextureName.value = self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)
+    self.pipeline.OutputTextureName.value = self.SERVER_PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)
     
     self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
     self.pipeline.BackgroundTexture.value = "data/textures/sky.jpg"
@@ -310,13 +276,13 @@ class PortalPreView(avango.script.Script):
 
 
     self.textured_quad = avango.gua.nodes.TexturedQuadNode(Name = "texture_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
-                                                           Texture = self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
+                                                           Texture = self.SERVER_PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
                                                            IsStereoTexture = self.VIEW.is_stereo,
                                                            Width = self.screen_node.Width.value,
                                                            Height = self.screen_node.Height.value
                                                            )
     self.textured_quad.GroupNames.value = ["w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-    self.client_portal_matrix_node.Children.value.append(self.textured_quad)
+    self.portal_matrix_node.Children.value.append(self.textured_quad)
 
 
     ## @var back_geometry
@@ -324,7 +290,7 @@ class PortalPreView(avango.script.Script):
     self.back_geometry = _loader.create_geometry_from_file("back_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/plane.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS)
     self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
     self.back_geometry.GroupNames.value = ["do_not_display_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-    self.client_portal_matrix_node.Children.value.append(self.back_geometry)
+    self.portal_matrix_node.Children.value.append(self.back_geometry)
 
     ## @var portal_border
     # Geometry node containing the portal's frame.
@@ -332,14 +298,14 @@ class PortalPreView(avango.script.Script):
     self.portal_border.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.portal_border.GroupNames.value = ["do_not_display_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
     self.portal_border.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
-    self.client_portal_matrix_node.Children.value.append(self.portal_border)
+    self.portal_matrix_node.Children.value.append(self.portal_border)
 
     ## @var frame_trigger
     # Triggers framewise evaluation of frame_callback method.
     self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
 
     # init field connections
-    self.mf_portal_modes.connect_from(VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/settings"].GroupNames)
+    self.mf_portal_modes.connect_from(VIEW.SCENEGRAPH["/net/portal_group/" + SERVER_PORTAL_NODE.Name.value + "/settings"].GroupNames)
     self.sf_screen_width.connect_from(self.screen_node.Width)
     self.sf_screen_height.connect_from(self.screen_node.Height)
 
@@ -349,7 +315,7 @@ class PortalPreView(avango.script.Script):
   ## Compares a given portal node with the portal node associated with this instance.
   # @param PORTAL_NODE The portal node to be compared with.
   def compare_portal_node(self, PORTAL_NODE):
-    if self.PORTAL_NODE == PORTAL_NODE:
+    if self.SERVER_PORTAL_NODE == PORTAL_NODE:
       return True
 
     return False
@@ -462,9 +428,8 @@ class PortalPreView(avango.script.Script):
 
     # determine if outside of viewing range
     #_view_in_portal_space_mat = self.transformed_head_node.Transform.value
-    _view_in_portal_space_mat = avango.gua.make_trans_mat(self.screen_node.Transform.value.get_translate() * -1.0) * \
-                                self.transformed_head_node.Transform.value * \
-                                avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self.screen_node.Transform.value.get_rotate()))
+    _view_in_portal_space_mat = avango.gua.make_inverse_mat(self.screen_node.Transform.value) * \
+                                self.transformed_head_node.Transform.value
     _ref_vec = avango.gua.Vec3(0, 0, -1)
     _view_in_portal_space_vec = avango.gua.make_rot_mat(_view_in_portal_space_mat.get_rotate_scale_corrected()) * _ref_vec
     _view_in_portal_space_vec = avango.gua.Vec3(_view_in_portal_space_vec.x, _view_in_portal_space_vec.y, _view_in_portal_space_vec.z)

@@ -182,10 +182,10 @@ class View(avango.script.Script):
       WINDOW.WarpMatrixBlueLeft.value    = WARPMATRICES[5]
 
   ## Creates a PortalPreView instance for the portal copied at LOCAL_PORTAL_NODE.
-  # @param LOCAL_PORTAL_NODE The client portal node to create the PreView for.
-  def create_portal_preview(self, LOCAL_PORTAL_NODE):
+  # @param SERVER_PORTAL_NODE Server portal grouping node.
+  def create_portal_preview(self, SERVER_PORTAL_NODE):
     _pre_view = PortalPreView()
-    _pre_view.my_constructor(LOCAL_PORTAL_NODE, self)
+    _pre_view.my_constructor(SERVER_PORTAL_NODE, self)
     self.portal_pre_views.append(_pre_view)
 
   ## Removes the PortalPreView instance of LOCAL_PORTAL_NODE.

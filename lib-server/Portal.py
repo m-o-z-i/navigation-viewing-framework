@@ -99,6 +99,18 @@ class Portal(Display):
     # Boolean saying if teleportation for is portal is enabled.
     self.transitable = TRANSITABLE
 
+    ##
+    #
+    self.display_group_offset = avango.gua.make_identity_mat()
+
+  ##
+  #
+  def set_display_group_offset(self, OFFSET_MATRIX):
+
+    self.display_group_offset = OFFSET_MATRIX
+
+    self.portal_screen_node.Transform.value = OFFSET_MATRIX
+
 
   ## Switches viewing_mode to the other state.
   def switch_viewing_mode(self):

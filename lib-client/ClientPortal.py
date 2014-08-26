@@ -240,7 +240,14 @@ class PortalPreView(avango.script.Script):
     ## @var screen_node
     # Screen node representing the screen position in the portal's exit space.
     self.screen_node = VIEW.SCENEGRAPH["/net/portal_group/" + PORTAL_NODE.Name.value + "/scene_matrix/portal_screen"]
-    
+
+    # debug screen visualization
+    #_loader = avango.gua.nodes.TriMeshLoader()
+    #_node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/ShadelessBlack.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    #_node.Transform.value = self.screen_node.Transform.value * \
+    #                        avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
+    #self.scene_matrix_node.Children.value.append(_node)
+
     ## @var camera
     # The camera from which this PortalPreView will be rendered.
     self.camera = avango.gua.nodes.Camera()

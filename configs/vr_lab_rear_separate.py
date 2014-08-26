@@ -149,6 +149,15 @@ tower_portal_1 = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-23.0, 1.3, 21
                       , BORDER_MATERIAL = "data/materials/White.gmd"
                       , TRANSITABLE = True)
 
+side_portal = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-23.0, 1.3, 16.5) * avango.gua.make_rot_mat(90, 0, 1, 0)
+                      , WIDTH = 4.0
+                      , HEIGHT = 2.6
+                      , VIEWING_MODE = "3D"
+                      , CAMERA_MODE = "PERSPECTIVE"
+                      , NEGATIVE_PARALLAX = "False"
+                      , BORDER_MATERIAL = "data/materials/White.gmd"
+                      , TRANSITABLE = True)
+
 tower_portal_2 = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-12.0, 17.3, -7.0) * avango.gua.make_rot_mat(180, 0, 1, 0)
                       , WIDTH = 4.0
                       , HEIGHT = 2.6
@@ -160,7 +169,7 @@ tower_portal_2 = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-12.0, 17.3, -
 
 ## Create virtual display groups ##
 tower_portal_1_dg = DisplayGroup(ID = None
-                               , DISPLAY_LIST = [tower_portal_1]
+                               , DISPLAY_LIST = [tower_portal_1, side_portal]
                                , NAVIGATION_LIST = [tower_portal_1_nav]
                                , VISIBILITY_TAG = "portal"
                                , OFFSET_TO_WORKSPACE = avango.gua.make_identity_mat()

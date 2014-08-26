@@ -202,8 +202,15 @@ class ApplicationManager(avango.script.Script):
 
       for _display in _display_group.displays:
 
+        # index within display group
+        _display_index = _display_group.displays.index(_display)
+
         # create portal nodes
         _display.append_portal_nodes()
+
+        # express secondary displays with respect to first display
+        if _display_index > 0:
+          _display.set_display_group_offset(avango.gua.make_inverse_mat(_display_group.displays[0].portal_matrix_node.Transform.value) * _display.portal_matrix_node.Transform.value)
 
         _transit_entry_added = False
 
@@ -214,10 +221,9 @@ class ApplicationManager(avango.script.Script):
           if _display.viewing_mode == "2D":
             _complex = False
 
-          #if _physical_user_repr.USER.id == 0 and _physical_user_repr.DISPLAY_GROUP.id == 0:
-          #  transformation_policy = """print self.dependent_nodes[0].WorldTransform.value\nself.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"""
-          #else:
-          transformation_policy = """self.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"""
+          transformation_policy = "self.head.Transform.value = self.DISPLAY_GROUP.displays[" + str(_display_index) + \
+                                  "].portal_screen_node.Transform.value * avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[" + \
+                                  str(_display_index) + "].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"
 
           _virtual_user_repr = _physical_user_repr.USER.create_user_representation_for(
             _display_group

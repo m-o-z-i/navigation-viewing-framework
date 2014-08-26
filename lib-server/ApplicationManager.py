@@ -39,6 +39,7 @@ class ApplicationManager(avango.script.Script):
   # List of all Workspace instances active in the setup.
   all_workspaces = []
 
+
   def __init__(self):
     self.super(ApplicationManager).__init__()
 
@@ -116,6 +117,11 @@ class ApplicationManager(avango.script.Script):
     # Last button states of the request buttons of requestable navigations to detect changes.
     self.requestable_navigations_last_button_states = []
 
+
+    ##
+    #
+    self.workspace_navigations = []
+
     ## Handle physical viewing setups ##
 
     for _workspace in self.workspaces:
@@ -132,6 +138,9 @@ class ApplicationManager(avango.script.Script):
 
           # fill list of requestable navigations
           for _navigation in _display_group.navigations:
+
+            self.workspace_navigations.append(_navigation)
+
             if _navigation.is_requestable == True:
               self.requestable_navigations.append( (_workspace, _display_group, _navigation) )
               self.requestable_navigations_last_button_states.append(False)
@@ -158,12 +167,6 @@ class ApplicationManager(avango.script.Script):
               _user_repr.add_screen_node_for(_display)
               _user_repr.add_screen_visualization_for(_display)
 
-              # add screen visualization for all screens in workspace
-              #for _display_group_2 in _workspace.display_groups:
-              #  for _display_2 in _display_group_2.displays:
-              #    _user_repr.add_screen_visualization_for(_display_group_2, _display_2)
-
-              # add other screen geometries
             else:
               print_warning("Warning: No empty slot left for user " + str(_u_id) + " in workspace " + str(_workspace.name) + " on display " + str(_display.name))
               continue
@@ -182,14 +185,26 @@ class ApplicationManager(avango.script.Script):
                 time.sleep(1)
 
 
+    ##
+    #
+    self.portal_display_groups = portal_display_groups
+
+    ##
+    #
+    self.transit_portals = []
+
 
     ## Handle virtual viewing setups ##
 
     _virtual_user_representations = []
 
-    for _display_group in portal_display_groups:
+    for _display_group in self.portal_display_groups:
 
       for _display in _display_group.displays:
+
+        # collect transit portals
+        if _display.transitable:
+          self.transit_portals.append( (_display_group, _display) )
 
         # create portal nodes
         _display.append_portal_nodes()
@@ -235,7 +250,7 @@ class ApplicationManager(avango.script.Script):
         for _user in _workspace.users:
           _user.handle_correct_visibility_groups_for(_display_group)
 
-          for _portal_display_group in portal_display_groups:
+          for _portal_display_group in self.portal_display_groups:
             _user.handle_correct_visibility_groups_for(_portal_display_group)
 
     # connect proper navigations
@@ -321,6 +336,61 @@ class ApplicationManager(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
+    # handle portal transitions
+    for _nav in self.workspace_navigations:
+
+      # if navigation has no device (e.g. static navigation), do not allow transit
+      try:
+        _nav.device
+      except:
+        continue
+
+      _nav_device_mat = _nav.sf_abs_mat.value * \
+                        avango.gua.make_scale_mat(_nav.sf_scale.value) * \
+                        avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate())
+
+
+      _nav_device_pos = _nav_device_mat.get_translate()
+
+      _nav_device_pos2 = _nav_device_mat * avango.gua.Vec3(0.0,0.0,1.0)
+      _nav_device_pos2 = avango.gua.Vec3(_nav_device_pos2.x, _nav_device_pos2.y, _nav_device_pos2.z)
+
+      for _tuple in self.transit_portals:
+
+        _portal_display_group = _tuple[0]
+        _portal = _tuple[1]
+
+        ## todo nav 0
+        _active_navigation = _portal_display_group.navigations[0]
+        _mat = avango.gua.make_inverse_mat(_portal.portal_matrix_node.Transform.value)
+
+        _nav_device_portal_space_mat = _mat * _nav_device_mat
+        _nav_device_portal_space_pos = _mat * _nav_device_pos
+        _nav_device_portal_space_pos2 = _mat * _nav_device_pos2
+        _nav_device_portal_space_pos = avango.gua.Vec3(_nav_device_portal_space_pos.x, _nav_device_portal_space_pos.y, _nav_device_portal_space_pos.z)
+
+        # do a teleportation if navigation enters portal
+        if  _nav_device_portal_space_pos.x > -_portal.size[0]/2     and \
+            _nav_device_portal_space_pos.x <  _portal.size[0]/2     and \
+            _nav_device_portal_space_pos.y > -_portal.size[1]/2     and \
+            _nav_device_portal_space_pos.y <  _portal.size[1]/2     and \
+            _nav_device_portal_space_pos.z < 0.0                    and \
+            _nav_device_portal_space_pos2.z >= 0.0                  and \
+            _portal.viewing_mode == "3D":
+
+          _nav.inputmapping.set_abs_mat(_active_navigation.sf_abs_mat.value * \
+                                        avango.gua.make_scale_mat(_active_navigation.sf_scale.value) * \
+                                        avango.gua.make_trans_mat(_nav_device_portal_space_pos) * \
+                                        avango.gua.make_rot_mat(_nav_device_portal_space_mat.get_rotate_scale_corrected()) * \
+                                        avango.gua.make_trans_mat(_nav.device.sf_station_mat.value.get_translate() * -1.0) * \
+                                        avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value)))
+
+          _nav.trace.clear(_nav.inputmapping.sf_abs_mat.value)
+          _nav.inputmapping.scale_stop_time = None
+          _nav.inputmapping.set_scale(_active_navigation.sf_scale.value, False)
+
+
+    # handle requestable navigations
     for _requestable_nav in self.requestable_navigations:
 
       _workspace = _requestable_nav[0]

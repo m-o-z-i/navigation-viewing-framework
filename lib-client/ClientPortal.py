@@ -296,7 +296,7 @@ class PortalPreView(avango.script.Script):
 
     # set render mask
     #self.camera.RenderMask.value = "(main_scene | " + PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ") && !do_not_display_group"
-    self.camera.RenderMask.value = "main_scene && !do_not_display_group"
+    self.camera.RenderMask.value = "!main_scene && !do_not_display_group"
     print "Portal render mask", self.camera.RenderMask.value
 
     ## @var textured_quad

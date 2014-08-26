@@ -190,6 +190,8 @@ class ApplicationManager(avango.script.Script):
     # List of all workspace instances containing portals loaded from workspace configuration file.
     self.virtual_workspaces = virtual_workspaces
 
+    _virtual_user_representations = []
+
     for _virtual_workspace in self.virtual_workspaces:
 
       for _display_group in _virtual_workspace.display_groups:
@@ -198,8 +200,6 @@ class ApplicationManager(avango.script.Script):
 
           # create portal nodes
           _display.append_portal_nodes()
-
-          _virtual_user_representations = []
 
           # create user representations
           for _physical_user_repr in ApplicationManager.all_user_representations:
@@ -227,8 +227,8 @@ class ApplicationManager(avango.script.Script):
     for _virtual_user_representation in _virtual_user_representations:
       ApplicationManager.all_user_representations.append(_virtual_user_representation)
 
-    ## Initialize group names ##
 
+    ## Initialize group names ##
 
     # physical and virtual workspaces
     for _workspace in self.workspaces:

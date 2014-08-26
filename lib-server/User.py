@@ -333,7 +333,9 @@ class User(VisibilityHandler2D):
 
   ## Evaluated every frame.
   def evaluate(self):
+    pass
 
+    '''
     _track_vec = self.headtracking_reader.sf_abs_vec.value
 
     if _track_vec.x < -1.5 and _track_vec.x > -2.4 and \
@@ -347,6 +349,7 @@ class User(VisibilityHandler2D):
 
       #print "user", self.id, " true"
       self.toggle_user_activity(True)
+    '''
 
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
@@ -442,7 +445,10 @@ class User(VisibilityHandler2D):
           _handled_display_group_tag = _handled_display_group_instance.visibility_tag
           _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
           
-          _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
+          try:
+            _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
+          except:
+            _visible = False
           
           if _visible:
             if _user_repr.view_transform_node.Name.value == "scene_matrix":

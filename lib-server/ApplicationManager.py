@@ -202,12 +202,10 @@ class ApplicationManager(avango.script.Script):
 
       for _display in _display_group.displays:
 
-        # collect transit portals
-        if _display.transitable:
-          self.transit_portals.append( (_display_group, _display) )
-
         # create portal nodes
         _display.append_portal_nodes()
+
+        _transit_entry_added = False
 
         # create user representations
         for _physical_user_repr in ApplicationManager.all_user_representations:
@@ -231,6 +229,11 @@ class ApplicationManager(avango.script.Script):
           _virtual_user_repr.add_dependent_node(_physical_user_repr.head)
           _virtual_user_repr.add_existing_screen_node(_display.portal_screen_node)
           _virtual_user_representations.append(_virtual_user_repr)
+
+          # collect transit portals
+          if _display.transitable and _transit_entry_added == False:
+            self.transit_portals.append( (_display_group, _display, _virtual_user_repr) )
+            _transit_entry_added = True
 
     for _virtual_user_representation in _virtual_user_representations:
       ApplicationManager.all_user_representations.append(_virtual_user_representation)
@@ -359,9 +362,9 @@ class ApplicationManager(avango.script.Script):
 
         _portal_display_group = _tuple[0]
         _portal = _tuple[1]
+        _first_virtual_user_repr = _tuple[2]
 
-        ## todo nav 0
-        _active_navigation = _portal_display_group.navigations[0]
+        _active_navigation = _portal_display_group.navigations[_first_virtual_user_repr.connected_navigation_id]
         _mat = avango.gua.make_inverse_mat(_portal.portal_matrix_node.Transform.value)
 
         _nav_device_portal_space_mat = _mat * _nav_device_mat

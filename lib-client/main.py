@@ -65,14 +65,14 @@ def start():
   avango.gua.load_materials_from("data/materials")
 
   
-  '''
+  #'''
   timer = avango.nodes.TimeSensor()
   
   water_updater = ClientMaterialUpdaters.TimedMaterialUniformUpdate()
   water_updater.MaterialName.value = "data/materials/Water.gmd"
   water_updater.UniformName.value = "time"
   water_updater.TimeIn.connect_from(timer.Time)
-  '''
+  #'''
 
 
 
@@ -94,7 +94,7 @@ def start():
   fog_updater.TimeIn.connect_from(timer.Time)
   '''
 
-  #'''  
+  '''  
   avango.gua.load_material("data/materials/bwb/Fog.gmd")
 
 
@@ -114,16 +114,24 @@ def start():
   fog_updater.MaterialName.value = "data/materials/bwb/Fog.gmd"
   fog_updater.UniformName.value = "time"
   fog_updater.TimeIn.connect_from(timer.Time)
-  #'''
+  '''
   
-  avango.gua.load_material("data/materials/bwb/Glass2.gmd")
+  #avango.gua.load_material("data/materials/bwb/Glass2.gmd")
 
 
   #avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture")
   #avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture")  
-  avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture_left")
-  avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture_right")
+  #avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture_left")
+  #avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture_right")
 
+
+  _loader = avango.gua.nodes.PLODLoader()
+  _loader.UploadBudget.value = 32
+  _loader.RenderBudget.value = 1024
+  _loader.OutOfCoreBudget.value = 4 * 1024
+
+  _node = _loader.create_geometry_from_file("spacemonkey", "/media/veva6054/SSD/PLOD_Models/Spacemonkey/Spacemonkey_new.kdn", avango.gua.LoaderFlags.DEFAULTS)
+  
 
   # get the display instance
   for _display in displays:

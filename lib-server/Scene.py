@@ -71,16 +71,16 @@ class ScenePitoti(SceneObject):
     SceneObject.__init__(self, "ScenePitotiTest", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
     # navigation parameters
-    #self.starting_matrix = avango.gua.make_trans_mat(0.092, 4.922, 22.049)
-    #self.starting_scale = 1.0
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 3.0, 0.0)
+    self.starting_scale = 1.0
 
     # geometry
-    _mat = avango.gua.make_identity_mat()
-    self.init_point_cloud("spacemonkey", "/mnt/pitoti/KDN_LOD/PITOTI_KDN_LOD/Spacemonkey_new.kdn", _mat, self.scene_root, "main_scene")
+    _mat = avango.gua.make_trans_mat(0.0338275, 0.324057, 0.234019) * avango.gua.make_scale_mat(2.64027, 2.64027, 2.64027)
+    self.init_point_cloud("spacemonkey", "/media/veva6054/SSD/PLOD_Models/Spacemonkey/Spacemonkey_new.kdn", _mat, self.scene_root, "main_scene")
 
     # lights
-    _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
-    self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = True) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+    #_mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
+    #self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = False ) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
 
 
 class SceneVianden(SceneObject):

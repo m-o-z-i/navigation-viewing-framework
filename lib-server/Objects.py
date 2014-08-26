@@ -284,9 +284,9 @@ class SceneObject:
     _loader = avango.gua.nodes.PLODLoader()
     _loader.UploadBudget.value = 32
     _loader.RenderBudget.value = 1024
-    _loader.OutOfCoreBudget.value = 4096    
+    _loader.OutOfCoreBudget.value = 1024    
 
-    _node = _loader.create_geometry_from_file(NAME, FILENAME)
+    _node = _loader.create_geometry_from_file(NAME, FILENAME, avango.gua.LoaderFlags.NORMALIZE_POSITION)
     _node.Transform.value = MATRIX
     #_node.ShadowMode.value = avango.gua.ShadowMode.OFF
  

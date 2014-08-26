@@ -251,6 +251,8 @@ class PortalPreView(avango.script.Script):
     self.camera.LeftEye.value = self.left_eye_node.Path.value
     self.camera.RightEye.value = self.right_eye_node.Path.value
 
+    self.camera.RenderMask.value = "(main_scene | " + self.PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ") && !do_not_display_group"
+
     ## @var pipeline
     # The pipeline used to render this PortalPreView. 
     self.pipeline = avango.gua.nodes.Pipeline()
@@ -294,11 +296,6 @@ class PortalPreView(avango.script.Script):
 
     self.VIEW.pipeline.PreRenderPipelines.value.append(self.pipeline)
 
-    # set render mask
-    #self.camera.RenderMask.value = "(main_scene | " + PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ") && !do_not_display_group"
-    self.camera.RenderMask.value = "!main_scene && !do_not_display_group"
-    print "Portal render mask", self.camera.RenderMask.value
-
     ## @var textured_quad
     # The textured quad instance in which the portal view will be rendered.
 
@@ -307,13 +304,12 @@ class PortalPreView(avango.script.Script):
 
     self.textured_quad = avango.gua.nodes.TexturedQuadNode(Name = "texture_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
                                                            Texture = self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
-                                                           IsStereoTexture = self.VIEW.is_stereo#,
-                                                           #Width = self.screen_node.Width.value,
-                                                           #Height = self.screen_node.Height.value
+                                                           IsStereoTexture = self.VIEW.is_stereo,
+                                                           Width = self.screen_node.Width.value,
+                                                           Height = self.screen_node.Height.value
                                                            )
     self.textured_quad.GroupNames.value = ["w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
     self.client_portal_matrix_node.Children.value.append(self.textured_quad)
-    self.textured_quad.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
 
 
     ## @var back_geometry
@@ -358,7 +354,8 @@ class PortalPreView(avango.script.Script):
     except:
       return
 
-    self.textured_quad.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
+    self.textured_quad.Width.value = self.screen_node.Width.value
+    self.textured_quad.Height.value = self.screen_node.Height.value
     self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
     self.portal_border.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
 

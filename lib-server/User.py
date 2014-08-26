@@ -380,14 +380,15 @@ class User(VisibilityHandler2D):
       
       # switch navigation to desired one for DISPLAY_GROUP_ID
       self.user_representations[DISPLAY_GROUP_ID].connect_navigation_of_display_group(NAVIGATION_ID)
+      _display_group_instance = self.user_representations[DISPLAY_GROUP_ID].DISPLAY_GROUP
 
       # trigger correct avatar and screen visibilities
       for _user in WORKSPACE_USERS:
-        _user.handle_correct_visibility_groups_for(DISPLAY_GROUP_ID)
+        _user.handle_correct_visibility_groups_for(_display_group_instance)
 
       # trigger correct tool visibilities at display group
       for _tool in self.WORKSPACE_INSTANCE.tools:
-        _tool.handle_correct_visibility_groups_for(DISPLAY_GROUP_ID)
+        _tool.handle_correct_visibility_groups_for(_display_group_instance)
 
     else:
       print_error("Error. Display Group ID does not exist.", False)

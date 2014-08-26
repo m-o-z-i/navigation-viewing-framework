@@ -42,17 +42,17 @@ spheron_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0
                                  , TRACE_VISIBILITY_LIST = trace_visibility_list_wall_nav
                                  , DEVICE_TRACKING_NAME = 'tracking-new-spheron')
 
-#spacemouse_navigation = SteeringNavigation()
-#spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 20) * \
-#                                                        avango.gua.make_rot_mat(0, 0, 1, 0)
-#                                    , STARTING_SCALE = 50.0
-#                                    , INPUT_DEVICE_TYPE = 'Spacemouse'
-#                                    , INPUT_DEVICE_NAME = 'device-spacemouse'
-#                                    , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
-#                                    , GROUND_FOLLOWING_SETTINGS = [False, 0.75]
-#                                    , INVERT = True
-#                                    , TRACE_VISIBILITY_LIST = trace_visibility_list_table_nav
-#                                    , DEVICE_TRACKING_NAME = None)
+spacemouse_navigation = SteeringNavigation()
+spacemouse_navigation.my_constructor( STARTING_MATRIX = avango.gua.make_trans_mat(0, 0, 20) * \
+                                                        avango.gua.make_rot_mat(0, 0, 1, 0)
+                                    , STARTING_SCALE = 50.0
+                                    , INPUT_DEVICE_TYPE = 'Spacemouse'
+                                    , INPUT_DEVICE_NAME = 'device-spacemouse'
+                                    , NO_TRACKING_MAT = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
+                                    , GROUND_FOLLOWING_SETTINGS = [False, 0.75]
+                                    , INVERT = True
+                                    , TRACE_VISIBILITY_LIST = trace_visibility_list_table_nav
+                                    , DEVICE_TRACKING_NAME = None)
 
 
 xbox_navigation = SteeringNavigation()
@@ -70,10 +70,10 @@ xbox_navigation.my_constructor(       STARTING_MATRIX = avango.gua.make_trans_ma
 
 ## Create Display instances. ##
 large_powerwall = LargePowerwall()
-#touch_table_3D = TouchTable3D()
+touch_table_3D = TouchTable3D()
 
-#displays = [large_powerwall, touch_table_3D]
-displays = [large_powerwall]
+displays = [large_powerwall, touch_table_3D]
+
 
 ## Create display groups ##
 vr_lab_rear.create_display_group( DISPLAY_LIST = [large_powerwall]
@@ -81,11 +81,11 @@ vr_lab_rear.create_display_group( DISPLAY_LIST = [large_powerwall]
                                 , VISIBILITY_TAG = "wall"
                                 , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0, 0, 1.6) )
 
-#vr_lab_rear.create_display_group( DISPLAY_LIST = [touch_table_3D]
-#                                , NAVIGATION_LIST = [spacemouse_navigation]
-#                                , VISIBILITY_TAG = "table"
-#                                , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0.79, -0.96, 1.96) * \
-#                                                        avango.gua.make_rot_mat(-90, 0, 1, 0) )
+vr_lab_rear.create_display_group( DISPLAY_LIST = [touch_table_3D]
+                                , NAVIGATION_LIST = [spacemouse_navigation]
+                                , VISIBILITY_TAG = "table"
+                                , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0.79, -0.96, 1.96) * \
+                                                        avango.gua.make_rot_mat(-90, 0, 1, 0) )
 
 ## Create users ##
 avatar_visibility_table = {

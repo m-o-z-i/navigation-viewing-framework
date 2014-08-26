@@ -290,11 +290,16 @@ class ApplicationManager(avango.script.Script):
     _render_mask = "(main_scene"
 
     for _user_repr in ApplicationManager.all_user_representations:
-      _render_mask = _render_mask + " | " + _user_repr.view_transform_node.Name.value
+
+      if _user_repr.view_transform_node.Name.value == "scene_matrix":
+        _render_mask = _render_mask + " | " + _user_repr.view_transform_node.Parent.value.Name.value + "_" + _user_repr.head.Name.value
+      else:
+        _render_mask = _render_mask + " | " + _user_repr.view_transform_node.Name.value
 
     _render_mask = _render_mask + ") && !do_not_display_group"
 
     self.camera.RenderMask.value = _render_mask
+    print self.camera.RenderMask.value
 
     ## @var window
     # Window displaying the server control view.

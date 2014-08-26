@@ -52,10 +52,10 @@ class Portal(Display):
              , TRANSITABLE):
 
     # set stereo flag depending on viewing mode
-    if VIEWING_MODE == "2D":
-      _stereo = False
-    else:
-      _stereo = True
+    #if VIEWING_MODE == "2D":
+    #  _stereo = False
+    #else:
+    _stereo = True
 
     self.base_constructor("portal_" + str(Portal.num_instances_created), (1000, 1000), (WIDTH, HEIGHT), _stereo)
 

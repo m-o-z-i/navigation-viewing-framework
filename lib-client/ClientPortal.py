@@ -295,7 +295,8 @@ class PortalPreView(avango.script.Script):
     self.VIEW.pipeline.PreRenderPipelines.value.append(self.pipeline)
 
     # set render mask
-    self.camera.RenderMask.value = "(main_scene | " + PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ")" && "!do_not_display_group"
+    #self.camera.RenderMask.value = "(main_scene | " + PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ") && !do_not_display_group"
+    self.camera.RenderMask.value = "main_scene && !do_not_display_group"
     print "Portal render mask", self.camera.RenderMask.value
 
     ## @var textured_quad
@@ -303,42 +304,31 @@ class PortalPreView(avango.script.Script):
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
-    #self.textured_plane = _loader.create_geometry_from_file('textured_plane',
-    #                                                        'data/objects/plane.obj',
-    #                                                        'data/materials/Stones.gmd',
-    #                                                        avango.gua.LoaderFlags.LOAD_MATERIALS)
-    #self.textured_plane.Transform.value =  avango.gua.make_rot_mat(90, 1, 0, 0) * \
-    #                                       avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
-    #self.textured_plane.GroupNames.value = ["w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-    #avango.gua.set_material_uniform('data/materials/Portal.gmd', "portal_texture", self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
-    #print repr(self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id))
-    #self.portal_matrix_node.Children.value.append(self.textured_plane)
 
     self.textured_quad = avango.gua.nodes.TexturedQuadNode(Name = "texture_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
                                                            Texture = self.PORTAL_NODE.Name.value + "_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id),
-                                                           IsStereoTexture = self.VIEW.is_stereo,
-                                                           Width = self.screen_node.Width.value,
-                                                           Height = self.screen_node.Height.value)
+                                                           IsStereoTexture = self.VIEW.is_stereo#,
+                                                           #Width = self.screen_node.Width.value,
+                                                           #Height = self.screen_node.Height.value
+                                                           )
     self.textured_quad.GroupNames.value = ["w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-
-    #
-    #self.textured_quad.GroupNames.value = ["main_scene"]
     self.client_portal_matrix_node.Children.value.append(self.textured_quad)
+    self.textured_quad.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
 
 
     ## @var back_geometry
     # Geometry being displayed when portal pre view is seen from behind.
-    #self.back_geometry = _loader.create_geometry_from_file("back_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/plane.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS)
-    #self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
-    #self.back_geometry.GroupNames.value = ["do_not_display_groupasdf", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-    #self.client_portal_matrix_node.Children.value.append(self.back_geometry)
+    self.back_geometry = _loader.create_geometry_from_file("back_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/plane.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS)
+    self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    self.back_geometry.GroupNames.value = ["do_not_display_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
+    self.client_portal_matrix_node.Children.value.append(self.back_geometry)
 
     ## @var portal_border
     # Geometry node containing the portal's frame.
     self.portal_border = _loader.create_geometry_from_file("border_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/screen.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.portal_border.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.portal_border.GroupNames.value = ["do_not_display_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
-    self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
+    self.portal_border.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
     self.client_portal_matrix_node.Children.value.append(self.portal_border)
 
     ## @var frame_trigger
@@ -368,10 +358,9 @@ class PortalPreView(avango.script.Script):
     except:
       return
 
-    self.textured_quad.Width.value = self.screen_node.Width.value
-    self.textured_quad.Height.value = self.screen_node.Height.value
-    #self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.0001) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
-    self.portal_border.Transform.value = self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
+    self.textured_quad.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
+    self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    self.portal_border.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
 
   ## Removes this portal from the local portal group and destroys all the scenegraph nodes.
   def deactivate(self):
@@ -385,7 +374,7 @@ class PortalPreView(avango.script.Script):
     
     self.portal_matrix_node.Children.value.remove(self.textured_quad)
     del self.textured_quad
-    #del self.back_geometry
+    del self.back_geometry
 
     del self.pipeline
     del self.camera
@@ -442,19 +431,17 @@ class PortalPreView(avango.script.Script):
 
       if _material != "None":
         self.portal_border.Material.value = _material
-        #self.back_geometry.Material.value = _material
+        self.back_geometry.Material.value = _material
         self.portal_border.GroupNames.value.remove("do_not_display_group")
-        #self.back_geometry.GroupNames.value.remove("do_not_display_group")
+        self.back_geometry.GroupNames.value.remove("do_not_display_group")
       else:
         
         self.portal_border.GroupNames.value.append("do_not_display_group")
-        #self.back_geometry.GroupNames.value.append("do_not_display_group")
+        self.back_geometry.GroupNames.value.append("do_not_display_group")
 
 
   ## Evaluated every frame when active.
   def frame_callback(self):
-    
-    #print "frame callback"
 
     # update global clipping plane when negative parallax is false
     if self.mf_portal_modes.value[2] == "2-False":
@@ -469,34 +456,29 @@ class PortalPreView(avango.script.Script):
     _head_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/w" + str(self.VIEW.workspace_id) + "_dg" + \
                       str(self.VIEW.display_group_id) + "_u" + str(self.VIEW.user_id) + "/head"])
 
-    _view_in_portal_space = self.compute_world_transform(self.transformed_head_node)
     
-    #print "Cat"
+    # determine if outside of viewing range
+    _view_in_portal_space_mat = self.transformed_head_node.Transform.value
+    _ref_vec = avango.gua.Vec3(0, 0, -1)
+    _view_in_portal_space_vec = avango.gua.make_rot_mat(_view_in_portal_space_mat.get_rotate_scale_corrected()) * _ref_vec
+    _view_in_portal_space_vec = avango.gua.Vec3(_view_in_portal_space_vec.x, _view_in_portal_space_vec.y, _view_in_portal_space_vec.z)
+    _angle = math.acos(_ref_vec.dot(_view_in_portal_space_vec))
 
-    # determine view in portal space and decide if renering is necessary
-    _view_vec = avango.gua.make_rot_mat(_head_world_mat.get_rotate_scale_corrected()) * avango.gua.Vec3(0, 0, -1)
-    _view_vec = avango.gua.Vec3(_view_vec.x, _view_vec.y, _view_vec.z)
-    _portal_vec = avango.gua.make_rot_mat(self.portal_matrix_node.Transform.value.get_rotate()) * avango.gua.Vec3(0, 0, -1)
-    _portal_vec = avango.gua.Vec3(_portal_vec.x, _portal_vec.y, _portal_vec.z)
-    _angle = math.acos(_view_vec.dot(_portal_vec))
-
-    #print "still Cat"
-
-    if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 100.0:
+    # trigger on/off changes
+    if _view_in_portal_space_mat.get_translate().z < 0 or abs(math.degrees(_angle)) > 90.0:
 
       if self.pipeline.Enabled.value == True:
         self.pipeline.Enabled.value = False
-        #self.textured_quad.GroupNames.value.append("do_not_display_group")
-        #self.back_geometry.GroupNames.value.remove("do_not_display_group")
+        self.textured_quad.GroupNames.value.append("do_not_display_group")
+        self.back_geometry.GroupNames.value.remove("do_not_display_group")
 
     else:
 
       if self.pipeline.Enabled.value == False:
         self.pipeline.Enabled.value = True
-        #self.textured_quad.GroupNames.value.remove("do_not_display_group")
-        #self.back_geometry.GroupNames.value.append("do_not_display_group")
+        self.textured_quad.GroupNames.value.remove("do_not_display_group")
+        self.back_geometry.GroupNames.value.append("do_not_display_group")
 
-    #print "complete Cat"
 
 
   ## Called whenever sf_screen_width changes.

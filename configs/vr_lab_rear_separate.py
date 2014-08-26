@@ -149,13 +149,13 @@ tower_portal_2_nav.my_constructor(STATIC_ABS_MAT = avango.gua.make_trans_mat(-12
 #                      , BORDER_MATRIAL = "data/materials/White.gmd"
 #                      , TRANSITABLE = True)
 
-tower_portal_2 = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-23.0, 1.3, 21.0) * avango.gua.make_rot_mat(-90, 0, 1, 0) * avango.gua.make_rot_mat(180, 0, 1, 0)
+tower_portal_2 = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-23.0, 1.3, 21.0) * avango.gua.make_rot_mat(90, 0, 1, 0)
                       , WIDTH = 4.0
                       , HEIGHT = 2.6
                       , VIEWING_MODE = "3D"
                       , CAMERA_MODE = "PERSPECTIVE"
                       , NEGATIVE_PARALLAX = "False"
-                      , BORDER_MATRIAL = "data/materials/White.gmd"
+                      , BORDER_MATERIAL = "data/materials/White.gmd"
                       , TRANSITABLE = True)
 
 ## Create virtual display groups ##

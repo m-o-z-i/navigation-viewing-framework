@@ -352,6 +352,12 @@ class SceneManager(avango.script.Script):
       SceneManager.current_near_clip = self.active_scene.near_clip
       SceneManager.current_far_clip = self.active_scene.far_clip
 
+      if self.active_scene.starting_matrix != None:
+        print_warning("Overwrite all navigations' starting matrices by scene description matrix.")
+
+      if self.active_scene.starting_scale != None:
+        print_warning("Overwrite all navigations' starting scale by scene description value.")
+
       # reset all navigations to starting position
       for _workspace in ApplicationManager.all_workspaces:
         for _display_group in _workspace.display_groups:

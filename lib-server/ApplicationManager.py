@@ -208,8 +208,15 @@ class ApplicationManager(avango.script.Script):
             if _display.viewing_mode == "2D":
               _complex = False
 
-            _virtual_user_repr = _physical_user_repr.USER.create_user_representation_for(_display_group, _display.scene_matrix_node,
-              'self.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value'
+            #if _physical_user_repr.USER.id == 0 and _physical_user_repr.DISPLAY_GROUP.id == 0:
+            #  transformation_policy = """print self.dependent_nodes[0].WorldTransform.value\nself.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"""
+            #else:
+            transformation_policy = """self.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"""
+
+            _virtual_user_repr = _physical_user_repr.USER.create_user_representation_for(
+              _display_group
+            , _display.scene_matrix_node
+            , transformation_policy
             , 'head_' + _physical_user_repr.view_transform_node.Name.value
             , _complex)
 
@@ -238,13 +245,6 @@ class ApplicationManager(avango.script.Script):
           for _virtual_workspace in self.virtual_workspaces:
             for _virtual_display_group in _virtual_workspace.display_groups:
               _user.handle_correct_visibility_groups_for(_virtual_display_group)
-
-
-    # workaround to start viewing mode correctly
-    for _virtual_workspace in self.virtual_workspaces:
-      for _virtual_display_group in _virtual_workspace.display_groups:
-        _virtual_display_group.displays[0].switch_viewing_mode()
-        _virtual_display_group.displays[0].switch_viewing_mode()
 
     # connect proper navigations
     for _user_representation in ApplicationManager.all_user_representations:

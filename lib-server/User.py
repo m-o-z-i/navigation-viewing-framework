@@ -124,7 +124,7 @@ class UserRepresentation(avango.script.Script):
   def make_default_viewing_setup(self):
 
     self.execute_transformation_policy = False
-    self.head.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.6)
+    self.head.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 1.5)
     self.left_eye.Transform.value = avango.gua.make_identity_mat()
     self.right_eye.Transform.value = avango.gua.make_identity_mat()
 

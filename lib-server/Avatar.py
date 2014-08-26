@@ -106,7 +106,7 @@ class Avatar(avango.script.Script):
     _head_pos = self.USER_REPRESENTATION.head.Transform.value.get_translate()
     _forward_yaw = Utilities.get_yaw(self.USER_REPRESENTATION.head.Transform.value)
 
-    self.body_geometry.Transform.value = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self.USER_REPRESENTATION.head.Transform.value.get_rotate())) * \
+    self.body_geometry.Transform.value = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self.USER_REPRESENTATION.head.Transform.value.get_rotate_scale_corrected())) * \
                                          avango.gua.make_trans_mat(0.0, -_head_pos.y / 2, 0.0) * \
                                          avango.gua.make_rot_mat(math.degrees(_forward_yaw) - 90, 0, 1, 0) * \
                                          avango.gua.make_scale_mat(0.45, _head_pos.y / 2, 0.45)

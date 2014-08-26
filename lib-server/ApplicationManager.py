@@ -50,7 +50,7 @@ class ApplicationManager(avango.script.Script):
     _workspace_config_file_name = WORKSPACE_CONFIG.replace(".py", "")
     _workspace_config_file_name = _workspace_config_file_name.replace("/", ".")
     exec 'from ' + _workspace_config_file_name + ' import workspaces'
-    exec 'from ' + _workspace_config_file_name + ' import virtual_workspaces'
+    exec 'from ' + _workspace_config_file_name + ' import portal_display_groups'
     
     # parameters
     ## @var background_texture
@@ -185,44 +185,37 @@ class ApplicationManager(avango.script.Script):
 
     ## Handle virtual viewing setups ##
 
-
-    ## @var virtual_workspaces
-    # List of all workspace instances containing portals loaded from workspace configuration file.
-    self.virtual_workspaces = virtual_workspaces
-
     _virtual_user_representations = []
 
-    for _virtual_workspace in self.virtual_workspaces:
+    for _display_group in portal_display_groups:
 
-      for _display_group in _virtual_workspace.display_groups:
+      for _display in _display_group.displays:
 
-        for _display in _display_group.displays:
+        # create portal nodes
+        _display.append_portal_nodes()
 
-          # create portal nodes
-          _display.append_portal_nodes()
+        # create user representations
+        for _physical_user_repr in ApplicationManager.all_user_representations:
 
-          # create user representations
-          for _physical_user_repr in ApplicationManager.all_user_representations:
+          _complex = True
+          if _display.viewing_mode == "2D":
+            _complex = False
 
-            _complex = True
-            if _display.viewing_mode == "2D":
-              _complex = False
+          #if _physical_user_repr.USER.id == 0 and _physical_user_repr.DISPLAY_GROUP.id == 0:
+          #  transformation_policy = """print self.dependent_nodes[0].WorldTransform.value\nself.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"""
+          #else:
+          transformation_policy = """self.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"""
 
-            #if _physical_user_repr.USER.id == 0 and _physical_user_repr.DISPLAY_GROUP.id == 0:
-            #  transformation_policy = """print self.dependent_nodes[0].WorldTransform.value\nself.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"""
-            #else:
-            transformation_policy = """self.head.Transform.value = avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[0].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"""
+          _virtual_user_repr = _physical_user_repr.USER.create_user_representation_for(
+            _display_group
+          , _display.scene_matrix_node
+          , transformation_policy
+          , 'head_' + _physical_user_repr.view_transform_node.Name.value
+          , _complex)
 
-            _virtual_user_repr = _physical_user_repr.USER.create_user_representation_for(
-              _display_group
-            , _display.scene_matrix_node
-            , transformation_policy
-            , 'head_' + _physical_user_repr.view_transform_node.Name.value
-            , _complex)
-
-            _virtual_user_repr.add_dependent_node(_physical_user_repr.head)
-            _virtual_user_repr.add_existing_screen_node(_display.portal_screen_node)
-            _virtual_user_representations.append(_virtual_user_repr)
+          _virtual_user_repr.add_dependent_node(_physical_user_repr.head)
+          _virtual_user_repr.add_existing_screen_node(_display.portal_screen_node)
+          _virtual_user_representations.append(_virtual_user_repr)
 
     for _virtual_user_representation in _virtual_user_representations:
       ApplicationManager.all_user_representations.append(_virtual_user_representation)
@@ -242,9 +235,8 @@ class ApplicationManager(avango.script.Script):
         for _user in _workspace.users:
           _user.handle_correct_visibility_groups_for(_display_group)
 
-          for _virtual_workspace in self.virtual_workspaces:
-            for _virtual_display_group in _virtual_workspace.display_groups:
-              _user.handle_correct_visibility_groups_for(_virtual_display_group)
+          for _portal_display_group in portal_display_groups:
+            _user.handle_correct_visibility_groups_for(_portal_display_group)
 
     # connect proper navigations
     for _user_representation in ApplicationManager.all_user_representations:
@@ -299,7 +291,6 @@ class ApplicationManager(avango.script.Script):
     _render_mask = _render_mask + ") && !do_not_display_group"
 
     self.camera.RenderMask.value = _render_mask
-    print self.camera.RenderMask.value
 
     ## @var window
     # Window displaying the server control view.

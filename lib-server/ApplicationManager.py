@@ -387,7 +387,9 @@ class ApplicationManager(avango.script.Script):
             _nav_device_portal_space_pos2.z >= 0.0                  and \
             _portal.viewing_mode == "3D":
 
-          _nav.inputmapping.set_abs_mat(_active_navigation.sf_abs_mat.value * \
+          _nav.inputmapping.set_abs_mat(avango.gua.make_trans_mat(_portal.portal_screen_node.Transform.value.get_translate()) * \
+                                        _active_navigation.sf_abs_mat.value * \
+                                        avango.gua.make_rot_mat(_portal.portal_screen_node.Transform.value.get_rotate()) * \
                                         avango.gua.make_scale_mat(_active_navigation.sf_scale.value) * \
                                         avango.gua.make_trans_mat(_nav_device_portal_space_pos) * \
                                         avango.gua.make_rot_mat(_nav_device_portal_space_mat.get_rotate_scale_corrected()) * \

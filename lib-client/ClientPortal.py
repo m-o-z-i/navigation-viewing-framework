@@ -449,7 +449,9 @@ class PortalPreView(avango.script.Script):
 
     # update global clipping plane when negative parallax is false
     if self.mf_portal_modes.value[2] == "2-False":
-      _portal_scene_mat = self.scene_matrix_node.Transform.value
+      _portal_scene_mat = avango.gua.make_trans_mat(self.screen_node.Transform.value.get_translate()) * \
+                          self.scene_matrix_node.Transform.value * \
+                          avango.gua.make_rot_mat(self.screen_node.Transform.value.get_rotate())
       _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
       _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec
       _vec2 = _portal_scene_mat.get_translate()
@@ -457,19 +459,20 @@ class PortalPreView(avango.script.Script):
       _dist = _vec2.z
       self.pipeline.GlobalClippingPlane.value = avango.gua.Vec4(_vec.x, _vec.y, _vec.z, _dist)
 
-    _head_world_mat = self.compute_world_transform(self.VIEW.SCENEGRAPH["/net/w" + str(self.VIEW.workspace_id) + "_dg" + \
-                      str(self.VIEW.display_group_id) + "_u" + str(self.VIEW.user_id) + "/head"])
 
-    
     # determine if outside of viewing range
-    _view_in_portal_space_mat = self.transformed_head_node.Transform.value
+    #_view_in_portal_space_mat = self.transformed_head_node.Transform.value
+    _view_in_portal_space_mat = avango.gua.make_trans_mat(self.screen_node.Transform.value.get_translate() * -1.0) * \
+                                self.transformed_head_node.Transform.value * \
+                                avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self.screen_node.Transform.value.get_rotate()))
     _ref_vec = avango.gua.Vec3(0, 0, -1)
     _view_in_portal_space_vec = avango.gua.make_rot_mat(_view_in_portal_space_mat.get_rotate_scale_corrected()) * _ref_vec
     _view_in_portal_space_vec = avango.gua.Vec3(_view_in_portal_space_vec.x, _view_in_portal_space_vec.y, _view_in_portal_space_vec.z)
     _angle = math.acos(_ref_vec.dot(_view_in_portal_space_vec))
 
+
     # trigger on/off changes
-    if _view_in_portal_space_mat.get_translate().z < 0 or abs(math.degrees(_angle)) > 90.0:
+    if _view_in_portal_space_mat.get_translate().z < 0 or abs(math.degrees(_angle)) > 100.0:
 
       if self.pipeline.Enabled.value == True:
         self.pipeline.Enabled.value = False

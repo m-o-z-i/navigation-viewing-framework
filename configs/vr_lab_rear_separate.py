@@ -149,7 +149,7 @@ tower_portal_1 = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-23.0, 1.3, 21
                       , BORDER_MATERIAL = "data/materials/White.gmd"
                       , TRANSITABLE = True)
 
-side_portal = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-23.0, 1.3, 16.5) * avango.gua.make_rot_mat(90, 0, 1, 0)
+side_portal = Portal(PORTAL_MATRIX = avango.gua.make_trans_mat(-21.0, 1.3, 19.0)
                       , WIDTH = 4.0
                       , HEIGHT = 2.6
                       , VIEWING_MODE = "3D"

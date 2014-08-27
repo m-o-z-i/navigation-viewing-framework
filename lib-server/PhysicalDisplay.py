@@ -140,16 +140,16 @@ class PhysicalDisplay(Display):
     return _node
 
   ## Creates a proxy geometry for this display to be checked for intesections in the global tracking space.
-  # @param PLATFORM Reference to the Platform instance to which the display is belonging.
-  # @param SCREEN_ID Number of the screen this display is representing on the platform.
-  def create_transformed_proxy_geometry(self, PLATFORM, SCREEN_ID):
+  # @param 
+  def create_transformed_proxy_geometry(self, WORKSPACE_INSTANCE, DISPLAY_GROUP_INSTANCE, DISPLAY_NUM):
   
     _loader = avango.gua.nodes.TriMeshLoader()
   
-    _node = _loader.create_geometry_from_file("proxy_" + str(PLATFORM.platform_id) + "_" + str(SCREEN_ID)
-                                            , "data/objects/plane.obj", "data/materials/AvatarBlue.gmd"
+    _node = _loader.create_geometry_from_file("proxy_w" + str(WORKSPACE_INSTANCE.id) + "_dg" + str(DISPLAY_GROUP_INSTANCE.id) + "_s" + str(DISPLAY_NUM)
+                                            , "data/objects/plane.obj"
+                                            , "data/materials/White.gmd"
                                             , avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.MAKE_PICKABLE)
-    _node.GroupNames.value = ["do_not_display_group", "screen_proxy_group"]
+    _node.GroupNames.value = ["screen_proxy_group"]
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     _w, _h = self.size
@@ -158,10 +158,8 @@ class PhysicalDisplay(Display):
     _w += 0.5
     _h += 0.5
 
-    _node.Transform.value = self.transformation * avango.gua.make_rot_mat(90, 1, 0 ,0) * avango.gua.make_scale_mat(_w,1.0,_h)
-
-    # eliminate transmitter offset to transform screen in tracking space
-    _node.Transform.value =  avango.gua.make_inverse_mat(PLATFORM.transmitter_offset) * _node.Transform.value
+    _node.Transform.value = avango.gua.make_inverse_mat(DISPLAY_GROUP_INSTANCE.offset_to_workspace * WORKSPACE_INSTANCE.transmitter_offset) * \
+                            self.transformation * avango.gua.make_rot_mat(90, 1, 0 ,0) * avango.gua.make_scale_mat(_w,1.0,_h)
     
     return _node
 

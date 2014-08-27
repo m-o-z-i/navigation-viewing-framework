@@ -137,8 +137,15 @@ class ApplicationManager(avango.script.Script):
 
     for _workspace in self.workspaces:
 
-      _w_id = _workspace.id 
+      _w_id = _workspace.id
 
+      # create proxy geometries
+      for _display_group in _workspace.display_groups:
+        for _display in _display_group.displays:
+            _proxy_geom = _display.create_transformed_proxy_geometry(_workspace, _display_group, _display_group.displays.index(_display))
+            scenegraphs[0].Root.value.Children.value.append(_proxy_geom)
+
+      # build up user and tool representations
       for _user in _workspace.users:
 
         _u_id = _user.id

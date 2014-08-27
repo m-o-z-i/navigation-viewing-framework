@@ -261,6 +261,10 @@ class UserRepresentation(avango.script.Script):
 # and cares for receiving the headtracking input.
 class User(VisibilityHandler2D):
 
+  ## @var mf_screen_pick_result
+  # Intersections of the viewing ray with the screens in the setup.
+  mf_screen_pick_result = avango.gua.MFPickResult()
+
   ## Default constructor.
   def __init__(self):
     self.super(User).__init__()
@@ -329,10 +333,25 @@ class User(VisibilityHandler2D):
     # toggles activity
     self.toggle_user_activity(self.is_active)
 
+    ## @var intersection_tester
+    # Instance of Intersection to determine intersection points of user with screens.
+    self.intersection_tester = Intersection()
+    self.intersection_tester.my_constructor(scenegraphs[0]
+                                          , self.headtracking_reader.sf_abs_mat
+                                          , 5.0
+                                          , "screen_proxy_group")
+    self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
+
     self.always_evaluate(True)
 
   ## Evaluated every frame.
   def evaluate(self):
+    import random
+
+    if self.id == 0:
+      if len(self.mf_screen_pick_result.value) > 0:
+        print self.mf_screen_pick_result.value[0].Object.value.Name.value, random.randint(1, 100)
+
     pass
 
     '''

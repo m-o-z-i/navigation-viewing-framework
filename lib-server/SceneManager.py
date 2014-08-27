@@ -182,6 +182,9 @@ class SceneManager(avango.script.Script):
   # Boolean field representing the home key.
   sf_key_home = avango.SFBool()
 
+  active_scene_name = None
+
+
 
   # Default constructor.
   def __init__(self):
@@ -241,7 +244,7 @@ class SceneManager(avango.script.Script):
 
     # init scenes   
     #self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
     self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)       
 
@@ -353,7 +356,7 @@ class SceneManager(avango.script.Script):
         self.navigation_list[0].start_scale = self.active_scene.starting_scale
         self.navigation_list[0].reset()
         print_warning("Overwrite platform 0's starting scale factor by the one given in the scene description.")
-  
+      SceneManager.active_scene_name = self.active_scene.name
       print "Switching to Scene: " + self.active_scene.name
   
   ## Prints all the nodes of the active scene on the console.

@@ -1,6 +1,7 @@
 #!/bin/python
 
 from Device import MultiDofDevice
+from SceneManager import SceneManager 
 
 import avango
 import avango.gua
@@ -16,6 +17,7 @@ class MultiTouchDevice(avango.script.Script):
     Base class for multi touch devices.
     """
 
+
     def __init__(self):
         self.super(MultiTouchDevice).__init__()
         self._sceneGraph = None
@@ -27,6 +29,8 @@ class MultiTouchDevice(avango.script.Script):
         
         self._fingerCenterPos = avango.gua.Vec3(0,0,0)
         self._lastPos = None
+
+        self._sceneName = None
 
         self.always_evaluate(True)
 
@@ -45,6 +49,7 @@ class MultiTouchDevice(avango.script.Script):
 
     def evaluate(self):
         self.applyTransformations()
+        self._sceneName = SceneManager.active_scene_name
 
     def getDisplay(self):
         return self._display
@@ -94,33 +99,37 @@ class MultiTouchDevice(avango.script.Script):
         Requires the scene graph to have a transform node as root node.
         """
 
-        scenePos = self._sceneGraph["/net/MedievalTown"].Transform.value.get_translate()
-        translateDistance = self._fingerCenterPos - scenePos
+        if (None != self._sceneName):
 
-        TransformMatrix = self._sceneGraph["/net/MedievalTown"].Transform.value
+            sceneNode = "/net/" + self._sceneName
 
-        #transform world-space to object-space
-        translateDistance = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * translateDistance
-        translateDistance = avango.gua.Vec3(translateDistance.x, translateDistance.y, translateDistance.z)
+            scenePos = self._sceneGraph[sceneNode].Transform.value.get_translate()
+            translateDistance = self._fingerCenterPos - scenePos
 
-        TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
-                            avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
-                            avango.gua.make_trans_mat(translateDistance * 1.0) * \
-                            self._rotMat * \
-                            self._scaleMat * \
-                            avango.gua.make_trans_mat(translateDistance * -1.0) * \
-                            avango.gua.make_scale_mat(TransformMatrix.get_scale())
+            TransformMatrix = self._sceneGraph[sceneNode].Transform.value
 
-        TransformMatrix = self._transMat * TransformMatrix
+            #transform world-space to object-space
+            translateDistance = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * translateDistance
+            translateDistance = avango.gua.Vec3(translateDistance.x, translateDistance.y, translateDistance.z)
+
+            TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
+                                avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                                avango.gua.make_trans_mat(translateDistance * 1.0) * \
+                                self._rotMat * \
+                                self._scaleMat * \
+                                avango.gua.make_trans_mat(translateDistance * -1.0) * \
+                                avango.gua.make_scale_mat(TransformMatrix.get_scale())
+
+            TransformMatrix = self._transMat * TransformMatrix
 
 
-        self._sceneGraph["/net/MedievalTown"].Transform.value = TransformMatrix #ScenePitotiTest
+            self._sceneGraph[sceneNode].Transform.value = TransformMatrix
 
-        #reset all data
-        self._transMat   = avango.gua.make_identity_mat()
-        self._rotMat     = avango.gua.make_identity_mat()
-        self._scaleMat   = avango.gua.make_identity_mat()
-        self._fingerCenterPos = avango.gua.Vec3(0,0,0)
+            #reset all data
+            self._transMat   = avango.gua.make_identity_mat()
+            self._rotMat     = avango.gua.make_identity_mat()
+            self._scaleMat   = avango.gua.make_identity_mat()
+            self._fingerCenterPos = avango.gua.Vec3(0,0,0)
 
 
 class TUIODevice(MultiTouchDevice):

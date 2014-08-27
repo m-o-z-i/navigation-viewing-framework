@@ -10,7 +10,9 @@ import avango.script
 from avango.script import field_has_changed
 
 # import framework libraries
+from DisplayGroup import *
 from Portal import *
+from StaticNavigation import *
 from TrackingReader import *
 from Tool import *
 import Utilities
@@ -229,6 +231,11 @@ class Shot(avango.script.Script):
 ## Geometric representation of a PortalCamera in a DisplayGroup.
 class PortalCameraRepresentation(ToolRepresentation):
 
+  ##
+  #
+  sf_world_border_mat_no_scale = avango.gua.SFMatrix4()
+  sf_world_border_mat_no_scale.value = avango.gua.make_identity_mat()
+
   ## Default constructor.
   def __init__(self):
     self.super(PortalCameraRepresentation).__init__()
@@ -246,6 +253,64 @@ class PortalCameraRepresentation(ToolRepresentation):
                         , "portal_cam_" + str(PORTAL_CAM_INSTANCE.id)
                         , "self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value")
 
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+
+    ## @var camera_frame
+    # Geometry node containing the PortalCamera's portal frame.
+    self.camera_frame = _loader.create_geometry_from_file('camera_frame'
+                                                        , 'data/objects/screen.obj'
+                                                        , 'data/materials/ShadelessRed.gmd'
+                                                        , avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, PORTAL_CAM_INSTANCE.portal_height/2, 0.0) * \
+                                        avango.gua.make_scale_mat(PORTAL_CAM_INSTANCE.portal_width, PORTAL_CAM_INSTANCE.portal_height, 1.0)
+    self.tool_transform_node.Children.value.append(self.camera_frame)
+
+    ## @var viewing_mode_indicator
+    # Tiny geometry in the border of the camera frame to illustrate the current state of self.capture_viewing_mode.
+    self.viewing_mode_indicator = _loader.create_geometry_from_file('viewing_mode_indicator',
+                                                                    'data/objects/plane.obj',
+                                                                    'data/materials/CameraMode3D.gmd',
+                                                                    avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-PORTAL_CAM_INSTANCE.portal_width/2 * 0.86, PORTAL_CAM_INSTANCE.portal_height * 0.93, 0.0) * \
+                                                  avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                                  avango.gua.make_scale_mat(PORTAL_CAM_INSTANCE.portal_height * 0.1, 1.0, PORTAL_CAM_INSTANCE.portal_height * 0.1)
+    self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.tool_transform_node.Children.value.append(self.viewing_mode_indicator)
+    
+    self.portal = Portal(PORTAL_MATRIX = avango.gua.make_identity_mat()
+                       , WIDTH = PORTAL_CAM_INSTANCE.portal_width
+                       , HEIGHT = PORTAL_CAM_INSTANCE.portal_height
+                       , VIEWING_MODE = PORTAL_CAM_INSTANCE.capture_viewing_mode
+                       , CAMERA_MODE = "PERSPECTIVE"
+                       , NEGATIVE_PARALLAX = PORTAL_CAM_INSTANCE.capture_parallax_mode
+                       , BORDER_MATERIAL = "data/materials/White.gmd"
+                       , TRANSITABLE = False)
+
+    self.portal_nav = StaticNavigation()
+    self.portal_nav.my_constructor(STATIC_ABS_MAT = avango.gua.make_trans_mat(-12.0, 17.3, -7.0)
+                            , STATIC_SCALE = 1.0
+                            , TRACE_VISIBILITY_LIST = {})
+
+    self.portal_dg = DisplayGroup(ID = None
+                           , DISPLAY_LIST = [self.portal]
+                           , NAVIGATION_LIST = [self.portal_nav]
+                           , VISIBILITY_TAG = "portal"
+                           , OFFSET_TO_WORKSPACE = avango.gua.make_identity_mat()
+                           , WORKSPACE_TRANSMITTER_OFFSET = avango.gua.make_identity_mat()
+                           )
+
+    #self.portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+
+
+  def evaluate(self):
+
+    exec self.transformation_policy
+  
+    self.sf_world_border_mat_no_scale.value = self.USER_REPRESENTATION.view_transform_node.Transform.value * \
+                                              self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value * \
+                                              avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
 
   ## Appends a string to the GroupNames field of this ToolRepresentation's visualization.
   # @param STRING The string to be appended.
@@ -443,48 +508,6 @@ class PortalCamera(Tool):
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
-    '''
-    ## @var portal_camera_node
-    # Scenegraph node below the platform node to represent this PortalCamera.
-    self.portal_camera_node = avango.gua.nodes.TransformNode(Name = "portal_cam_" + str(ID))
-    self.portal_camera_node.Transform.connect_from(self.tracking_reader.sf_abs_mat)
-    self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
-    self.PLATFORM_NODE.Children.value.append(self.portal_camera_node)
-
-    ## @var camera_frame
-    # Geometry node containing the PortalCamera's portal frame.
-    self.camera_frame = _loader.create_geometry_from_file("camera_frame", "data/objects/screen.obj", "data/materials/ShadelessRed.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.portal_camera_node.Children.value.append(self.camera_frame)
-
-    ## @var viewing_mode_indicator
-    # Tiny geometry in the border of the camera frame to illustrate the current state of self.capture_viewing_mode.
-    self.viewing_mode_indicator = _loader.create_geometry_from_file('viewing_mode_indicator',
-                                                                    'data/objects/plane.obj',
-                                                                    'data/materials/CameraMode' + self.capture_viewing_mode + '.gmd',
-                                                                    avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width/2 * 0.86, self.portal_height * 0.93, 0.0) * \
-                                                  avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                                  avango.gua.make_scale_mat(self.portal_height * 0.1, 1.0, self.portal_height * 0.1)
-    self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
-
-    self.portal_camera_node.Children.value.append(self.viewing_mode_indicator)
-
-    ## @var display_portal
-    # Portal instance in which shots of this PortalCamera will be loaded.
-    self.display_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
-                                                         1.0,
-                                                         avango.gua.make_identity_mat(),
-                                                         self.portal_width,
-                                                         self.portal_height,
-                                                         self.capture_viewing_mode,
-                                                         "PERSPECTIVE",
-                                                         self.capture_parallax_mode,
-                                                         "data/materials/ShadelessBlue.gmd")
-    self.display_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-    self.display_portal.set_visibility(False)
-    '''
-
     ## @var last_open_shot_index
     # Index within self.captured_shots saying which of the Shots was lastly opened by the PortalCamera.
     self.last_open_shot_index = None
@@ -513,15 +536,6 @@ class PortalCamera(Tool):
 
     # update user assignment
     self.check_for_user_assignment()
-
-    #print self.assigned_user.id
-
-    #self.sf_world_border_mat_no_scale.value = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
-    #                                          self.tracking_reader.sf_abs_mat.value * \
-    #                                          avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
-
-    #self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
-    #                                    avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
 
     #self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width/2 * 0.86, self.portal_height * 0.93, 0.0) * \
     #                                              avango.gua.make_rot_mat(90, 1, 0, 0) * \

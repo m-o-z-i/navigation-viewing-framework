@@ -122,6 +122,10 @@ class ApplicationManager(avango.script.Script):
     #
     self.workspace_navigations = []
 
+    ##
+    #
+    self.portal_display_groups = portal_display_groups
+
     ## Handle physical viewing setups ##
 
     for _workspace in self.workspaces:
@@ -158,6 +162,8 @@ class ApplicationManager(avango.script.Script):
           for _tool in _workspace.tools:
             _tool_repr = _tool.create_tool_representation_for(_display_group, _user_repr)
 
+            # register portal display groups
+
           for _display in _display_group.displays:
 
             _s_id = _display_group.displays.index(_display)
@@ -184,10 +190,6 @@ class ApplicationManager(avango.script.Script):
                 , stderr=subprocess.PIPE)
                 time.sleep(1)
 
-
-    ##
-    #
-    self.portal_display_groups = portal_display_groups
 
     ##
     #

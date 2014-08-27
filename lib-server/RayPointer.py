@@ -74,6 +74,10 @@ class RayPointerRepresentation(ToolRepresentation):
     self.ray_start_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value) 
     self.tool_transform_node.Children.value.append(self.ray_start_geometry)
 
+    ##
+    #
+    self.highlighted = False
+
 
   ## Sets ray_geometry to a specific length.
   # @param NEW_RAY_DISTANCE The new distance of the ray to be set.
@@ -124,19 +128,32 @@ class RayPointerRepresentation(ToolRepresentation):
   ## Enables a highlight for this RayPointerRepresentation.
   def enable_highlight(self):
   
-    #self.ray_geometry.Material.value = "data/materials/AvatarRedShadeless.gmd"
-    self.ray_geometry.Material.value = "data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd"
+    self.highlighted = True
 
   ## Disables the highlight for this RayPointerRepresentation.
   def disable_highlight(self):
 
-    self.ray_geometry.Material.value = "data/materials/White.gmd"
+    self.highlighted = False
 
   ## Sets a different matrial for the ray's start geometry to visualize the selection level.
   # @param MATERIAL The material string to be set.
   def set_ray_start_geometry_material(self, MATERIAL):
 
     self.ray_start_geometry.Material.value = MATERIAL
+
+  ##
+  def evaluate(self):
+
+    # base class evaluate
+    exec self.transformation_policy
+
+    # update border color according to highlight enabled
+    if self.highlighted:
+      if self.ray_geometry.Material.value != "data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd":
+        self.ray_geometry.Material.value = "data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd"
+    else:
+      if self.ray_geometry.Material.value != "data/materials/White.gmd":
+        self.ray_geometry.Material.value = "data/materials/White.gmd"
 
 
 ###############################################################################################

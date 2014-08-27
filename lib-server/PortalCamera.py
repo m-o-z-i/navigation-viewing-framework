@@ -149,6 +149,10 @@ class PortalCameraRepresentation(ToolRepresentation):
     #
     self.portal_matrix_connected = False
 
+    ##
+    #
+    self.highlighted = False
+
 
   def evaluate(self):
 
@@ -171,6 +175,14 @@ class PortalCameraRepresentation(ToolRepresentation):
 
     self.sf_portal_matrix.value = self.tool_transform_node.WorldTransform.value * \
                                   avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
+
+    # update border color according to highlight enabled
+    if self.highlighted:
+      if self.portal.border_material != "data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd":
+        self.portal.set_border_material("data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd")
+    else:
+      if self.portal.border_material != "data/materials/White.gmd":
+        self.portal.set_border_material("data/materials/White.gmd")
 
   ##
   #
@@ -281,13 +293,13 @@ class PortalCameraRepresentation(ToolRepresentation):
 
   ##
   def enable_highlight(self):
-
-    self.portal.set_border_material("data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd")
+    
+    self.highlighted = True
 
   ##
   def disable_highlight(self):
     
-    self.portal.set_border_material("data/materials/White.gmd")
+    self.highlighted = False
     
 
 

@@ -413,6 +413,8 @@ class PortalPreView(avango.script.Script):
 
       if self.frame_trigger.Active.value == False:
         self.frame_trigger.Active.value = True
+
+        # fixes display of back geometry when jumping between navigations
         self.back_geometry.GroupNames.value.remove("portal_invisible_group")
 
 

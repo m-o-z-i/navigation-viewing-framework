@@ -12,7 +12,7 @@ from avango.script import field_has_changed
 # import framework libraries
 from DisplayGroup import *
 from Portal import *
-from StaticNavigation import *
+from PortalCameraNavigation import *
 from TrackingReader import *
 from Tool import *
 import Utilities
@@ -130,10 +130,9 @@ class PortalCameraRepresentation(ToolRepresentation):
                        , BORDER_MATERIAL = "data/materials/White.gmd"
                        , TRANSITABLE = False)
 
-    self.portal_nav = StaticNavigation()
-    self.portal_nav.my_constructor(STATIC_ABS_MAT = avango.gua.make_identity_mat()
-                            , STATIC_SCALE = 1.0
-                            , TRACE_VISIBILITY_LIST = {})
+    self.portal_nav = PortalCameraNavigation()
+    self.portal_nav.my_constructor(PORTAL_CAMERA_INSTANCE = self.TOOL_INSTANCE
+                                 , TRACE_VISIBILITY_LIST = {})
 
     self.portal_dg = DisplayGroup(ID = None
                            , DISPLAY_LIST = [self.portal]

@@ -162,12 +162,10 @@ class ApplicationManager(avango.script.Script):
           for _tool in _workspace.tools:
             _tool_repr = _tool.create_tool_representation_for(_display_group, _user_repr)
 
-            # register portal display groups
-
+            # register portal display groups if this tool representation is a PortalCameraRepresentation
             try:
               _tool_repr.portal_dg
               self.portal_display_groups.append(_tool_repr.portal_dg)
-              print _tool_repr.portal_dg
             except:
               pass
 

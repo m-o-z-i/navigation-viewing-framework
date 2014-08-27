@@ -233,8 +233,8 @@ class PortalCameraRepresentation(ToolRepresentation):
 
   ##
   #
-  sf_world_border_mat_no_scale = avango.gua.SFMatrix4()
-  sf_world_border_mat_no_scale.value = avango.gua.make_identity_mat()
+  sf_portal_matrix = avango.gua.SFMatrix4()
+  sf_portal_matrix.value = avango.gua.make_identity_mat()
 
   ## Default constructor.
   def __init__(self):
@@ -303,9 +303,9 @@ class PortalCameraRepresentation(ToolRepresentation):
                            , OFFSET_TO_WORKSPACE = avango.gua.make_identity_mat()
                            , WORKSPACE_TRANSMITTER_OFFSET = avango.gua.make_identity_mat()
                            )
-
+    ##
+    #
     self.portal_matrix_connected = False
-    #self.portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
 
 
   def evaluate(self):
@@ -313,7 +313,7 @@ class PortalCameraRepresentation(ToolRepresentation):
     # base class evaluate
     exec self.transformation_policy
 
-    # connect portal matrix if not done
+    # wait for portal matrix node, then connect it if not already done
     if self.portal_matrix_connected == False:
 
       try:
@@ -321,28 +321,49 @@ class PortalCameraRepresentation(ToolRepresentation):
       except:
         return
 
-      self.portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+      self.portal.connect_portal_matrix(self.sf_portal_matrix)
+      self.portal.portal_matrix_node.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
       self.portal_matrix_connected = True
   
-    #self.sf_world_border_mat_no_scale.value = self.USER_REPRESENTATION.view_transform_node.Transform.value * \
-    #                                          self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value * \
-    #                                          avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
-    self.sf_world_border_mat_no_scale.value = self.tool_transform_node.WorldTransform.value * \
-                                              avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
+
+    self.sf_portal_matrix.value = self.tool_transform_node.WorldTransform.value * \
+                                  avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
 
   ## Appends a string to the GroupNames field of this ToolRepresentation's visualization.
   # @param STRING The string to be appended.
   def append_to_visualization_group_names(self, STRING):
-    pass
+    
+    # do not add portal head group nodes for visibility of this portal
+    if not STRING.startswith("portal"):
+      self.portal.portal_matrix_node.GroupNames.value.append(STRING)
+
+      if STRING == "do_not_display_group":
+        print "deactivting display of portal cam repr", self.USER_REPRESENTATION.view_transform_node.Name.value
+        self.portal.set_visibility(False)
 
   ## Removes a string from the GroupNames field of this ToolRepresentation's visualization.
   # @param STRING The string to be removed.
   def remove_from_visualization_group_names(self, STRING):
-    pass
+    
+    self.portal.portal_matrix_node.GroupNames.value.remove(STRING)
 
   ## Resets the GroupNames field of this ToolRepresentation's visualization to the user representation's view_transform_node.
   def reset_visualization_group_names(self):
-    pass
+
+    self.portal.portal_matrix_node.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
+    self.portal.set_visibility(True)
+
+  ##
+  def enable_highlight(self):
+
+    self.portal.set_border_material("data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd")
+
+  ##
+  def disable_highlight(self):
+    
+    self.portal.set_border_material("data/materials/White.gmd")
+    
+
 
 ###############################################################################################
 
@@ -548,6 +569,23 @@ class PortalCamera(Tool):
     self.tool_representations.append(_portal_cam_repr)
     return _portal_cam_repr
 
+  ## Checks which user is closest to this RayPointer in tracking spaces and makes him the assigned user.
+  # Additionally updates the material of the corresponding RayPointerRepresentation.
+  def check_for_user_assignment(self):
+
+    _assigned_user_before = self.assigned_user
+    self.super(PortalCamera).check_for_user_assignment()
+    _assigned_user_after = self.assigned_user
+
+    # Change material on assigned ray holder
+    if _assigned_user_before != _assigned_user_after:
+
+      for _tool_repr in self.tool_representations:
+
+        if _tool_repr.user_id == self.assigned_user.id:
+          _tool_repr.enable_highlight()
+        else:
+          _tool_repr.disable_highlight()
 
   ## Evaluated every frame.
   def evaluate(self):

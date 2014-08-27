@@ -25,8 +25,6 @@ class MultiTouchDevice(avango.script.Script):
         self._rotMat     = avango.gua.make_identity_mat()
         self._scaleMat   = avango.gua.make_identity_mat()
         
-        #self._head_matrix = avango.gua.make_identity_mat()
-        #self.TransformMatrix = avango.gua.make_identity_mat()
         self._fingerCenterPos = avango.gua.Vec3(0,0,0)
         self._lastPos = None
 
@@ -43,8 +41,6 @@ class MultiTouchDevice(avango.script.Script):
         self._sceneGraph = graph
         self._display    = display
         self._origMat    = graph.Root.value.Transform.value
-        #self._head_matrix = self._sceneGraph["/net/platform_0/scale/s0_slot0/eye"].WorldTransform.value
-
 
 
     def evaluate(self):
@@ -59,31 +55,12 @@ class MultiTouchDevice(avango.script.Script):
     def setFingerCenterPosition(self, FingerCenterPos, touchDevice):
 
         point = FingerCenterPos
-        if None == self._lastPos:
-            self._lastPos = point
-            return
 
         # map points from interval [0, 1] to [-0.5, 0.5]
         mappedPosX = point[0] * 1 - 0.5
-        mappedPosY = point[1] * 1 - 0.5
-        #mappedLastPosX = self._lastPos[0] * 2 - 1
-        #mappedLastPosY = self._lastPos[1] * 2 - 1
-
-        #relDist               = (point[0] - self._lastPos[0], point[1] - self._lastPos[1])
-        #relDistSizeMapped     = (relDist[0] * touchDevice.getDisplay().size[0], relDist[1] * touchDevice.getDisplay().size[1])
-    
-        # multiply the distance by .5 * scaling factor
-        # TODO: don't hardcode values
-        #newPosX = relDistSizeMapped[0]# * 100
-        #newPosY = relDistSizeMapped[1]# * 100
+        mappedPosY = point[2] * 1 - 0.5
 
         self._fingerCenterPos = avango.gua.Vec3(mappedPosX * touchDevice.getDisplay().size[0], 0.0, mappedPosY * touchDevice.getDisplay().size[1])
-
-        #self._lastPos = (point[0], point[1])
-
-        #print avango.gua.Vec3(mappedPosX * touchDevice.getDisplay().size[0], 0.0, mappedPosY * touchDevice.getDisplay().size[1])
-
-
 
 
 
@@ -116,19 +93,16 @@ class MultiTouchDevice(avango.script.Script):
         Apply calculated world matrix to scene graph.
         Requires the scene graph to have a transform node as root node.
         """
-        # TODD: Medieval knoten mit dem inversen der fingerposition in den Nullpunkt verschieben; diesen knoten verschieben, scalieren, rotieren und wieder zurueck verschieben
-        # avango.gua.make_inverse_mat(self._head_matrix)
 
         scenePos = self._sceneGraph["/net/MedievalTown"].Transform.value.get_translate()
         translateDistance = self._fingerCenterPos - scenePos
-        #print translateDistance
 
         TransformMatrix = self._sceneGraph["/net/MedievalTown"].Transform.value
 
+        #transform world-space to object-space
         translateDistance = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * translateDistance
         translateDistance = avango.gua.Vec3(translateDistance.x, translateDistance.y, translateDistance.z)
 
-        #TransformMatrix = TransformMatrix 
         TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
                             avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
                             avango.gua.make_trans_mat(translateDistance * 1.0) * \
@@ -136,19 +110,13 @@ class MultiTouchDevice(avango.script.Script):
                             self._scaleMat * \
                             avango.gua.make_trans_mat(translateDistance * -1.0) * \
                             avango.gua.make_scale_mat(TransformMatrix.get_scale())
-        # * self._scaleMat
-        #TransformMatrix = TransformMatrix * avango.gua.make_trans_mat(translateDistance * -1.0)
+
         TransformMatrix = self._transMat * TransformMatrix
 
 
-        self._sceneGraph["/net/MedievalTown"].Transform.value = TransformMatrix
+        self._sceneGraph["/net/MedievalTown"].Transform.value = TransformMatrix #ScenePitotiTest
 
-
-        #print "ScenenPos:  " , scenePos , ";  FingerPos:  " , self._fingerCenterPos
-
-        #without translate to center
-        #self._sceneGraph["/net/MedievalTown"].Transform.value = self._transMat * self._sceneGraph["/net/MedievalTown"].Transform.value * self._rotMat * self._scaleMat
-
+        #reset all data
         self._transMat   = avango.gua.make_identity_mat()
         self._rotMat     = avango.gua.make_identity_mat()
         self._scaleMat   = avango.gua.make_identity_mat()
@@ -287,6 +255,7 @@ class DragGesture(MultiTouchGesture):
 
         point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
         point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+        
         point = point1.lerp_to(point2, .5)
 
         if None == self._lastPos:
@@ -303,13 +272,14 @@ class DragGesture(MultiTouchGesture):
         relDistSizeMapped     = (relDist[0] * touchDevice.getDisplay().size[0], relDist[1] * touchDevice.getDisplay().size[1])
 
         # multiply the distance by .5 * scaling factor
-        # TODO: don't hardcode values
-        newPosX = relDistSizeMapped[0] #* 100
-        newPosY = relDistSizeMapped[1] #* 100
+        # TODO: don't hardcode values --> CHECK :)
+
+        newPosX = relDistSizeMapped[0]
+        newPosY = relDistSizeMapped[1]
 
 
         centerPos = (point1 + ((point2-point1) / 2))
-        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, centerPos.y, 0)
+        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
         touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
 
         touchDevice.addLocalTranslation(avango.gua.make_trans_mat(newPosX, 0, newPosY))
@@ -357,7 +327,7 @@ class PinchGesture(MultiTouchGesture):
         #mDofDevice.mf_dof.value[2] -= self.centerDirection.y * relDistance * 15 * self.display.size[1]
 
         centerPos = (vec1 + ((vec2-vec1) / 2))
-        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, centerPos.y, 0)
+        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
         touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
 
         touchDevice.addLocalScaling(avango.gua.make_scale_mat(1 - relDistance))
@@ -411,7 +381,7 @@ class RotationGesture(MultiTouchGesture):
         #center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
         #rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
         angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, -crossProduct.z)
-        angle = self.movingAverage(angle, self._smoothingFactor)
+        #angle = self.movingAverage(angle, self._smoothingFactor)
 
         #if 1 < abs(angle) - abs(self._lastAngle):
         #    self._lastAngle = angle
@@ -424,14 +394,12 @@ class RotationGesture(MultiTouchGesture):
         #print(angle)
         
         centerPos = (vec1 + ((vec2-vec1) / 2))
-        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, centerPos.y, 0)
+        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
         touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
 
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, avango.gua.Vec3(0, 1, 0)))
         self._lastAngle = angle
         self._fingerCenterPos = avango.gua.Vec3(0,0,0)
-
-
 
         return True
 

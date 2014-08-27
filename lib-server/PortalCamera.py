@@ -99,9 +99,9 @@ class PortalCameraRepresentation(ToolRepresentation):
                                                         , 'data/objects/screen.obj'
                                                         , 'data/materials/ShadelessRed.gmd'
                                                         , avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
+    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0) * \
+                                        avango.gua.make_scale_mat(self.TOOL_INSTANCE.portal_width, self.TOOL_INSTANCE.portal_height, 1.0)
     self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, PORTAL_CAM_INSTANCE.portal_height/2, 0.0) * \
-                                        avango.gua.make_scale_mat(PORTAL_CAM_INSTANCE.portal_width, PORTAL_CAM_INSTANCE.portal_height, 1.0)
     self.camera_frame.GroupNames.value.append("portal_invisible_group")
     self.camera_frame.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
     self.tool_transform_node.Children.value.append(self.camera_frame)
@@ -112,9 +112,9 @@ class PortalCameraRepresentation(ToolRepresentation):
                                                                     'data/objects/plane.obj',
                                                                     'data/materials/CameraMode3D.gmd',
                                                                     avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-PORTAL_CAM_INSTANCE.portal_width/2 * 0.86, PORTAL_CAM_INSTANCE.portal_height * 0.93, 0.0) * \
+    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.TOOL_INSTANCE.portal_width/2 * 0.86, self.TOOL_INSTANCE.portal_height * 0.93, 0.0) * \
                                                   avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                                  avango.gua.make_scale_mat(PORTAL_CAM_INSTANCE.portal_height * 0.1, 1.0, PORTAL_CAM_INSTANCE.portal_height * 0.1)
+                                                  avango.gua.make_scale_mat(self.TOOL_INSTANCE.portal_height * 0.1, 1.0, self.TOOL_INSTANCE.portal_height * 0.1)
     self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.viewing_mode_indicator.GroupNames.value.append("portal_invisible_group")
     self.viewing_mode_indicator.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
@@ -174,6 +174,19 @@ class PortalCameraRepresentation(ToolRepresentation):
 
   ##
   #
+  def update_size(self):
+
+    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0) * \
+                                        avango.gua.make_scale_mat(self.TOOL_INSTANCE.portal_width, self.TOOL_INSTANCE.portal_height, 1.0)
+
+    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.TOOL_INSTANCE.portal_width/2 * 0.86, self.TOOL_INSTANCE.portal_height * 0.93, 0.0) * \
+                                                  avango.gua.make_rot_mat(90, 1, 0, 0) * \
+                                                  avango.gua.make_scale_mat(self.TOOL_INSTANCE.portal_height * 0.1, 1.0, self.TOOL_INSTANCE.portal_height * 0.1)
+
+    self.portal.set_size(self.TOOL_INSTANCE.portal_width, self.TOOL_INSTANCE.portal_height)                                                  
+
+  ##
+  #
   def assign_shot(self, SHOT):
 
     if self.assigned_shot != None:
@@ -215,18 +228,12 @@ class PortalCameraRepresentation(ToolRepresentation):
   #
   def set_viewing_mode(self, MODE):
 
-    if self.assigned_shot != None:
-      self.assigned_shot.sf_viewing_mode.value = MODE
-
     if self.portal.viewing_mode != MODE:
       self.portal.switch_viewing_mode()
 
   ##
   #
   def set_negative_parallax(self, MODE):
-
-    if self.assigned_shot != None:
-      self.assigned_shot.sf_negative_parallax.value = MODE
 
     if self.portal.negative_parallax != MODE:
       self.portal.switch_negative_parallax()
@@ -339,14 +346,6 @@ class PortalCamera(Tool):
   # Boolean field to check if the gallery button was pressed.
   sf_gallery_button = avango.SFBool()
 
-  ## @var sf_scene_copy_button
-  # Boolean field to check if the scene copy button was pressed.
-  sf_scene_copy_button = avango.SFBool()
-
-  ## @var sf_maximize_button
-  # Boolean field to check if the maximize button was pressed.
-  sf_maximize_button = avango.SFBool()
-
   ## @var sf_size_up_button
   # Boolean field to check if the size up button was pressed.
   sf_size_up_button = avango.SFBool()
@@ -451,8 +450,6 @@ class PortalCamera(Tool):
     self.sf_open_close_button.connect_from(self.device_sensor.Button6)
     self.sf_delete_button.connect_from(self.device_sensor.Button15)
     self.sf_gallery_button.connect_from(self.device_sensor.Button11)
-    #self.sf_scene_copy_button.connect_from(self.device_sensor.Button14)
-    self.sf_maximize_button.connect_from(self.device_sensor.Button14)
     self.sf_size_up_button.connect_from(self.device_sensor.Button3)
     self.sf_size_down_button.connect_from(self.device_sensor.Button2)
     self.sf_2D_mode_button.connect_from(self.device_sensor.Button7)
@@ -508,6 +505,34 @@ class PortalCamera(Tool):
     # update user assignment
     self.check_for_user_assignment()
 
+    # apply scale changes
+    if self.sf_scale_up_button.value == True and self.current_shot != None:
+      self.set_current_shot_scale(self.current_shot.sf_scale.value * 0.985)
+
+    if self.sf_scale_down_button.value == True and self.current_shot != None:
+      self.set_current_shot_scale(self.current_shot.sf_scale.value * 1.015)
+
+    # apply size changes
+    if self.sf_size_up_button.value == True:
+      self.portal_width += 0.005
+      self.portal_height += 0.005
+
+      for _tool_repr in self.tool_representations:
+        _tool_repr.update_size()
+
+    if self.sf_size_down_button.value == True:
+      self.portal_width -= 0.005
+      self.portal_height -= 0.005
+      
+      if self.portal_width < 0.15:
+        self.portal_width = 0.15
+
+      if self.portal_height < 0.15:
+        self.portal_height = 0.15
+
+      for _tool_repr in self.tool_representations:
+        _tool_repr.update_size()
+
 
   ## Sets the scale of the currently active shot or returns when no shot is active.
   # @param SCALE The new scale to be set.
@@ -516,22 +541,11 @@ class PortalCamera(Tool):
     if self.current_shot == None:
       return
     else:
-      self.current_shot.set_scale(SCALE)
 
-  ## Called whenever sf_focus_button changes.
-  @field_has_changed(sf_focus_button)
-  def sf_focus_button_changed(self):
-
-    # show and hide camera frame
-    if self.sf_focus_button.value == True and self.current_shot == None:
+      self.current_shot.sf_scale.value = SCALE
 
       for _tool_repr in self.tool_representations:
-        _tool_repr.show_capture_frame()
-
-    else:
-
-      for _tool_repr in self.tool_representations:
-        _tool_repr.hide_capture_frame()
+        _tool_repr.portal_nav.set_navigation_values(_tool_repr.portal_nav.sf_abs_mat.value, SCALE)
 
   ##
   #
@@ -550,6 +564,21 @@ class PortalCamera(Tool):
       _tool_repr.deassign_shot()
 
     self.current_shot = None
+
+  ## Called whenever sf_focus_button changes.
+  @field_has_changed(sf_focus_button)
+  def sf_focus_button_changed(self):
+
+    # show and hide camera frame
+    if self.sf_focus_button.value == True and self.current_shot == None:
+
+      for _tool_repr in self.tool_representations:
+        _tool_repr.show_capture_frame()
+
+    else:
+
+      for _tool_repr in self.tool_representations:
+        _tool_repr.hide_capture_frame()
 
 
   ## Called whenever sf_capture_button changes.
@@ -653,26 +682,6 @@ class PortalCamera(Tool):
         self.captured_shots.remove(_shot_to_delete)
         del _shot_to_delete
 
-  ## Called whenever sf_gallery_button changes.
-  @field_has_changed(sf_gallery_button)
-  def sf_gallery_button_changed(self):
-    if self.sf_gallery_button.value == True:
-      pass
-
-  ## Called whenever sf_scene_copy_button changes.
-  @field_has_changed(sf_scene_copy_button)
-  def sf_scene_copy_button_changed(self):
-    
-    if self.sf_scene_copy_button.value == True:
-      pass
-
-  ## Called whenever sf_maximize_button changes.
-  @field_has_changed(sf_maximize_button)
-  def sf_maximize_button_changed(self):
-
-    if self.sf_maximize_button.value == True:
-      pass
-
 
   ## Called whenever sf_2D_mode_button changes.
   @field_has_changed(sf_2D_mode_button)
@@ -722,7 +731,11 @@ class PortalCamera(Tool):
       
       # switch mode of currently opened shot
       if self.current_shot != None:
+
         self.current_shot.sf_negative_parallax.value = "True"
+
+        for _tool_repr in self.tool_representations:
+          _tool_repr.set_negative_parallax("True")
 
       # switch capture_parallax_mode
       else:
@@ -736,7 +749,11 @@ class PortalCamera(Tool):
       
       # switch mode of currently opened shot
       if self.current_shot != None:
+
         self.current_shot.sf_negative_parallax.value = "False"
+
+        for _tool_repr in self.tool_representations:
+          _tool_repr.set_negative_parallax("False")
 
       # switch capture_parallax_mode
       else:

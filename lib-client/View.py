@@ -83,7 +83,7 @@ class View(avango.script.Script):
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = SCENEGRAPH.Name.value
     
-    self.camera.Mode.value = 0
+    self.camera.Mode.value = 1
 
     # set render mask for camera
     #_render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)

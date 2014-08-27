@@ -286,8 +286,14 @@ class PortalCameraRepresentation(ToolRepresentation):
   def reset_visualization_group_names(self):
 
     self.portal.portal_matrix_node.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
-    self.camera_frame.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
-    self.viewing_mode_indicator.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
+
+    # do not hide camera frame and viewing mode indicator when visible
+    if self.TOOL_INSTANCE.sf_focus_button.value == True and self.TOOL_INSTANCE.current_shot == None:
+      self.camera_frame.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
+      self.viewing_mode_indicator.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
+    else:
+      self.camera_frame.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
+      self.viewing_mode_indicator.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
     
 
   ##

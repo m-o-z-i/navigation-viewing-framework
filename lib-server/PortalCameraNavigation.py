@@ -16,7 +16,18 @@ from PortalCamera import *
 #
 class PortalCameraNavigation(Navigation):
 
+  ##
+  #
   sf_capture_button = avango.SFBool()
+
+  ##
+  #
+  sf_scale_up_button = avango.SFBool()
+
+  ##
+  #
+  sf_scale_down_button = avango.SFBool()
+
 
   ## Default constructor.
   def __init__(self):
@@ -38,6 +49,8 @@ class PortalCameraNavigation(Navigation):
 
     # init field connections
     self.sf_capture_button.connect_from(self.portal_cam.sf_capture_button)
+    self.sf_scale_up_button.connect_from(self.portal_cam.sf_scale_up_button)
+    self.sf_scale_down_button.connect_from(self.portal_cam.sf_scale_down_button)
 
     #
     self.always_evaluate(True)
@@ -45,19 +58,27 @@ class PortalCameraNavigation(Navigation):
   ##
   def evaluate(self):
 
-     # update matrices in dragging    
-     if self.drag_last_frame_camera_mat != None:
-
+    # update matrices in dragging    
+    if self.drag_last_frame_camera_mat != None:
+  
       _current_camera_mat = self.portal_cam.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_cam.portal_height/2, 0.0)
       _drag_input_mat = avango.gua.make_inverse_mat(self.drag_last_frame_camera_mat) * _current_camera_mat
       _drag_input_mat.set_translate(_drag_input_mat.get_translate() * self.sf_scale.value)
       _new_scene_mat = self.sf_abs_mat.value * _drag_input_mat
-      
+    
       self.sf_abs_mat.value = _new_scene_mat
       self.drag_last_frame_camera_mat = _current_camera_mat
 
-      # update nav mat
-      self.sf_nav_mat.value = self.sf_abs_mat.value * avango.gua.make_scale_mat(self.sf_scale.value)
+    # update scaling
+    if self.sf_scale_up_button.value == True and self.portal_cam.current_shot != None:
+      self.portal_cam.set_current_shot_scale(self.portal_cam.current_shot.sf_scale.value * 0.985)
+
+    if self.sf_scale_down_button.value == True and self.portal_cam.current_shot != None:
+      self.portal_cam.set_current_shot_scale(self.portal_cam.current_shot.sf_scale.value * 1.005)
+
+    # update nav mat
+    self.sf_nav_mat.value = self.sf_abs_mat.value * avango.gua.make_scale_mat(self.sf_scale.value)
+
 
   ##
   #

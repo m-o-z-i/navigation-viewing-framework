@@ -516,13 +516,6 @@ class PortalCamera(Tool):
     # update user assignment
     self.check_for_user_assignment()
 
-    # apply scale changes
-    if self.sf_scale_up_button.value == True and self.current_shot != None:
-      self.set_current_shot_scale(self.current_shot.sf_scale.value * 0.985)
-
-    if self.sf_scale_down_button.value == True and self.current_shot != None:
-      self.set_current_shot_scale(self.current_shot.sf_scale.value * 1.015)
-
     # apply size changes
     if self.sf_size_up_button.value == True:
       self.portal_width += 0.005

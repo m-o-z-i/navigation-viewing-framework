@@ -38,7 +38,7 @@ class SceneMedievalTown(SceneObject):
 
 
     # navigation parameters
-    self.starting_matrix = avango.gua.make_trans_mat(0.0, 3.0, 0.0)
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
     self.starting_scale = 1.0
 
 
@@ -71,7 +71,7 @@ class ScenePitoti(SceneObject):
     SceneObject.__init__(self, "ScenePitotiTest", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
     # navigation parameters
-    self.starting_matrix = avango.gua.make_trans_mat(0.0, 3.0, 0.0)
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
     self.starting_scale = 1.0
 
     # geometry

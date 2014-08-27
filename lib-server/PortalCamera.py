@@ -215,7 +215,7 @@ class PortalCameraRepresentation(ToolRepresentation):
       self.portal.switch_camera_mode()
 
     if SHOT.sf_negative_parallax.value != self.portal.negative_parallax:
-      self.portal.switch_viewing_mode()
+      self.portal.switch_negative_parallax()
 
     SHOT.sf_abs_mat.disconnect()
     SHOT.sf_abs_mat.connect_from(self.portal_nav.sf_abs_mat)

@@ -164,6 +164,13 @@ class ApplicationManager(avango.script.Script):
 
             # register portal display groups
 
+            try:
+              _tool_repr.portal_dg
+              self.portal_display_groups.append(_tool_repr.portal_dg)
+              print _tool_repr.portal_dg
+            except:
+              pass
+
           for _display in _display_group.displays:
 
             _s_id = _display_group.displays.index(_display)

@@ -278,6 +278,9 @@ class PortalCameraRepresentation(ToolRepresentation):
                                                   avango.gua.make_scale_mat(PORTAL_CAM_INSTANCE.portal_height * 0.1, 1.0, PORTAL_CAM_INSTANCE.portal_height * 0.1)
     self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.tool_transform_node.Children.value.append(self.viewing_mode_indicator)
+
+    self.camera_frame.GroupNames.value.append("do_not_display_group")
+    self.viewing_mode_indicator.GroupNames.value.append("do_not_display_group")
     
     self.portal = Portal(PORTAL_MATRIX = avango.gua.make_identity_mat()
                        , WIDTH = PORTAL_CAM_INSTANCE.portal_width
@@ -301,15 +304,30 @@ class PortalCameraRepresentation(ToolRepresentation):
                            , WORKSPACE_TRANSMITTER_OFFSET = avango.gua.make_identity_mat()
                            )
 
+    self.portal_matrix_connected = False
     #self.portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
 
 
   def evaluate(self):
 
+    # base class evaluate
     exec self.transformation_policy
+
+    # connect portal matrix if not done
+    if self.portal_matrix_connected == False:
+
+      try:
+        self.portal.portal_matrix_node
+      except:
+        return
+
+      self.portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
+      self.portal_matrix_connected = True
   
-    self.sf_world_border_mat_no_scale.value = self.USER_REPRESENTATION.view_transform_node.Transform.value * \
-                                              self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value * \
+    #self.sf_world_border_mat_no_scale.value = self.USER_REPRESENTATION.view_transform_node.Transform.value * \
+    #                                          self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value * \
+    #                                          avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
+    self.sf_world_border_mat_no_scale.value = self.tool_transform_node.WorldTransform.value * \
                                               avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
 
   ## Appends a string to the GroupNames field of this ToolRepresentation's visualization.

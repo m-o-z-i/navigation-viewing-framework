@@ -379,8 +379,8 @@ class OculusRift(Display):
 class PerseusTouchTable(Display):
     def __init__(self):
         Display.__init__(self
-                        , hostname = "nohra"
-                        , name = "touch_table"
+                        , hostname = "perseus"
+                        , name = "perseus_touch_table"
                         , resolution = (1920 * 2, 1080 * 2)
                         , displaystrings = [":0.0"]
                         , size = (1.25, .75)
@@ -389,6 +389,21 @@ class PerseusTouchTable(Display):
 
     def get_touch_protocols(self):
         return [ "TUIO" ]
+
+class NohraTouchTable(Display):
+    def __init__(self):
+        Display.__init__(self
+                        , hostname = "nohra"
+                        , name = "nohra_touch_table"
+                        , resolution = (1920 * 2, 2160)
+                        , displaystrings = [":0.0"]
+                        , size = (1.25, .72)
+                        , transformation = avango.gua.make_trans_mat(0.0,1.2,0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+                        )
+
+    def get_touch_protocols(self):
+        return [ "TUIO" ]
+
 
 ##################################################
 # STORE ALL DISPLAYS TO BE USED IN THIS LIST
@@ -401,10 +416,11 @@ displays = [
   #SmallPowerwall() ,
   #SmallPowerwall2() ,  
   #OculusRift() ,
-  TouchTable3D() ,
+  #TouchTable3D() ,
   #Display(hostname = "daedalos", stereo = False) ,
 
-  PerseusTouchTable() ,
+  #PerseusTouchTable() 
+  NohraTouchTable()
 
   #Display(hostname = "apollo"
   #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)

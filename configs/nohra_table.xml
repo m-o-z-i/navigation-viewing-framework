@@ -13,7 +13,7 @@
     <type>Spacemouse</type>
     <inputsensor>device-spacemouse</inputsensor>
 
-    <display>perseus_touch_table</display>
+    <display>nohra_touch_table</display>
 
     <avatartype>None</avatartype>
 

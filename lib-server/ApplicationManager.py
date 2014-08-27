@@ -156,7 +156,7 @@ class ApplicationManager(avango.script.Script):
 
           # create tool representation in display_group
           for _tool in _workspace.tools:
-            _tool_repr = _tool.create_ray_pointer_representation_for(_display_group, _user_repr)
+            _tool_repr = _tool.create_tool_representation_for(_display_group, _user_repr)
 
           for _display in _display_group.displays:
 

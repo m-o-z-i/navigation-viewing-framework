@@ -12,6 +12,7 @@ from avango.script import field_has_changed
 # import framework libraries
 from Portal import *
 from TrackingReader import *
+from Tool import *
 import Utilities
 
 # import python libraries
@@ -223,10 +224,48 @@ class Shot(avango.script.Script):
 
       self.associated_portal_instance.switch_negative_parallax()
 
+###############################################################################################
+
+## Geometric representation of a PortalCamera in a DisplayGroup.
+class PortalCameraRepresentation(ToolRepresentation):
+
+  ## Default constructor.
+  def __init__(self):
+    self.super(PortalCameraRepresentation).__init__()
+
+  ## Custom constructor.
+  # @param 
+  # @param DISPLAY_GROUP DisplayGroup instance for which this RayPointerRepresentation is responsible for. 
+  # @param USER_REPRESENTATION Corresponding UserRepresentation instance under which's view_transform_node the RayPointerRepresentation is appended.
+  def my_constructor(self, PORTAL_CAM_INSTANCE, DISPLAY_GROUP, USER_REPRESENTATION):
+    
+    # call base class constructor
+    self.base_constructor(PORTAL_CAM_INSTANCE
+                        , DISPLAY_GROUP
+                        , USER_REPRESENTATION
+                        , "portal_cam_" + str(PORTAL_CAM_INSTANCE.id)
+                        , "self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value")
+
+
+  ## Appends a string to the GroupNames field of this ToolRepresentation's visualization.
+  # @param STRING The string to be appended.
+  def append_to_visualization_group_names(self, STRING):
+    pass
+
+  ## Removes a string from the GroupNames field of this ToolRepresentation's visualization.
+  # @param STRING The string to be removed.
+  def remove_from_visualization_group_names(self, STRING):
+    pass
+
+  ## Resets the GroupNames field of this ToolRepresentation's visualization to the user representation's view_transform_node.
+  def reset_visualization_group_names(self):
+    pass
+
+###############################################################################################
 
 ## A PortalCamera is a physical device to interactively caputure, view
 # and manipulate Portal instances in the scene.
-class PortalCamera(avango.script.Script):
+class PortalCamera(Tool):
  
   ## @var sf_tracking_mat
   # Tracking matrix of the PortalCamera within the platform coordinate system.
@@ -372,29 +411,16 @@ class PortalCamera(avango.script.Script):
 
 
   ## Custom constructor.
-  # @param ID Identification number of the PortalCamera. Used for scenegraph node naming.
-  # @param PORTAL_MANAGER Reference to the PortalManager used for Portal creation and management.
-  # @param NAVIGATION Navigation instance to which this PortalCamera belongs to.
-  # @param CAMERA_INPUT_NAME Name of the PortalCamera's input sensor as registered in daemon.
-  # @param CAMERA_TRACKING_NAME Name of the PortalCamera's tracking target as registered in daemon.
-  def my_constructor(self, ID, PORTAL_MANAGER, NAVIGATION, CAMERA_INPUT_NAME, CAMERA_TRACKING_NAME):
-    
-    ## @var PORTAL_MANAGER
-    # Reference to the PortalManager used for Portal creation and management.
-    self.PORTAL_MANAGER = PORTAL_MANAGER
+  # @param 
+  def my_constructor(self, WORKSPACE_INSTANCE, TOOL_ID, CAMERA_TRACKING_STATION, CAMERA_DEVICE_STATION, VISIBILITY_TABLE):
 
-    ## @var NAVIGATION
-    # Navigation instance to which this PortalCamera belongs to.
-    self.NAVIGATION = NAVIGATION
-
-    ## @var PLATFORM_NODE
-    # Platform scenegraph node to which this PortalCamera should be appended to.
-    self.PLATFORM_NODE = self.NAVIGATION.platform.platform_scale_transform_node
+    # call base class constructor
+    self.base_constructor(WORKSPACE_INSTANCE, TOOL_ID, CAMERA_TRACKING_STATION, VISIBILITY_TABLE)
 
     ## @var device_sensor
     # Device sensor for the PortalCamera's button inputs.
     self.device_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
-    self.device_sensor.Station.value = CAMERA_INPUT_NAME
+    self.device_sensor.Station.value = CAMERA_DEVICE_STATION
 
     # init field connections
     self.sf_focus_button.connect_from(self.device_sensor.Button0)
@@ -415,14 +441,9 @@ class PortalCamera(avango.script.Script):
     self.sf_negative_parallax_on_button.connect_from(self.device_sensor.Button12)
     self.sf_negative_parallax_off_button.connect_from(self.device_sensor.Button13)
 
-    ## @var tracking_reader
-    # TrackingTargetReader to process the tracking input of the PortalCamera.
-    self.tracking_reader = TrackingTargetReader()
-    self.tracking_reader.my_constructor(CAMERA_TRACKING_NAME)
-    self.sf_tracking_mat.connect_from(self.tracking_reader.sf_abs_mat)
-
     _loader = avango.gua.nodes.TriMeshLoader()
 
+    '''
     ## @var portal_camera_node
     # Scenegraph node below the platform node to represent this PortalCamera.
     self.portal_camera_node = avango.gua.nodes.TransformNode(Name = "portal_cam_" + str(ID))
@@ -462,55 +483,7 @@ class PortalCamera(avango.script.Script):
                                                          "data/materials/ShadelessBlue.gmd")
     self.display_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
     self.display_portal.set_visibility(False)
-
-    ## @var gallery_portals
-    # List of Portal instance that serve as gallery shot containers.
-    self.gallery_portals = []
-
-    ## @var gallery_left_portal
-    # Portal instance in which the left gallery shot is loaded.
-    self.gallery_left_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
-                                                              1.0,
-                                                              avango.gua.make_identity_mat(),
-                                                              self.portal_width,
-                                                              self.portal_height,
-                                                              self.capture_viewing_mode,
-                                                              "PERSPECTIVE",
-                                                              self.capture_parallax_mode,
-                                                              "data/materials/ShadelessBlue.gmd")
-    self.gallery_portals.append(self.gallery_left_portal)
-    self.gallery_left_portal.set_visibility(False)
-    
-    ## @var gallery_center_portal
-    # Portal instance in which the center gallery shot is loaded.
-    self.gallery_center_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
-                                                                1.0,
-                                                                avango.gua.make_identity_mat(),
-                                                                self.portal_width,
-                                                                self.portal_height,
-                                                                self.capture_viewing_mode,
-                                                                "PERSPECTIVE",
-                                                                self.capture_parallax_mode,
-                                                                "data/materials/ShadelessBlue.gmd")
-    self.gallery_portals.append(self.gallery_center_portal)
-    self.gallery_center_portal.set_visibility(False)
-
-    ## @var gallery_right_portal
-    # Portal instance in which the right gallery shot is loaded.
-    self.gallery_right_portal = self.PORTAL_MANAGER.add_portal(avango.gua.make_identity_mat(),
-                                                               1.0,
-                                                               avango.gua.make_identity_mat(),
-                                                               self.portal_width,
-                                                               self.portal_height,
-                                                               self.capture_viewing_mode,
-                                                               "PERSPECTIVE",
-                                                               self.capture_parallax_mode,
-                                                               "data/materials/ShadelessBlue.gmd")
-    self.gallery_portals.append(self.gallery_right_portal)
-    self.gallery_right_portal.set_visibility(False)
-
-    for _gallery_portal in self.gallery_portals:
-      _gallery_portal.set_size(0.3, 0.3)
+    '''
 
     ## @var last_open_shot_index
     # Index within self.captured_shots saying which of the Shots was lastly opened by the PortalCamera.
@@ -524,21 +497,37 @@ class PortalCamera(avango.script.Script):
     self.always_evaluate(True)
 
 
+  ## Creates a PortalCamearRepresentation for this RayPointer at a DISPLAY_GROUP.
+  # @param DISPLAY_GROUP The DisplayGroup instance to create the representation for.
+  # @param USER_REPRESENTATION The UserRepresentation this representation will belong to.
+  def create_tool_representation_for(self, DISPLAY_GROUP, USER_REPRESENTATION):
+
+    _portal_cam_repr = PortalCameraRepresentation()
+    _portal_cam_repr.my_constructor(self, DISPLAY_GROUP, USER_REPRESENTATION)
+    self.tool_representations.append(_portal_cam_repr)
+    return _portal_cam_repr
+
+
   ## Evaluated every frame.
   def evaluate(self):
 
-    self.sf_world_border_mat_no_scale.value = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
-                                              self.tracking_reader.sf_abs_mat.value * \
-                                              avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
+    # update user assignment
+    self.check_for_user_assignment()
 
-    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
-                                        avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
+    #print self.assigned_user.id
 
-    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width/2 * 0.86, self.portal_height * 0.93, 0.0) * \
-                                                  avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                                  avango.gua.make_scale_mat(self.portal_height * 0.1, 1.0, self.portal_height * 0.1)
+    #self.sf_world_border_mat_no_scale.value = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
+    #                                          self.tracking_reader.sf_abs_mat.value * \
+    #                                          avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
 
-    
+    #self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0) * \
+    #                                    avango.gua.make_scale_mat(self.portal_width, self.portal_height, 1.0)
+
+    #self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width/2 * 0.86, self.portal_height * 0.93, 0.0) * \
+    #                                              avango.gua.make_rot_mat(90, 1, 0, 0) * \
+    #                                              avango.gua.make_scale_mat(self.portal_height * 0.1, 1.0, self.portal_height * 0.1)
+
+    '''
     # always hide red camera frame when a shot is displayed
     if self.current_shot != None:
       self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
@@ -584,7 +573,6 @@ class PortalCamera(avango.script.Script):
 
       self.drag_last_frame_camera_mat = _current_camera_mat
 
-
     # check for camera hitting free portals
     _camera_vec = self.camera_frame.WorldTransform.value.get_translate()
 
@@ -610,7 +598,6 @@ class PortalCamera(avango.script.Script):
           self.PORTAL_MANAGER.free_portals.remove(_free_portal)
           self.PORTAL_MANAGER.remove_portal(_free_portal.id)
           return
-
 
     # check for animations
     if self.animation_start_time != None:
@@ -648,7 +635,6 @@ class PortalCamera(avango.script.Script):
       self.display_portal.set_size(_animation_size.x, _animation_size.y)
       return
 
-    
     # update matrices in gallery mode
     if self.gallery_activated:
 
@@ -700,6 +686,7 @@ class PortalCamera(avango.script.Script):
 
         _increment_index += 1
         _increment_place += 1.0
+    '''
 
 
   ## Checks if the position of a camera is close to the position of a portal.

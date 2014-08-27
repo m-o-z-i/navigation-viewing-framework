@@ -10,6 +10,7 @@ import avango.gua
 # import framework libraries
 from ConsoleIO import *
 from DisplayGroup import *
+from PortalCamera import *
 from RayPointer import *
 from User import *
 import Utilities
@@ -131,3 +132,19 @@ class Workspace:
                                , POINTER_DEVICE_STATION
                                , VISIBILITY_TABLE)
     self.tools.append(_ray_pointer)
+
+
+  ##
+  #
+  def create_portal_cam( self
+                       , CAMERA_TRACKING_STATION
+                       , CAMERA_DEVICE_STATION
+                       , VISIBILITY_TABLE):
+
+    _portal_cam = PortalCamera()
+    _portal_cam.my_constructor( self
+                              , len(self.tools)
+                              , CAMERA_TRACKING_STATION
+                              , CAMERA_DEVICE_STATION
+                              , VISIBILITY_TABLE)
+    self.tools.append(_portal_cam)

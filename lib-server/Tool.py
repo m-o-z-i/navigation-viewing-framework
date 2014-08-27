@@ -142,6 +142,10 @@ class Tool(VisibilityHandler2D):
     # set evaluation policy
     self.always_evaluate(True)
 
+  ## 
+  def create_tool_representation_for(self, DISPLAY_GROUP, USER_REPRESENTATION):
+    raise NotImplementedError( "To be implemented by a subclass." )
+
   ## Selects a list of potentially currently active ToolRepresentations.
   def create_candidate_list(self):
     raise NotImplementedError( "To be implemented by a subclass." )
@@ -161,9 +165,11 @@ class Tool(VisibilityHandler2D):
 
       if _user.is_active:
 
+
         _dist = Utilities.compute_point_to_line_distance( self.tracking_reader.sf_abs_vec.value
                                                         , _user.headtracking_reader.sf_abs_vec.value
                                                         , avango.gua.Vec3(0, -1, 0) )
+
         if _dist < _closest_distance:
           _closest_distance = _dist
           _closest_user = _user

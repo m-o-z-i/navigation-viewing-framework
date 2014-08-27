@@ -220,7 +220,7 @@ class RayPointer(Tool):
   ## Creates a RayPointerRepresentation for this RayPointer at a DISPLAY_GROUP.
   # @param DISPLAY_GROUP The DisplayGroup instance to create the representation for.
   # @param USER_REPRESENTATION The UserRepresentation this representation will belong to.
-  def create_ray_pointer_representation_for(self, DISPLAY_GROUP, USER_REPRESENTATION):
+  def create_tool_representation_for(self, DISPLAY_GROUP, USER_REPRESENTATION):
 
     _ray_pointer_repr = RayPointerRepresentation()
     _ray_pointer_repr.my_constructor(self, DISPLAY_GROUP, USER_REPRESENTATION)

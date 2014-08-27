@@ -84,10 +84,10 @@ class PortalCameraRepresentation(ToolRepresentation):
   def my_constructor(self, PORTAL_CAMERA_INSTANCE, DISPLAY_GROUP, USER_REPRESENTATION):
     
     # call base class constructor
-    self.base_constructor(PORTAL_CAM_INSTANCE
+    self.base_constructor(PORTAL_CAMERA_INSTANCE
                         , DISPLAY_GROUP
                         , USER_REPRESENTATION
-                        , "portal_cam_" + str(PORTAL_CAM_INSTANCE.id)
+                        , "portal_cam_" + str(PORTAL_CAMERA_INSTANCE.id)
                         , "self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value")
 
     _loader = avango.gua.nodes.TriMeshLoader()
@@ -123,11 +123,11 @@ class PortalCameraRepresentation(ToolRepresentation):
     ## @var portal
     # Portal display instance belonging to this representation.
     self.portal = Portal(PORTAL_MATRIX = avango.gua.make_identity_mat()
-                       , WIDTH = PORTAL_CAM_INSTANCE.portal_width
-                       , HEIGHT = PORTAL_CAM_INSTANCE.portal_height
-                       , VIEWING_MODE = PORTAL_CAM_INSTANCE.capture_viewing_mode
+                       , WIDTH = PORTAL_CAMERA_INSTANCE.portal_width
+                       , HEIGHT = PORTAL_CAMERA_INSTANCE.portal_height
+                       , VIEWING_MODE = PORTAL_CAMERA_INSTANCE.capture_viewing_mode
                        , CAMERA_MODE = "PERSPECTIVE"
-                       , NEGATIVE_PARALLAX = PORTAL_CAM_INSTANCE.capture_parallax_mode
+                       , NEGATIVE_PARALLAX = PORTAL_CAMERA_INSTANCE.capture_parallax_mode
                        , BORDER_MATERIAL = "data/materials/White.gmd"
                        , TRANSITABLE = False)
 

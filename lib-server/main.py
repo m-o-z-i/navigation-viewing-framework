@@ -14,7 +14,6 @@ from RecorderPlayer import *
 from Manipulation import *
 from Portal import *
 from PortalCamera import *
-from PortalInteractionSpace import *
 from Device import *
 
 from scene_config import scenegraphs

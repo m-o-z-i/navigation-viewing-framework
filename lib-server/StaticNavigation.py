@@ -25,7 +25,11 @@ class StaticNavigation(Navigation):
   def my_constructor(self, STATIC_ABS_MAT, STATIC_SCALE, TRACE_VISIBILITY_LIST):
 
     self.list_constructor(TRACE_VISIBILITY_LIST)
+    self.set_navigation_values(STATIC_ABS_MAT, STATIC_SCALE)
 
+  ##
+  #
+  def set_navigation_values(self, STATIC_ABS_MAT, STATIC_SCALE):
     self.sf_abs_mat.value = STATIC_ABS_MAT
     self.sf_scale.value = STATIC_SCALE
     self.sf_nav_mat.value = self.sf_abs_mat.value * avango.gua.make_scale_mat(self.sf_scale.value)

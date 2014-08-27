@@ -26,11 +26,11 @@ class Shot(avango.script.Script):
 
   ## @var sf_platform_mat
   # Field representing the platform matrix of this shot.
-  sf_platform_mat = avango.gua.SFMatrix4()
+  sf_abs_mat = avango.gua.SFMatrix4()
 
   ## @var sf_platform_scale
   # Field representing the platform scale of this shot.
-  sf_platform_scale = avango.SFFloat()
+  sf_scale = avango.SFFloat()
 
   ## @var sf_viewing_mode
   # Field representing the viewing mode of this shot.
@@ -47,184 +47,21 @@ class Shot(avango.script.Script):
   ## Default constructor.
   def __init__(self):
     self.super(Shot).__init__()
-    self.associated_portal_instance = None
-
-    ## @var min_scale
-    # The minimum scaling factor that can be applied.
-    self.min_scale = 0.001
-
-    ## @var max_scale
-    # The maximum scaling factor that can be applied.
-    self.max_scale = 1000.0
-
-    ## @var scale_stop_time
-    # Time at which a scaling process stopped at a fixed step.
-    self.scale_stop_time = None
-
-    ## @var scale_stop_duration
-    # Time how long a scaling process is stopped at a fixed step in seconds.
-    self.scale_stop_duration = 1.0
 
   ## Custom constructor.
   def my_constructor(self
-                   , PLATFORM_MATRIX
-                   , PLATFORM_SCALE
+                   , ABS_MAT
+                   , SCALE
                    , VIEWING_MODE
                    , CAMERA_MODE
                    , NEGATIVE_PARALLAX):
     
-    self.sf_platform_mat.value = PLATFORM_MATRIX
-    self.sf_platform_scale.value = PLATFORM_SCALE
+    self.sf_abs_mat.value = ABS_MAT
+    self.sf_scale.value = SCALE
     self.sf_viewing_mode.value = VIEWING_MODE
     self.sf_camera_mode.value = CAMERA_MODE
     self.sf_negative_parallax.value = NEGATIVE_PARALLAX
 
-  ## Tells this Shot that it was loaded into a Portal instance and is now being displayed.
-  # @param PORTAL_INSTANCE The Portal instance in which this Shot was loaded.
-  def assign_portal(self, PORTAL_INSTANCE):
-
-    self.associated_portal_instance = PORTAL_INSTANCE
-    self.associated_portal_instance.set_platform_matrix(self.sf_platform_mat.value)
-    self.associated_portal_instance.set_platform_scale(self.sf_platform_scale.value)
-
-    if self.associated_portal_instance.viewing_mode != self.sf_viewing_mode.value:
-      self.associated_portal_instance.switch_viewing_mode()
-
-    if self.associated_portal_instance.camera_mode != self.sf_camera_mode.value:
-      self.associated_portal_instance.switch_camera_mode()
-
-    if self.associated_portal_instance.negative_parallax != self.sf_negative_parallax.value:
-      self.associated_portal_instance.switch_negative_parallax()
-
-    PORTAL_INSTANCE.set_visibility(True)
-
-  ## Tells this Shot that no portal instance is associated anymore.
-  def deassign_portal(self):
-
-    if self.associated_portal_instance != None:
-      self.associated_portal_instance.set_visibility(False)
-      self.associated_portal_instance = None
-
-  ## Modifies the scene matrix (platform matrix and platform scale) by the input values given from a device.
-  # @param DEVICE_INPUT_VALUES List of input values from a device.
-  # @param OFFSET_MAT Offset matrix to be applied to the translation and rotation.
-  def modify_scene_matrix(self, DEVICE_INPUT_VALUES = [0,0,0,0,0,0,0], OFFSET_MAT = avango.gua.make_identity_mat):
-
-    _x = DEVICE_INPUT_VALUES[0]
-    _y = DEVICE_INPUT_VALUES[1]
-    _z = DEVICE_INPUT_VALUES[2]
-    _rx = DEVICE_INPUT_VALUES[3]
-    _ry = DEVICE_INPUT_VALUES[4]
-    _rz = DEVICE_INPUT_VALUES[5]
-    _w = DEVICE_INPUT_VALUES[6]
-
-    if _w == -1:
-      self.set_scale(self.sf_platform_scale.value * 0.985)
-    elif _w == 1:
-      self.set_scale(self.sf_platform_scale.value * 1.015)
-
-    _trans_vec = avango.gua.Vec3(_x, _y, _z)
-    _rot_vec = avango.gua.Vec3(_rx, _ry, _rz)
-
-    if _trans_vec.length() != 0.0 or _rot_vec.length() != 0.0:
-
-      # object metaphor
-      _transformed_trans_vec = avango.gua.make_rot_mat(self.sf_platform_mat.value.get_rotate_scale_corrected()) * avango.gua.Vec3(_x*-1.0, _z, _y*-1.0)
-      _transformed_trans_vec = OFFSET_MAT * _transformed_trans_vec
-      _transformed_trans_vec = avango.gua.Vec3(_transformed_trans_vec.x, _transformed_trans_vec.y, _transformed_trans_vec.z)
-      _transformed_trans_vec *= self.sf_platform_scale.value
-
-      _rot_vec = OFFSET_MAT * _rot_vec
-
-      _new_platform_matrix = avango.gua.make_trans_mat(_transformed_trans_vec) * \
-                             self.sf_platform_mat.value * \
-                             avango.gua.make_rot_mat( _rot_vec.y, 0, 0, -1) * \
-                             avango.gua.make_rot_mat( _rot_vec.x, -1, 0, 0) * \
-                             avango.gua.make_rot_mat( _rot_vec.z, 0, 1, 0)
-
-      self.sf_platform_mat.value = _new_platform_matrix
-
-  ## Sets the scale of this shot and snaps at specific scalings.
-  # @param SCALE The new scale value to be set.
-  def set_scale(self, SCALE):
- 
-    if self.scale_stop_time == None:
-  
-      _old_scale = self.sf_platform_scale.value
-      _old_scale = round(_old_scale,6)
-      
-      _new_scale = max(min(SCALE, self.max_scale), self.min_scale)
-      _new_scale = round(_new_scale,6)
-            
-      # stop at certain scale levels
-      if (_old_scale < 100.0 and _new_scale > 100.0) or (_new_scale < 100.0 and _old_scale > 100.0):
-        #print "snap 100:1"
-        _new_scale = 100.0
-        self.scale_stop_time = time.time()
-              
-      elif (_old_scale < 10.0 and _new_scale > 10.0) or (_new_scale < 10.0 and _old_scale > 10.0):
-        #print "snap 10:1"
-        _new_scale = 10.0
-        self.scale_stop_time = time.time()
-      
-      elif (_old_scale < 1.0 and _new_scale > 1.0) or (_new_scale < 1.0 and _old_scale > 1.0):
-        #print "snap 1:1"
-        _new_scale = 1.0
-        self.scale_stop_time = time.time()
-
-      elif (_old_scale < 0.1 and _new_scale > 0.1) or (_new_scale < 0.1 and _old_scale > 0.1):
-        #print "snap 1:10"
-        _new_scale = 0.1
-        self.scale_stop_time = time.time()
-
-
-      elif (_old_scale < 0.01 and _new_scale > 0.01) or (_new_scale < 0.01 and _old_scale > 0.01):
-        #print "snap 1:100"
-        _new_scale = 0.01
-        self.scale_stop_time = time.time()
-
-      self.sf_platform_scale.value = _new_scale
-
-    else:
-
-      if (time.time() - self.scale_stop_time) > self.scale_stop_duration:
-        self.scale_stop_time = None
-
-  ## Called whenever sf_platform_mat changes.
-  @field_has_changed(sf_platform_mat)
-  def sf_platform_mat_changed(self):
-    if self.associated_portal_instance != None:
-      self.associated_portal_instance.set_platform_matrix(self.sf_platform_mat.value)
-
-  ## Called whenever sf_platform_scale changes.
-  @field_has_changed(sf_platform_scale)
-  def sf_platform_scale_changed(self):
-    if self.associated_portal_instance != None:
-      self.associated_portal_instance.set_platform_scale(self.sf_platform_scale.value)
-
-  ## Called whenever sf_viewing_mode changes.
-  @field_has_changed(sf_viewing_mode)
-  def sf_viewing_mode_changed(self):
-    if self.associated_portal_instance != None and \
-       self.associated_portal_instance.viewing_mode != self.sf_viewing_mode.value:
-
-      self.associated_portal_instance.switch_viewing_mode()
-
-  ## Called whenever sf_camera_mode changes.
-  @field_has_changed(sf_camera_mode)
-  def sf_camera_mode_changed(self):
-    if self.associated_portal_instance != None and \
-       self.associated_portal_instance.camera_mode != self.sf_camera_mode.value:
-
-      self.associated_portal_instance.switch_camera_mode()
-
-  ## Called whenever sf_negative_parallax changes.
-  @field_has_changed(sf_negative_parallax)
-  def sf_negative_parallax_changed(self):
-    if self.associated_portal_instance != None and \
-       self.associated_portal_instance.negative_parallax != self.sf_negative_parallax.value:
-
-      self.associated_portal_instance.switch_negative_parallax()
 
 ###############################################################################################
 
@@ -294,7 +131,7 @@ class PortalCameraRepresentation(ToolRepresentation):
                        , TRANSITABLE = False)
 
     self.portal_nav = StaticNavigation()
-    self.portal_nav.my_constructor(STATIC_ABS_MAT = avango.gua.make_trans_mat(-12.0, 17.3, -7.0)
+    self.portal_nav.my_constructor(STATIC_ABS_MAT = avango.gua.make_identity_mat()
                             , STATIC_SCALE = 1.0
                             , TRACE_VISIBILITY_LIST = {})
 
@@ -305,6 +142,8 @@ class PortalCameraRepresentation(ToolRepresentation):
                            , OFFSET_TO_WORKSPACE = avango.gua.make_identity_mat()
                            , WORKSPACE_TRANSMITTER_OFFSET = avango.gua.make_identity_mat()
                            )
+
+    self.assigned_shot = None
 
     ##
     #
@@ -332,6 +171,42 @@ class PortalCameraRepresentation(ToolRepresentation):
 
     self.sf_portal_matrix.value = self.tool_transform_node.WorldTransform.value * \
                                   avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
+
+  ##
+  #
+  def assign_shot(self, SHOT):
+
+    self.portal_nav.set_navigation_values(SHOT.sf_abs_mat.value, SHOT.sf_scale.value)
+
+    if SHOT.sf_viewing_mode != self.portal.viewing_mode:
+      self.portal.switch_viewing_mode()
+
+    if SHOT.sf_camera_mode != self.portal.camera_mode:
+      self.portal.switch_camera_mode()
+
+    if SHOT.sf_negative_parallax != self.portal.negative_parallax:
+      self.portal.switch_viewing_mode()
+
+    SHOT.sf_abs_mat.disconnect()
+    SHOT.sf_abs_mat.connect_from(self.portal_nav.sf_abs_mat)
+    SHOT.sf_scale.disconnect()
+    SHOT.sf_scale.connect_from(self.portal_nav.sf_scale)
+
+    self.assigned_shot = SHOT
+
+    self.portal.set_visibility(True)
+
+  ##
+  #
+  def deassign_shot(self):
+
+    SHOT.sf_abs_mat.disconnect()
+    SHOT.sf_scale.disconnect()
+    self.assigned_shot = None
+
+    self.portal.set_visibility(False)
+
+
 
   ##
   #
@@ -513,10 +388,6 @@ class PortalCamera(Tool):
     ## @var gallery_magification_factor
     # Factor with which the size of the portals will be multiplied when in gallery mode.
     self.gallery_magnification_factor = 1.5
-
-    ## @var interaction_spaces
-    # List of PortalInteractionSpace instances currently associated with this PortalCamera.
-    self.interaction_spaces = []
 
     ## @var animation_start_time
     # Starting time of an animation handled by this class.
@@ -799,11 +670,6 @@ class PortalCamera(Tool):
     return False
 
 
-  ## Associates a PortalInteractionSpace with this PortalCamera instance.
-  # @param INTERACTION_SPACE The PortalInteractionSpace to be added.
-  def add_interaction_space(self, INTERACTION_SPACE):
-
-    self.interaction_spaces.append(INTERACTION_SPACE)
 
   ## Sets the scale of the currently active shot or returns when no shot is active.
   # @param SCALE The new scale to be set.
@@ -837,19 +703,27 @@ class PortalCamera(Tool):
       # capture a new portal
       if self.current_shot == None:
 
-        _shot_platform_matrix = self.sf_world_border_mat_no_scale.value * \
-                                avango.gua.make_inverse_mat(avango.gua.make_scale_mat(self.NAVIGATION.inputmapping.sf_scale.value))
+        _active_tool_representation = self.tool_representations[0]
+        _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
+
+        _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
+                                avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
+
 
         _shot = Shot()
         _shot.my_constructor(_shot_platform_matrix,
-                             self.NAVIGATION.inputmapping.sf_scale.value,
+                             _active_navigation.sf_scale.value,
                              self.capture_viewing_mode,
                              "PERSPECTIVE",
                              self.capture_parallax_mode)
 
         self.captured_shots.append(_shot)
-        _shot.assign_portal(self.display_portal)
+
+        for _tool_repr in self.tool_representations:
+          _tool_repr.assign_shot(_shot)
+
         self.current_shot = _shot
+
 
       # initiate dragging
       else:

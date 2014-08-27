@@ -368,6 +368,8 @@ class PortalPreView(avango.script.Script):
     except:
       return
 
+    #print "change modes to", self.mf_portal_modes.value[0], self.mf_portal_modes.value[1], self.mf_portal_modes.value[2], self.mf_portal_modes.value[3], self.mf_portal_modes.value[4]
+
     # check for camera mode
     if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
       self.camera.Mode.value = avango.gua.ProjectionMode.ORTHOGRAPHIC
@@ -459,6 +461,7 @@ class PortalPreView(avango.script.Script):
       if self.pipeline.Enabled.value == False:
         self.pipeline.Enabled.value = True
         self.textured_quad.GroupNames.value.remove("portal_invisible_group")
+        self.portal_border.GroupNames.value.remove("portal_invisible_group")
         self.back_geometry.GroupNames.value.append("portal_invisible_group")
 
 

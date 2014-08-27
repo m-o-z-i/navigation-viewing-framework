@@ -329,7 +329,7 @@ class PortalPreView(avango.script.Script):
 
     self.textured_quad.Width.value = self.screen_node.Width.value
     self.textured_quad.Height.value = self.screen_node.Height.value
-    self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
     self.portal_border.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
 
   ## Removes this portal from the local portal group and destroys all the scenegraph nodes.
@@ -390,12 +390,6 @@ class PortalPreView(avango.script.Script):
       if _material != "None":
         self.portal_border.Material.value = _material
         self.back_geometry.Material.value = _material
-        #self.portal_border.GroupNames.value.remove("portal_invisible_group")
-        #self.back_geometry.GroupNames.value.remove("portal_invisible_group")
-      #else:
-        
-      #  self.portal_border.GroupNames.value.append("portal_invisible_group")
-      #  self.back_geometry.GroupNames.value.append("portal_invisible_group")
 
   ##
   def evaluate(self):
@@ -419,6 +413,7 @@ class PortalPreView(avango.script.Script):
 
       if self.frame_trigger.Active.value == False:
         self.frame_trigger.Active.value = True
+        self.back_geometry.GroupNames.value.remove("portal_invisible_group")
 
 
   ## Evaluated every frame when active.

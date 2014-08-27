@@ -130,7 +130,7 @@ def start():
   _loader.RenderBudget.value = 1024
   _loader.OutOfCoreBudget.value = 4 * 1024
 
-  _node = _loader.create_geometry_from_file("spacemonkey", "/media/veva6054/SSD/PLOD_Models/Spacemonkey/Spacemonkey_new.kdn", avango.gua.LoaderFlags.DEFAULTS)
+  _node = _loader.create_geometry_from_file("spacemonkey", "/mnt/SSD/PLOD_Models/Spacemonkey/Spacemonkey_new.kdn", avango.gua.LoaderFlags.DEFAULTS)
   
 
   # get the display instance

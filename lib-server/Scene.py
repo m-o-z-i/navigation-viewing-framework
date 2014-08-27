@@ -39,11 +39,11 @@ class SceneMedievalTown(SceneObject):
 
     # navigation parameters
     self.starting_matrix = avango.gua.make_trans_mat(0.0, 3.0, 0.0)
-    self.starting_scale = 200.0
+    self.starting_scale = 1.0
 
 
     # geometry
-    _mat = avango.gua.make_scale_mat(7.5)
+    _mat = avango.gua.make_scale_mat(0.1)
     self.init_geometry("town", "data/objects/demo_models/medieval_harbour/town.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     
     _mat = avango.gua.make_trans_mat(0, -3.15, 0) * avango.gua.make_scale_mat(1500.0, 1.0, 1500.0)
@@ -76,7 +76,7 @@ class ScenePitoti(SceneObject):
 
     # geometry
     _mat = avango.gua.make_trans_mat(0.0338275, 0.324057, 0.234019) * avango.gua.make_scale_mat(2.64027, 2.64027, 2.64027)
-    self.init_point_cloud("spacemonkey", "/media/veva6054/SSD/PLOD_Models/Spacemonkey/Spacemonkey_new.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("spacemonkey", "/mnt/SSD/PLOD_Models/Spacemonkey/Spacemonkey_new.kdn", _mat, self.scene_root, "main_scene")
 
     # lights
     #_mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)

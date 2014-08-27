@@ -176,6 +176,11 @@ class PortalCameraRepresentation(ToolRepresentation):
   #
   def assign_shot(self, SHOT):
 
+    if self.assigned_shot != None:
+      self.assigned_shot.sf_abs_mat.disconnect()
+      self.assigned_shot.sf_scale.disconnect()
+
+
     self.portal_nav.set_navigation_values(SHOT.sf_abs_mat.value, SHOT.sf_scale.value)
 
     if SHOT.sf_viewing_mode != self.portal.viewing_mode:
@@ -200,8 +205,8 @@ class PortalCameraRepresentation(ToolRepresentation):
   #
   def deassign_shot(self):
 
-    SHOT.sf_abs_mat.disconnect()
-    SHOT.sf_scale.disconnect()
+    self.assigned_shot.sf_abs_mat.disconnect()
+    self.assigned_shot.sf_scale.disconnect()
     self.assigned_shot = None
 
     self.portal.set_visibility(False)
@@ -685,7 +690,7 @@ class PortalCamera(Tool):
   def sf_focus_button_changed(self):
 
     # show and hide camera frame
-    if self.sf_focus_button.value == True:
+    if self.sf_focus_button.value == True and self.current_shot == None:
 
       for _tool_repr in self.tool_representations:
         _tool_repr.show_capture_frame()
@@ -694,6 +699,25 @@ class PortalCamera(Tool):
 
       for _tool_repr in self.tool_representations:
         _tool_repr.hide_capture_frame()
+
+  ##
+  #
+  def set_current_shot(self, SHOT):
+
+    for _tool_repr in self.tool_representations:
+      _tool_repr.assign_shot(SHOT)
+
+    self.current_shot = SHOT
+
+  ##
+  #
+  def clear_current_shot(self):
+
+    for _tool_repr in self.tool_representations:
+      _tool_repr.deassign_shot()
+
+    self.current_shot = None
+
 
   ## Called whenever sf_capture_button changes.
   @field_has_changed(sf_capture_button)
@@ -719,22 +743,20 @@ class PortalCamera(Tool):
 
         self.captured_shots.append(_shot)
 
-        for _tool_repr in self.tool_representations:
-          _tool_repr.assign_shot(_shot)
-
-        self.current_shot = _shot
-
+        self.set_current_shot(_shot)
 
       # initiate dragging
       else:
 
-        self.drag_last_frame_camera_mat = self.tracking_reader.sf_abs_mat.value * \
-                                          avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
+        pass
+        #self.drag_last_frame_camera_mat = self.tracking_reader.sf_abs_mat.value * \
+        #                                  avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
 
     # capture button released, stop dragging
     else:
 
-      self.drag_last_frame_camera_mat = None
+      pass
+      #self.drag_last_frame_camera_mat = None
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)
@@ -759,8 +781,9 @@ class PortalCamera(Tool):
         _current_index += 1
         _current_index = _current_index % len(self.captured_shots)
 
-        self.current_shot = self.captured_shots[_current_index]
-        self.current_shot.assign_portal(self.display_portal)
+        _new_shot = self.captured_shots[_current_index]
+        self.set_current_shot(_new_shot)
+        print "shot id", _current_index
 
 
   ## Called whenever sf_prior_rec_button changes.
@@ -786,8 +809,9 @@ class PortalCamera(Tool):
         _current_index -= 1
         _current_index = _current_index % len(self.captured_shots)
 
-        self.current_shot = self.captured_shots[_current_index]
-        self.current_shot.assign_portal(self.display_portal)
+        _new_shot = self.captured_shots[_current_index]
+        self.set_current_shot(_new_shot)
+        print "shot id", _current_index
 
 
   ## Called whenever sf_open_button changes.
@@ -810,14 +834,13 @@ class PortalCamera(Tool):
 
       # open lastly opened portal when no portal is opened
       if self.current_shot == None and len(self.captured_shots) > 0:
-        self.current_shot = self.captured_shots[self.last_open_shot_index]
-        self.current_shot.assign_portal(self.display_portal)
+        _new_shot = self.captured_shots[self.last_open_shot_index]
+        self.set_current_shot(_new_shot)
 
       # close currently opened portal
       elif self.current_shot != None:
-        self.current_shot.deassign_portal()
         self.last_open_shot_index = self.captured_shots.index(self.current_shot)
-        self.current_shot = None
+        self.clear_current_shot()
 
 
   ## Called whenever sf_delete_button changes.

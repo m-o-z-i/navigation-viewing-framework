@@ -30,7 +30,7 @@ class RayPointerRepresentation(ToolRepresentation):
     self.intersection_sphere_size = 0.05
 
   ## Custom constructor.
-  # @param RAY_POINTER_INSTANCE An instance of RayPointer to which this RayPointer representation is associated.
+  # @param RAY_POINTER_INSTANCE An instance of RayPointer to which this RayPointerRepresentation is associated.
   # @param DISPLAY_GROUP DisplayGroup instance for which this RayPointerRepresentation is responsible for. 
   # @param USER_REPRESENTATION Corresponding UserRepresentation instance under which's view_transform_node the RayPointerRepresentation is appended.
   def my_constructor(self, RAY_POINTER_INSTANCE, DISPLAY_GROUP, USER_REPRESENTATION):
@@ -74,8 +74,8 @@ class RayPointerRepresentation(ToolRepresentation):
     self.ray_start_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value) 
     self.tool_transform_node.Children.value.append(self.ray_start_geometry)
 
-    ##
-    #
+## @var highlighted
+    # Boolean indicating if this representation is highlighted. Usually used to color the assigned user's representation.
     self.highlighted = False
 
 
@@ -141,7 +141,7 @@ class RayPointerRepresentation(ToolRepresentation):
 
     self.ray_start_geometry.Material.value = MATERIAL
 
-  ##
+  ## Evaluated every frame.
   def evaluate(self):
 
     # base class evaluate

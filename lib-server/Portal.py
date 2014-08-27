@@ -99,12 +99,12 @@ class Portal(Display):
     # Boolean saying if teleportation for is portal is enabled.
     self.transitable = TRANSITABLE
 
-    ##
-    #
+    ## @var display_group_offset
+    # Offset of this portal to the display group. Used when multiple portals are in one display group.
     self.display_group_offset = avango.gua.make_identity_mat()
 
-  ##
-  #
+  ## Sets the offset to the display group and updates the screen node accordingly..
+  # @param OFFSET_MATRIX The matrix to be set.
   def set_display_group_offset(self, OFFSET_MATRIX):
 
     self.display_group_offset = OFFSET_MATRIX

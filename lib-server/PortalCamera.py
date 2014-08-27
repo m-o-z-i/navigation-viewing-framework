@@ -24,12 +24,12 @@ import math
 ## Class representing the parameters of a captured photo by a PortalCamera.
 class Shot(avango.script.Script):
 
-  ## @var sf_platform_mat
-  # Field representing the platform matrix of this shot.
+  ## @var sf_abs_mat
+  # Field representing the translation and rotation matrix of this shot.
   sf_abs_mat = avango.gua.SFMatrix4()
 
-  ## @var sf_platform_scale
-  # Field representing the platform scale of this shot.
+  ## @var sf_scale
+  # Field representing the scaling of this shot.
   sf_scale = avango.SFFloat()
 
   ## @var sf_viewing_mode
@@ -68,8 +68,8 @@ class Shot(avango.script.Script):
 ## Geometric representation of a PortalCamera in a DisplayGroup.
 class PortalCameraRepresentation(ToolRepresentation):
 
-  ##
-  #
+  ## @var sf_portal_matrix
+  # Field to which the portal entry matrices are connected to in order to appear above the PortalCamera.
   sf_portal_matrix = avango.gua.SFMatrix4()
   sf_portal_matrix.value = avango.gua.make_identity_mat()
 
@@ -78,10 +78,10 @@ class PortalCameraRepresentation(ToolRepresentation):
     self.super(PortalCameraRepresentation).__init__()
 
   ## Custom constructor.
-  # @param 
-  # @param DISPLAY_GROUP DisplayGroup instance for which this RayPointerRepresentation is responsible for. 
-  # @param USER_REPRESENTATION Corresponding UserRepresentation instance under which's view_transform_node the RayPointerRepresentation is appended.
-  def my_constructor(self, PORTAL_CAM_INSTANCE, DISPLAY_GROUP, USER_REPRESENTATION):
+  # @param PORTAL_CAMERA_INSTANCE An instance of PortalCamera to which this PortalCameraRepresentation is associated.
+  # @param DISPLAY_GROUP DisplayGroup instance for which this PortalCameraRepresentation is responsible for. 
+  # @param USER_REPRESENTATION Corresponding UserRepresentation instance under which's view_transform_node the PortalCameraRepresentation is appended.
+  def my_constructor(self, PORTAL_CAMERA_INSTANCE, DISPLAY_GROUP, USER_REPRESENTATION):
     
     # call base class constructor
     self.base_constructor(PORTAL_CAM_INSTANCE
@@ -120,7 +120,8 @@ class PortalCameraRepresentation(ToolRepresentation):
     self.viewing_mode_indicator.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
     self.tool_transform_node.Children.value.append(self.viewing_mode_indicator)
 
-    
+    ## @var portal
+    # Portal display instance belonging to this representation.
     self.portal = Portal(PORTAL_MATRIX = avango.gua.make_identity_mat()
                        , WIDTH = PORTAL_CAM_INSTANCE.portal_width
                        , HEIGHT = PORTAL_CAM_INSTANCE.portal_height
@@ -130,10 +131,14 @@ class PortalCameraRepresentation(ToolRepresentation):
                        , BORDER_MATERIAL = "data/materials/White.gmd"
                        , TRANSITABLE = False)
 
+    ## @var portal_nav
+    # Instance of PortalCameraNavigation in which the captured shots are to be loaded.
     self.portal_nav = PortalCameraNavigation()
     self.portal_nav.my_constructor(PORTAL_CAMERA_INSTANCE = self.TOOL_INSTANCE
                                  , TRACE_VISIBILITY_LIST = {})
 
+    ## @var portal_dg
+    # DisplayGroup opened up by the portal of this representation.
     self.portal_dg = DisplayGroup(ID = None
                            , DISPLAY_LIST = [self.portal]
                            , NAVIGATION_LIST = [self.portal_nav]
@@ -142,17 +147,20 @@ class PortalCameraRepresentation(ToolRepresentation):
                            , WORKSPACE_TRANSMITTER_OFFSET = avango.gua.make_identity_mat()
                            )
 
+    ## @var assigned_shot
+    # Shot instance which is currently displayed in the portal of this representation.
     self.assigned_shot = None
 
-    ##
-    #
-    self.portal_matrix_connected = False
-
-    ##
-    #
+    ## @var highlighted
+    # Boolean indicating if this representation is highlighted. Usually used to color the assigned user's representation.
     self.highlighted = False
 
+    ## @var portal_matrix_connected
+    # Boolean saying if the portal's portal matrix node was connected. Is done once it is present by evaluate().
+    self.portal_matrix_connected = False
 
+
+  ## Evaluated every frame.
   def evaluate(self):
 
     # base class evaluate
@@ -172,6 +180,7 @@ class PortalCameraRepresentation(ToolRepresentation):
       self.portal.set_visibility(False)
   
 
+    # update sf_portal_matrix
     self.sf_portal_matrix.value = self.tool_transform_node.WorldTransform.value * \
                                   avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
 
@@ -183,8 +192,7 @@ class PortalCameraRepresentation(ToolRepresentation):
       if self.portal.border_material != "data/materials/White.gmd":
         self.portal.set_border_material("data/materials/White.gmd")
 
-  ##
-  #
+  ## Retrieves portal_width and portal_height from the PortalCamera instance and updates the sizes of the representation's parts.
   def update_size(self):
 
     self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0) * \
@@ -196,17 +204,19 @@ class PortalCameraRepresentation(ToolRepresentation):
 
     self.portal.set_size(self.TOOL_INSTANCE.portal_width, self.TOOL_INSTANCE.portal_height)                                                  
 
-  ##
-  #
+  ## Loads a shot to this representation's portal and sets it visible.
+  # @param SHOT The Shot instance to be loaded.
   def assign_shot(self, SHOT):
 
+    # disconnect fields when a shot is already assigned
     if self.assigned_shot != None:
       self.assigned_shot.sf_abs_mat.disconnect()
       self.assigned_shot.sf_scale.disconnect()
 
-
+    # copy shot values to navigation
     self.portal_nav.set_navigation_values(SHOT.sf_abs_mat.value, SHOT.sf_scale.value)
 
+    # copy shot values to portal
     if SHOT.sf_viewing_mode.value != self.portal.viewing_mode:
       self.portal.switch_viewing_mode()
 
@@ -216,17 +226,16 @@ class PortalCameraRepresentation(ToolRepresentation):
     if SHOT.sf_negative_parallax.value != self.portal.negative_parallax:
       self.portal.switch_negative_parallax()
 
+    # establish field connections to copy updates done by the PortalCameraNavigation.
     SHOT.sf_abs_mat.disconnect()
     SHOT.sf_abs_mat.connect_from(self.portal_nav.sf_abs_mat)
     SHOT.sf_scale.disconnect()
     SHOT.sf_scale.connect_from(self.portal_nav.sf_scale)
 
     self.assigned_shot = SHOT
-
     self.portal.set_visibility(True)
 
-  ##
-  #
+  ## Removes the assigned shot of this representation and makes the portal invisible.
   def deassign_shot(self):
 
     self.assigned_shot.sf_abs_mat.disconnect()
@@ -235,35 +244,33 @@ class PortalCameraRepresentation(ToolRepresentation):
 
     self.portal.set_visibility(False)
 
-  ##
-  #
+  ## Sets the viewing mode on the portal.
+  # @param MODE The mode string to be set.
   def set_viewing_mode(self, MODE):
 
     if self.portal.viewing_mode != MODE:
       self.portal.switch_viewing_mode()
 
-  ##
-  #
+  ## Sets the negative parallax mode on the portal.
+  # @param MODE The mode string to be set.
   def set_negative_parallax(self, MODE):
 
     if self.portal.negative_parallax != MODE:
       self.portal.switch_negative_parallax()
 
-  ##
-  #
+  ## Shows the red frame indicating photo capturing.
   def show_capture_frame(self):
 
     self.camera_frame.GroupNames.value.remove("portal_invisible_group")
     self.viewing_mode_indicator.GroupNames.value.remove("portal_invisible_group")
 
-  ##
-  #
+  ## Hides the red frame indicating photo capturing.
   def hide_capture_frame(self):
     
     self.camera_frame.GroupNames.value.append("portal_invisible_group")
     self.viewing_mode_indicator.GroupNames.value.append("portal_invisible_group")
 
-  ## Appends a string to the GroupNames field of this ToolRepresentation's visualization.
+  ## Appends a string to the GroupNames field of this PortalCameraRepresentation's visualization.
   # @param STRING The string to be appended.
   def append_to_visualization_group_names(self, STRING):
     
@@ -274,7 +281,7 @@ class PortalCameraRepresentation(ToolRepresentation):
       self.viewing_mode_indicator.GroupNames.value.append(STRING)
 
 
-  ## Removes a string from the GroupNames field of this ToolRepresentation's visualization.
+  ## Removes a string from the GroupNames field of this PortalCameraRepresentation's visualization.
   # @param STRING The string to be removed.
   def remove_from_visualization_group_names(self, STRING):
     
@@ -282,7 +289,7 @@ class PortalCameraRepresentation(ToolRepresentation):
     self.camera_frame.GroupNames.value.remove(STRING)
     self.viewing_mode_indicator.GroupNames.value.remove(STRING)
 
-  ## Resets the GroupNames field of this ToolRepresentation's visualization to the user representation's view_transform_node.
+  ## Resets the GroupNames field of this PortalCameraRepresentation's visualization to the user representation's view_transform_node.
   def reset_visualization_group_names(self):
 
     self.portal.portal_matrix_node.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
@@ -296,12 +303,12 @@ class PortalCameraRepresentation(ToolRepresentation):
       self.viewing_mode_indicator.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
     
 
-  ##
+  ## Enables the highlight for this PortalCameraRepresentation.
   def enable_highlight(self):
     
     self.highlighted = True
 
-  ##
+  ## Disables the highlight for this PortalCameraRepresentation.
   def disable_highlight(self):
     
     self.highlighted = False
@@ -311,7 +318,7 @@ class PortalCameraRepresentation(ToolRepresentation):
 ###############################################################################################
 
 ## A PortalCamera is a physical device to interactively caputure, view
-# and manipulate Portal instances in the scene.
+# and manipulate Shots in the scene.
 class PortalCamera(Tool):
  
   ## @var sf_tracking_mat
@@ -321,10 +328,6 @@ class PortalCamera(Tool):
   ## @var sf_world_border_mat_no_scale
   # World transformation of the camera frame without scaling. Used for Portal instantiation.
   sf_world_border_mat_no_scale = avango.gua.SFMatrix4()
-
-  ## @var sf_animation_matrix
-  # Matrix to which animated objects are connected to.
-  sf_animation_matrix = avango.gua.SFMatrix4()
 
   # button fields
   ## @var sf_focus_button
@@ -420,29 +423,13 @@ class PortalCamera(Tool):
     # Boolean indicating if the gallery is currently visible for this PortalCamera.
     self.gallery_activated = False
 
-    ## @var gallery_focus_shot_index
-    # Index within self.captured_shots saying which of the Shots is currently in the gallery's focus.
-    self.gallery_focus_shot_index = 0
+    ## @var last_open_shot_index
+    # Index within self.captured_shots saying which of the Shots was lastly opened by the PortalCamera.
+    self.last_open_shot_index = None
 
     ## @var gallery_magification_factor
     # Factor with which the size of the portals will be multiplied when in gallery mode.
     self.gallery_magnification_factor = 1.5
-
-    ## @var animation_start_time
-    # Starting time of an animation handled by this class.
-    self.animation_start_time = None
-
-    ## @var animation_start_matrix
-    # Starting matrix of an animation handled by this class.
-    self.animation_start_matrix = None
-
-    ## @var animation_start_size
-    # Starting size of an animation handled by this class.
-    self.animation_start_size = None
-
-    ## @var animation_duration
-    # Duration of an animation handled by this class.
-    self.animation_duration = 1.0
 
 
   ## Custom constructor.
@@ -474,16 +461,6 @@ class PortalCamera(Tool):
     self.sf_negative_parallax_on_button.connect_from(self.device_sensor.Button12)
     self.sf_negative_parallax_off_button.connect_from(self.device_sensor.Button13)
 
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var last_open_shot_index
-    # Index within self.captured_shots saying which of the Shots was lastly opened by the PortalCamera.
-    self.last_open_shot_index = None
-
-    ## @var drag_last_frame_camera_mat
-    # Matrix containing the value of the tracking target of the last frame when in drag mode.
-    self.drag_last_frame_camera_mat = None
-
     # set evaluation policy
     self.always_evaluate(True)
 
@@ -498,7 +475,7 @@ class PortalCamera(Tool):
     self.tool_representations.append(_portal_cam_repr)
     return _portal_cam_repr
 
-  ## Checks which user is closest to this RayPointer in tracking spaces and makes him the assigned user.
+  ## Checks which user is closest to this PortalCamera in tracking spaces and makes him the assigned user.
   # Additionally updates the material of the corresponding RayPointerRepresentation.
   def check_for_user_assignment(self):
 
@@ -557,8 +534,8 @@ class PortalCamera(Tool):
       for _tool_repr in self.tool_representations:
         _tool_repr.portal_nav.set_navigation_values(_tool_repr.portal_nav.sf_abs_mat.value, SCALE)
 
-  ##
-  #
+  ## Loads a given Shot instances to all representations.
+  # @param SHOT The Shot instance to be loaded.
   def set_current_shot(self, SHOT):
 
     for _tool_repr in self.tool_representations:
@@ -566,14 +543,15 @@ class PortalCamera(Tool):
 
     self.current_shot = SHOT
 
-  ##
-  #
+  ## Clears the Shot currently loaded to all representations.
   def clear_current_shot(self):
 
     for _tool_repr in self.tool_representations:
       _tool_repr.deassign_shot()
 
     self.current_shot = None
+
+  
 
   ## Called whenever sf_focus_button changes.
   @field_has_changed(sf_focus_button)
@@ -653,19 +631,6 @@ class PortalCamera(Tool):
   def sf_open_button_changed(self):
     if self.sf_open_close_button.value == True:
 
-      # grab current gallery portal in gallery mode
-      if self.gallery_activated:
-
-        self.gallery_activated = False
-
-        for _gallery_portal in self.gallery_portals:
-          _gallery_portal.set_visibility(False)
-
-        self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
-        self.current_shot.assign_portal(self.display_portal)
-
-        return
-
       # open lastly opened portal when no portal is opened
       if self.current_shot == None and len(self.captured_shots) > 0:
         _new_shot = self.captured_shots[self.last_open_shot_index]
@@ -685,7 +650,6 @@ class PortalCamera(Tool):
       # delete current portal
       if self.current_shot != None:
         _shot_to_delete = self.current_shot
-        self.gallery_focus_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
         self.last_open_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
         self.clear_current_shot()
 

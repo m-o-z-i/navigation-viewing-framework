@@ -117,14 +117,21 @@ class ApplicationManager(avango.script.Script):
     # Last button states of the request buttons of requestable navigations to detect changes.
     self.requestable_navigations_last_button_states = []
 
-
-    ##
-    #
+    ## @var workspace_navigations
+    # List of all Navigation instances associated to display groups in a physical workspace.
+    # Used for portal teleportation checks.
     self.workspace_navigations = []
 
-    ##
-    #
+    ## @var transit_portals
+    # List of Portal instances that have the transitable flag set true.
+    self.transit_portals = []
+
+    ## @var portal_display_groups
+    # List of DisplayGroups that contain portals from the configuration file. Is completed
+    # by portal display groups created by PortalCameraRepresentations.
     self.portal_display_groups = portal_display_groups
+
+
 
     ## Handle physical viewing setups ##
 
@@ -196,9 +203,6 @@ class ApplicationManager(avango.script.Script):
                 time.sleep(1)
 
 
-    ##
-    #
-    self.transit_portals = []
 
 
     ## Handle virtual viewing setups ##

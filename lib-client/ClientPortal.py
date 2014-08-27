@@ -391,7 +391,7 @@ class PortalPreView(avango.script.Script):
         self.portal_border.Material.value = _material
         self.back_geometry.Material.value = _material
 
-  ##
+  ## Evaluated every frame.
   def evaluate(self):
 
     # trigger frame callback activity

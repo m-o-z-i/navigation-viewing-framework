@@ -38,14 +38,6 @@ class SceneVRHyperspace0(SceneObject):
     self.init_geometry("bwb_inner_right_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
-    tex_quad = avango.gua.nodes.TexturedQuadNode(
-        Texture = "pre_scene2_texture",
-        IsStereoTexture = True
-    )
-    tex_quad.Transform.value = avango.gua.make_scale_mat(100.0)
-    NET_TRANS_NODE.Children.value.append(tex_quad)
-
-
     # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
     self.init_light(TYPE = 1, NAME = "ceiling_light1", COLOR = avango.gua.Color(0.6, 0.6, 0.7), MATRIX = _mat, PARENT_NODE = self.scene_root, LIGHT_DIMENSIONS = avango.gua.Vec3(7.0,7.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light

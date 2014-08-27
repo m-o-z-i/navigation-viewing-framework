@@ -368,20 +368,6 @@ class PortalPreView(avango.script.Script):
     except:
       return
 
-    # check for visibility
-    if self.mf_portal_modes.value[4] == "4-False":
-      self.frame_trigger.Active.value = False
-      self.pipeline.Enabled.value = False
-      self.textured_quad.GroupNames.value.append("do_not_display_group")
-      self.portal_border.GroupNames.value.append("do_not_display_group")
-      #self.back_geometry.GroupNames.value.append("do_not_display_group")
-      return
-    else:
-      self.frame_trigger.Active.value = True
-      self.pipeline.Enabled.value = True
-      self.textured_quad.GroupNames.value.remove("do_not_display_group")
-      self.portal_border.GroupNames.value.remove("do_not_display_group")
-
     # check for camera mode
     if self.mf_portal_modes.value[1] == "1-ORTHOGRAPHIC":
       self.camera.Mode.value = avango.gua.ProjectionMode.ORTHOGRAPHIC
@@ -409,9 +395,33 @@ class PortalPreView(avango.script.Script):
         self.portal_border.GroupNames.value.append("do_not_display_group")
         self.back_geometry.GroupNames.value.append("do_not_display_group")
 
+  ##
+  def evaluate(self):
+
+    # trigger frame callback activity
+    _server_view_node_name = "w" + str(self.VIEW.workspace_id) + "_dg" + str(self.VIEW.display_group_id) + "_u" + str(self.VIEW.user_id)
+
+    if (_server_view_node_name) not in self.portal_matrix_node.GroupNames.value or \
+       self.mf_portal_modes.value[4] == "4-False":
+
+      if self.frame_trigger.Active.value == True:
+        self.frame_trigger.Active.value = False
+        self.pipeline.Enabled.value = False
+        self.textured_quad.GroupNames.value.append("do_not_display_group")
+        self.portal_border.GroupNames.value.append("do_not_display_group")
+        self.back_geometry.GroupNames.value.append("do_not_display_group")
+        
+      return
+
+    else:
+
+      if self.frame_trigger.Active.value == False:
+        self.frame_trigger.Active.value = True
+
 
   ## Evaluated every frame when active.
   def frame_callback(self):
+
 
     # update global clipping plane when negative parallax is false
     if self.mf_portal_modes.value[2] == "2-False":
@@ -450,7 +460,6 @@ class PortalPreView(avango.script.Script):
         self.pipeline.Enabled.value = True
         self.textured_quad.GroupNames.value.remove("do_not_display_group")
         self.back_geometry.GroupNames.value.append("do_not_display_group")
-
 
 
   ## Called whenever sf_screen_width changes.

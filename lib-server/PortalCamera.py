@@ -265,6 +265,8 @@ class PortalCameraRepresentation(ToolRepresentation):
     self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
     self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, PORTAL_CAM_INSTANCE.portal_height/2, 0.0) * \
                                         avango.gua.make_scale_mat(PORTAL_CAM_INSTANCE.portal_width, PORTAL_CAM_INSTANCE.portal_height, 1.0)
+    self.camera_frame.GroupNames.value.append("portal_invisible_group")
+    self.camera_frame.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
     self.tool_transform_node.Children.value.append(self.camera_frame)
 
     ## @var viewing_mode_indicator
@@ -277,10 +279,10 @@ class PortalCameraRepresentation(ToolRepresentation):
                                                   avango.gua.make_rot_mat(90, 1, 0, 0) * \
                                                   avango.gua.make_scale_mat(PORTAL_CAM_INSTANCE.portal_height * 0.1, 1.0, PORTAL_CAM_INSTANCE.portal_height * 0.1)
     self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
+    self.viewing_mode_indicator.GroupNames.value.append("portal_invisible_group")
+    self.viewing_mode_indicator.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
     self.tool_transform_node.Children.value.append(self.viewing_mode_indicator)
 
-    self.camera_frame.GroupNames.value.append("do_not_display_group")
-    self.viewing_mode_indicator.GroupNames.value.append("do_not_display_group")
     
     self.portal = Portal(PORTAL_MATRIX = avango.gua.make_identity_mat()
                        , WIDTH = PORTAL_CAM_INSTANCE.portal_width
@@ -303,6 +305,7 @@ class PortalCameraRepresentation(ToolRepresentation):
                            , OFFSET_TO_WORKSPACE = avango.gua.make_identity_mat()
                            , WORKSPACE_TRANSMITTER_OFFSET = avango.gua.make_identity_mat()
                            )
+
     ##
     #
     self.portal_matrix_connected = False
@@ -324,10 +327,25 @@ class PortalCameraRepresentation(ToolRepresentation):
       self.portal.connect_portal_matrix(self.sf_portal_matrix)
       self.portal.portal_matrix_node.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
       self.portal_matrix_connected = True
+      self.portal.set_visibility(False)
   
 
     self.sf_portal_matrix.value = self.tool_transform_node.WorldTransform.value * \
                                   avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
+
+  ##
+  #
+  def show_capture_frame(self):
+
+    self.camera_frame.GroupNames.value.remove("portal_invisible_group")
+    self.viewing_mode_indicator.GroupNames.value.remove("portal_invisible_group")
+
+  ##
+  #
+  def hide_capture_frame(self):
+    
+    self.camera_frame.GroupNames.value.append("portal_invisible_group")
+    self.viewing_mode_indicator.GroupNames.value.append("portal_invisible_group")
 
   ## Appends a string to the GroupNames field of this ToolRepresentation's visualization.
   # @param STRING The string to be appended.
@@ -336,22 +354,25 @@ class PortalCameraRepresentation(ToolRepresentation):
     # do not add portal head group nodes for visibility of this portal
     if not STRING.startswith("portal"):
       self.portal.portal_matrix_node.GroupNames.value.append(STRING)
+      self.camera_frame.GroupNames.value.append(STRING)
+      self.viewing_mode_indicator.GroupNames.value.append(STRING)
 
-      if STRING == "do_not_display_group":
-        print "deactivting display of portal cam repr", self.USER_REPRESENTATION.view_transform_node.Name.value
-        self.portal.set_visibility(False)
 
   ## Removes a string from the GroupNames field of this ToolRepresentation's visualization.
   # @param STRING The string to be removed.
   def remove_from_visualization_group_names(self, STRING):
     
     self.portal.portal_matrix_node.GroupNames.value.remove(STRING)
+    self.camera_frame.GroupNames.value.remove(STRING)
+    self.viewing_mode_indicator.GroupNames.value.remove(STRING)
 
   ## Resets the GroupNames field of this ToolRepresentation's visualization to the user representation's view_transform_node.
   def reset_visualization_group_names(self):
 
     self.portal.portal_matrix_node.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
-    self.portal.set_visibility(True)
+    self.camera_frame.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
+    self.viewing_mode_indicator.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
+    
 
   ##
   def enable_highlight(self):
@@ -800,17 +821,13 @@ class PortalCamera(Tool):
     # show and hide camera frame
     if self.sf_focus_button.value == True:
 
-      try:
-        self.portal_camera_node.GroupNames.value = []
-      except:
-        pass
+      for _tool_repr in self.tool_representations:
+        _tool_repr.show_capture_frame()
 
     else:
 
-      try:
-        self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
-      except:
-        pass
+      for _tool_repr in self.tool_representations:
+        _tool_repr.hide_capture_frame()
 
   ## Called whenever sf_capture_button changes.
   @field_has_changed(sf_capture_button)

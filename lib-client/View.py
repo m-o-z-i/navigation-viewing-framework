@@ -96,7 +96,7 @@ class View(avango.script.Script):
     self.camera.Mode.value = DISPLAY_INSTANCE.cameramode
 
     # set render mask for camera
-    _render_mask = "(main_scene | w" + str(WORKSPACE_ID) + "_dg" + str(DISPLAY_GROUP_ID) + "_u" + str(USER_ID) + ") && !do_not_display_group"
+    _render_mask = "(main_scene | w" + str(WORKSPACE_ID) + "_dg" + str(DISPLAY_GROUP_ID) + "_u" + str(USER_ID) + ") && !do_not_display_group && !portal_invisible_group"
     self.camera.RenderMask.value = _render_mask
     #print repr(self.camera.RenderMask.value)
 

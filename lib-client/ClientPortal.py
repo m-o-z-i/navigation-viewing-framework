@@ -224,7 +224,7 @@ class PortalPreView(avango.script.Script):
     self.camera.LeftEye.value = self.left_eye_node.Path.value
     self.camera.RightEye.value = self.right_eye_node.Path.value
 
-    self.camera.RenderMask.value = "(main_scene | " + self.SERVER_PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ") && !do_not_display_group"
+    self.camera.RenderMask.value = "(main_scene | " + self.SERVER_PORTAL_NODE.Name.value + "_" + self.transformed_head_node.Name.value + ") && !do_not_display_group && !portal_invisible_group"
 
     ## @var pipeline
     # The pipeline used to render this PortalPreView. 
@@ -288,15 +288,15 @@ class PortalPreView(avango.script.Script):
     ## @var back_geometry
     # Geometry being displayed when portal pre view is seen from behind.
     self.back_geometry = _loader.create_geometry_from_file("back_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/plane.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS)
-    self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
-    self.back_geometry.GroupNames.value = ["do_not_display_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
+    self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    self.back_geometry.GroupNames.value = ["portal_invisible_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
     self.portal_matrix_node.Children.value.append(self.back_geometry)
 
     ## @var portal_border
     # Geometry node containing the portal's frame.
     self.portal_border = _loader.create_geometry_from_file("border_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/screen.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.portal_border.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.portal_border.GroupNames.value = ["do_not_display_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
+    self.portal_border.GroupNames.value = ["portal_invisible_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
     self.portal_border.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
     self.portal_matrix_node.Children.value.append(self.portal_border)
 
@@ -388,12 +388,12 @@ class PortalPreView(avango.script.Script):
       if _material != "None":
         self.portal_border.Material.value = _material
         self.back_geometry.Material.value = _material
-        self.portal_border.GroupNames.value.remove("do_not_display_group")
-        self.back_geometry.GroupNames.value.remove("do_not_display_group")
-      else:
+        #self.portal_border.GroupNames.value.remove("portal_invisible_group")
+        #self.back_geometry.GroupNames.value.remove("portal_invisible_group")
+      #else:
         
-        self.portal_border.GroupNames.value.append("do_not_display_group")
-        self.back_geometry.GroupNames.value.append("do_not_display_group")
+      #  self.portal_border.GroupNames.value.append("portal_invisible_group")
+      #  self.back_geometry.GroupNames.value.append("portal_invisible_group")
 
   ##
   def evaluate(self):
@@ -407,9 +407,9 @@ class PortalPreView(avango.script.Script):
       if self.frame_trigger.Active.value == True:
         self.frame_trigger.Active.value = False
         self.pipeline.Enabled.value = False
-        self.textured_quad.GroupNames.value.append("do_not_display_group")
-        self.portal_border.GroupNames.value.append("do_not_display_group")
-        self.back_geometry.GroupNames.value.append("do_not_display_group")
+        self.textured_quad.GroupNames.value.append("portal_invisible_group")
+        self.portal_border.GroupNames.value.append("portal_invisible_group")
+        self.back_geometry.GroupNames.value.append("portal_invisible_group")
         
       return
 
@@ -451,15 +451,15 @@ class PortalPreView(avango.script.Script):
 
       if self.pipeline.Enabled.value == True:
         self.pipeline.Enabled.value = False
-        self.textured_quad.GroupNames.value.append("do_not_display_group")
-        self.back_geometry.GroupNames.value.remove("do_not_display_group")
+        self.textured_quad.GroupNames.value.append("portal_invisible_group")
+        self.back_geometry.GroupNames.value.remove("portal_invisible_group")
 
     else:
 
       if self.pipeline.Enabled.value == False:
         self.pipeline.Enabled.value = True
-        self.textured_quad.GroupNames.value.remove("do_not_display_group")
-        self.back_geometry.GroupNames.value.append("do_not_display_group")
+        self.textured_quad.GroupNames.value.remove("portal_invisible_group")
+        self.back_geometry.GroupNames.value.append("portal_invisible_group")
 
 
   ## Called whenever sf_screen_width changes.

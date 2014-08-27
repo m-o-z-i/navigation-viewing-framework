@@ -319,7 +319,7 @@ class ApplicationManager(avango.script.Script):
       else:
         _render_mask = _render_mask + " | " + _user_repr.view_transform_node.Name.value
 
-    _render_mask = _render_mask + ") && !do_not_display_group"
+    _render_mask = _render_mask + ") && !do_not_display_group && !portal_invisible_group"
 
     self.camera.RenderMask.value = _render_mask
 

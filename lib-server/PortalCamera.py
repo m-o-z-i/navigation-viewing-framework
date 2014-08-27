@@ -183,13 +183,13 @@ class PortalCameraRepresentation(ToolRepresentation):
 
     self.portal_nav.set_navigation_values(SHOT.sf_abs_mat.value, SHOT.sf_scale.value)
 
-    if SHOT.sf_viewing_mode != self.portal.viewing_mode:
+    if SHOT.sf_viewing_mode.value != self.portal.viewing_mode:
       self.portal.switch_viewing_mode()
 
-    if SHOT.sf_camera_mode != self.portal.camera_mode:
+    if SHOT.sf_camera_mode.value != self.portal.camera_mode:
       self.portal.switch_camera_mode()
 
-    if SHOT.sf_negative_parallax != self.portal.negative_parallax:
+    if SHOT.sf_negative_parallax.value != self.portal.negative_parallax:
       self.portal.switch_viewing_mode()
 
     SHOT.sf_abs_mat.disconnect()
@@ -211,7 +211,25 @@ class PortalCameraRepresentation(ToolRepresentation):
 
     self.portal.set_visibility(False)
 
+  ##
+  #
+  def set_viewing_mode(self, MODE):
 
+    if self.assigned_shot != None:
+      self.assigned_shot.sf_viewing_mode.value = MODE
+
+    if self.portal.viewing_mode != MODE:
+      self.portal.switch_viewing_mode()
+
+  ##
+  #
+  def set_negative_parallax(self, MODE):
+
+    if self.assigned_shot != None:
+      self.assigned_shot.sf_negative_parallax.value = MODE
+
+    if self.portal.negative_parallax != MODE:
+      self.portal.switch_negative_parallax()
 
   ##
   #
@@ -490,191 +508,6 @@ class PortalCamera(Tool):
     # update user assignment
     self.check_for_user_assignment()
 
-    #self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.portal_width/2 * 0.86, self.portal_height * 0.93, 0.0) * \
-    #                                              avango.gua.make_rot_mat(90, 1, 0, 0) * \
-    #                                              avango.gua.make_scale_mat(self.portal_height * 0.1, 1.0, self.portal_height * 0.1)
-
-    '''
-    # always hide red camera frame when a shot is displayed
-    if self.current_shot != None:
-      self.portal_camera_node.GroupNames.value = ["do_not_display_group"]
-    
-    # apply scale changes 
-    if self.sf_scale_up_button.value == True and self.current_shot != None:
-      
-      self.set_current_shot_scale(self.current_shot.sf_platform_scale.value * 0.985)
-      
-    if self.sf_scale_down_button.value == True and self.current_shot != None:
-
-      self.set_current_shot_scale(self.current_shot.sf_platform_scale.value * 1.015)
-    
-    
-    # apply size changes
-    if self.sf_size_up_button.value == True:
-      self.portal_width += 0.005
-      self.portal_height += 0.005
-      self.display_portal.set_size(self.portal_width, self.portal_height)
-
-    if self.sf_size_down_button.value == True:
-      self.portal_width -= 0.005
-      self.portal_height -= 0.005
-      
-      if self.portal_width < 0.15:
-        self.portal_width = 0.15
-
-      if self.portal_height < 0.15:
-        self.portal_height = 0.15
-
-      self.display_portal.set_size(self.portal_width, self.portal_height)
-
-    # update matrices in drag mode
-    if self.drag_last_frame_camera_mat != None:
-
-      _current_camera_mat = self.tracking_reader.sf_abs_mat.value * avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
-      _drag_input_mat = avango.gua.make_inverse_mat(self.drag_last_frame_camera_mat) * _current_camera_mat
-      _drag_input_mat.set_translate(_drag_input_mat.get_translate() * self.current_shot.sf_platform_scale.value)
-
-      _new_scene_mat = self.current_shot.sf_platform_mat.value * _drag_input_mat
-
-      self.current_shot.sf_platform_mat.value = _new_scene_mat
-
-      self.drag_last_frame_camera_mat = _current_camera_mat
-
-    # check for camera hitting free portals
-    _camera_vec = self.camera_frame.WorldTransform.value.get_translate()
-
-    if self.current_shot == None:
-
-      for _free_portal in self.PORTAL_MANAGER.free_portals:
-
-        _portal_vec = _free_portal.portal_matrix_node.WorldTransform.value.get_translate()
-
-        if self.check_for_hit(_camera_vec, _portal_vec):
-
-          _shot = Shot()
-          _shot.my_constructor(_free_portal.platform_matrix,
-                               _free_portal.platform_scale,
-                               _free_portal.viewing_mode,
-                               _free_portal.camera_mode,
-                               _free_portal.negative_parallax)
-
-          self.captured_shots.append(_shot)
-          _shot.assign_portal(self.display_portal)
-          self.current_shot = _shot
-
-          self.PORTAL_MANAGER.free_portals.remove(_free_portal)
-          self.PORTAL_MANAGER.remove_portal(_free_portal.id)
-          return
-
-    # check for animations
-    if self.animation_start_time != None:
-
-      _time_step = time.time() - self.animation_start_time
-
-      if _time_step > self.animation_duration:
-        self.animation_start_time = None
-        self.animation_start_matrix = None
-        self.animation_start_size = None
-        self.display_portal.connect_portal_matrix(self.sf_world_border_mat_no_scale)
-        self.display_portal.set_size(self.portal_width, self.portal_height)
-        return
-
-      _ratio = _time_step / self.animation_duration
-      _start_trans = self.animation_start_matrix.get_translate()
-      _end_trans = self.sf_world_border_mat_no_scale.value.get_translate()
-      _animation_trans = _start_trans.lerp_to(_end_trans, _ratio)
-
-      _start_rot = self.animation_start_matrix.get_rotate_scale_corrected()
-      _end_rot = self.sf_world_border_mat_no_scale.value.get_rotate_scale_corrected()
-      _animation_rot = _start_rot.slerp_to(_end_rot, _ratio)
-
-      _start_scale = self.animation_start_matrix.get_scale()
-      _end_scale = self.sf_world_border_mat_no_scale.value.get_scale()
-      _animation_scale = _start_scale * (1-_ratio) + _end_scale * _ratio
-
-      _start_size = self.animation_start_size
-      _end_size = avango.gua.Vec3(self.portal_width, self.portal_height, 1.0)
-      _animation_size = _start_size.lerp_to(_end_size, _ratio)
-
-      self.sf_animation_matrix.value = avango.gua.make_trans_mat(_animation_trans) * \
-                                       avango.gua.make_rot_mat(_animation_rot) * \
-                                       avango.gua.make_scale_mat(_animation_scale)
-      self.display_portal.set_size(_animation_size.x, _animation_size.y)
-      return
-
-    # update matrices in gallery mode
-    if self.gallery_activated:
-
-      # disable gallery when no captured shots are present (anymore)
-      if len(self.captured_shots) == 0:
-        self.gallery_activated = False
-
-        for _gallery_portal in self.gallery_portals:
-          _gallery_portal.set_visibility(False)
-
-        return
-
-      # place gallery correctly over device
-      if len(self.captured_shots) < len(self.gallery_portals):
-        _num_displayed_portals = len(self.captured_shots)
-      else:
-        _num_displayed_portals = len(self.gallery_portals)
-
-      _increment_index = int(math.floor(-_num_displayed_portals / 2) + 1)
-      _increment_place = (-_num_displayed_portals / 2.0) + 0.5
-
-      for _gallery_portal in self.gallery_portals:
-
-        if self.gallery_portals.index(_gallery_portal) > _num_displayed_portals - 1:
-          _gallery_portal.set_visibility(False)
-          break
-
-        _station_mat = self.NAVIGATION.device.sf_station_mat.value
-        _station_vec = _station_mat.get_translate()
-
-        _modified_station_mat = avango.gua.make_trans_mat(_station_vec.x + self.gallery_magnification_factor * (0.3 + 0.2 * 0.3) * _increment_place, _station_vec.y + 1.5 * 0.3, _station_vec.z)
-
-        _matrix = self.NAVIGATION.platform.platform_scale_transform_node.WorldTransform.value * \
-                  avango.gua.make_trans_mat(_station_vec) * \
-                  avango.gua.make_rot_mat(_station_mat.get_rotate()) * \
-                  avango.gua.make_trans_mat(_station_vec * -1) * \
-                  _modified_station_mat * \
-                  avango.gua.make_scale_mat(self.gallery_magnification_factor, self.gallery_magnification_factor, 1.0)
-
-        _gallery_portal.portal_matrix_node.Transform.value = _matrix
-
-        _shot_index = self.gallery_focus_shot_index
-        _shot_index += _increment_index
-        _shot_index = _shot_index % len(self.captured_shots)
-
-        _shot_instance = self.captured_shots[_shot_index]
-        #_shot_instance.deassign_portal()
-        _shot_instance.assign_portal(_gallery_portal)
-
-        _increment_index += 1
-        _increment_place += 1.0
-    '''
-
-
-  ## Checks if the position of a camera is close to the position of a portal.
-  # @param CAMERA_VEC The camera's vector to be used for incidence computation.
-  # @param PORTAL_VEC The portal's vector to be used for incidence computation.
-  def check_for_hit(self, CAMERA_VEC, PORTAL_VEC):
-
-    _nav_scale = self.NAVIGATION.inputmapping.sf_scale.value
-
-    if CAMERA_VEC.x > PORTAL_VEC.x - (self.portal_width/2) * _nav_scale and \
-       CAMERA_VEC.x < PORTAL_VEC.x + (self.portal_width/2) * _nav_scale and \
-       CAMERA_VEC.y > PORTAL_VEC.y - 0.1 * _nav_scale and \
-       CAMERA_VEC.y < PORTAL_VEC.y + 0.1 * _nav_scale and \
-       CAMERA_VEC.z > PORTAL_VEC.z - 0.05 * _nav_scale and \
-       CAMERA_VEC.z < PORTAL_VEC.z + 0.05 * _nav_scale:
-
-      return True
-
-    return False
-
-
 
   ## Sets the scale of the currently active shot or returns when no shot is active.
   # @param SCALE The new scale to be set.
@@ -742,37 +575,12 @@ class PortalCamera(Tool):
                              self.capture_parallax_mode)
 
         self.captured_shots.append(_shot)
-
         self.set_current_shot(_shot)
-
-      # initiate dragging
-      else:
-
-        pass
-        #self.drag_last_frame_camera_mat = self.tracking_reader.sf_abs_mat.value * \
-        #                                  avango.gua.make_trans_mat(0.0, self.portal_height/2, 0.0)
-
-    # capture button released, stop dragging
-    else:
-
-      pass
-      #self.drag_last_frame_camera_mat = None
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)
   def sf_next_rec_button_changed(self):
     if self.sf_next_rec_button.value == True:
-
-      # update focus in gallery mode
-      if self.gallery_activated:
-
-          _shot_index = self.gallery_focus_shot_index
-          _shot_index += 1
-          _shot_index = _shot_index % len(self.captured_shots)
-          
-          self.gallery_focus_shot_index = _shot_index
-          self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
-          return
       
       # move to next recording in open mode
       if self.current_shot != None:
@@ -783,24 +591,12 @@ class PortalCamera(Tool):
 
         _new_shot = self.captured_shots[_current_index]
         self.set_current_shot(_new_shot)
-        print "shot id", _current_index
 
 
   ## Called whenever sf_prior_rec_button changes.
   @field_has_changed(sf_prior_rec_button)
   def sf_prior_rec_button_changed(self):
     if self.sf_prior_rec_button.value == True:
-
-      # update focus in gallery mode
-      if self.gallery_activated:
-        
-        _shot_index = self.gallery_focus_shot_index
-        _shot_index -= 1
-        _shot_index = _shot_index % len(self.captured_shots)
-        
-        self.gallery_focus_shot_index = _shot_index
-        self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
-        return
       
       # move to prior recording in open mode
       if self.current_shot != None:
@@ -811,7 +607,6 @@ class PortalCamera(Tool):
 
         _new_shot = self.captured_shots[_current_index]
         self.set_current_shot(_new_shot)
-        print "shot id", _current_index
 
 
   ## Called whenever sf_open_button changes.
@@ -853,125 +648,30 @@ class PortalCamera(Tool):
         _shot_to_delete = self.current_shot
         self.gallery_focus_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
         self.last_open_shot_index = max(self.captured_shots.index(_shot_to_delete) - 1, 0)
-        _shot_to_delete.deassign_portal()
+        self.clear_current_shot()
 
         self.captured_shots.remove(_shot_to_delete)
         del _shot_to_delete
-
-        if self.gallery_activated and len(self.captured_shots) > 0:
-          self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
-        else:
-          self.current_shot = None
 
   ## Called whenever sf_gallery_button changes.
   @field_has_changed(sf_gallery_button)
   def sf_gallery_button_changed(self):
     if self.sf_gallery_button.value == True:
-
-      # open gallery when not opened
-      if self.gallery_activated == False:
-        
-        self.gallery_activated = True
-
-        if self.current_shot != None:
-          self.current_shot.deassign_portal()
-
-        if len(self.captured_shots) > 0:
-          self.current_shot = self.captured_shots[self.gallery_focus_shot_index]
-      
-      # close gallery when opened, trigger correct portal visibilities
-      else:
-
-        self.gallery_activated = False
-        for _gallery_portal in self.gallery_portals:
-          _gallery_portal.set_visibility(False)
-        self.last_open_shot_index = self.gallery_focus_shot_index
-        self.current_shot = None
+      pass
 
   ## Called whenever sf_scene_copy_button changes.
   @field_has_changed(sf_scene_copy_button)
   def sf_scene_copy_button_changed(self):
+    
     if self.sf_scene_copy_button.value == True:
-      
-      # create a free copy of the opened shot in the scene
-      if self.current_shot != None and self.gallery_activated == False:
-
-        _portal = self.PORTAL_MANAGER.add_portal(self.current_shot.sf_platform_mat.value,
-                                                 self.current_shot.sf_platform_scale.value,
-                                                 self.display_portal.portal_matrix_node.Transform.value,
-                                                 self.display_portal.width,
-                                                 self.display_portal.height,
-                                                 self.current_shot.sf_viewing_mode.value,
-                                                 self.current_shot.sf_camera_mode.value,
-                                                 self.current_shot.sf_negative_parallax.value,
-                                                 self.display_portal.border_material)
-        self.PORTAL_MANAGER.free_portals.append(_portal)
+      pass
 
   ## Called whenever sf_maximize_button changes.
   @field_has_changed(sf_maximize_button)
   def sf_maximize_button_changed(self):
+
     if self.sf_maximize_button.value == True:
-
-      # check in which interaction space the PortalCamera is
-      for _interaction_space in self.interaction_spaces:
-
-        if _interaction_space.is_inside(self.tracking_reader.sf_abs_mat.value.get_translate()) and \
-           self.gallery_activated == False:
-          
-          # push current portal to interaction space and maximize it
-          if _interaction_space.maximized_shot == None:
-
-            if self.current_shot == None or self.animation_start_time != None: # no shot to maximize
-              return
-
-            _shot = self.current_shot
-            _shot.sf_negative_parallax.value = "True"
-
-            # set correct forward angle in interaction space
-            _camera_forward = math.degrees(Utilities.get_yaw(self.tracking_reader.sf_abs_mat.value))
-
-            if _camera_forward < 135.0 and _camera_forward > 45.0:
-              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle
-            elif _camera_forward < 225.0 and _camera_forward > 135.0:
-              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 90.0
-            elif _camera_forward < 315.0 and _camera_forward > 225.0:
-              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 180.0
-            else:
-              _interaction_space.maximize_forward_angle = _interaction_space.forward_angle + 270.0
-
-            self.last_open_shot_index = max(self.captured_shots.index(self.current_shot)-1, 0)
-            self.gallery_focus_shot_index = max(self.captured_shots.index(self.current_shot)-1, 0)
-            
-            _shot.deassign_portal()
-            self.captured_shots.remove(self.current_shot)
-            self.current_shot = None
-            _interaction_space.add_maximized_shot(_shot
-                                                , self.display_portal.portal_matrix_node.WorldTransform.value
-                                                , self.display_portal.width
-                                                , self.display_portal.height)
-
-          # grab portal from interaction space and resize it
-          else:
-            
-            if self.current_shot != None:
-              self.current_shot.deassign_portal()
-
-            _shot = _interaction_space.remove_maximized_shot()
-
-            if _shot != None:
-              self.animation_start_time = time.time()
-              self.animation_start_matrix = _interaction_space.sf_min_y_plane_transform.value
-              self.sf_animation_matrix.value = self.animation_start_matrix
-              self.animation_start_size = avango.gua.Vec3(_interaction_space.get_width()
-                                                        , _interaction_space.get_height()
-                                                        , 1.0)
-              _shot.assign_portal(self.display_portal)
-              self.current_shot = _shot
-              self.display_portal.portal_matrix_node.Transform.disconnect()
-              self.display_portal.connect_portal_matrix(self.sf_animation_matrix)
-              self.captured_shots.append(_shot)
-
-          return
+      pass
 
 
   ## Called whenever sf_2D_mode_button changes.
@@ -981,12 +681,18 @@ class PortalCamera(Tool):
       
       # switch mode of currently opened shot
       if self.current_shot != None:
+
         self.current_shot.sf_viewing_mode.value = "2D"
+
+        for _tool_repr in self.tool_representations:
+          _tool_repr.set_viewing_mode("2D")
 
       # switch capture_viewing_mode
       else:
         self.capture_viewing_mode = "2D"
-        self.viewing_mode_indicator.Material.value = 'data/materials/CameraMode2D.gmd'
+
+        for _tool_repr in self.tool_representations:
+          _tool_repr.viewing_mode_indicator.Material.value = 'data/materials/CameraMode2D.gmd'
 
   ## Called whenever sf_3D_mode_button changes.
   @field_has_changed(sf_3D_mode_button)
@@ -995,12 +701,18 @@ class PortalCamera(Tool):
       
       # switch mode of currently opened shot
       if self.current_shot != None:
+        
         self.current_shot.sf_viewing_mode.value = "3D"
+
+        for _tool_repr in self.tool_representations:
+          _tool_repr.set_viewing_mode("3D")
       
       # switch capture_viewing_mode
       else:
         self.capture_viewing_mode = "3D"
-        self.viewing_mode_indicator.Material.value = 'data/materials/CameraMode3D.gmd'
+
+        for _tool_repr in self.tool_representations:
+          _tool_repr.viewing_mode_indicator.Material.value = 'data/materials/CameraMode3D.gmd'
 
 
   ## Called whenever sf_negative_parallax_on_button changes.

@@ -369,6 +369,8 @@ class SceneObject:
     for _object in self.objects:
       _object.reset()
 
+    self.scene_root.Transform.value = avango.gua.make_identity_mat()
+
 
 ## Class to represent an object in a scene, associated to a scenegraph node.
 class InteractiveObject(avango.script.Script):

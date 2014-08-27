@@ -83,7 +83,7 @@ class View(avango.script.Script):
     self.camera = avango.gua.nodes.Camera()
     self.camera.SceneGraph.value = SCENEGRAPH.Name.value
     
-    self.camera.Mode.value = 1
+    self.camera.Mode.value = 0
 
     # set render mask for camera
     #_render_mask = "!do_not_display_group && !avatar_group_" + str(self.platform_id) + " && !couple_group_" + str(self.platform_id)
@@ -101,6 +101,8 @@ class View(avango.script.Script):
     # The pipeline used to render this View.
     self.pipeline = avango.gua.nodes.Pipeline()
     self.pipeline.Enabled.value = True
+    #self.pipeline.NearClip.value = 1.5
+    #self.pipeline.FarClip.value = 10.0
 
     if DISPLAY_INSTANCE.stereomode == "HMD":
 

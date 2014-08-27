@@ -342,17 +342,32 @@ class User(VisibilityHandler2D):
                                           , "screen_proxy_group")
     self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
 
+    ## @var last_seen_display_group
+    # DisplayGroup instance for which the user's viewing ray lastly hit a screen proxy geometry.
+    self.last_seen_display_group = None
+
     self.always_evaluate(True)
 
   ## Evaluated every frame.
   def evaluate(self):
-    import random
+
+    # evaluate viewing ray intersections with screen proxy geometries
+    for _i in range(len(self.mf_screen_pick_result.value)):
+
+      _pick_object = self.mf_screen_pick_result.value[_i].Object.value
+
+      # only consider own workspace geometries
+      if _pick_object.Name.value.startswith("proxy_w" + str(self.WORKSPACE_INSTANCE.id)):
+        _display_group_id = int(_pick_object.Name.value.split("_")[2].replace("dg", ""))
+        self.last_seen_display_group = self.WORKSPACE_INSTANCE.display_groups[_display_group_id]
+        break
+
 
     if self.id == 0:
-      if len(self.mf_screen_pick_result.value) > 0:
-        print self.mf_screen_pick_result.value[0].Object.value.Name.value, random.randint(1, 100)
-
-    pass
+      if self.last_seen_display_group != None:
+        pass#print self.last_seen_display_group.displays[0]
+      else:
+        pass#print "None"
 
     '''
     _track_vec = self.headtracking_reader.sf_abs_vec.value

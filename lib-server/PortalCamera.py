@@ -89,36 +89,6 @@ class PortalCameraRepresentation(ToolRepresentation):
                         , USER_REPRESENTATION
                         , "portal_cam_" + str(PORTAL_CAMERA_INSTANCE.id))
 
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-
-    ## @var camera_frame
-    # Geometry node containing the PortalCamera's portal frame.
-    self.camera_frame = _loader.create_geometry_from_file('camera_frame'
-                                                        , 'data/objects/screen.obj'
-                                                        , 'data/materials/ShadelessRed.gmd'
-                                                        , avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0) * \
-                                        avango.gua.make_scale_mat(self.TOOL_INSTANCE.portal_width, self.TOOL_INSTANCE.portal_height, 1.0)
-    self.camera_frame.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.camera_frame.GroupNames.value.append("portal_invisible_group")
-    self.camera_frame.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
-    self.tool_transform_node.Children.value.append(self.camera_frame)
-
-    ## @var viewing_mode_indicator
-    # Tiny geometry in the border of the camera frame to illustrate the current state of self.capture_viewing_mode.
-    self.viewing_mode_indicator = _loader.create_geometry_from_file('viewing_mode_indicator',
-                                                                    'data/objects/plane.obj',
-                                                                    'data/materials/CameraMode3D.gmd',
-                                                                    avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.TOOL_INSTANCE.portal_width/2 * 0.86, self.TOOL_INSTANCE.portal_height * 0.93, 0.0) * \
-                                                  avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                                  avango.gua.make_scale_mat(self.TOOL_INSTANCE.portal_height * 0.1, 1.0, self.TOOL_INSTANCE.portal_height * 0.1)
-    self.viewing_mode_indicator.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.viewing_mode_indicator.GroupNames.value.append("portal_invisible_group")
-    self.viewing_mode_indicator.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value)
-    self.tool_transform_node.Children.value.append(self.viewing_mode_indicator)
-
     ## @var portal
     # Portal display instance belonging to this representation.
     self.portal = Portal(PORTAL_MATRIX = avango.gua.make_identity_mat()
@@ -193,13 +163,6 @@ class PortalCameraRepresentation(ToolRepresentation):
   ## Retrieves portal_width and portal_height from the PortalCamera instance and updates the sizes of the representation's parts.
   def update_size(self):
 
-    self.camera_frame.Transform.value = avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0) * \
-                                        avango.gua.make_scale_mat(self.TOOL_INSTANCE.portal_width, self.TOOL_INSTANCE.portal_height, 1.0)
-
-    self.viewing_mode_indicator.Transform.value = avango.gua.make_trans_mat(-self.TOOL_INSTANCE.portal_width/2 * 0.86, self.TOOL_INSTANCE.portal_height * 0.93, 0.0) * \
-                                                  avango.gua.make_rot_mat(90, 1, 0, 0) * \
-                                                  avango.gua.make_scale_mat(self.TOOL_INSTANCE.portal_height * 0.1, 1.0, self.TOOL_INSTANCE.portal_height * 0.1)
-
     self.portal.set_size(self.TOOL_INSTANCE.portal_width, self.TOOL_INSTANCE.portal_height)                                                  
 
   ## Loads a shot to this representation's portal and sets it visible.
@@ -256,17 +219,6 @@ class PortalCameraRepresentation(ToolRepresentation):
     if self.portal.negative_parallax != MODE:
       self.portal.switch_negative_parallax()
 
-  ## Shows the red frame indicating photo capturing.
-  def show_capture_frame(self):
-
-    self.camera_frame.GroupNames.value.remove("portal_invisible_group")
-    self.viewing_mode_indicator.GroupNames.value.remove("portal_invisible_group")
-
-  ## Hides the red frame indicating photo capturing.
-  def hide_capture_frame(self):
-    
-    self.camera_frame.GroupNames.value.append("portal_invisible_group")
-    self.viewing_mode_indicator.GroupNames.value.append("portal_invisible_group")
 
   ## Appends a string to the GroupNames field of this PortalCameraRepresentation's visualization.
   # @param STRING The string to be appended.
@@ -275,8 +227,6 @@ class PortalCameraRepresentation(ToolRepresentation):
     # do not add portal head group nodes for visibility of this portal
     if not STRING.startswith("portal"):
       self.portal.portal_matrix_node.GroupNames.value.append(STRING)
-      self.camera_frame.GroupNames.value.append(STRING)
-      self.viewing_mode_indicator.GroupNames.value.append(STRING)
 
 
   ## Removes a string from the GroupNames field of this PortalCameraRepresentation's visualization.
@@ -284,22 +234,11 @@ class PortalCameraRepresentation(ToolRepresentation):
   def remove_from_visualization_group_names(self, STRING):
     
     self.portal.portal_matrix_node.GroupNames.value.remove(STRING)
-    self.camera_frame.GroupNames.value.remove(STRING)
-    self.viewing_mode_indicator.GroupNames.value.remove(STRING)
 
   ## Resets the GroupNames field of this PortalCameraRepresentation's visualization to the user representation's view_transform_node.
   def reset_visualization_group_names(self):
 
     self.portal.portal_matrix_node.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
-
-    # do not hide camera frame and viewing mode indicator when visible
-    if self.TOOL_INSTANCE.sf_focus_button.value == True and self.TOOL_INSTANCE.current_shot == None:
-      self.camera_frame.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
-      self.viewing_mode_indicator.GroupNames.value = [self.USER_REPRESENTATION.view_transform_node.Name.value]
-    else:
-      self.camera_frame.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
-      self.viewing_mode_indicator.GroupNames.value = ["portal_invisible_group", self.USER_REPRESENTATION.view_transform_node.Name.value]
-    
 
   ## Enables the highlight for this PortalCameraRepresentation.
   def enable_highlight(self):
@@ -435,7 +374,11 @@ class PortalCamera(Tool):
 
 
   ## Custom constructor.
-  # @param 
+  # @param WORKSPACE_INSTANCE The instance of Workspace to which this Tool belongs to.
+  # @param TOOL_ID The identification number of this Tool within the workspace.
+  # @param CAMERA_TRACKING_STATION The tracking target name of this PortalCamera.
+  # @param CAMERA_DEVICE_STATION The device station name of this PortalCamera.
+  # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags.
   def my_constructor(self, WORKSPACE_INSTANCE, TOOL_ID, CAMERA_TRACKING_STATION, CAMERA_DEVICE_STATION, VISIBILITY_TABLE):
 
     # call base class constructor
@@ -495,8 +438,7 @@ class PortalCamera(Tool):
         else:
           _tool_repr.disable_highlight()
 
-  ##
-  #
+  ## Selects a list of potentially currently active PortalCameraRepresentations by checking the assigned user of them.
   def create_candidate_list(self):
     
     _candidate_list = []
@@ -514,8 +456,8 @@ class PortalCamera(Tool):
 
     return _candidate_list
 
-  ##
-  #
+  ## Chooses one PortalCameraRepresentation among the potentially active ones in a candidate list.
+  # @param CANDIDATE_LIST The list of candidates to be checked.
   def choose_from_candidate_list(self, CANDIDATE_LIST):
     
     _dg_hit_by_user = self.assigned_user.last_seen_display_group
@@ -527,8 +469,7 @@ class PortalCamera(Tool):
 
     return None
 
-  ##
-  #
+  ## Create candidate list and select one of the candidates.
   def get_active_tool_representation(self):
 
     _candidate_representations = self.create_candidate_list()

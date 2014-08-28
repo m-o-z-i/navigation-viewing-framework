@@ -401,6 +401,10 @@ class PortalCamera(Tool):
     # Shot instance which is currently displayed above the PortalCamera.
     self.current_shot = None
 
+    ## @var in_capture_mode
+    # Boolean saying if the portal camera is currently at capturing a photo.
+    self.in_capture_mode = False
+
     ## @var portal_width
     # Width of the portals displayed in this PortalCamera.
     self.portal_width = 0.35
@@ -565,6 +569,18 @@ class PortalCamera(Tool):
       for _tool_repr in self.tool_representations:
         _tool_repr.update_size()
 
+    # update portal preview in capture mode
+    if self.in_capture_mode:
+      
+      _active_tool_representation = self.get_active_tool_representation()
+
+      _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
+
+      _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
+                              avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
+
+      for _tool_repr in self.tool_representations:
+        _tool_repr.portal_nav.set_navigation_values(_shot_platform_matrix, _tool_repr.portal_nav.sf_scale.value)
 
   ## Sets the scale of the currently active shot or returns when no shot is active.
   # @param SCALE The new scale to be set.
@@ -596,7 +612,6 @@ class PortalCamera(Tool):
 
     self.current_shot = None
 
-  
 
   ## Called whenever sf_focus_button changes.
   @field_has_changed(sf_focus_button)
@@ -605,13 +620,32 @@ class PortalCamera(Tool):
     # show and hide camera frame
     if self.sf_focus_button.value == True and self.current_shot == None:
 
-      for _tool_repr in self.tool_representations:
-        _tool_repr.show_capture_frame()
+      # get active tool mechanism by decision algorithm
+      _active_tool_representation = self.get_active_tool_representation()
+
+      # create shot and assign it
+      _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
+
+      # compute matrix
+      _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
+                              avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
+
+      _shot = Shot()
+      _shot.my_constructor(_shot_platform_matrix,
+                           _active_navigation.sf_scale.value,
+                           self.capture_viewing_mode,
+                           "PERSPECTIVE",
+                           self.capture_parallax_mode)
+
+      self.set_current_shot(_shot)              
+
+      self.in_capture_mode = True
 
     else:
 
-      for _tool_repr in self.tool_representations:
-        _tool_repr.hide_capture_frame()
+      if self.in_capture_mode == True:
+        self.in_capture_mode = False
+        self.clear_current_shot()
 
 
   ## Called whenever sf_capture_button changes.
@@ -619,28 +653,9 @@ class PortalCamera(Tool):
   def sf_capture_button_changed(self):
     if self.sf_capture_button.value == True:
 
-      # capture a new portal
-      if self.current_shot == None and self.assigned_user != None:
-
-        # get active tool mechanism by decision algorithm
-        _active_tool_representation = self.get_active_tool_representation()
-
-        # create shot and assign it
-        _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
-
-        _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
-                                avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
-
-
-        _shot = Shot()
-        _shot.my_constructor(_shot_platform_matrix,
-                             _active_navigation.sf_scale.value,
-                             self.capture_viewing_mode,
-                             "PERSPECTIVE",
-                             self.capture_parallax_mode)
-
-        self.captured_shots.append(_shot)
-        self.set_current_shot(_shot)
+      # store the preview shot currently loaded
+      self.captured_shots.append(self.current_shot)
+      self.in_capture_mode = False
 
   ## Called whenever sf_next_rec_button changes.
   @field_has_changed(sf_next_rec_button)

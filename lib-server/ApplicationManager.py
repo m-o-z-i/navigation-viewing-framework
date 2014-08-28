@@ -362,6 +362,10 @@ class ApplicationManager(avango.script.Script):
     # handle portal transitions
     for _nav in self.workspace_navigations:
 
+      # if navigation does not allow portal transit, go to next loop iteration
+      if _nav.reacts_on_portal_transit == False:
+        continue
+
       # if navigation has no device (e.g. static navigation), do not allow transit
       try:
         _nav.device

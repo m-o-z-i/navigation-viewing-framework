@@ -44,6 +44,7 @@ class SteeringNavigation(Navigation):
   # @param DEVICE_TRACKING_NAME Name of the device's tracking target name as chosen in daemon.
   # @param IS_REQUESTABLE Boolean saying if this Navigation is a requestable one. Requestable navigations can be switched to using a special button on the device.
   # @param REQUEST_BUTTON_NUM Button number of the device's sensor which should be used for the request mechanism.
+  # @param REACTS_ON_PORTAL_TRANSIT Boolean saying if this navigation is allowed to be reset by portal transitions.
   def my_constructor(
       self
     , STARTING_MATRIX
@@ -57,6 +58,7 @@ class SteeringNavigation(Navigation):
     , DEVICE_TRACKING_NAME = None
     , IS_REQUESTABLE = False
     , REQUEST_BUTTON_NUM = None
+    , REACTS_ON_PORTAL_TRANSIT = False
     ):
 
     self.list_constructor(TRACE_VISIBILITY_LIST)
@@ -157,6 +159,10 @@ class SteeringNavigation(Navigation):
     # connect request button
     if self.is_requestable:
       exec "self.sf_request_trigger.connect_from(self.device.device_sensor.Button" + str(REQUEST_BUTTON_NUM) + ")"
+
+    ## @var reacts_on_portal_transit
+    # Boolean saying if this navigation is allowed to be reset by portal transitions.
+    self.reacts_on_portal_transit = REACTS_ON_PORTAL_TRANSIT
 
     # evaluate every frame
     self.always_evaluate(True)

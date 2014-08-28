@@ -543,6 +543,12 @@ class PortalCamera(Tool):
       self.portal_width += 0.005
       self.portal_height += 0.005
 
+      if self.portal_width > 1.0:
+        self.portal_width = 1.0
+
+      if self.portal_height > 1.0:
+        self.portal_height = 1.0
+
       for _tool_repr in self.tool_representations:
         _tool_repr.update_size()
 

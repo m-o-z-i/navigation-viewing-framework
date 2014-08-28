@@ -19,24 +19,25 @@ import Utilities
 
 # import math libraries
 import math
+import time
 
 ## A User instances has UserRepresentations for each display group of his workspace.
 # It handles the selection of the display group's navigations.
-class UserRepresentation(avango.script.Script):
+class UserRepresentation:
 
   ## Default constructor.
   def __init__(self):
-    self.super(UserRepresentation).__init__()
+    pass
 
   ## Custom constructor.
   # @param USER Reference to the user to be represented.
   # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
-  # @param TRANSFORMATION_POLICY A string command to be evaluated every frame.
+  # @param 
   # @param HEAD_NODE_NAME Name of the UserRepresentation's head node in the scenegraph.
   # @param COMPLEX_SETUP If activated, the transformation policy is evaluated every frame to update head. If deactivated,
   #                      a standard mono viewing setup is assumed.
-  def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = 'head', COMPLEX_SETUP = True):
+  def my_constructor(self, USER, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, VIRTUAL_USER_REPR_DISPLAY_INDEX = -1, HEAD_NODE_NAME = 'head', COMPLEX_SETUP = True):
 
     ## @var USER
     # Reference to the user to be represented.
@@ -57,10 +58,6 @@ class UserRepresentation(avango.script.Script):
     ## @var dependent_nodes
     # Placeholder for scenegraph nodes which are relevant for the transformation policy.
     self.dependent_nodes = []
-
-    ## @var transformation_policy
-    # A string command to be evaluated every frame.
-    self.transformation_policy = TRANSFORMATION_POLICY
 
     ## @var execute_transformation_policy
     # Boolean indicating if the transformation policy is evaluated every frame.
@@ -109,14 +106,36 @@ class UserRepresentation(avango.script.Script):
     self.avatar = Avatar()
     self.avatar.my_constructor(self)
 
-    # set evaluation policy
-    self.always_evaluate(True)
+    ##
+    #
+    self.virtual_user_repr_display_index = VIRTUAL_USER_REPR_DISPLAY_INDEX
+
+    ##
+    #
+    self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
+
 
   ## Evaluated every frame.
-  def evaluate(self):
-    
-    if self.execute_transformation_policy:  
-      exec self.transformation_policy
+  def frame_callback(self):
+  
+    if self.execute_transformation_policy:
+      
+      if self.virtual_user_repr_display_index == -1:
+        self.perform_physical_user_head_transformation()
+
+      else:
+        self.perform_virtual_user_head_transformation(self.virtual_user_repr_display_index)
+
+  ##
+  def perform_physical_user_head_transformation(self):
+    self.head.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.USER.headtracking_reader.sf_abs_mat.value
+
+  ##
+  def perform_virtual_user_head_transformation(self, DISPLAY_INDEX):
+    self.head.Transform.value = self.DISPLAY_GROUP.displays[DISPLAY_INDEX].portal_screen_node.Transform.value * \
+                                avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[DISPLAY_INDEX].portal_matrix_node.Transform.value) * \
+                                self.dependent_nodes[0].WorldTransform.value
+
 
 
   ## Deactivates the evaluation of the transformation policy and assigns fixed matrices
@@ -389,14 +408,14 @@ class User(VisibilityHandler2D):
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
-  # @param TRANSFORMATION_POLICY A string command to be evaluated every frame.
+  # @param 
   # @param HEAD_NODE_NAME Name of the UserRepresentation's head node in the scenegraph.
   # @param COMPLEX_SETUP If activated, the transformation policy is evaluated every frame to update head. If deactivated,
   #                      a standard mono viewing setup is assumed.
-  def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME = "head", COMPLEX_SETUP = True):
+  def create_user_representation_for(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, VIRTUAL_USER_REPR_DISPLAY_INDEX = -1, HEAD_NODE_NAME = "head", COMPLEX_SETUP = True):
 
     _user_repr = UserRepresentation()
-    _user_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, TRANSFORMATION_POLICY, HEAD_NODE_NAME, COMPLEX_SETUP)
+    _user_repr.my_constructor(self, DISPLAY_GROUP, VIEW_TRANSFORM_NODE, VIRTUAL_USER_REPR_DISPLAY_INDEX, HEAD_NODE_NAME, COMPLEX_SETUP)
     self.user_representations.append(_user_repr)
     return _user_repr
 

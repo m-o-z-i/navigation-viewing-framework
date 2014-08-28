@@ -132,7 +132,7 @@ vr_lab_rear.create_portal_cam(  CAMERA_TRACKING_STATION = 'tracking-portal-camer
 
 
 ## Create portal navigations. ##
-'''
+#'''
 tower_portal_1_nav = StaticNavigation()
 tower_portal_1_nav.my_constructor(STATIC_ABS_MAT = avango.gua.make_trans_mat(-12.0, 17.3, -7.0)
                                 , STATIC_SCALE = 1.0
@@ -189,5 +189,5 @@ tower_portal_2_dg = DisplayGroup(ID = None
                                )
 
 portal_display_groups = [tower_portal_1_dg, tower_portal_2_dg]
-'''
-portal_display_groups = []
+#'''
+#portal_display_groups = []

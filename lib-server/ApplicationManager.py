@@ -132,7 +132,6 @@ class ApplicationManager(avango.script.Script):
     self.portal_display_groups = portal_display_groups
 
 
-
     ## Handle physical viewing setups ##
 
     for _workspace in self.workspaces:
@@ -168,8 +167,8 @@ class ApplicationManager(avango.script.Script):
           self.NET_TRANS_NODE.Children.value.append(_view_transform_node)
 
           # create user representation in display group
-          _user_repr = _user.create_user_representation_for(_display_group, _view_transform_node
-                     , 'self.head.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.USER.headtracking_reader.sf_abs_mat.value')
+          _user_repr = _user.create_user_representation_for(_display_group
+                                                          , _view_transform_node)
           ApplicationManager.all_user_representations.append(_user_repr)
 
           # create tool representation in display_group
@@ -239,16 +238,13 @@ class ApplicationManager(avango.script.Script):
           if _display.viewing_mode == "2D":
             _complex = False
 
-          transformation_policy = "self.head.Transform.value = self.DISPLAY_GROUP.displays[" + str(_display_index) + \
-                                  "].portal_screen_node.Transform.value * avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[" + \
-                                  str(_display_index) + "].portal_matrix_node.Transform.value) * self.dependent_nodes[0].WorldTransform.value"
 
           _virtual_user_repr = _physical_user_repr.USER.create_user_representation_for(
-            _display_group
-          , _display.scene_matrix_node
-          , transformation_policy
-          , 'head_' + _physical_user_repr.view_transform_node.Name.value
-          , _complex)
+                               _display_group
+                             , _display.scene_matrix_node
+                             , _display_index
+                             , 'head_' + _physical_user_repr.view_transform_node.Name.value
+                             , _complex)
 
           _virtual_user_repr.add_dependent_node(_physical_user_repr.head)
           _virtual_user_repr.add_existing_screen_node(_display.portal_screen_node)

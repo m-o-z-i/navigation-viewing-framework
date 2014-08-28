@@ -29,13 +29,11 @@ class ToolRepresentation(avango.script.Script):
   # @param DISPLAY_GROUP DisplayGroup instance for which this ToolRepresentation is responsible for.
   # @param USER_REPRESENTATION Corresponding UserRepresentation instance under which's view_transform_node the ToolRepresentation is appended.
   # @param TOOL_TRANSFORM_NODE_NAME String to be used as name for this ToolRepresentation's transform node.
-  # @param TRANSFORMATION_POLICY A string command to be evaluated every frame.
   def base_constructor(self
                    , TOOL_INSTANCE
                    , DISPLAY_GROUP
                    , USER_REPRESENTATION
-                   , TOOL_TRANSFORM_NODE_NAME
-                   , TRANSFORMATION_POLICY):
+                   , TOOL_TRANSFORM_NODE_NAME):
     
     ## @var TOOL_INSTANCE
     # An instance of a subclass of Tool to which this ToolRepresentation is associated.
@@ -57,9 +55,6 @@ class ToolRepresentation(avango.script.Script):
     # Identification number of the workspace in which TOOL_INSTANCE is active.
     self.workspace_id = int(self.USER_REPRESENTATION.view_transform_node.Name.value.split("_")[0].replace("w", ""))
 
-    ## @var transformation_policy
-    # A string command to be evaluated every frame.
-    self.transformation_policy = TRANSFORMATION_POLICY
 
     ## @var tool_transform_node
     # Scenegraph transformation node representing this ToolRepresentation.
@@ -73,6 +68,12 @@ class ToolRepresentation(avango.script.Script):
   def get_world_transform(self):
 
     return self.tool_transform_node.WorldTransform.value
+
+  ##
+  #
+  def perform_tool_node_transformation(self):
+
+    self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value
 
   ## Appends a string to the GroupNames field of this ToolRepresentation's visualization.
   # @param STRING The string to be appended.
@@ -91,7 +92,8 @@ class ToolRepresentation(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
-    exec self.transformation_policy
+    self.perform_tool_node_transformation()
+
 
 ###############################################################################################
 

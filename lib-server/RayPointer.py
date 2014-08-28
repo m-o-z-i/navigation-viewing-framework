@@ -39,8 +39,7 @@ class RayPointerRepresentation(ToolRepresentation):
     self.base_constructor(RAY_POINTER_INSTANCE
                         , DISPLAY_GROUP
                         , USER_REPRESENTATION
-                        , "pick_ray_" + str(RAY_POINTER_INSTANCE.id)
-                        , "self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value")
+                        , "pick_ray_" + str(RAY_POINTER_INSTANCE.id))
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
@@ -74,7 +73,7 @@ class RayPointerRepresentation(ToolRepresentation):
     self.ray_start_geometry.GroupNames.value.append(self.USER_REPRESENTATION.view_transform_node.Name.value) 
     self.tool_transform_node.Children.value.append(self.ray_start_geometry)
 
-## @var highlighted
+    ## @var highlighted
     # Boolean indicating if this representation is highlighted. Usually used to color the assigned user's representation.
     self.highlighted = False
 
@@ -145,7 +144,7 @@ class RayPointerRepresentation(ToolRepresentation):
   def evaluate(self):
 
     # base class evaluate
-    exec self.transformation_policy
+    self.perform_tool_node_transformation()
 
     # update border color according to highlight enabled
     if self.highlighted:

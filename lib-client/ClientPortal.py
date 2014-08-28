@@ -397,7 +397,8 @@ class PortalPreView(avango.script.Script):
     # trigger frame callback activity
     _server_view_node_name = "w" + str(self.VIEW.workspace_id) + "_dg" + str(self.VIEW.display_group_id) + "_u" + str(self.VIEW.user_id)
 
-    if (_server_view_node_name) not in self.portal_matrix_node.GroupNames.value or \
+    if (len(self.portal_matrix_node.GroupNames.value) != 0 and \
+       (_server_view_node_name) not in self.portal_matrix_node.GroupNames.value) or \
        self.mf_portal_modes.value[4] == "4-False":
 
       if self.frame_trigger.Active.value == True:
@@ -416,6 +417,7 @@ class PortalPreView(avango.script.Script):
 
         # fixes display of back geometry when jumping between navigations
         self.back_geometry.GroupNames.value.remove("portal_invisible_group")
+        self.portal_border.GroupNames.value.remove("portal_invisible_group")
 
 
   ## Evaluated every frame when active.
@@ -443,7 +445,6 @@ class PortalPreView(avango.script.Script):
     _view_in_portal_space_vec = avango.gua.make_rot_mat(_view_in_portal_space_mat.get_rotate_scale_corrected()) * _ref_vec
     _view_in_portal_space_vec = avango.gua.Vec3(_view_in_portal_space_vec.x, _view_in_portal_space_vec.y, _view_in_portal_space_vec.z)
     _angle = math.acos(_ref_vec.dot(_view_in_portal_space_vec))
-
 
     # trigger on/off changes
     if _view_in_portal_space_mat.get_translate().z < 0 or abs(math.degrees(_angle)) > 100.0:

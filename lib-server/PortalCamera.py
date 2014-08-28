@@ -87,8 +87,7 @@ class PortalCameraRepresentation(ToolRepresentation):
     self.base_constructor(PORTAL_CAMERA_INSTANCE
                         , DISPLAY_GROUP
                         , USER_REPRESENTATION
-                        , "portal_cam_" + str(PORTAL_CAMERA_INSTANCE.id)
-                        , "self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value")
+                        , "portal_cam_" + str(PORTAL_CAMERA_INSTANCE.id))
 
     _loader = avango.gua.nodes.TriMeshLoader()
 
@@ -164,7 +163,7 @@ class PortalCameraRepresentation(ToolRepresentation):
   def evaluate(self):
 
     # base class evaluate
-    exec self.transformation_policy
+    self.perform_tool_node_transformation()
 
     # wait for portal matrix node, then connect it if not already done
     if self.portal_matrix_connected == False:

@@ -127,6 +127,14 @@ class PortalCameraRepresentation(ToolRepresentation):
     # Boolean saying if the portal's portal matrix node was connected. Is done once it is present by evaluate().
     self.portal_matrix_connected = False
 
+  ## Computes the WorldTransform of a scenegraph node manually without using the pre-defined field.
+  # @param NODE The scenegraph node to compute the world transformation for.
+  def compute_world_transform(self, NODE):
+
+    if NODE == None:
+      return avango.gua.make_identity_mat()
+    else:   
+      return self.compute_world_transform(NODE.Parent.value) * NODE.Transform.value
 
   ## Evaluated every frame.
   def evaluate(self):
@@ -149,7 +157,7 @@ class PortalCameraRepresentation(ToolRepresentation):
   
 
     # update sf_portal_matrix
-    self.sf_portal_matrix.value = self.tool_transform_node.WorldTransform.value * \
+    self.sf_portal_matrix.value = self.compute_world_transform(self.tool_transform_node) * \
                                   avango.gua.make_trans_mat(0.0, self.TOOL_INSTANCE.portal_height/2, 0.0)
 
     # update border color according to highlight enabled
@@ -510,19 +518,6 @@ class PortalCamera(Tool):
       for _tool_repr in self.tool_representations:
         _tool_repr.update_size()
 
-    # update portal preview in capture mode
-    if self.in_capture_mode:
-      
-      _active_tool_representation = self.get_active_tool_representation()
-
-      _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
-
-      _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
-                              avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
-
-      for _tool_repr in self.tool_representations:
-        _tool_repr.portal_nav.set_navigation_values(_shot_platform_matrix, _tool_repr.portal_nav.sf_scale.value)
-
   ## Sets the scale of the currently active shot or returns when no shot is active.
   # @param SCALE The new scale to be set.
   def set_current_shot_scale(self, SCALE):
@@ -678,9 +673,6 @@ class PortalCamera(Tool):
       else:
         self.capture_viewing_mode = "2D"
 
-        for _tool_repr in self.tool_representations:
-          _tool_repr.viewing_mode_indicator.Material.value = 'data/materials/CameraMode2D.gmd'
-
   ## Called whenever sf_3D_mode_button changes.
   @field_has_changed(sf_3D_mode_button)
   def sf_3D_mode_button_changed(self):
@@ -697,9 +689,6 @@ class PortalCamera(Tool):
       # switch capture_viewing_mode
       else:
         self.capture_viewing_mode = "3D"
-
-        for _tool_repr in self.tool_representations:
-          _tool_repr.viewing_mode_indicator.Material.value = 'data/materials/CameraMode3D.gmd'
 
 
   ## Called whenever sf_negative_parallax_on_button changes.

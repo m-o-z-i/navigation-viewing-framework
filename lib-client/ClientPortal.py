@@ -349,15 +349,6 @@ class PortalPreView(avango.script.Script):
     del self.pipeline
     del self.camera
 
-  ## Computes the WorldTransform of a scenegraph node manually without using the pre-defined field.
-  # @param NODE The scenegraph node to compute the world transformation for.
-  def compute_world_transform(self, NODE):
-
-    if NODE == None:
-      return avango.gua.make_identity_mat()
-    else:   
-      return self.compute_world_transform(NODE.Parent.value) * NODE.Transform.value
-
   ## Called whenever mf_portal_modes changes.
   @field_has_changed(mf_portal_modes)
   def mf_portal_modes_changed(self):

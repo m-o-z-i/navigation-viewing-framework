@@ -17,9 +17,9 @@ from PortalCamera import *
 # changes scalings by button presses.
 class PortalCameraNavigation(Navigation):
 
-  ## @var sf_capture_button
-  # Boolean field to check if the capture button was pressed.
-  sf_capture_button = avango.SFBool()
+  ## @var sf_clutch_button
+  # Boolean field to check if the clutch trigger button was pressed.
+  sf_clutch_button = avango.SFBool()
 
   ## @var sf_scale_up_button
   # Boolean field to check if the scale up button was pressed.
@@ -46,7 +46,7 @@ class PortalCameraNavigation(Navigation):
     self.drag_last_frame_camera_mat = None
 
     # init field connections
-    self.sf_capture_button.connect_from(self.portal_cam.sf_capture_button)
+    self.sf_clutch_button.connect_from(self.portal_cam.sf_focus_button)
     self.sf_scale_up_button.connect_from(self.portal_cam.sf_scale_up_button)
     self.sf_scale_down_button.connect_from(self.portal_cam.sf_scale_down_button)
 
@@ -86,12 +86,12 @@ class PortalCameraNavigation(Navigation):
     self.sf_scale.value = STATIC_SCALE
     self.sf_nav_mat.value = self.sf_abs_mat.value * avango.gua.make_scale_mat(self.sf_scale.value)
 
-  ## Called whenever sf_capture_button changes
-  @field_has_changed(sf_capture_button)
+  ## Called whenever sf_clutch_button changes
+  @field_has_changed(sf_clutch_button)
   def sf_capture_button_changed(self):
     
     # initiate dragging
-    if self.sf_capture_button.value == True and self.portal_cam.current_shot != None:
+    if self.sf_clutch_button.value == True and self.portal_cam.current_shot != None:
 
       self.drag_last_frame_camera_mat = self.portal_cam.tracking_reader.sf_abs_mat.value * \
                                         avango.gua.make_trans_mat(0.0, self.portal_cam.portal_height/2, 0.0)

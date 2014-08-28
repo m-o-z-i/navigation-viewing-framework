@@ -243,10 +243,17 @@ class SceneManager(avango.script.Script):
     _pipeline_value_node.Children.value.append(self.pipeline_info_node)
 
     # init scenes   
-    #self.scene_monkey = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_pitoti = ScenePitoti(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_medieval = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_vianden = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)       
+    #self.scene_monkey     = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_medieval    = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_vianden    = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)   
+
+    #pitoti krams:    
+    self.scene_spacemonkey  = SpacemonkeyPitoti(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_seradinaRock = SeradinaRock(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_streets      = Streets(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_valley       = SeradinaValley(self, SCENEGRAPH, NET_TRANS_NODE)
+
+
 
     self.activate_scene(0) # activate first scene
 
@@ -274,7 +281,7 @@ class SceneManager(avango.script.Script):
 
     if self.sf_key3.value == True: # key pressed
       self.activate_scene(2)
-
+  """
   ## Called whenever sf_key4 changes.
   @field_has_changed(sf_key4)
   def sf_key4_changed(self):
@@ -323,7 +330,8 @@ class SceneManager(avango.script.Script):
 
     if self.sf_key0.value == True: # key pressed
       self.activate_scene(9)
-
+  """
+  
   ## Called whenever sf_key_home changes.
   @field_has_changed(sf_key_home)
   def sf_key_home_changed(self):

@@ -64,11 +64,129 @@ class SceneMedievalTown(SceneObject):
     self.enable_fxaa = True
 
 
-class ScenePitoti(SceneObject):
+class SpacemonkeyPitoti(SceneObject):
 
   # constructor
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
-    SceneObject.__init__(self, "ScenePitotiTest", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+    SceneObject.__init__(self, "SpacemonkeyPitoti", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+
+    # navigation parameters
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
+    self.starting_scale = 1.0
+
+    _matrix = avango.gua.make_identity_mat()
+    _list = [-2.233, 0.348, -0.051, 0.003, 0.340, 2.217, 0.279, -0.003, 0.093, 0.268, -2.243, 0.012, 0.000, 0.000, 0.000, 1.000 ]
+    counter = 0
+
+    for i in range(0, 4):
+        for j in range(0, 4):
+            _matrix.set_element(i,j,_list[counter])
+            counter+=1
+
+
+    # geometry
+    _mat =  _matrix * avango.gua.make_trans_mat(0.0338275, 0.324057, 0.234019)
+    self.init_point_cloud("spacemonkey", "/mnt/SSD/PLOD_Models/Spacemonkey/Spacemonkey_new.kdn", _mat, self.scene_root, "main_scene")
+
+    # lights
+    #_mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
+    #self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = False ) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+
+class SeradinaRock(SceneObject):
+
+  # constructor
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+    SceneObject.__init__(self, "SeradinaRock", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+
+    # navigation parameters
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
+    self.starting_scale = 1.0
+
+    #trans:  (-0.064  -0.069  0.066)   rot:  (0.018  0.145  0.772  0.619)   scale:  (0.055  0.055  0.055)
+    
+    _matrix = avango.gua.make_identity_mat()
+    _matrix.set_element(0,0,-0.045)
+    _matrix.set_element(0,1,0.013)
+    _matrix.set_element(0,2,0.004)
+    _matrix.set_element(0,3,-0.018)
+    _matrix.set_element(1,0,0.005)
+    _matrix.set_element(1,1,0.002)
+    _matrix.set_element(1,2,0.046)
+    _matrix.set_element(1,3,0.036)
+    _matrix.set_element(2,0,0.013)
+    _matrix.set_element(2,1,0.045)
+    _matrix.set_element(2,2,-0.004)
+    _matrix.set_element(2,3,0.038)
+    _matrix.set_element(3,0,0.0)
+    _matrix.set_element(3,1,0.0)
+    _matrix.set_element(3,2,0.0)
+    _matrix.set_element(3,3,1.0)
+
+
+    # geometry
+    _mat = _matrix * avango.gua.make_trans_mat(23.0957, -391.458, -56.8221)
+    self.init_point_cloud("SeradinaRock", "/mnt/SSD/PLOD_Models/Seradina_Rock/TLS_Seradina_Rock-12C.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti1",  "/mnt/SSD/PLOD_Models/Pitoti/Area-9_Deer.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti2",  "/mnt/SSD/PLOD_Models/Pitoti/Area-12_Horn.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti3",  "/mnt/SSD/PLOD_Models/Pitoti/Area-A_Dagger.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti4",  "/mnt/SSD/PLOD_Models/Pitoti/Area-B_Dagger.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti5",  "/mnt/SSD/PLOD_Models/Pitoti/Area-7_Warrior.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti6",  "/mnt/SSD/PLOD_Models/Pitoti/Area-6_house_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti7",  "/mnt/SSD/PLOD_Models/Pitoti/Area-6_house_P02.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti8",  "/mnt/SSD/PLOD_Models/Pitoti/Area-11_Stele_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti9",  "/mnt/SSD/PLOD_Models/Pitoti/Area-11_Stele_P02.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti10", "/mnt/SSD/PLOD_Models/Pitoti/Area-11_Stele_P03.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti11", "/mnt/SSD/PLOD_Models/Pitoti/Area-11_Stele_P04.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti12", "/mnt/SSD/PLOD_Models/Pitoti/Area-3_Archers_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti13", "/mnt/SSD/PLOD_Models/Pitoti/Area-3_Archers_P02.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti14", "/mnt/SSD/PLOD_Models/Pitoti/Area-7_Rosa-Camuna.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti15", "/mnt/SSD/PLOD_Models/Pitoti/Standing-Rider_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti16", "/mnt/SSD/PLOD_Models/Pitoti/Standing-Rider_P02.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti17", "/mnt/SSD/PLOD_Models/Pitoti/Area-8_Alphabet_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti18", "/mnt/SSD/PLOD_Models/Pitoti/Area-8_Alphabet_P02.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti19", "/mnt/SSD/PLOD_Models/Pitoti/TLS_Naquane-Ossimo-8.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti20", "/mnt/SSD/PLOD_Models/Pitoti/Area_4_hunter_with_bow.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti21", "/mnt/SSD/PLOD_Models/Pitoti/Area-8_SFM_Alphabet_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti22", "/mnt/SSD/PLOD_Models/Pitoti/Area-8_SFM_Alphabet_P02.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti23", "/mnt/SSD/PLOD_Models/Pitoti/Area-13_Superimposition.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti23", "/mnt/SSD/PLOD_Models/Pitoti/Sellero_Rosa_Camuna_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti25", "/mnt/SSD/PLOD_Models/Pitoti/Sellero_Rosa_Camuna_P02.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti26", "/mnt/SSD/PLOD_Models/Pitoti/Sellero_Rosa_Camuna_P03.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti27", "/mnt/SSD/PLOD_Models/Pitoti/Sellero_Rosa_Camuna_P04.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti28", "/mnt/SSD/PLOD_Models/Pitoti/Area-10_Hunting_Scene_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti29", "/mnt/SSD/PLOD_Models/Pitoti/Area-10_Hunting_Scene_P02.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti30", "/mnt/SSD/PLOD_Models/Pitoti/Area-10_Hunting_Scene_P03.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti31", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P01-1.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti32", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P01-2.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti33", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P01-3.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti34", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P01-4.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti35", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P02-1.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti36", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P02-2.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti37", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P02-3.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti38", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P02-4.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti39", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P03-1.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti40", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P03-2.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti41", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P03-3.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti42", "/mnt/SSD/PLOD_Models/Pitoti/Area-1_Warrior-scene_P03-4.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti43", "/mnt/SSD/PLOD_Models/Pitoti/Area-2_Plowing-scene_P01-1.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti44", "/mnt/SSD/PLOD_Models/Pitoti/Area-2_Plowing-scene_P01-2.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti45", "/mnt/SSD/PLOD_Models/Pitoti/Area-2_Plowing-scene_P01-3.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti46", "/mnt/SSD/PLOD_Models/Pitoti/Area-2_Plowing-scene_P01-4.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti47", "/mnt/SSD/PLOD_Models/Pitoti/Area-2_Plowing-scene_P02-1.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti48", "/mnt/SSD/PLOD_Models/Pitoti/Area-2_Plowing-scene_P02-2.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti49", "/mnt/SSD/PLOD_Models/Pitoti/Area-2_Plowing-scene_P02-3.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti50", "/mnt/SSD/PLOD_Models/Pitoti/Area-2_Plowing-scene_P02-4.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti51", "/mnt/SSD/PLOD_Models/Pitoti/TLS_Foppe-di-Nadro_Rock-24.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti52", "/mnt/SSD/PLOD_Models/Pitoti/Area-5_hunter_with_speer_P01.kdn", _mat, self.scene_root, "main_scene")
+    self.init_point_cloud("SeradinaRock_pitoti53", "/mnt/SSD/PLOD_Models/Pitoti/Area-5_hunter_with_speer_P02.kdn", _mat, self.scene_root, "main_scene")
+    #self.init_point_cloud("SeradinaRock_pitoti53", "/mnt/SSD/PLOD_Models/Pitoti/Area-Area-15_Sun-shape_Superimposition.kdn", _mat, self.scene_root, "main_scene")
+   
+   
+class SeradinaValley(SceneObject):
+
+  # constructor
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+    SceneObject.__init__(self, "SeradinaValley", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
     # navigation parameters
     self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
@@ -76,12 +194,55 @@ class ScenePitoti(SceneObject):
 
     # geometry
     _mat = avango.gua.make_trans_mat(0.0338275, 0.324057, 0.234019) * avango.gua.make_scale_mat(2.64027, 2.64027, 2.64027)
-    self.init_point_cloud("spacemonkey", "/mnt/SSD/PLOD_Models/Spacemonkey/Spacemonkey_new.kdn", _mat, self.scene_root, "main_scene")
 
-    # lights
-    #_mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
-    #self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = False ) # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE
+    for i in range(1, 15):
+        self.init_point_cloud("SeradinaValley"+str(i), "/mnt/SSD/PLOD_Models/Seradina_Valley/CONVERTED_Seradina_Part_"+str(i)+".kdn", _mat, self.scene_root, "main_scene")
 
+
+
+class Streets(SceneObject):
+
+  # constructor
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+    SceneObject.__init__(self, "Streets", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+
+    # navigation parameters
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
+    self.starting_scale = 1.0
+
+    _matrix = avango.gua.make_identity_mat()
+    _list = [0.021, 0.008, 0.010, 0.801, -0.005, -0.012, 0.021, -1.021, 0.012, -0.020, -0.009, -0.151, 0.000, 0.000, 0.000, 1.000 ]
+    counter = 0
+
+    for i in range(0, 4):
+        for j in range(0, 4):
+            _matrix.set_element(i,j,_list[counter])
+            counter+=1
+    #print _matrix
+    #(0.021 0.008 0.010 0.801
+    # -0.005 -0.012 0.021 -1.021
+    # 0.012 -0.020 -0.009 -0.151
+    # 0.000 0.000 0.000 1.000)
+
+    # geometry
+    _mat = _matrix * avango.gua.make_trans_mat(10075.6, -7419.66, 14.7925)
+
+    for i in range(1, 28):
+        self.init_point_cloud("Streets"+str(i), "/mnt/SSD/PLOD_Models/Streets/out_"+str(i)+".kdn", _mat, self.scene_root, "main_scene")
+
+class ScenePitoti(SceneObject):
+
+  # constructor
+  def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
+    SceneObject.__init__(self, "ScenePitoti", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
+
+    # navigation parameters
+    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
+    self.starting_scale = 1.0
+
+    # geometry
+    _mat = avango.gua.make_trans_mat(0.0338275, 0.324057, 0.234019) * avango.gua.make_scale_mat(2.64027, 2.64027, 2.64027)
+    self.init_point_cloud("ScenePitoti", "/mnt/SSD/PLOD_Models/Streets/out_1.kdn/Area_4_hunter_with_bow.kdn", _mat, self.scene_root, "main_scene")
 
 class SceneVianden(SceneObject):
 

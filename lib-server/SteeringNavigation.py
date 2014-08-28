@@ -139,6 +139,16 @@ class SteeringNavigation(Navigation):
     # Instance of TimeSensor to handle the duration of animations.
     self.timer = avango.nodes.TimeSensor()
 
+    # create trace and add 'Shadeless' to material string to have a nicer line apperance
+    try:
+      _device_pos = self.device.sf_station_mat.value.get_translate()
+    except:
+      _device_pos = avango.gua.Vec3(0.0, 0.0, 0.0)
+
+    ## @var trace
+    # Instance of Trace class to handle trace drawing of this navigation's movements.  
+    self.trace = Trace(str(self), 100, 50.0, self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z), self.trace_material + 'Shadeless')
+
     ## @var is_requestable
     # Boolean saying if this Navigation is a requestable one. Requestable navigations
     # can be switched to using a special button on the device.

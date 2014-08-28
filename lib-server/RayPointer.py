@@ -147,6 +147,7 @@ class RayPointerRepresentation(ToolRepresentation):
     self.perform_tool_node_transformation()
 
     # update border color according to highlight enabled
+    
     if self.highlighted:
       if self.ray_geometry.Material.value != "data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd":
         self.ray_geometry.Material.value = "data/materials/" + self.USER_REPRESENTATION.DISPLAY_GROUP.navigations[self.USER_REPRESENTATION.connected_navigation_id].trace_material + "Shadeless.gmd"

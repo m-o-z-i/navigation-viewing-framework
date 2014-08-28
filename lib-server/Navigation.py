@@ -84,16 +84,6 @@ class Navigation(VisibilityHandler1D):
     Navigation.number_of_instances += 1
     Navigation.number_of_instances = Navigation.number_of_instances % len(Navigation.trace_materials)
 
-    # create trace and add 'Shadeless' to material string to have a nicer line apperance
-    try:
-      _device_pos = self.device.sf_station_mat.value.get_translate()
-    except:
-      _device_pos = avango.gua.Vec3(0.0, 0.0, 0.0)
-
-    ## @var trace
-    # Instance of Trace class to handle trace drawing of this navigation's movements.  
-    self.trace = Trace(str(self), 500, 50.0, self.sf_abs_mat.value * avango.gua.make_trans_mat(_device_pos.x, 0, _device_pos.z), self.trace_material + 'Shadeless')
-
 
   ## Adds a UserRepresentation to this navigation.
   # @param USER_REPRESENTATION The UserRepresentation instance to be added.

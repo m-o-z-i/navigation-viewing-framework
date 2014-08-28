@@ -18,11 +18,11 @@ import math
 
 ## Representation of an Avatar belonging to a UserRepresentation.
 # Contains of several parts of geometry.
-class Avatar(avango.script.Script):
+class Avatar:
 
   ## Default constructor.
   def __init__(self):
-    self.super(Avatar).__init__()
+    pass#self.super(Avatar).__init__()
 
   ## Custom constructor.
   # @param USER_REPRESENTATION The UserRepresentation instance to create the avatar for.
@@ -56,8 +56,12 @@ class Avatar(avango.script.Script):
     # Geometry nodes representing all the screens at the DisplayGroup the UserRepresentation belongs to.
     self.screen_visualizations = []
 
+    ##
+    #
+    self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
+
     # set evaluation policy
-    self.always_evaluate(True)
+    #self.always_evaluate(True)
 
   ## Adds a screen visualization for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen visualization from.
@@ -100,7 +104,7 @@ class Avatar(avango.script.Script):
       _screen_vis.Material.value = SCREEN_MATERIAL
 
   ## Evaluated every frame.
-  def evaluate(self):
+  def frame_callback(self):
 
     # update avatar body matrix if present at this view transform node
     _head_pos = self.USER_REPRESENTATION.head.Transform.value.get_translate()

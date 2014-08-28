@@ -69,7 +69,7 @@ class PortalCameraNavigation(Navigation):
 
     # update scaling
     if self.sf_scale_up_button.value == True and self.portal_cam.current_shot != None:
-      self.portal_cam.set_current_shot_scale(self.portal_cam.current_shot.sf_scale.value * 0.985)
+      self.portal_cam.set_current_shot_scale(self.portal_cam.current_shot.sf_scale.value * 0.995)
 
     if self.sf_scale_down_button.value == True and self.portal_cam.current_shot != None:
       self.portal_cam.set_current_shot_scale(self.portal_cam.current_shot.sf_scale.value * 1.005)

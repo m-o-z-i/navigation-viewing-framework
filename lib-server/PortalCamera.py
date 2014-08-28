@@ -448,7 +448,7 @@ class PortalCamera(Tool):
     self.sf_next_rec_button.connect_from(self.device_sensor.Button5)
     self.sf_prior_rec_button.connect_from(self.device_sensor.Button4)
     self.sf_scale_up_button.connect_from(self.device_sensor.Button9)
-    self.sf_scale_down_button.connect_from(self.device_sensor.Button10)
+    self.sf_scale_down_button.connect_from(self.device_sensor.Button11)
     self.sf_open_close_button.connect_from(self.device_sensor.Button6)
     self.sf_delete_button.connect_from(self.device_sensor.Button15)
     self.sf_gallery_button.connect_from(self.device_sensor.Button11)

@@ -124,6 +124,8 @@ class MultiTouchDevice(avango.script.Script):
 
 
             self._sceneGraph[sceneNode].Transform.value = TransformMatrix
+            #print TransformMatrix
+            #print "trans: ", TransformMatrix.get_translate(), "  rot: " , TransformMatrix.get_rotate_scale_corrected() , "  scale: " , TransformMatrix.get_scale()
 
             #reset all data
             self._transMat   = avango.gua.make_identity_mat()

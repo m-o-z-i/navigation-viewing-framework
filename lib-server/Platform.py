@@ -428,7 +428,7 @@ class Platform(avango.script.Script):
     self.own_color_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
     #self.own_color_geometry.GroupNames.value = ["do_not_display_group"]
 
-    self.coupling_status_node.Children.value.append(self.own_color_geometry)
+    #self.coupling_status_node.Children.value.append(self.own_color_geometry)
 
     self.update_coupling_status_overview()
 

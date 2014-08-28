@@ -35,10 +35,7 @@ class PortalCameraNavigation(Navigation):
 
   ## Custom constructor.
   # @param PORTAL_CAMERA_INSTANCE Instance of PortalCamera which is the input device of this Navigation.
-  # @param TRACE_VISIBILITY_LIST A list containing visibility rules according to the DisplayGroups' visibility tags. 
-  def my_constructor(self, PORTAL_CAMERA_INSTANCE, TRACE_VISIBILITY_LIST):
-
-    self.list_constructor(TRACE_VISIBILITY_LIST)
+  def my_constructor(self, PORTAL_CAMERA_INSTANCE):
 
     ## @var portal_cam
     # Instance of PortalCamera which is the input device of this Navigation.

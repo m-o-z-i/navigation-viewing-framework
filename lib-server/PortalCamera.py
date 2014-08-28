@@ -133,8 +133,7 @@ class PortalCameraRepresentation(ToolRepresentation):
     ## @var portal_nav
     # Instance of PortalCameraNavigation in which the captured shots are to be loaded.
     self.portal_nav = PortalCameraNavigation()
-    self.portal_nav.my_constructor(PORTAL_CAMERA_INSTANCE = self.TOOL_INSTANCE
-                                 , TRACE_VISIBILITY_LIST = {})
+    self.portal_nav.my_constructor(PORTAL_CAMERA_INSTANCE = self.TOOL_INSTANCE)
 
     ## @var portal_dg
     # DisplayGroup opened up by the portal of this representation.
@@ -615,7 +614,7 @@ class PortalCamera(Tool):
     if self.sf_capture_button.value == True:
 
       # capture a new portal
-      if self.current_shot == None:
+      if self.current_shot == None and self.assigned_user != None:
 
         # get active tool mechanism by decision algorithm
         _active_tool_representation = self.get_active_tool_representation()

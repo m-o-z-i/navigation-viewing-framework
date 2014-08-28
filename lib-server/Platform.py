@@ -45,7 +45,7 @@ class Platform(avango.script.Script):
   ## @var hosts_visited
   # List of hostnames on which a client daemon was already launched. Used to avoid double launching.
   hosts_visited = []
-  
+
   ## Default constructor.
   def __init__(self):
     self.super(Platform).__init__()
@@ -61,7 +61,7 @@ class Platform(avango.script.Script):
     ## @var screens
     # List of ScreenNode instances which are appended to this platform.
     self.screens = []
-    
+
 
   ## Custom constructor.
   # @param NET_TRANS_NODE Reference to the net matrix node in the scenegraph for distribution.
@@ -99,7 +99,7 @@ class Platform(avango.script.Script):
 
     ## @var platform_id
     # The id number of this platform, starting from 0.
-    self.platform_id = PLATFORM_ID   
+    self.platform_id = PLATFORM_ID
 
     ## @var INPUT_MAPPING_INSTANCE
     # Reference to an InputMapping which accumulates the device inputs for this platform.
@@ -121,7 +121,7 @@ class Platform(avango.script.Script):
     # The matrix to be applied when no tracking information is available for users.
     self.no_tracking_mat = NO_TRACKING_MAT
 
-    ## @var displays 
+    ## @var displays
     # List of names of the displays that belong to this navigation.
     self.displays = DISPLAYS
 
@@ -170,7 +170,7 @@ class Platform(avango.script.Script):
       if _screen != None:
         self.platform_scale_transform_node.Children.value.append(_screen)
         self.screens.append(_screen)
-      
+
         # create screen visualization when desired
         if AVATAR_TYPE != "None":
           _screen_visualization = _display.create_screen_visualization()
@@ -184,7 +184,7 @@ class Platform(avango.script.Script):
       _string_num = 0
       # create a slot for each displaystring
       for _displaystring in _display.displaystrings:
-        
+
         if _display.stereomode == "HMD":
           # create hmd slot
           _slot = SlotHMD(_display,
@@ -205,7 +205,7 @@ class Platform(avango.script.Script):
                        True,
                        self.platform_scale_transform_node)
           self.slot_list.append(_slot)
-          SLOT_MANAGER.register_slot(_slot, _display) 
+          SLOT_MANAGER.register_slot(_slot, _display)
 
         else:
           # create mono slot
@@ -236,7 +236,7 @@ class Platform(avango.script.Script):
             "/start-client.sh " + _server_ip + " " + str(self.platform_id) + " " + \
             _display.name + " " + str(self.displays.index(_display))]
           , stderr=subprocess.PIPE)
-        
+
         time.sleep(1)
       else:
         print_warning("Start of client on " + _display.hostname + " disabled for debugging reasons.")
@@ -291,8 +291,8 @@ class Platform(avango.script.Script):
                                        avango.gua.make_rot_mat(270, 0, 0, 1) * \
                                        avango.gua.make_scale_mat(self.depth, 1, 2)
     self.left_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_scale_transform_node.Children.value.append(self.left_border)    
-    
+    self.platform_scale_transform_node.Children.value.append(self.left_border)
+
     ## @var right_border
     # Geometry scenegraph node of the platform's left border
     self.right_border = _loader.create_geometry_from_file('right_border_geometry',
@@ -305,7 +305,7 @@ class Platform(avango.script.Script):
                                         avango.gua.make_rot_mat(90, 0, 0, 1) * \
                                         avango.gua.make_scale_mat(self.depth, 1, 2)
     self.right_border.GroupNames.value = ["do_not_display_group", "platform_group_" + str(PLATFORM_ID)]
-    self.platform_scale_transform_node.Children.value.append(self.right_border)    
+    self.platform_scale_transform_node.Children.value.append(self.right_border)
 
     ## @var front_border
     # Geometry scenegraph node of the platform's front border
@@ -335,10 +335,10 @@ class Platform(avango.script.Script):
     self.platform_scale_transform_node.Children.value.append(self.back_border)
 
     # create coupling notification plane
-    self.create_coupling_plane()
+    #self.create_coupling_plane()
 
     # create coupling status notifications
-    self.create_coupling_status_overview()
+    #self.create_coupling_status_overview()
 
   ## Toggles visibility of left platform border.
   # @param VISIBLE A boolean value if the border should be set visible or not.
@@ -371,19 +371,20 @@ class Platform(avango.script.Script):
       self.back_border.GroupNames.value[0] = "display_group"
     else:
       self.back_border.GroupNames.value[0] = "do_not_display_group"
-         
+
   ## Scales the platform scale transform node when the scaling changes in the inputmapping.
   @field_has_changed(sf_scale)
   def sf_scale_values_changed(self):
 
     _scale = self.sf_scale.value
-    
+
     self.platform_scale_transform_node.Transform.value = avango.gua.make_scale_mat(_scale)
 
 
+  '''
   ## Creates a plane in front of the user used for displaying coupling messages.
   def create_coupling_plane(self):
-    
+
     _loader = avango.gua.nodes.TriMeshLoader()
 
     ## @var message_plane_node
@@ -425,9 +426,9 @@ class Platform(avango.script.Script):
 
   ## Creates an overview of the user's current couplings in his or her field of view.
   def create_coupling_status_overview(self):
-    
+
     _loader = avango.gua.nodes.TriMeshLoader()
- 
+
     # create transformation node
     ## @var coupling_status_node
     # Scenegraph transformation node for coupling icons in the user's field of view.
@@ -482,12 +483,12 @@ class Platform(avango.script.Script):
                                               avango.gua.make_rot_mat(90, 1, 0, 0)
     # append to primary screen
     self.screens[0].Children.value.append(self.message_plane_node)
-    
+
 
   ## Handles all the specialized settings for the coupling status overview.
   def handle_coupling_status_attributes(self):
     self.coupling_status_node.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
-    
+
     # append to primary screen
     self.screens[0].Children.value.append(self.coupling_status_node)
 
@@ -498,7 +499,7 @@ class Platform(avango.script.Script):
     ## @var start_scale
     # Scaling of the first coupling status notifier (own color).
     self.start_scale = 0.05 * self.screens[0].Height.value
-      
+
     ## @var y_increment
     # Y offset for all coupling status notifiers after the own color.
     self.y_increment = -self.start_scale
@@ -527,7 +528,7 @@ class Platform(avango.script.Script):
     # check for every user that could be updated
     for _nav in COUPLED_NAVIGATION_LIST:
       if _nav.platform != self:
-            
+
         # check if desired plane is not already present
         _new_node_needed = True
 
@@ -546,15 +547,16 @@ class Platform(avango.script.Script):
           _plane.ShadowMode.value = avango.gua.ShadowMode.OFF
           self.NET_TRANS_NODE.distribute_object(_plane)
           self.coupling_status_node.Children.value.append(_plane)
-      
+
       # update the offsets of the notifiers to have a proper display
       self.update_coupling_status_overview()
-
+  '''
   ## Updates the nettrans node. Used to replace pseudo nettrans.
   # @param NET_TRANS_NODE The new nettrans node to be set.
   def update_nettrans_node(self, NET_TRANS_NODE):
     self.NET_TRANS_NODE = NET_TRANS_NODE
 
+    '''
   ## Removes a platform indicator from the coupling display and shows a message to all other platforms.
   # @param NAVIGATION The Navigation instance to be removed from all couplings.
   # @param SHOW_NOTIFICATION Boolean saying if a notification should be displayed to all other platforms involved.
@@ -567,7 +569,7 @@ class Platform(avango.script.Script):
       if (_node.Name.value == ('coupl_notifier_' + str(NAVIGATION.platform.platform_id))):
         self.coupling_status_node.Children.value.remove(_node)
         self.update_coupling_status_overview()
-        
+
         if SHOW_NOTIFICATION:
           # display notification that a user was decoupled
           self.coupling_plane_node.GroupNames.value[0] = "display_group"
@@ -582,13 +584,15 @@ class Platform(avango.script.Script):
           self.start_time = self.timer.Time.value
 
         break
+  '''
+
 
   ## Evaluated every frame.
   def evaluate(self):
 
     # if a time update is required
     if self.start_time != None:
-      
+
       # hide decoupling notifiers again after a certain amount of time
       if self.timer.Time.value - self.start_time > 3.0:
 

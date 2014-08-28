@@ -339,7 +339,8 @@ class User(VisibilityHandler2D):
     self.intersection_tester.my_constructor(scenegraphs[0]
                                           , self.headtracking_reader.sf_abs_mat
                                           , 5.0
-                                          , "screen_proxy_group")
+                                          , "screen_proxy_group"
+                                          , False)
     self.mf_screen_pick_result.connect_from(self.intersection_tester.mf_pick_result)
 
     ## @var last_seen_display_group

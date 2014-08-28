@@ -493,6 +493,47 @@ class PortalCamera(Tool):
         else:
           _tool_repr.disable_highlight()
 
+  ##
+  #
+  def create_candidate_list(self):
+    
+    _candidate_list = []
+
+    # only go on if a user is assigned to the PortalCamera
+    if self.assigned_user != None:
+
+      # iterate over all tool representations of assigned user
+      for _tool_repr in self.tool_representations:
+
+        if _tool_repr.user_id == self.assigned_user.id:
+
+          _candidate_list.append(_tool_repr)
+
+
+    return _candidate_list
+
+  ##
+  #
+  def choose_from_candidate_list(self, CANDIDATE_LIST):
+    
+    _dg_hit_by_user = self.assigned_user.last_seen_display_group
+
+    for _tool_repr in CANDIDATE_LIST:
+
+      if _tool_repr.DISPLAY_GROUP == _dg_hit_by_user:
+        return _tool_repr
+
+    return None
+
+  ##
+  #
+  def get_active_tool_representation(self):
+
+    _candidate_representations = self.create_candidate_list()
+    _chosen_tool_representation = self.choose_from_candidate_list(_candidate_representations)
+    return _chosen_tool_representation
+
+
   ## Evaluated every frame.
   def evaluate(self):
 
@@ -577,7 +618,10 @@ class PortalCamera(Tool):
       # capture a new portal
       if self.current_shot == None:
 
-        _active_tool_representation = self.tool_representations[0]
+        # get active tool mechanism by decision algorithm
+        _active_tool_representation = self.get_active_tool_representation()
+
+        # create shot and assign it
         _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
 
         _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \

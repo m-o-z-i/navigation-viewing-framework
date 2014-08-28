@@ -352,6 +352,10 @@ class PortalCamera(Tool):
     # Boolean saying if the portal camera is currently at capturing a photo.
     self.in_capture_mode = False
 
+    ##
+    #
+    self.capture_tool_representation = None
+
     ## @var portal_width
     # Width of the portals displayed in this PortalCamera.
     self.portal_width = 0.35
@@ -491,6 +495,27 @@ class PortalCamera(Tool):
     # update user assignment
     self.check_for_user_assignment()
 
+    if self.in_capture_mode:
+
+      # get active tool mechanism by decision algorithm
+      _active_tool_representation = self.get_active_tool_representation()
+
+      if self.capture_tool_representation != _active_tool_representation:
+
+        self.capture_tool_representation = _active_tool_representation
+
+        # compute shot parameters and assign them
+        _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
+
+        # compute matrix
+        _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
+                                avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
+
+        for _tool_repr in self.tool_representations:
+          _tool_repr.portal_nav.set_navigation_values(_shot_platform_matrix, _active_navigation.sf_scale.value)
+
+    
+
     # apply size changes
     if self.sf_size_up_button.value == True:
       self.portal_width += 0.005
@@ -558,6 +583,7 @@ class PortalCamera(Tool):
 
       # get active tool mechanism by decision algorithm
       _active_tool_representation = self.get_active_tool_representation()
+      self.capture_tool_representation = _active_tool_representation
 
       # create shot and assign it
       _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]

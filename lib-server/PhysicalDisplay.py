@@ -126,6 +126,13 @@ class PhysicalDisplay(Display):
     elif len(self.shutter_timings[0][0]) == 4:
       return "ACTIVE_STEREO"
 
+  ## Sets the transformation of this physical display to a value when the standard values shall not be used.
+  # @param MATRIX The transformation matrix to be set.
+  def set_transformation(self, MATRIX):
+
+    self.transformation = MATRIX
+
+
   ## Creates a visualization of the display's screen in the scene (white frame). Returns the scenegraph geometry node.
   def create_screen_visualization(self, NODE_NAME):
   

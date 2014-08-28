@@ -296,7 +296,7 @@ class PortalPreView(avango.script.Script):
     # Geometry node containing the portal's frame.
     self.portal_border = _loader.create_geometry_from_file("border_w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id), "data/objects/screen.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     self.portal_border.ShadowMode.value = avango.gua.ShadowMode.OFF
-    self.portal_border.GroupNames.value = ["portal_invisible_group", "w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
+    self.portal_border.GroupNames.value = ["w" + str(VIEW.workspace_id) + "_dg" + str(VIEW.display_group_id) + "_u" + str(VIEW.user_id)]
     self.portal_border.Transform.value = avango.gua.make_scale_mat(self.screen_node.Width.value, self.screen_node.Height.value, 1.0)
     self.portal_matrix_node.Children.value.append(self.portal_border)
 

@@ -41,6 +41,7 @@ class Portal(Display):
   # @param NEGATIVE_PARALLAX Indicating if negative parallax is allowed in the portal, can be either "True" or "False".
   # @param BORDER_MATERIAL The material string to be used for the portal's border.
   # @param TRANSITABLE Boolean saying if teleportation for this portal is enabled.
+  # @param PORTAL_NODE_NAME_ATTACHMENT Additional string information passed in the name of portal_node.
   def __init__(self
              , PORTAL_MATRIX
              , WIDTH
@@ -49,7 +50,8 @@ class Portal(Display):
              , CAMERA_MODE
              , NEGATIVE_PARALLAX
              , BORDER_MATERIAL
-             , TRANSITABLE):
+             , TRANSITABLE
+             , PORTAL_NODE_NAME_ATTACHMENT = "wa_dga"):
 
     # set stereo flag depending on viewing mode
     #if VIEWING_MODE == "2D":
@@ -102,6 +104,10 @@ class Portal(Display):
     ## @var display_group_offset
     # Offset of this portal to the display group. Used when multiple portals are in one display group.
     self.display_group_offset = avango.gua.make_identity_mat()
+
+    ## @var portal_node_name_attachment
+    # Additional string information passed in the name of portal_node.
+    self.portal_node_name_attachment = PORTAL_NODE_NAME_ATTACHMENT
 
   ## Sets the offset to the display group and updates the screen node accordingly..
   # @param OFFSET_MATRIX The matrix to be set.
@@ -186,7 +192,7 @@ class Portal(Display):
 
     ## @var portal_node
     # Grouping node for this portal below the group node for all portals.
-    self.portal_node = avango.gua.nodes.TransformNode(Name = "portal_" + str(self.id))
+    self.portal_node = avango.gua.nodes.TransformNode(Name = "portal_" + str(self.id) + "_" + self.portal_node_name_attachment)
     Portal.portal_group_node.Children.value.append(self.portal_node)
     self.NET_TRANS_NODE.distribute_object(self.portal_node)
 

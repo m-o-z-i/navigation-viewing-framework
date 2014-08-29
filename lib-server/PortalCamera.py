@@ -98,7 +98,8 @@ class PortalCameraRepresentation(ToolRepresentation):
                        , CAMERA_MODE = "PERSPECTIVE"
                        , NEGATIVE_PARALLAX = PORTAL_CAMERA_INSTANCE.capture_parallax_mode
                        , BORDER_MATERIAL = "data/materials/White.gmd"
-                       , TRANSITABLE = False)
+                       , TRANSITABLE = False
+                       , PORTAL_NODE_NAME_ATTACHMENT = "w" + str(PORTAL_CAMERA_INSTANCE.WORKSPACE_INSTANCE.id) + "_dg" + str(self.DISPLAY_GROUP.id))
 
     ## @var portal_nav
     # Instance of PortalCameraNavigation in which the captured shots are to be loaded.

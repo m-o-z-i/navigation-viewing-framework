@@ -130,11 +130,17 @@ class UserRepresentation:
       else:
         self.perform_virtual_user_head_transformation(self.virtual_user_repr_display_index)
 
-        _dist_to_portal = self.head.Transform.value.get_translate().length()
-        _switch_dist = 15.0 * self.DISPLAY_GROUP.displays[self.virtual_user_repr_display_index].size[0]
+        # activate thumbnail mode when scale is too small
+        # make sure not to switch off own PortalCameraRepresentations
+        _physical_nav_node = self.dependent_nodes[0].Parent.value
+        _physical_nav_scale = _physical_nav_node.Transform.value.get_scale()
 
-        # activate thumbnail mode when too far away from portal
-        if _dist_to_portal > _switch_dist:
+        _physical_user_w_id = _physical_nav_node.Name.value.split("_")[0].replace("w", "")
+        _physical_user_dg_id = _physical_nav_node.Name.value.split("_")[1].replace("dg", "")
+        _portal_w_id = self.view_transform_node.Parent.value.Name.value.split("_")[2].replace("w", "")
+        _portal_dg_id = self.view_transform_node.Parent.value.Name.value.split("_")[3].replace("dg", "")
+
+        if _physical_nav_scale.x > 30.0 and (_physical_user_w_id != _portal_w_id or _physical_user_dg_id != _portal_dg_id):
           self.thumbnail_mode = True
           self.make_default_viewing_setup()
 
@@ -143,11 +149,17 @@ class UserRepresentation:
 
       self.perform_virtual_user_head_transformation(self.virtual_user_repr_display_index)
 
-      _dist_to_portal = self.head.Transform.value.get_translate().length()
-      _switch_dist = 15.0 * self.DISPLAY_GROUP.displays[self.virtual_user_repr_display_index].size[0]
+      # same check as performed above
+      _physical_nav_node = self.dependent_nodes[0].Parent.value
+      _physical_nav_scale = _physical_nav_node.Transform.value.get_scale()
+
+      _physical_user_w_id = _physical_nav_node.Name.value.split("_")[0].replace("w", "")
+      _physical_user_dg_id = _physical_nav_node.Name.value.split("_")[1].replace("dg", "")
+      _portal_w_id = self.view_transform_node.Parent.value.Name.value.split("_")[2].replace("w", "")
+      _portal_dg_id = self.view_transform_node.Parent.value.Name.value.split("_")[3].replace("dg", "")
 
       # remain in thumbnail mode
-      if _dist_to_portal > _switch_dist:
+      if _physical_nav_scale.x > 30.0 and (_physical_user_w_id != _portal_w_id or _physical_user_dg_id != _portal_dg_id):
         self.make_default_viewing_setup()
       
       # deactive thumbnail mode

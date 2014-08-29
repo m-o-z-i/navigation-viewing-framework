@@ -16,6 +16,7 @@ from Portal import *
 from PortalCamera import *
 from PortalInteractionSpace import *
 from Device import *
+import hyperspace_config
 
 # import python libraries
 import sys
@@ -37,9 +38,9 @@ def start():
   graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
   #graph.Root.value.GroupNames.value = ["all"]
 
-  # get server ip 
+  # get server ip
   server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
-  server_ip = server_ip.strip(" \n")  
+  server_ip = server_ip.strip(" \n")
   server_ip = server_ip.rsplit(" ")
   server_ip = str(server_ip[-1])
 
@@ -48,7 +49,7 @@ def start():
   graph.Root.value.Children.value = [pseudo_nettrans]
 
   if sys.argv[2] == "True":
-    start_clients = True 
+    start_clients = True
   else:
     start_clients = False
 
@@ -114,26 +115,30 @@ def start():
   table_interaction_space.add_maximized_portal(_table_portal)
   '''
 
-  # initialize animation manager
-  #animation_manager = AnimationManager()
-  #animation_manager.my_constructor([ graph["/net/platform_0"]]
-  #                               , [ application_manager.navigation_list[0]])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"], graph["/net/SceneVRHyperspace1/ceiling_light5"], graph["/net/SceneVRHyperspace1/ceiling_light6"]]
-  #                               , [None, None, None, None, None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"]]
-  #                               , [None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"]]
-  #                               , [None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"]]
-  #                               , [None, None, None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/steppo"]]
-  #                               , [None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"], graph["/net/SceneVRHyperspace4/terrain_group"]]
-  #                               , [None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]]
-  #                               , [None])
+  if (1 or 3 or 4) in hyperspace_config.active_scenes:
+    # initialize animation manager
+    animation_manager = AnimationManager()
 
-  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+    '''
+    animation_manager.my_constructor([ graph["/net/platform_0"]]
+                                   , [ application_manager.navigation_list[0]])
+    animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"], graph["/net/SceneVRHyperspace1/ceiling_light5"], graph["/net/SceneVRHyperspace1/ceiling_light6"]]
+                                   , [None, None, None, None, None, None])
+    animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"]]
+                                   , [None])
+    animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"]]
+                                   , [None, None])
+    animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"]]
+                                   , [None, None, None, None])
+    animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/steppo"]]
+                                   , [None])
+    animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"], graph["/net/SceneVRHyperspace4/terrain_group"]]
+                                   , [None, None])
+    '''
+    if hyperspace_config.active_scenes == [3]:
+      animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]], [None])
+
+    manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

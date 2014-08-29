@@ -16,11 +16,15 @@ scenes = {
   , 7: "SceneVRHyperspace7(self, SCENEGRAPH, NET_TRANS_NODE)" # avatar call
 }
 
-active_scenes = [3]
+active_scenes = [3, 4]
 
-stereo = True
+stereo = False
+
+animation_nodes = {
+  3: [ "/net/SceneVRHyperspace3/terrain_group" ],
+  4: [ "/net/SceneVRHyperspace4/terrain_group" ]
+}
 
 
 # this flag is set automatically, nothing to do here
 prepipes = (3 in active_scenes) or (4 in active_scenes)
-#prepipes = False

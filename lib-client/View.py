@@ -164,7 +164,9 @@ class View(avango.script.Script):
     # append pipeline to the viewer
     VIEWER.Pipelines.value.append(self.pipeline)
 
-    self.always_evaluate(True)
+    ## @var frame_trigger
+    # Triggers framewise evaluation of frame_callback method.
+    self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
   
 
   ## Sets the warp matrices if there is a correct amount of them.
@@ -273,16 +275,15 @@ class View(avango.script.Script):
   
     #avango.gua.reload_materials()
   
-  ## Evaluated every frame.
-  def evaluate(self):
+  ## Evaluated every frame until connection is setup.
+  def frame_callback(self):
 
     try:
       _pipeline_info_node = self.SCENEGRAPH["/net/pipeline_values"].Children.value[0]
     except:
       return
 
-    #print repr(self.SCENEGRAPH["/net/w0_dg0_u0/screen_0/nav_color_plane"].GroupNames.value[0])
-
     # connect sf_pipeline_string with Name field of info node once
     if _pipeline_info_node != None and self.sf_pipeline_string.value == "":
       self.sf_pipeline_string.connect_from(_pipeline_info_node.Name)
+      self.frame_trigger.Active.value = False

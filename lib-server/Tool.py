@@ -157,8 +157,11 @@ class Tool(VisibilityHandler2D):
   def choose_from_candidate_list(self, CANDIDATE_LIST):
     raise NotImplementedError( "To be implemented by a subclass." )
 
-  ## Checks which user is closest to this Tool in tracking spaces and makes him the assigned user.
+  ## Checks which user is closest to this Tool in tracking space and makes him the assigned user.
+  # Additionally updates the material of the corresponding RayPointerRepresentation.
   def check_for_user_assignment(self):
+
+    _assigned_user_before = self.assigned_user
 
     _closest_user = None
     _closest_distance = 1000
@@ -178,6 +181,18 @@ class Tool(VisibilityHandler2D):
 
     if _closest_user != self.assigned_user:
       self.assign_user(_closest_user)
+
+    _assigned_user_after = self.assigned_user
+
+    # Change material on assigned ray holder
+    if _assigned_user_before != _assigned_user_after:
+
+      for _tool_repr in self.tool_representations:
+
+        if self.assigned_user != None and _tool_repr.user_id == self.assigned_user.id:
+          _tool_repr.enable_highlight()
+        else:
+          _tool_repr.disable_highlight()
 
 
   ## Assigns a user to this Tool.

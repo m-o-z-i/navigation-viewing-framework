@@ -433,24 +433,6 @@ class PortalCamera(Tool):
     self.tool_representations.append(_portal_cam_repr)
     return _portal_cam_repr
 
-  ## Checks which user is closest to this PortalCamera in tracking spaces and makes him the assigned user.
-  # Additionally updates the material of the corresponding RayPointerRepresentation.
-  def check_for_user_assignment(self):
-
-    _assigned_user_before = self.assigned_user
-    self.super(PortalCamera).check_for_user_assignment()
-    _assigned_user_after = self.assigned_user
-
-    # Change material on assigned ray holder
-    if _assigned_user_before != _assigned_user_after:
-
-      for _tool_repr in self.tool_representations:
-
-        if self.assigned_user != None and _tool_repr.user_id == self.assigned_user.id:
-          _tool_repr.enable_highlight()
-        else:
-          _tool_repr.disable_highlight()
-
   ## Selects a list of potentially currently active PortalCameraRepresentations by checking the assigned user of them.
   def create_candidate_list(self):
     

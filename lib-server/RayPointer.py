@@ -345,25 +345,6 @@ class RayPointer(Tool):
     _chosen_pick_result_tuple = self.choose_from_candidate_list(_candidate_representations)
     return _chosen_pick_result_tuple
 
-
-  ## Checks which user is closest to this RayPointer in tracking spaces and makes him the assigned user.
-  # Additionally updates the material of the corresponding RayPointerRepresentation.
-  def check_for_user_assignment(self):
-
-    _assigned_user_before = self.assigned_user
-    self.super(RayPointer).check_for_user_assignment()
-    _assigned_user_after = self.assigned_user
-
-    # Change material on assigned ray holder
-    if _assigned_user_before != _assigned_user_after:
-
-      for _tool_repr in self.tool_representations:
-
-        if self.assigned_user != None and _tool_repr.user_id == self.assigned_user.id:
-          _tool_repr.enable_highlight()
-        else:
-          _tool_repr.disable_highlight()
-
   ## Evaluated every frame.
   def evaluate(self):
 

@@ -12,6 +12,7 @@ from avango.script import field_has_changed
 # import framework libraries
 from ConsoleIO import *
 import Tools
+import hyperspace_config
 
 # import python libraries
 import time
@@ -63,17 +64,19 @@ class PortalManager(avango.script.Script):
     self.counter = 0
 
     # add portal instances
-    '''
-    self.add_portal(avango.gua.make_trans_mat(0, 1, 0) * avango.gua.make_rot_mat(180, 0, 1, 0),
-                    1.0,
-                    avango.gua.make_trans_mat(0, 1, 0) * avango.gua.make_rot_mat(0, 0, 1, 0) * avango.gua.make_scale_mat(-1, 1, 1),
-                    4.0,
-                    2.0,
-                    "3D",
-                    "PERSPECTIVE",
-                    "False",
-                    "data/materials/ShadelessBlack.gmd")
-    '''
+    #'''
+
+    if hyperspace_config.active_scenes == [1]:
+      self.add_portal(avango.gua.make_trans_mat(0.0, 0.0, 0.0),
+                      1.0,
+                      avango.gua.make_trans_mat(-63.8, 6.430, 1.245) * avango.gua.make_rot_mat(180, 0, 1, 0),
+                      1.0,
+                      1.8,
+                      "3D",
+                      "PERSPECTIVE",
+                      "False",
+                      "data/materials/ShadelessBlack.gmd")
+    #'''
     '''
     self.add_portal(avango.gua.make_trans_mat(118.730, -3.571, -40.000) * avango.gua.make_rot_mat(225, 0, 1, 0),
                     1.0,
@@ -97,7 +100,7 @@ class PortalManager(avango.script.Script):
                     "False",
                     "data/materials/ShadelessBlue.gmd")
     '''
-    
+
     '''
     self.add_portal(avango.gua.make_trans_mat(0.0, 1.55, 2.0),
                     0.2,
@@ -128,7 +131,7 @@ class PortalManager(avango.script.Script):
                                   "PERSPECTIVE",
                                   "False")
     '''
-    
+
     # tower portal
     '''
     self.add_bidirectional_portal( avango.gua.make_trans_mat(-23.0, 1.3, 21.0) * avango.gua.make_rot_mat(-90, 0, 1, 0),
@@ -186,7 +189,7 @@ class PortalManager(avango.script.Script):
             _nav.trace.clear(_nav.inputmapping.sf_abs_mat.value)
           _nav.inputmapping.scale_stop_time = None
           _nav.inputmapping.set_scale(_portal.platform_scale, False)
-          
+
 
       '''
       _mat = _nav.platform.platform_scale_transform_node.WorldTransform.value * _nav.device.sf_station_mat.value
@@ -198,7 +201,7 @@ class PortalManager(avango.script.Script):
         _mat_in_portal_space = avango.gua.make_inverse_mat(_portal.portal_matrix_node.Transform.value) * \
                                _mat
 
-        _transit_check_mat = _mat_in_portal_space 
+        _transit_check_mat = _mat_in_portal_space
 
         _vec_in_portal_space = _mat_in_portal_space.get_translate()
 
@@ -374,7 +377,7 @@ class Portal:
 
     ## @var platform_scale
     # Scaling factor of the portal platform.
-    self.platform_scale = PLATFORM_SCALE 
+    self.platform_scale = PLATFORM_SCALE
 
     self.append_portal_nodes()
 
@@ -424,7 +427,7 @@ class Portal:
   def connect_portal_matrix(self, SF_PORTAL_MATRIX):
 
     self.portal_matrix_node.Transform.disconnect()
-    
+
     if SF_PORTAL_MATRIX != None:
       self.portal_matrix_node.Transform.connect_from(SF_PORTAL_MATRIX)
 

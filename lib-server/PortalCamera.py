@@ -613,7 +613,7 @@ class PortalCamera(Tool):
   ## Called whenever sf_capture_button changes.
   @field_has_changed(sf_capture_button)
   def sf_capture_button_changed(self):
-    if self.sf_capture_button.value == True:
+    if self.sf_capture_button.value == True and self.in_capture_mode:
 
       # store the preview shot currently loaded
       self.captured_shots.append(self.current_shot)

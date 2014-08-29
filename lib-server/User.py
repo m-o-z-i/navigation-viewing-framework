@@ -33,7 +33,7 @@ class UserRepresentation:
   # @param USER Reference to the user to be represented.
   # @param DISPLAY_GROUP Reference to the display group this user representation is responsible for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
-  # @param 
+  # @param VIRTUAL_USER_REPR_DISPLAY_INDEX If this is a portal user representation, ID giving the display index within the display group. -1 otherwise.
   # @param HEAD_NODE_NAME Name of the UserRepresentation's head node in the scenegraph.
   # @param COMPLEX_SETUP If activated, the transformation policy is evaluated every frame to update head. If deactivated,
   #                      a standard mono viewing setup is assumed.
@@ -106,13 +106,17 @@ class UserRepresentation:
     self.avatar = Avatar()
     self.avatar.my_constructor(self)
 
-    ##
-    #
+    ## @var virtual_user_repr_display_index
+    # If this is a portal user representation, ID giving the display index within the display group. -1 otherwise.
     self.virtual_user_repr_display_index = VIRTUAL_USER_REPR_DISPLAY_INDEX
 
-    ##
-    #
+    ## @var frame_trigger
+    # Triggers framewise evaluation of frame_callback method.
     self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
+
+    ## @var thumbnail_mode
+    # Boolean indicating if the portal if a default viewing setup is activated although the portal might suggest it differently.
+    self.thumbnail_mode = False
 
 
   ## Evaluated every frame.
@@ -126,11 +130,40 @@ class UserRepresentation:
       else:
         self.perform_virtual_user_head_transformation(self.virtual_user_repr_display_index)
 
-  ##
+        _dist_to_portal = self.head.Transform.value.get_translate().length()
+        _switch_dist = 15.0 * self.DISPLAY_GROUP.displays[self.virtual_user_repr_display_index].size[0]
+
+        # activate thumbnail mode when too far away from portal
+        if _dist_to_portal > _switch_dist:
+          self.thumbnail_mode = True
+          self.make_default_viewing_setup()
+
+    # handle reactivation in thumbnail mode
+    elif self.thumbnail_mode:
+
+      self.perform_virtual_user_head_transformation(self.virtual_user_repr_display_index)
+
+      _dist_to_portal = self.head.Transform.value.get_translate().length()
+      _switch_dist = 15.0 * self.DISPLAY_GROUP.displays[self.virtual_user_repr_display_index].size[0]
+
+      # remain in thumbnail mode
+      if _dist_to_portal > _switch_dist:
+        self.make_default_viewing_setup()
+      
+      # deactive thumbnail mode
+      else:
+        if self.DISPLAY_GROUP.displays[self.virtual_user_repr_display_index].viewing_mode == "3D":
+          self.make_complex_viewing_setup()
+        else:
+          self.make_default_viewing_setup()
+
+        self.thumbnail_mode = False
+
+  ## Transforms the head node according to the display group offset and the tracking matrix.
   def perform_physical_user_head_transformation(self):
     self.head.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.USER.headtracking_reader.sf_abs_mat.value
 
-  ##
+  ## Transforms the head according to the head - portal entry relation.
   def perform_virtual_user_head_transformation(self, DISPLAY_INDEX):
     self.head.Transform.value = self.DISPLAY_GROUP.displays[DISPLAY_INDEX].portal_screen_node.Transform.value * \
                                 avango.gua.make_inverse_mat(self.DISPLAY_GROUP.displays[DISPLAY_INDEX].portal_matrix_node.Transform.value) * \

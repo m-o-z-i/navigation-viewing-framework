@@ -11,9 +11,9 @@ LOCAL_AVANGO="$DIR/../../../avango"
 #GUACAMOLE=/opt/guacamole/testing/guacamole
 #AVANGO=/opt/guacamole/testing/avango
 
-GUACAMOLE=/opt/guacamole/master
+GUACAMOLE=/opt/guacamole/feature_test
 #GUACAMOLE=/opt/guacamole/gua1806
-AVANGO=/opt/avango/master
+AVANGO=/opt/avango/feature_test
 
 # third party libs
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/boost/latest/lib:/opt/openscenegraph/3.0.1/lib64/:/opt/zmq/current/lib

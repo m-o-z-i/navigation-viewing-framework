@@ -53,12 +53,8 @@ class Portal(Display):
              , TRANSITABLE
              , PORTAL_NODE_NAME_ATTACHMENT = "wa_dga"):
 
-    # set stereo flag depending on viewing mode
-    #if VIEWING_MODE == "2D":
-    #  _stereo = False
-    #else:
-    _stereo = True
 
+    _stereo = True
     self.base_constructor("portal_" + str(Portal.num_instances_created), (1000, 1000), (WIDTH, HEIGHT), _stereo)
 
     ## @var id

@@ -353,8 +353,8 @@ class PortalCamera(Tool):
     # Boolean saying if the portal camera is currently at capturing a photo.
     self.in_capture_mode = False
 
-    ##
-    #
+    ## @var capture_tool_representation
+    # PortalCameraRepresentation instance which is used in capture mode. Might change during capturing.
     self.capture_tool_representation = None
 
     ## @var portal_width

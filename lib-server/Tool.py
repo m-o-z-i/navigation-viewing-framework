@@ -69,8 +69,7 @@ class ToolRepresentation(avango.script.Script):
 
     return self.tool_transform_node.WorldTransform.value
 
-  ##
-  #
+  ## Performs the necessary tool node transformation in the display group.
   def perform_tool_node_transformation(self):
 
     self.tool_transform_node.Transform.value = self.DISPLAY_GROUP.offset_to_workspace * self.TOOL_INSTANCE.tracking_reader.sf_abs_mat.value
@@ -144,7 +143,9 @@ class Tool(VisibilityHandler2D):
     # set evaluation policy
     self.always_evaluate(True)
 
-  ## 
+  ## Creates a ToolRepresentation for this Tool at a DISPLAY_GROUP. 
+  # @param DISPLAY_GROUP The DisplayGroup instance to create the representation for.
+  # @param USER_REPRESENTATION The UserRepresentation this representation will belong to.
   def create_tool_representation_for(self, DISPLAY_GROUP, USER_REPRESENTATION):
     raise NotImplementedError( "To be implemented by a subclass." )
 

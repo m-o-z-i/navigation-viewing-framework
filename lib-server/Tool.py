@@ -185,8 +185,9 @@ class Tool(VisibilityHandler2D):
 
     self.assigned_user = USER_INSTANCE
 
-    for _display_group in self.WORKSPACE_INSTANCE.display_groups:
-      self.handle_correct_visibility_groups_for(_display_group)
+    if self.assigned_user != None:
+      for _display_group in self.WORKSPACE_INSTANCE.display_groups:
+        self.handle_correct_visibility_groups_for(_display_group)
 
   ## Handles the correct GroupNames of all ToolRepresentations at a display group.
   # @param DISPLAY_GROUP The DisplayGroup to be handled.

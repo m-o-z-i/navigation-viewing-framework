@@ -446,7 +446,7 @@ class PortalCamera(Tool):
 
       for _tool_repr in self.tool_representations:
 
-        if _tool_repr.user_id == self.assigned_user.id:
+        if self.assigned_user != None and _tool_repr.user_id == self.assigned_user.id:
           _tool_repr.enable_highlight()
         else:
           _tool_repr.disable_highlight()

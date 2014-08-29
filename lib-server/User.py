@@ -427,33 +427,22 @@ class User(VisibilityHandler2D):
         self.last_seen_display_group = self.WORKSPACE_INSTANCE.display_groups[_display_group_id]
         break
 
-
-    if self.id == 0:
-      if self.last_seen_display_group != None:
-        pass#print self.last_seen_display_group.displays[0]
-      else:
-        pass#print "None"
-
-    '''
     _track_vec = self.headtracking_reader.sf_abs_vec.value
 
     if _track_vec.x < -1.5 and _track_vec.x > -2.4 and \
-       _track_vec.y < 1.01 and _track_vec.y > 0.98 and \
+       _track_vec.y < 1.05 and _track_vec.y > 0.95 and \
        _track_vec.z < 1.35 and _track_vec.z > 0.16:
 
-      #print "user", self.id, " false"
       self.toggle_user_activity(False)
 
     else:
 
-      #print "user", self.id, " true"
       self.toggle_user_activity(True)
-    '''
 
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.
-  # @param 
+  # @param VIRTUAL_USER_REPR_DISPLAY_INDEX If this is a portal user representation, ID giving the display index within the display group. -1 otherwise.
   # @param HEAD_NODE_NAME Name of the UserRepresentation's head node in the scenegraph.
   # @param COMPLEX_SETUP If activated, the transformation policy is evaluated every frame to update head. If deactivated,
   #                      a standard mono viewing setup is assumed.

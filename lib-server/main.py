@@ -115,7 +115,7 @@ def start():
   table_interaction_space.add_maximized_portal(_table_portal)
   '''
 
-  if (1 or 3 or 4) in hyperspace_config.active_scenes:
+  if (3 in hyperspace_config.active_scenes) or (4 in hyperspace_config.active_scenes):
     # initialize animation manager
     animation_manager = AnimationManager()
 
@@ -132,11 +132,17 @@ def start():
                                    , [None, None, None, None])
     animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/steppo"]]
                                    , [None])
-    animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"], graph["/net/SceneVRHyperspace4/terrain_group"]]
-                                   , [None, None])
     '''
-    if hyperspace_config.active_scenes == [3]:
-      animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]], [None])
+
+    _nodes = []
+    for scene_num in hyperspace_config.active_scenes:
+      for node_name in hyperspace_config.animation_nodes[scene_num]:
+        _nodes += [ graph[node_name] ]
+
+    animation_manager.my_constructor(_nodes, [None] * len(_nodes))
+
+    #if hyperspace_config.active_scenes == [3]:
+    #  animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]], [None])
 
     manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 

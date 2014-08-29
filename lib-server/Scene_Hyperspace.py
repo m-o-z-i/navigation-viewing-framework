@@ -23,9 +23,6 @@ class SceneVRHyperspace0(SceneObject):
     self.starting_matrix = avango.gua.make_trans_mat(-67.0,5.5,-5.7) * avango.gua.make_rot_mat(135.0,0,-1,0)
     self.starting_scale = 1.0
 
-    _mat = avango.gua.make_trans_mat(0.0, 0.0, -2.0)
-    self.init_geometry("monkey", "data/objects/monkey.obj", _mat, "data/materials/Stones.gmd", True, False, self.scene_root, "main_scene")
-
     # geometry
     _mat = avango.gua.make_identity_mat()
     self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -93,6 +90,10 @@ class SceneVRHyperspace1(SceneObject):
     # navigation parameters
     self.starting_matrix = avango.gua.make_trans_mat(-67.0,5.5,-5.7) * avango.gua.make_rot_mat(135.0,0,-1,0)
     self.starting_scale = 1.0
+
+    # advertisement geometry
+    _mat = avango.gua.make_trans_mat(0.0, 0.0, -105.0)
+    self.init_geometry("monkey", "data/objects/monkey.obj", _mat, "data/materials/Stones.gmd", True, False, self.scene_root, "main_scene")
 
     # geometry
     _mat = avango.gua.make_identity_mat()

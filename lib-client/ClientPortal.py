@@ -84,7 +84,7 @@ class ClientPortalManager(avango.script.Script):
     for _node in self.mf_portal_group_children.value:
 
       _portal_instance_found = False
-      
+
       # iterate over all Portal instances
       for _i in range(len(self.portals)):
 
@@ -190,7 +190,7 @@ class ClientPortal:
     return False
 
 
-## A PortalPreView is instantiated for each View for each ClientPortal and displays the correct 
+## A PortalPreView is instantiated for each View for each ClientPortal and displays the correct
 # perspective for the view within the portal.
 class PortalPreView(avango.script.Script):
 
@@ -224,7 +224,7 @@ class PortalPreView(avango.script.Script):
   def my_constructor(self, PORTAL_NODE, VIEW):
 
     print "constructor portal pre view for " + PORTAL_NODE.Name.value + " and s" + str(VIEW.screen_num) + "_slot" + str(VIEW.slot_id)
-    
+
     ## @var PORTAL_NODE
     # The portal scenegraph node on client side to be associated with this instance.
     self.PORTAL_NODE = PORTAL_NODE
@@ -270,7 +270,7 @@ class PortalPreView(avango.script.Script):
     self.camera.RightEye.value = self.right_eye_node.Path.value
 
     ## @var pipeline
-    # The pipeline used to render this PortalPreView. 
+    # The pipeline used to render this PortalPreView.
     self.pipeline = avango.gua.nodes.Pipeline()
     self.pipeline.Enabled.value = True
     self.pipeline.EnableGlobalClippingPlane.value = True
@@ -299,13 +299,13 @@ class PortalPreView(avango.script.Script):
     self.pipeline.LeftResolution.value = avango.gua.Vec2ui(1024, 1024)
     self.pipeline.RightResolution.value = self.pipeline.LeftResolution.value
 
-    if VIEW.is_stereo:  
+    if VIEW.is_stereo:
       self.pipeline.EnableStereo.value = True
     else:
       self.pipeline.EnableStereo.value = False
 
     self.pipeline.OutputTextureName.value = self.PORTAL_NODE.Name.value + "_" + "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)
-    
+
     self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
     self.pipeline.BackgroundTexture.value = "data/textures/sky.jpg"
 
@@ -330,7 +330,7 @@ class PortalPreView(avango.script.Script):
     ## @var back_geometry
     # Geometry being displayed when portal pre view is seen from behind.
     self.back_geometry = _loader.create_geometry_from_file("back_s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id), "data/objects/plane.obj", "data/materials/ShadelessBlue.gmd", avango.gua.LoaderFlags.DEFAULTS)
-    self.back_geometry.Transform.value = avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
     self.back_geometry.GroupNames.value = ["do_not_display_group", "s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)]
     self.portal_matrix_node.Children.value.append(self.back_geometry)
 
@@ -393,7 +393,7 @@ class PortalPreView(avango.script.Script):
 
     self.textured_quad.Width.value = self.screen_node.Width.value
     self.textured_quad.Height.value = self.screen_node.Height.value
-    self.back_geometry.Transform.value = avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
+    self.back_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, -0.01) * avango.gua.make_rot_mat(90, 1, 0, 0) * avango.gua.make_scale_mat(self.screen_node.Width.value, 1.0, self.screen_node.Height.value)
     self.portal_border.Transform.value = self.portal_border.Transform.value = avango.gua.make_scale_mat(self.textured_quad.Width.value, self.textured_quad.Height.value, 1.0)
 
   ## Removes this portal from the local portal group and destroys all the scenegraph nodes.
@@ -405,7 +405,7 @@ class PortalPreView(avango.script.Script):
 
     self.portal_matrix_node.Children.value.remove(self.portal_border)
     del self.portal_border
-    
+
     self.portal_matrix_node.Children.value.remove(self.textured_quad)
     del self.textured_quad
     del self.back_geometry
@@ -424,7 +424,7 @@ class PortalPreView(avango.script.Script):
 
     if NODE == None:
       return avango.gua.make_identity_mat()
-    else:   
+    else:
       return self.compute_world_transform(NODE.Parent.value) * NODE.Transform.value
 
   ## Called whenever mf_portal_modes changes.
@@ -464,7 +464,7 @@ class PortalPreView(avango.script.Script):
 
     # set correct border material
     if self.portal_border.Material.value != self.mf_portal_modes.value[3].replace("3-", ""):
-      
+
       _material = self.mf_portal_modes.value[3].replace("3-", "")
 
       if _material != "None":
@@ -503,7 +503,7 @@ class PortalPreView(avango.script.Script):
     if self.mf_portal_modes.value[2] == "2-False":
       _portal_scene_mat = self.PORTAL_NODE.Children.value[1].Transform.value
       _vec = avango.gua.Vec3(0.0, 0.0, -1.0)
-      _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec        
+      _vec = avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected()) * _vec
       _vec2 = _portal_scene_mat.get_translate()
       _vec2 = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(_portal_scene_mat.get_rotate_scale_corrected())) * _vec2
       _dist = _vec2.z

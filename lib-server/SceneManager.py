@@ -244,13 +244,13 @@ class SceneManager(avango.script.Script):
 
     # init scenes   
     #self.scene_monkey     = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_medieval    = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_medieval    = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden    = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)   
 
     #pitoti krams:    
-    self.scene_spacemonkey  = SpacemonkeyPitoti(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_seradinaRock = SeradinaRock(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_streets      = Streets(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_spacemonkey  = SpacemonkeyPitoti(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_seradinaRock = SeradinaRock(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_streets      = Streets(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_valley       = SeradinaValley(self, SCENEGRAPH, NET_TRANS_NODE)
 
 

@@ -16,8 +16,29 @@ from ClientPortal import *
 from display_config import displays
 import hyperspace_config
 
+from   examples_common.GuaVE import GuaVE
+
 # import python libraries
 import sys
+import time
+
+
+def test1(VIEWS, i):
+
+  _view = VIEWS[i]
+  _view.pipeline.PreRenderPipelines.value = [_view.pre_pipeline2]
+
+
+def test2(VIEWS, i):
+
+  _view = VIEWS[i]
+  _view.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.QUAD_TEXTURE
+
+def test3(VIEWS, i):
+
+  _view = VIEWS[i]
+  _view.pipeline.BackgroundTexture.value = "pre_scene2_texture"
+
 
 # Command line parameters:
 # client.py SERVER_IP PLATFORM_ID DISPLAY_NAME SCREEN_NUM
@@ -29,8 +50,12 @@ import sys
 ## Main method for the client application.
 def start():
 
+  ## @var shell
+  # The GuaVE shell to be used when the application is running.
+  shell = GuaVE()
+
   # disable logger warningss
-  logger = avango.gua.nodes.Logger(EnableWarning = False)
+  logger = avango.gua.nodes.Logger(EnableWarning = True)
 
   # get the server ip
   server_ip = str(sys.argv[1])
@@ -43,6 +68,8 @@ def start():
 
   # get the screen number on platform
   screen_num = int(sys.argv[4])
+
+  slot_id = int(sys.argv[5])
 
   # get own hostname
   hostname = open('/etc/hostname', 'r').readline()
@@ -108,6 +135,7 @@ def start():
       avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture_left")
       avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture_right")
 
+
   # get the display instance
   for _display in displays:
     if _display.name == display_name:
@@ -117,20 +145,20 @@ def start():
   viewer = avango.gua.nodes.Viewer()
 
   # Create a view for each displaystring (= slot)
-  _string_num = 0
+  #_string_num = 0
   views = []
 
-  for _displaystring in handled_display_instance.displaystrings:
-    _view = View()
-    _view.my_constructor(graph,
-                         viewer,
-                         platform_id,
-                         _string_num,
-                         handled_display_instance,
-                         screen_num,
-                         handled_display_instance.stereo)
-    views.append(_view)
-    _string_num += 1
+  #for _displaystring in handled_display_instance.displaystrings:
+  _view = View()
+  _view.my_constructor(graph,
+                       viewer,
+                       platform_id,
+                       slot_id,
+                       handled_display_instance,
+                       screen_num,
+                       handled_display_instance.stereo)
+  views.append(_view)
+  #_string_num += 1
 
   viewer.SceneGraphs.value = [graph]
 
@@ -139,6 +167,7 @@ def start():
   portal_manager.my_constructor(graph, views)
 
   # start rendering process
+  shell.start(locals(), globals())
   viewer.run()
 
 if __name__ == '__main__':

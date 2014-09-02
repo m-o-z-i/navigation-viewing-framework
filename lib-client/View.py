@@ -75,7 +75,7 @@ class View(avango.script.Script):
     # retrieve the needed values from display
     ## @var display_values
     # Values that are retrieved from the display. Vary for each view on this display.
-    self.display_values = DISPLAY_INSTANCE.register_view()
+    self.display_values = DISPLAY_INSTANCE.register_view(SLOT_ID)
 
     ##
     #
@@ -192,13 +192,14 @@ class View(avango.script.Script):
       else:
         self.pipeline.EnableStereo.value = False
 
+
     self.pipeline.Window.value = self.window
     self.pipeline.Camera.value = self.camera
     self.pipeline.EnableFPSDisplay.value = True
     self.pipeline.EnablePreviewDisplay.value = False
     self.pipeline.EnableBackfaceCulling.value = False
     self.pipeline.EnableFrustumCulling.value = True
-    self.pipeline.EnableFXAA.value = False
+    self.pipeline.EnableFXAA.value = True
 
     if hyperspace_config.prepipes:
 
@@ -236,7 +237,6 @@ class View(avango.script.Script):
       self.pre_pipeline2.BackgroundTexture.value = "/opt/guacamole/resources/skymaps/bright_sky.jpg"
       self.pre_pipeline2.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
 
-
       self.pre_camera1 = avango.gua.nodes.Camera()
       self.pre_camera1.SceneGraph.value = SCENEGRAPH.Name.value
       self.pre_camera1.LeftScreen.value = self.camera.LeftScreen.value
@@ -260,22 +260,24 @@ class View(avango.script.Script):
       self.pre_pipeline1.BackgroundTexture.value = "pre_scene2_texture"
       self.pre_pipeline1.BackgroundMode.value = avango.gua.BackgroundMode.QUAD_TEXTURE
 
-
+      #'''
       self.pipeline.PreRenderPipelines.value = [self.pre_pipeline1]
       self.pipeline.EnableFrustumCulling.value = True
       self.pipeline.EnableBackfaceCulling.value = False
       self.pipeline.EnableSsao.value = False
-      self.pipeline.BackgroundTexture.value = "pre_scene1_texture"
       self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.QUAD_TEXTURE
+      self.pipeline.BackgroundTexture.value = "pre_scene1_texture"
       self.pipeline.EnableSsao.value = False
       self.pipeline.FogStart.value = 850.0
       self.pipeline.FogEnd.value = 1000.0
       self.pipeline.EnableFog.value = False
+      #'''
 
     else:
 
       self.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.SKYMAP_TEXTURE
       self.pipeline.BackgroundTexture.value = "/opt/guacamole/resources/skymaps/bright_sky.jpg"
+
 
     '''
       General user settings

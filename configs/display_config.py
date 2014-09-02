@@ -19,7 +19,133 @@ class LargePowerwall(Display):
                     , hostname = "kerberos"
                     , name = "large_powerwall"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
+                    , displaystrings = [":0.0", ":0.1", ":0.2"] #, ":0.3"]
+                    , size = (4.16, 2.61)
+                    , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
+                    #, shutter_timings = [ [(0,2400), (100,2500)],
+                    #                      [(3000,4600),(3100,4700)],
+                    #                      [(5700,8175), (5800,8275)],
+                    #                      [(8200,10700), (8300,10800)],
+                    #                      [(11400,12900), (11500,13000)],
+                    #                      [(14000,15800), (14100,15900)]
+                    #                    ]
+                    , shutter_timings = [ [(0,8175), (100,8275)],
+                                          [(8200,10700), (8300,10800)],
+                                          [(11400,12900), (11500,13000)],
+                                          #[(14000,15800), (14100,15900)]
+                                        ]
+                    #, shutter_values = [  [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)]
+                    #                   ]
+                    , shutter_values = [  [(22,44), (88,11)],
+                                          [(22,44), (88,11)],
+                                          [(22,44), (88,11)],
+                                          #[(22,44), (88,11)]
+                                       ]
+                    , max_viewing_distance = 5.0
+                    , stereo = True
+                    , stereomode = "SIDE_BY_SIDE"
+                    , render_mask = render_mask
+                    )
+
+  ## Registers a new view at this display and returns the display string
+  # and the warp matrices assigned to the new view.
+  def register_view(self, view_num):
+    if view_num < 4:
+      warpmatrices = [
+          "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P5.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P6.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P1.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
+      ]
+      self.num_views += 1
+      return (self.displaystrings[view_num], warpmatrices)
+    else:
+      return None
+
+'''
+class LargePowerwall2(Display):
+
+  ## Custom constructor.
+  # @param hostname The hostname to which this display is connected to.
+  # @param name A name to be associated to that display. Will be used in XML configuration file.
+  # @param resolution The display's resolution to be used.
+  # @param displaystrings A list of strings on which the windows for each user will pop up.
+  # @param size Physical size of the display medium in meters.
+  # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
+  def __init__(self, render_mask = ""):
+    Display.__init__( self
+                    , hostname = "kerberos"
+                    , name = "large_powerwall2"
+                    , resolution = (1920, 1200)
+                    , displaystrings = [":0.0"]
+                    , size = (4.16, 2.61)
+                    , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
+                    #, shutter_timings = [ [(0,2400), (100,2500)],
+                    #                      [(3000,4600),(3100,4700)],
+                    #                      [(5700,8175), (5800,8275)],
+                    #                      [(8200,10700), (8300,10800)],
+                    #                      [(11400,12900), (11500,13000)],
+                    #                      [(14000,15800), (14100,15900)]
+                    #                    ]
+                    , shutter_timings = [ [(0,8175), (100,8275)],
+                                          [(8200,10700), (8300,10800)],
+                                          [(11400,12900), (11500,13000)],
+                                          [(14000,15800), (14100,15900)]
+                                        ]
+                    #, shutter_values = [  [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)],
+                    #                      [(22,44), (88,11)]
+                    #                   ]
+                    , shutter_values = [  [(22,44), (88,11)],
+                                          [(22,44), (88,11)],
+                                          [(22,44), (88,11)],
+                                          [(22,44), (88,11)]
+                                       ]
+                    , max_viewing_distance = 5.0
+                    , stereo = True
+                    , stereomode = "SIDE_BY_SIDE"
+                    , render_mask = render_mask
+                    )
+
+  ## Registers a new view at this display and returns the display string
+  # and the warp matrices assigned to the new view.
+  def register_view(self):
+    view_num = self.num_views
+    if view_num < 4:
+      warpmatrices = [
+          "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P5.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P6.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P1.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
+      ]
+      self.num_views += 1
+      return (self.displaystrings[view_num], warpmatrices)
+    else:
+      return None
+'''
+
+## Display configuration for the large powerwall in the VR lab.
+class LargePowerwall_U1(Display):
+
+  ## Default constructor.
+  def __init__(self, render_mask = ""):
+    Display.__init__( self
+                    , hostname = "kerberos"
+                    , name = "large_powerwall_u1"
+                    , resolution = (1920, 1200)
+                    , displaystrings = [":0.0"]
                     , size = (4.16, 2.61)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     #, shutter_timings = [ [(0,2400), (100,2500)],
@@ -70,22 +196,16 @@ class LargePowerwall(Display):
     else:
       return None
 
+## Display configuration for the large powerwall in the VR lab.
+class LargePowerwall_U2(Display):
 
-class LargePowerwall2(Display):
-
-  ## Custom constructor.
-  # @param hostname The hostname to which this display is connected to.
-  # @param name A name to be associated to that display. Will be used in XML configuration file.
-  # @param resolution The display's resolution to be used.
-  # @param displaystrings A list of strings on which the windows for each user will pop up.
-  # @param size Physical size of the display medium in meters.
-  # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
+  ## Default constructor.
   def __init__(self, render_mask = ""):
     Display.__init__( self
                     , hostname = "kerberos"
-                    , name = "large_powerwall2"
+                    , name = "large_powerwall_u2"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.0"]
+                    , displaystrings = [":0.1"]
                     , size = (4.16, 2.61)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     #, shutter_timings = [ [(0,2400), (100,2500)],
@@ -411,9 +531,11 @@ class OculusRift(Display):
 ## @var displays A list of Display instances to be used in the framework.
 
 displays = [
-  #LargePowerwall(),
+  LargePowerwall(),
   #LargePowerwall2() ,
-  SmallPowerwall(),
+  LargePowerwall_U1(),
+  LargePowerwall_U2(),
+  #SmallPowerwall(),
   #SmallPowerwall2() ,
   #OculusRift(hostname = "atalante", name = "oculus_rift_atalante") ,
   #TouchTable3DStandalone() ,

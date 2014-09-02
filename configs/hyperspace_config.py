@@ -16,9 +16,9 @@ scenes = {
   , 7: "SceneVRHyperspace7(self, SCENEGRAPH, NET_TRANS_NODE)" # avatar call
 }
 
-active_scenes = [3, 4]
+active_scenes = [3]
 
-stereo = False
+stereo = True
 
 animation_nodes = {
   3: [ "/net/SceneVRHyperspace3/terrain_group" ],

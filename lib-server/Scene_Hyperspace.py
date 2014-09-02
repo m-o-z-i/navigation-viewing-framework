@@ -275,7 +275,7 @@ class SceneVRHyperspace3(SceneObject):
     _parent_node = SCENEGRAPH["/net/platform_0/scale/screen_0"]
     self.init_geometry("clouds", "data/objects/plane.obj", _mat, "data/materials/bwb/Fog.gmd", False, False, _parent_node, "pre_scene1")
 
-    #'''
+
     _mat = avango.gua.make_identity_mat()
     self.init_group("terrain_group", _mat, False, False, self.scene_root, "pre_scene2")
 
@@ -295,7 +295,6 @@ class SceneVRHyperspace3(SceneObject):
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
     self.init_geometry("terrain_tile4", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
     self.init_geometry("terrain_tile5", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -334,7 +333,6 @@ class SceneVRHyperspace3(SceneObject):
 
     _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
     self.init_geometry("terrain_tile16", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    #'''
 
     # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)

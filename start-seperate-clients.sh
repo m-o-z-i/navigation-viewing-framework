@@ -31,5 +31,5 @@ num=$(($5 - 1))
 for i in `seq 0 $num`;
   do
     # run program
-    echo "cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4 $i"
+    cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4 $i
   done

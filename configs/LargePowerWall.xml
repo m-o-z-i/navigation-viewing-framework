@@ -45,7 +45,7 @@
     </platformrot>
 
     <groundfollowing>
-      <activated>False</activated>
+      <activated>True</activated>
       <raystartheight>0.75</raystartheight>
     </groundfollowing>
 
@@ -102,7 +102,26 @@
 
     <startplatform>0</startplatform>
 
-    <headtrackingstation>tracking-dlp-glasses-6</headtrackingstation>
+    <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
+
+    <eyedist>0.065</eyedist>
+
+    <warnings>False</warnings>
+
+  </user>
+
+
+  <!-- Fourth User -->
+
+  <user>
+
+    <vip>False</vip>
+
+    <glasses>3</glasses>
+
+    <startplatform>0</startplatform>
+
+    <headtrackingstation>tracking-dlp-glasses-5</headtrackingstation>
 
     <eyedist>0.065</eyedist>
 

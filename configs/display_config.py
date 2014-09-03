@@ -19,7 +19,7 @@ class LargePowerwall(Display):
                     , hostname = "kerberos"
                     , name = "large_powerwall"
                     , resolution = (1920, 1200)
-                    , displaystrings = [":0.0", ":0.1", ":0.2"] #, ":0.3"]
+                    , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
                     , size = (4.16, 2.61)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     #, shutter_timings = [ [(0,2400), (100,2500)],
@@ -304,7 +304,7 @@ displays = [
   #TouchTable3DSecondary(render_mask = "!main_scene") ,
   # Display(hostname = "orestes", stereo = False),
   # Display(hostname = "artemis", stereo = False)
-  #Display(hostname = "atalante", stereo = False)
+  Display(hostname = "atalante", stereo = False)
 ]
 
 ## @var INTELLIGENT_SHUTTER_SWITCHING

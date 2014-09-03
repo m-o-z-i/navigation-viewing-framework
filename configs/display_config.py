@@ -253,7 +253,7 @@ class TouchTable3D(Display):
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
   def __init__(self):
     Display.__init__( self
-                    , hostname = "medusa.medien.uni-weimar.de"
+                    , hostname = "medusa"
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
                     , displaystrings = [":0.0", ":0.1", ":0.2"] 

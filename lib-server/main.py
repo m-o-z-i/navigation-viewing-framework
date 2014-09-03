@@ -35,7 +35,9 @@ def start():
   server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
   server_ip = server_ip.strip(" \n")  
   server_ip = server_ip.rsplit(" ")
-  server_ip = str(server_ip[-1])
+  server_ip = str(server_ip[0])
+  print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", server_ip
+  #server_ip = "127.0.0.1"
 
   # initialize pseudo nettrans node as client processes are started in Platform class
   pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
@@ -58,7 +60,8 @@ def start():
   # create distribution node and sync children from pseudo nettrans
   nettrans = avango.gua.nodes.NetTransform(
       Name = "net"
-    , Groupname = "AVSERVER|{0}|7432".format(server_ip)
+    , Groupname = "AVSERVER|{0}|5665".format(server_ip)
+    #, Groupname = "AVSERVER|{0}|7432".format(server_ip)
   )
   #nettrans.GroupNames.value = ["all"]
 

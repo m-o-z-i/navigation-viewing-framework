@@ -8,6 +8,7 @@ import avango
 import avango.script
 import avango.gua
 import avango.oculus
+from   examples_common.GuaVE import GuaVE
 
 # import framework libraries
 import ClientMaterialUpdaters
@@ -27,11 +28,17 @@ import sys
 ## Main method for the client application.
 def start():
 
+
+  ## @var shell
+  # The GuaVE shell to be used when the application is running.
+  shell = GuaVE()
+
   # disable logger warningss
   logger = avango.gua.nodes.Logger(EnableWarning = False)
 
   # get the server ip
   server_ip = str(sys.argv[1])
+  #server_ip = "127.0.0.1"
 
   # get the platform id
   platform_id = int(sys.argv[2])
@@ -53,7 +60,8 @@ def start():
   nettrans = avango.gua.nodes.NetTransform(
                 Name = "net",
                 # specify role, ip, and port
-                Groupname = "AVCLIENT|{0}|7432".format(server_ip)
+                #Groupname = "AVCLIENT|{0}|7432".format(server_ip)
+                Groupname = "AVCLIENT|{0}|5665".format(server_ip)
                 )
 
   # create a dummy scenegraph to be extended by distribution
@@ -124,7 +132,7 @@ def start():
   #avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture_left")
   #avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture_right")
 
-
+  """
   _loader = avango.gua.nodes.PLODLoader()
   _loader.UploadBudget.value = 128
   _loader.RenderBudget.value = 1024
@@ -200,7 +208,7 @@ def start():
   _Valley = [0] *15
   for i in range(1, 15):
         _Valley[i]  = _loader.create_geometry_from_file("SeradinaValley"+str(i), "/mnt/SSD/PLOD_Models/Seradina_Valley/CONVERTED_Seradina_Part_"+str(i)+".kdn", avango.gua.LoaderFlags.DEFAULTS)
-
+  """
 
   # get the display instance
   for _display in displays:
@@ -227,6 +235,8 @@ def start():
     _string_num += 1
 
   viewer.SceneGraphs.value = [graph]
+
+  shell.start(locals(), globals())
 
   # start rendering process
   viewer.run()

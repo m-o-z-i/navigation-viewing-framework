@@ -266,7 +266,7 @@ class TouchTable3D(Display):
                                            [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
                                         ]
-                    , size = (1.27, 0.93)
+                    , size = (1.05, 0.765)
                     , transformation = #avango.gua.make_trans_mat(-1.56, 0.953, 2.28) * \
                                        #avango.gua.make_rot_mat(90, 0, 1, 0) * \
                                        avango.gua.make_rot_mat(90.0, -1,0, 0)

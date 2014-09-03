@@ -253,7 +253,7 @@ class TouchTable3D(Display):
   # @param transformation A matrix specifying the display's transformation with respect to the platform coordinate system.
   def __init__(self):
     Display.__init__( self
-                    , hostname = "medusa"
+                    , hostname = "medusa.medien.uni-weimar.de"
                     , name = "touch_table_3D"
                     , resolution = (1400, 1050)
                     , displaystrings = [":0.0", ":0.1", ":0.2"] 
@@ -416,15 +416,15 @@ displays = [
   #SmallPowerwall() ,
   #SmallPowerwall2() ,  
   #OculusRift() ,
-  #TouchTable3D() ,
+  TouchTable3D() ,
   #Display(hostname = "daedalos", stereo = False) ,
 
-  #PerseusTouchTable() 
-  NohraTouchTable()
+  PerseusTouchTable(), 
+  NohraTouchTable(),
 
-  #Display(hostname = "apollo"
-  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
-  #)
+  Display(hostname = "apollo"
+      , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+  )
   #,
   #Display(hostname = "atalante"
   #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)

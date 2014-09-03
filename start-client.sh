@@ -32,6 +32,11 @@ export PYTHONPATH="$LOCAL_AVANGO/lib/python2.7":"$LOCAL_AVANGO/examples":$AVANGO
 export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./lib-server
 
 # run program
+# param 1: server-ip
+# param 2: platform-id
+# param 3: display-name
+# param 4: screen-number
+# param 5: slot-id
 cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4 $5
 
 # kill daemon

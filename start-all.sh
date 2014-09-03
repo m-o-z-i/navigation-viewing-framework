@@ -12,10 +12,6 @@ DIR="$( cd "$( dirname "$0" )" && pwd )"
 LOCAL_GUACAMOLE="$DIR/../../../guacamole"
 LOCAL_AVANGO="$DIR/../../../avango"
 
-#GUACAMOLE=/opt/guacamole/feature_test
-#GUACAMOLE=/opt/guacamole/gua1806
-#AVANGO=/opt/avango/feature_test
-
 GUACAMOLE=/opt/guacamole/master
 AVANGO=/opt/avango/master
 

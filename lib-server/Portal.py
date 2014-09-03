@@ -69,9 +69,9 @@ class PortalManager(avango.script.Script):
     if hyperspace_config.active_scenes == [1]:
       self.add_portal(avango.gua.make_trans_mat(0.0, 0.0, -100.0),
                       1.0,
-                      avango.gua.make_trans_mat(-63.8, 6.430, 1.245) * avango.gua.make_rot_mat(180, 0, 1, 0),
-                      0.8,
-                      1.5,
+                      avango.gua.make_trans_mat(-63.8, 6.6, 1.3) * avango.gua.make_rot_mat(180, 0, 1, 0),
+                      0.6,
+                      1.2,
                       "3D",
                       "PERSPECTIVE",
                       "False",

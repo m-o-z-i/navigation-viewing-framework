@@ -137,7 +137,7 @@ class SceneManager(avango.script.Script):
 
     #SCENEGRAPH.update_cache()
 
-
+  '''
   # callbacks
   ## Called whenever sf_key1 changes.
   @field_has_changed(sf_key1)
@@ -215,7 +215,7 @@ class SceneManager(avango.script.Script):
 
     if self.sf_key_home.value == True: # key pressed
       self.print_active_scene()
-
+  '''
 
   # functions
   ## Sets one of the loaded scene to the active (displayed) one.

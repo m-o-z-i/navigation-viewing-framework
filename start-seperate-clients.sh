@@ -1,19 +1,13 @@
 #!/bin/bash
 
+# param 1: server-ip
+# param 2: platform-id
+# param 3: display-name
+# param 4: screen-number
+# param 5: number of client applications
+
 # get directory of script
 DIR="$( cd "$( dirname "$0" )" && pwd )"
-
-# assuming a local guacmole version is located properly
-LOCAL_GUACAMOLE="$DIR/../../../guacamole"
-LOCAL_AVANGO="$DIR/../../../avango"
-
-# if not, this path will be used
-#GUACAMOLE=/opt/guacamole/testing/guacamole
-#AVANGO=/opt/guacamole/testing/avango
-
-#GUACAMOLE=/opt/guacamole/feature_test
-#GUACAMOLE=/opt/guacamole/gua1806
-#AVANGO=/opt/avango/feature_test
 
 GUACAMOLE=/opt/guacamole/master
 AVANGO=/opt/avango/master
@@ -31,13 +25,11 @@ export PYTHONPATH="$LOCAL_AVANGO/lib/python2.7":"$LOCAL_AVANGO/examples":$AVANGO
 # guacamole
 export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./lib-server
 
-# run program
-# param 1: server-ip
-# param 2: platform-id
-# param 3: display-name
-# param 4: screen-number
-# param 5: slot-id
-cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4 $5
+# loop to start all the desired client applications
+num=$(($5 - 1))
 
-# kill daemon
-kill %1
+for i in `seq 0 $num`;
+  do
+    # run program
+    cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4 $i
+  done

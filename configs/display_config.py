@@ -69,7 +69,6 @@ class LargePowerwall(Display):
     else:
       return None
 
-
 ## Display configuration for the small powerwall in the VR lab.
 class SmallPowerwall(Display):
 

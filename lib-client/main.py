@@ -23,21 +23,26 @@ import sys
 import time
 
 
-def test1(VIEWS, i):
+class TimeUpdater(avango.script.Script):
 
-  _view = VIEWS[i]
-  _view.pipeline.PreRenderPipelines.value = [_view.pre_pipeline2]
+  ## @var TimeIn
+  # Field containing the current time in milliseconds.
+  TimeIn = avango.SFFloat()
 
+  ## @var MaterialName
+  # Field containing the name of the material to be updated
+  MaterialName = avango.SFString()
 
-def test2(VIEWS, i):
+  ## @var UniformName
+  # Field containing the name of the uniform value to be updated
+  UniformName = avango.SFString()
 
-  _view = VIEWS[i]
-  _view.pipeline.BackgroundMode.value = avango.gua.BackgroundMode.QUAD_TEXTURE
-
-def test3(VIEWS, i):
-
-  _view = VIEWS[i]
-  _view.pipeline.BackgroundTexture.value = "pre_scene2_texture"
+  ## Called whenever TimeIn changes.
+  @field_has_changed(TimeIn)
+  def update(self):
+    avango.gua.set_material_uniform(self.MaterialName.value,
+                                    self.UniformName.value,
+                                    self.TimeIn.value)
 
 
 # Command line parameters:
@@ -128,6 +133,8 @@ def start():
 
     avango.gua.load_material("data/materials/bwb/Glass2.gmd")
 
+    avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "transparency", 0.0)
+
     if not hyperspace_config.stereo:
       avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture")
       avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture")
@@ -169,6 +176,17 @@ def start():
   # start rendering process
   shell.start(locals(), globals())
   viewer.run()
+
+
+def toggle_transparency():
+  if not hyperspace_config.toggle_transparency:
+    hyperspace_config.toggle_transparency = True
+    hyperspace_config.toggle_transparency_start_time = time.time()
+    start_val = hyperspace_config.toggle_transparency_end_val
+    hyperspace_config.toggle_transparency_end_val = hyperspace_config.toggle_transparency_start_val
+    hyperspace_config.toggle_transparency_start_val = start_val
+    hyperspace_config.toggle_transparency_end_time = hyperspace_config.toggle_transparency_start_time + hyperspace_config.toggle_transparency_duration
+
 
 if __name__ == '__main__':
   start()

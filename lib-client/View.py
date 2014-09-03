@@ -77,6 +77,8 @@ class View(avango.script.Script):
     # Values that are retrieved from the display. Vary for each view on this display.
     self.display_values = DISPLAY_INSTANCE.register_view(SLOT_ID)
 
+    self.timer = avango.nodes.TimeSensor()
+
     ##
     #
     self.display_render_mask = DISPLAY_INSTANCE.render_mask
@@ -437,6 +439,17 @@ class View(avango.script.Script):
     # connect sf_pipeline_string with Name field of info node once
     if _pipeline_info_node != None and self.sf_pipeline_string.value == "":
       self.sf_pipeline_string.connect_from(_pipeline_info_node.Name)
+
+
+    if hyperspace_config.toggle_transparency:
+
+      if time.time() < hyperspace_config.toggle_transparency_end_time:
+        _val_inc = (hyperspace_config.toggle_transparency_end_val - hyperspace_config.toggle_transparency_start_val)
+        _time_factor = max(min((hyperspace_config.toggle_transparency_end_time - time.time()) / hyperspace_config.toggle_transparency_duration, 1.0), 0.0)
+
+        avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "transparency", hyperspace_config.toggle_transparency_start_val + _val_inc * _time_factor)
+      else:
+        hyperspace_config.toggle_transparency = False
 
 
     # local tracking update code, does not noticeably increase performance

@@ -92,9 +92,9 @@ class SceneVRHyperspace1(SceneObject):
     self.starting_matrix = avango.gua.make_trans_mat(-67.0,5.5,-5.7) * avango.gua.make_rot_mat(135.0,0,-1,0)
     self.starting_scale = 1.0
 
-    # advertisement geometry
-    _mat = avango.gua.make_trans_mat(0.0, 0.0, -105.0)
-    self.init_geometry("monkey", "data/objects/monkey.obj", _mat, "data/materials/Stones.gmd", True, False, self.scene_root, "main_scene")
+    # navigation geometry
+    _mat = avango.gua.make_trans_mat(0.0, 0.0, -102.0)
+    self.init_geometry("bwb_map", "data/objects/demo_models/vr_hyperspace/props/map.obj", _mat, "data/materials/Stones.gmd", True, False, self.scene_root, "main_scene")
 
     # geometry
     _mat = avango.gua.make_identity_mat()
@@ -111,8 +111,8 @@ class SceneVRHyperspace1(SceneObject):
     self.init_geometry("bwb_inner_right_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_08.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_right_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
-    _mat = avango.gua.make_trans_mat(0.0,-0.15,0.0)
-    self.init_geometry("bwb_map", "data/objects/demo_models/vr_hyperspace/props/map.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    #_mat = avango.gua.make_trans_mat(0.0,-0.15,0.0)
+    #self.init_geometry("bwb_map", "data/objects/demo_models/vr_hyperspace/props/map.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
     # lights

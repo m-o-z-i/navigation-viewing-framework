@@ -12,10 +12,10 @@ from ConsoleIO import *
 
 ## Class representing a display. A display is a physical projection medium
 # running on a host and having certain resolution, size and transformation. It
-# supports a specific amount of users. In the Platform class, a screen node 
+# supports a specific amount of users. In the Platform class, a screen node
 # is associated for each display.
 class Display:
-  
+
   ## Custom constructor
   # @param hostname The hostname to which this display is connected to.
   # @param name A name to be associated to that display. Will be used in XML configuration file.
@@ -50,7 +50,7 @@ class Display:
     ## @var hostname
     # The hostname to which this display is connected to.
     self.hostname = hostname
-    
+
     # default naming for desktop setups
     ## @var name
     # A name to be associated to that display. Will be used in XML configuration file.
@@ -62,7 +62,7 @@ class Display:
     ## @var resolution
     # The display's resolution to be used.
     self.resolution = resolution
-    
+
     ## @var displaystrings
     # A list of strings on which the windows for each user will pop up.
     self.displaystrings = displaystrings
@@ -74,16 +74,16 @@ class Display:
     ## @var shutter_values
     # A list of lists of hexadecimal commands for shutter glasses associated with the timings for each displaystring.
     self.shutter_values = shutter_values
-    
+
     ## @var size
     # A list of strings on which the windows for each user will pop up.
     self.size = size
-    
+
     ## @var transformation
     # A matrix specifying the display's transformation with respect to the platform coordinate system.
     self.transformation = transformation
 
-    ## @var max_viewing_distance 
+    ## @var max_viewing_distance
     # Specification of the maximum viewing distance for the shutters to sync in.
     self.max_viewing_distance = max_viewing_distance
 
@@ -94,7 +94,7 @@ class Display:
     ## @var stereo
     # Boolean indicating if the stereo mode is to be used.
     self.stereo = stereo
-   
+
     ## @var stereomode
     # A string indicating the stereo mode that is used by this display.
     self.stereomode = stereomode
@@ -109,8 +109,8 @@ class Display:
 
 
   ## Registers a new view at this display and returns the display string assigned to the new view.
-  def register_view(self):
-    view_num = self.num_views
+  def register_view(self, view_num):
+    #view_num = self.num_views
     if view_num < len(self.displaystrings):
       self.num_views += 1
       return [self.displaystrings[view_num]]
@@ -140,24 +140,24 @@ class Display:
 
   ## Creates a visualization of the display's screen in the scene (white frame). Returns the scenegraph geometry node.
   def create_screen_visualization(self):
-  
+
     _loader = avango.gua.nodes.TriMeshLoader()
-  
+
     _node = _loader.create_geometry_from_file("screen_visualization", "data/objects/screen.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)
     _node.ShadowMode.value = avango.gua.ShadowMode.OFF
 
     _w, _h = self.size
     _node.Transform.value = self.transformation * avango.gua.make_scale_mat(_w,_h,1.0)
-    
+
     return _node
 
   ## Creates a proxy geometry for this display to be checked for intesections in the global tracking space.
   # @param PLATFORM Reference to the Platform instance to which the display is belonging.
   # @param SCREEN_ID Number of the screen this display is representing on the platform.
   def create_transformed_proxy_geometry(self, PLATFORM, SCREEN_ID):
-  
+
     _loader = avango.gua.nodes.TriMeshLoader()
-  
+
     _node = _loader.create_geometry_from_file("proxy_" + str(PLATFORM.platform_id) + "_" + str(SCREEN_ID)
                                             , "data/objects/plane.obj", "data/materials/AvatarBlue.gmd"
                                             , avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS | avango.gua.LoaderFlags.MAKE_PICKABLE)
@@ -174,5 +174,5 @@ class Display:
 
     # eliminate transmitter offset to transform screen in tracking space
     _node.Transform.value =  avango.gua.make_inverse_mat(PLATFORM.transmitter_offset) * _node.Transform.value
-    
+
     return _node

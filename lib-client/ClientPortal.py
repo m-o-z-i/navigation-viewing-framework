@@ -519,7 +519,7 @@ class PortalPreView(avango.script.Script):
     _portal_vec = avango.gua.Vec3(_portal_vec.x, _portal_vec.y, _portal_vec.z)
     _angle = math.acos(_view_vec.dot(_portal_vec))
 
-    if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 100.0:
+    if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 120.0:
 
       if self.pipeline.Enabled.value == True:
         self.pipeline.Enabled.value = False

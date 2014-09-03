@@ -92,9 +92,16 @@ class SceneVRHyperspace1(SceneObject):
     self.starting_matrix = avango.gua.make_trans_mat(-67.0,5.5,-5.7) * avango.gua.make_rot_mat(135.0,0,-1,0)
     self.starting_scale = 1.0
 
-    # navigation geometry
-    _mat = avango.gua.make_trans_mat(0.0, 0.0, -102.0)
-    self.init_geometry("bwb_map", "data/objects/demo_models/vr_hyperspace/props/map.obj", _mat, "data/materials/Stones.gmd", True, False, self.scene_root, "main_scene")
+    # navigation texture
+    _tex_quad = avango.gua.nodes.TexturedQuadNode(
+          Name = "navigation_map"
+        , Texture = "data/textures/tiles_diffuse.jpg"
+        , Width = 0.6
+        , Height = 1.2
+    )
+    _tex_quad.Transform.value = avango.gua.make_trans_mat(-63.8, 6.6, 1.3)
+    NET_TRANS_NODE.Children.value.append(_tex_quad)
+
 
     # geometry
     _mat = avango.gua.make_identity_mat()
@@ -110,10 +117,6 @@ class SceneVRHyperspace1(SceneObject):
     _mat = avango.gua.make_trans_mat(0.0, 0.08, 0.0) * avango.gua.make_scale_mat(1.0,1.0,-1.0)
     self.init_geometry("bwb_inner_right_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_08.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_right_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    #_mat = avango.gua.make_trans_mat(0.0,-0.15,0.0)
-    #self.init_geometry("bwb_map", "data/objects/demo_models/vr_hyperspace/props/map.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
 
     # lights
     _mat = avango.gua.make_trans_mat(-59.0, 7.74, 5.5)

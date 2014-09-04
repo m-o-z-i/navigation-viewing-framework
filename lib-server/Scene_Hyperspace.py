@@ -405,8 +405,34 @@ class SceneVRHyperspace4(SceneObject):
     self.starting_matrix = avango.gua.make_trans_mat(-57.937, 5.563, 7.599) * avango.gua.make_rot_mat(135.0,0,1,0)
     self.starting_scale = 1.0
 
+    # advertisement geometry
+    _mat = avango.gua.make_trans_mat(0.0, 0.0, -102.0)
+    self.init_geometry("bwb_inner", "data/objects/monkey.obj", _mat, "data/materials/bwb/Stones.gmd", False, False, self.scene_root, "main_scene")
+
+    _mat = avango.gua.make_trans_mat(10.0, 0.0, -102.0)
+    self.init_geometry("bwb_inner", "data/objects/sphere.obj", _mat, "data/materials/bwb/Stones.gmd", False, False, self.scene_root, "main_scene")
+
+    _tex_quad1 = avango.gua.nodes.TexturedQuadNode(
+          Name = "tex_ad_1"
+        , Texture = "data/textures/tiles_diffuse.jpg"
+        , Width = 0.6
+        , Height = 1.2
+    )
+    _tex_quad1.Transform.value = avango.gua.make_trans_mat(-63.79, 6.62, -0.95)
+    NET_TRANS_NODE.Children.value.append(_tex_quad1)
+
+    _tex_quad2 = avango.gua.nodes.TexturedQuadNode(
+          Name = "tex_ad_2"
+        , Texture = "data/textures/tiles_diffuse.jpg"
+        , Width = 0.6
+        , Height = 1.2
+    )
+    _tex_quad2.Transform.value = avango.gua.make_trans_mat(-58.34, 6.62, -0.95)
+    NET_TRANS_NODE.Children.value.append(_tex_quad2)
+
     # geometry
     _mat = avango.gua.make_identity_mat()
+    self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/Glass2.gmd", False, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 

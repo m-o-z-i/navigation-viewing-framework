@@ -182,9 +182,13 @@ def toggle_transparency():
   if not hyperspace_config.toggle_transparency:
     hyperspace_config.toggle_transparency = True
     hyperspace_config.toggle_transparency_start_time = time.time()
-    start_val = hyperspace_config.toggle_transparency_end_val
-    hyperspace_config.toggle_transparency_end_val = hyperspace_config.toggle_transparency_start_val
-    hyperspace_config.toggle_transparency_start_val = start_val
+    if hyperspace_config.toggle_transparency_start_val <= 0.0:
+      hyperspace_config.toggle_transparency_start_val = 0.5
+      hyperspace_config.toggle_transparency_end_val = 0.0
+    else:
+      hyperspace_config.toggle_transparency_start_val = 0.0
+      hyperspace_config.toggle_transparency_end_val = 0.5
+
     hyperspace_config.toggle_transparency_end_time = hyperspace_config.toggle_transparency_start_time + hyperspace_config.toggle_transparency_duration
 
 

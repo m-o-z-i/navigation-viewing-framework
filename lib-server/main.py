@@ -115,7 +115,7 @@ def start():
   table_interaction_space.add_maximized_portal(_table_portal)
   '''
 
-  if (3 in hyperspace_config.active_scenes) or (4 in hyperspace_config.active_scenes):
+  if [i for i in [1, 3, 4] if i in hyperspace_config.active_scenes]:
     # initialize animation manager
     animation_manager = AnimationManager()
 

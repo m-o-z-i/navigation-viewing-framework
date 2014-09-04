@@ -71,10 +71,14 @@ class SceneManager(avango.script.Script):
   # Boolean field representing the home key.
   sf_key_home = avango.SFBool()
 
+  sf_key_w = avango.SFBool()
+
 
   # Default constructor.
   def __init__(self):
     self.super(SceneManager).__init__()
+
+    self.key_w_before = False
 
     # parameters
 
@@ -108,6 +112,7 @@ class SceneManager(avango.script.Script):
     self.sf_key9.connect_from(self.keyboard_sensor.Button18) # key 9
     self.sf_key0.connect_from(self.keyboard_sensor.Button9)  # key 0
     self.sf_key_home.connect_from(self.keyboard_sensor.Button31) # key Pos1(Home)
+    self.sf_key_w.connect_from(self.keyboard_sensor.Button0)
 
 
   ## Custom constructor
@@ -136,6 +141,16 @@ class SceneManager(avango.script.Script):
     self.activate_scene(0) # activate first scene
 
     #SCENEGRAPH.update_cache()
+
+  @field_has_changed(sf_key_w)
+  def sf_key_w_changed(self):
+    if not (self.sf_key_w.value == self.key_w_before) and not self.key_w_before:
+      if (hyperspace_config.active_scenes[0] in hyperspace_config.textures.keys()) and len(self.scenes) > 0:
+        hyperspace_config.texture_idx += 1
+        if hyperspace_config.texture_idx >= len(hyperspace_config.textures[hyperspace_config.active_scenes[0]]):
+          hyperspace_config.texture_idx = 0
+        self.scenes[0].tex_quad.Texture.value = hyperspace_config.textures[hyperspace_config.active_scenes[0]][hyperspace_config.texture_idx]
+    self.key_w_before = self.sf_key_w.value
 
   '''
   # callbacks

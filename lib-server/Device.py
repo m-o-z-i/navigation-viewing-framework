@@ -98,6 +98,7 @@ class MultiDofDevice(avango.script.Script):
   # @param POS_THRESHOLD The positive threshold to be used.
   def filter_channel(self, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD):
 
+    #print VALUE
     VALUE = VALUE - OFFSET
     MIN = MIN - OFFSET
     MAX = MAX - OFFSET
@@ -546,7 +547,7 @@ class NewSpheronDevice(MultiDofDevice):
 
     self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_left.Value0.value, 0.0, -1.0, 1.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_left.Value1.value, 0.0, -1.0, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_left.Value2.value*-1.0, 0.0, -0.1, 0.22, 0, 0)")            
+    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_left.Value2.value*-1.0, 0.0, -0.025, 0.34, 0, 0)")            
     self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_left.Value3.value*-1.0, 0.0, -1.0, 1.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor_right.Value3.value*-1.0, 0.0, -150, 150, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value4.value*-1.0, 0.0, -150, 150, 0, 0)")

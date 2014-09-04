@@ -203,7 +203,7 @@ class SceneVRHyperspace2(SceneObject):
         , Width = 0.42
         , Height = 0.21
     )
-    self.tex_quad.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-47.62, 6.386, 8.021) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
+    self.tex_quad.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
     self.scene_root.Children.value.append(self.tex_quad)
 
 
@@ -443,8 +443,8 @@ class SceneVRHyperspace4(SceneObject):
     _tex_quad1 = avango.gua.nodes.TexturedQuadNode(
           Name = "tex_ad_1"
         , Texture = "data/textures/tiles_diffuse.jpg"
-        , Width = 0.6
-        , Height = 1.2
+        , Width = 0.85
+        , Height = 1.7
     )
     _tex_quad1.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-63.79, 6.62, -0.95)
     self.scene_root.Children.value.append(_tex_quad1)
@@ -452,8 +452,8 @@ class SceneVRHyperspace4(SceneObject):
     _tex_quad2 = avango.gua.nodes.TexturedQuadNode(
           Name = "tex_ad_2"
         , Texture = "data/textures/tiles_diffuse.jpg"
-        , Width = 0.6
-        , Height = 1.2
+        , Width = 0.85
+        , Height = 1.7
     )
     _tex_quad2.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-58.34, 6.62, -0.95)
     self.scene_root.Children.value.append(_tex_quad2)

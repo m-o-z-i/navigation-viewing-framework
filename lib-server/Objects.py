@@ -316,8 +316,8 @@ class SceneObject:
  
     _loader = avango.gua.nodes.PLODLoader()
     _loader.UploadBudget.value = 32
-    _loader.RenderBudget.value = 1024
-    _loader.OutOfCoreBudget.value = 4096    
+    _loader.RenderBudget.value = 512
+    _loader.OutOfCoreBudget.value = 512
 
     _loader_flags = "avango.gua.PLODLoaderFlags.DEFAULTS" # default loader flags
 
@@ -381,6 +381,14 @@ class SceneObject:
   def register_interactive_object(self, INTERACTIVE_OBJECT):
 
     self.objects.append(INTERACTIVE_OBJECT)
+  
+
+  def get_interactive_object(self, NAME):
+  
+    for _object in self.objects:
+
+      if _object.get_node().Name.value == NAME:
+        return _object
 
 
   def get_object(self, NAME):

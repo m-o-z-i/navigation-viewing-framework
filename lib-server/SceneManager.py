@@ -376,10 +376,19 @@ class SceneManager(avango.script.Script):
   ## Prints all the nodes of the active scene on the console.
   def print_active_scene(self):
   
+
+    for _workspace in ApplicationManager.all_workspaces:
+      for _display_group in _workspace.display_groups:
+        for _navigation in _display_group.navigations:
+
+          print "Workspace:", _workspace.id, "Display Group:", _display_group.id, "Navigation:", _display_group.navigations.index(_navigation)
+          print _navigation.sf_nav_mat.value
+
     # print navigation nodes
-    for _i, _navigation in enumerate(self.navigation_list):
-      print "platform_" + str(_i), _navigation.platform.sf_abs_mat.value.get_translate(), _navigation.platform.sf_abs_mat.value.get_rotate(), _navigation.platform.sf_scale.value
-  
+    #for _i, _navigation in enumerate(self.navigation_list):
+    #  print "platform_" + str(_i), _navigation.platform.sf_abs_mat.value.get_translate(), _navigation.platform.sf_abs_mat.value.get_rotate(), _navigation.platform.sf_scale.value
+    
+    '''
     # print interactive objects
     if self.active_scene != None:
       
@@ -391,6 +400,7 @@ class SceneManager(avango.script.Script):
         print _node.Path.value
         print _object.hierarchy_level
         print _node.Transform.value
+    '''
   
   
   ## Returns the hierarchy material string for a given depth.

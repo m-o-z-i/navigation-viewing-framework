@@ -5,12 +5,31 @@
 
 # import avango-guacamole libraries
 import avango
+import avango.gua
+import avango.script
+from avango.script import field_has_changed
 
 # import framework libraries
 from Objects import *
 
 # import python libraries
 # ...
+
+
+class TimedObjectRotation(avango.script.Script):
+
+  ## @var TimeIn
+  # Field containing the current time in milliseconds.
+  TimeIn = avango.SFFloat()
+
+  MatrixIn = avango.gua.SFMatrix4()
+  MatrixOut = avango.gua.SFMatrix4()
+
+  ## Called whenever TimeIn changes.
+  @field_has_changed(TimeIn)
+  def update(self):
+    self.MatrixOut.value = self.MatrixIn.value * avango.gua.make_rot_mat(self.TimeIn.value * 2.0, 0.0, 1.0, 0.0)
+
 
 
 class SceneVRHyperspace0(SceneObject):
@@ -400,6 +419,7 @@ class SceneVRHyperspace4(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "SceneVRHyperspace4", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
+    self.timer = avango.nodes.TimeSensor()
 
     # navigation parameters
     self.starting_matrix = avango.gua.make_trans_mat(-57.937, 5.563, 7.599) * avango.gua.make_rot_mat(135.0,0,1,0)
@@ -407,10 +427,18 @@ class SceneVRHyperspace4(SceneObject):
 
     # advertisement geometry
     _mat = avango.gua.make_trans_mat(0.0, 0.0, -102.0)
-    self.init_geometry("bwb_inner", "data/objects/monkey.obj", _mat, "data/materials/bwb/Stones.gmd", False, False, self.scene_root, "main_scene")
+    self.init_geometry("ad_object_1", "data/objects/monkey.obj", _mat, "data/materials/bwb/Stones.gmd", False, False, self.scene_root, "main_scene")
+    self.ad1_updater = TimedObjectRotation()
+    self.ad1_updater.TimeIn.connect_from(self.timer.Time)
+    self.ad1_updater.MatrixIn.value = avango.gua.make_trans_mat(0.0, 0.0, -102.0)
+    SCENEGRAPH["/net/SceneVRHyperspace4/ad_object_1"].Transform.connect_from(self.ad1_updater.MatrixOut)
 
     _mat = avango.gua.make_trans_mat(10.0, 0.0, -102.0)
-    self.init_geometry("bwb_inner", "data/objects/sphere.obj", _mat, "data/materials/bwb/Stones.gmd", False, False, self.scene_root, "main_scene")
+    self.init_geometry("ad_object_2", "data/objects/sphere.obj", _mat, "data/materials/bwb/Stones.gmd", False, False, self.scene_root, "main_scene")
+    self.ad2_updater = TimedObjectRotation()
+    self.ad2_updater.TimeIn.connect_from(self.timer.Time)
+    self.ad2_updater.MatrixIn.value = avango.gua.make_trans_mat(10.0, 0.0, -102.0)
+    SCENEGRAPH["/net/SceneVRHyperspace4/ad_object_2"].Transform.connect_from(self.ad2_updater.MatrixOut)
 
     _tex_quad1 = avango.gua.nodes.TexturedQuadNode(
           Name = "tex_ad_1"

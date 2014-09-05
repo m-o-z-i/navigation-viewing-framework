@@ -202,6 +202,7 @@ class View(avango.script.Script):
     self.pipeline.EnableBackfaceCulling.value = False
     self.pipeline.EnableFrustumCulling.value = True
     self.pipeline.EnableFXAA.value = True
+    self.pipeline.AmbientColor.value = avango.gua.Color(0.25, 0.25, 0.25)
 
     if hyperspace_config.prepipes:
 

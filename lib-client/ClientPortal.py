@@ -321,7 +321,7 @@ class PortalPreView(avango.script.Script):
                                                            IsStereoTexture = self.VIEW.is_stereo,
                                                            Width = self.screen_node.Width.value,
                                                            Height = self.screen_node.Height.value)
-    self.textured_quad.GroupNames.value = ["s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id)]
+    self.textured_quad.GroupNames.value = ["s" + str(self.VIEW.screen_num) + "_slot" + str(self.VIEW.slot_id), "main_scene"]
     self.portal_matrix_node.Children.value.append(self.textured_quad)
 
 
@@ -523,15 +523,15 @@ class PortalPreView(avango.script.Script):
 
       if self.pipeline.Enabled.value == True:
         self.pipeline.Enabled.value = False
-        self.textured_quad.GroupNames.value.append("do_not_display_group")
-        self.back_geometry.GroupNames.value.remove("do_not_display_group")
+        self.textured_quad.GroupNames.value.append("do_not_display_group && main_scene")
+        self.back_geometry.GroupNames.value.remove("do_not_display_group && main_scene")
 
     else:
 
       if self.pipeline.Enabled.value == False:
         self.pipeline.Enabled.value = True
-        self.textured_quad.GroupNames.value.remove("do_not_display_group")
-        self.back_geometry.GroupNames.value.append("do_not_display_group")
+        self.textured_quad.GroupNames.value.remove("do_not_display_group && main_scene")
+        self.back_geometry.GroupNames.value.append("do_not_display_group && main_scene")
 
     # check for scale and update render mask
     #if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:

@@ -457,6 +457,7 @@ class SceneVRHyperspace4(SceneObject):
         , Texture = "data/textures/bwb/advert-1.png"
         , Width = 0.85
         , Height = 1.7
+        , GroupNames = ['main_scene']
     )
     _tex_quad1.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-63.79, 6.62, -0.95)
     self.scene_root.Children.value.append(_tex_quad1)
@@ -466,7 +467,9 @@ class SceneVRHyperspace4(SceneObject):
         , Texture = "data/textures/bwb/advert-2.png"
         , Width = 0.85
         , Height = 1.7
+        , GroupNames = ['main_scene']
     )
+
     _tex_quad2.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-58.34, 6.62, -0.95)
     self.scene_root.Children.value.append(_tex_quad2)
 
@@ -478,7 +481,7 @@ class SceneVRHyperspace4(SceneObject):
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0)
     self.init_geometry("bwb_inner_left_seats_base_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3sitze-einzeln.obj", _mat, None, False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, None, False, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, "data/materials/bwb/Glass2.gmd", False, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 

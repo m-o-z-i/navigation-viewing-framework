@@ -432,6 +432,22 @@ class View(avango.script.Script):
   ## Evaluated every frame.
   def evaluate(self):
 
+    for _mat in hyperspace_config.transparent_materials:
+
+      _time = time.time()
+      _dict = hyperspace_config.toggle_transparency[_mat]
+
+      if _dict["toggle"]:
+
+        if _time < _dict["end_time"]:
+          _time_factor = 1.0 - (_dict["end_time"] - _time) / hyperspace_config.transparency_toggle_duration
+
+          avango.gua.set_material_uniform("data/materials/bwb/Transparent{0}.gmd".format(_mat), "transparency",
+            _dict["start_val"] + (_dict["end_val"] - _dict["start_val"]) * _time_factor)
+        else:
+          _dict["toggle"] = False
+
+
     try:
       _pipeline_info_node = self.SCENEGRAPH["/net/pipeline_values"].Children.value[0]
     except:
@@ -440,17 +456,6 @@ class View(avango.script.Script):
     # connect sf_pipeline_string with Name field of info node once
     if _pipeline_info_node != None and self.sf_pipeline_string.value == "":
       self.sf_pipeline_string.connect_from(_pipeline_info_node.Name)
-
-
-    if hyperspace_config.toggle_transparency:
-
-      if time.time() < hyperspace_config.toggle_transparency_end_time:
-        _val_inc = (hyperspace_config.toggle_transparency_end_val - hyperspace_config.toggle_transparency_start_val)
-        _time_factor = max(min((hyperspace_config.toggle_transparency_end_time - time.time()) / hyperspace_config.toggle_transparency_duration, 1.0), 0.0)
-
-        avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "transparency", hyperspace_config.toggle_transparency_start_val + _val_inc * _time_factor)
-      else:
-        hyperspace_config.toggle_transparency = False
 
 
     # local tracking update code, does not noticeably increase performance

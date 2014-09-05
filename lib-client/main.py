@@ -60,7 +60,7 @@ def start():
   shell = GuaVE()
 
   # disable logger warningss
-  logger = avango.gua.nodes.Logger(EnableWarning = True)
+  logger = avango.gua.nodes.Logger(EnableWarning = False)
 
   # get the server ip
   server_ip = str(sys.argv[1])
@@ -131,16 +131,20 @@ def start():
     fog_updater.UniformName.value = "time"
     fog_updater.TimeIn.connect_from(timer.Time)
 
-    avango.gua.load_material("data/materials/bwb/Glass2.gmd")
 
-    avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "transparency", 0.0)
+    for _material in hyperspace_config.transparent_materials:
 
-    if not hyperspace_config.stereo:
-      avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture")
-      avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture")
-    else:
-      avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_l", "pre_scene1_texture_left")
-      avango.gua.set_material_uniform("data/materials/bwb/Glass2.gmd", "background_texture_r", "pre_scene1_texture_right")
+      _mat_name = "data/materials/bwb/Transparent{0}.gmd".format(_material)
+
+      avango.gua.load_material(_mat_name)
+      avango.gua.set_material_uniform(_mat_name, "transparency", 0.0)
+
+      if not hyperspace_config.stereo:
+        avango.gua.set_material_uniform(_mat_name, "background_texture_l", "pre_scene1_texture")
+        avango.gua.set_material_uniform(_mat_name, "background_texture_r", "pre_scene1_texture")
+      else:
+        avango.gua.set_material_uniform(_mat_name, "background_texture_l", "pre_scene1_texture_left")
+        avango.gua.set_material_uniform(_mat_name, "background_texture_r", "pre_scene1_texture_right")
 
 
   # get the display instance
@@ -178,18 +182,18 @@ def start():
   viewer.run()
 
 
-def toggle_transparency():
-  if not hyperspace_config.toggle_transparency:
-    hyperspace_config.toggle_transparency = True
-    hyperspace_config.toggle_transparency_start_time = time.time()
-    if hyperspace_config.toggle_transparency_start_val <= 0.0:
-      hyperspace_config.toggle_transparency_start_val = 0.5
-      hyperspace_config.toggle_transparency_end_val = 0.0
-    else:
-      hyperspace_config.toggle_transparency_start_val = 0.0
-      hyperspace_config.toggle_transparency_end_val = 0.5
+def toggle_transparency(graph, material_name, start_val, end_val):
+  hyperspace_config.toggle_transparency[material_name]["toggle"] = True
+  hyperspace_config.toggle_transparency[material_name]["start_time"] = time.time()
+  hyperspace_config.toggle_transparency[material_name]["start_val"] = start_val
+  hyperspace_config.toggle_transparency[material_name]["end_val"] = end_val
+  hyperspace_config.toggle_transparency[material_name]["end_time"] = \
+    hyperspace_config.toggle_transparency[material_name]["start_time"] + hyperspace_config.transparency_toggle_duration
 
-    hyperspace_config.toggle_transparency_end_time = hyperspace_config.toggle_transparency_start_time + hyperspace_config.toggle_transparency_duration
+  if material_name == "Floor":
+
+    for _child in graph["/net/SceneVRHyperspace3/bwb_floor"].Children.value:
+      _child.Material.value = "data/materials/bwb/TransparentFloor.gmd"
 
 
 if __name__ == '__main__':

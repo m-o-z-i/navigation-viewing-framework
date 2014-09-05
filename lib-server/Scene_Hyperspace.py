@@ -39,12 +39,23 @@ class SceneVRHyperspace0(SceneObject):
     SceneObject.__init__(self, "SceneVRHyperspace0", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
     # navigation parameters
-    self.starting_matrix = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-67.0,5.5,-5.7) * avango.gua.make_rot_mat(135.0,0,-1,0)
+    #self.starting_matrix = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-67.0,5.5,-5.7) * avango.gua.make_rot_mat(135.0,0,-1,0)
+    self.starting_matrix = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-80.0,5.5,-5.7) * avango.gua.make_rot_mat(135.0,0,-1,0)
     self.starting_scale = 1.0
 
+    _mat = avango.gua.make_scale_mat(1.1)
+    self.init_geometry("airplane", "data/objects/demo_models/vr_hyperspace/airplane-airport/airplane.obj", _mat, None, False, False, self.scene_root, "main_scene")
+    self.init_geometry("airport", "data/objects/demo_models/vr_hyperspace/airplane-airport/airport.obj", _mat, None, False, False, self.scene_root, "main_scene")
+
+    _mat = avango.gua.make_scale_mat(1.1)# * avango.gua.make_rot_mat(-10.0, 1.0, 0.0, 0.0)
+    self.init_light(TYPE = 0, NAME = "sun", COLOR = avango.gua.Color(1.2, 1.2, 1.2), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SPECULAR_SHADING = True)
+
+    '''
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)
-    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_floor", "data/objects/demo_models/vr_hyperspace/bwb/floor/floor.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_walkway", "data/objects/demo_models/vr_hyperspace/bwb/floor/walkway.obj", _mat, None, True, False, self.scene_root, "main_scene")
 
     self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -62,12 +73,13 @@ class SceneVRHyperspace0(SceneObject):
     #_mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-60.8, 5.5, 9.5)# * avango.gua.make_scale_mat(0.95)
     #self.init_kinect("office_call", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
 
-    _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-54.8, 5.419, 3.0) * avango.gua.make_rot_mat(90.0,0,-1,0)
-    self.init_kinect("home_call2", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
 
-    _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-54.8, 5.419, 7.0) * avango.gua.make_rot_mat(90.0,0,-1,0)
-    self.init_kinect("home_call3", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
+    _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74)
+    self.init_kinect("test1", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
 
+
+    _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74)
+    self.init_kinect("test2", "/opt/kinect-resources/kinect_surface_K_26.ks", _mat, self.scene_root, "main_scene")
 
     # lights
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
@@ -99,7 +111,7 @@ class SceneVRHyperspace0(SceneObject):
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_rot_mat(-90.0, 1.0, 0.0, 0.0)
     self.init_light(TYPE = 0, NAME = "directional_light3", COLOR = avango.gua.Color(0.5, 0.5, 0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SPECULAR_SHADING = False) # TYPE: 0 = sun light; 1 = point light; 2 = spot light
-
+    '''
 
     # render pipeline parameters
     self.enable_backface_culling = False
@@ -139,12 +151,21 @@ class SceneVRHyperspace1(SceneObject):
 
     _mat = avango.gua.make_trans_mat(64.53, -6.705, -0.48)
     self.init_geometry("light_geometry", "data/objects/nav/01.obj", _mat, None, False, False, _parent_object, "main_scene")
-    _mat = avango.gua.make_rot_mat(-90, 1, 0, 0)
-    self.init_light(TYPE = 2, NAME = "light", COLOR = avango.gua.Color(1.0, 1.0, 3.0), MATRIX = _mat, PARENT_NODE = _parent_object, LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False)
+    _mat = avango.gua.make_trans_mat(-0.5, 0, 0) * avango.gua.make_rot_mat(-90, 1, 0, 0)
+    self.init_light(TYPE = 2, NAME = "light", COLOR = avango.gua.Color(1.0, 1.0, 3.0), MATRIX = _mat, PARENT_NODE = _parent_object, LIGHT_DIMENSIONS = avango.gua.Vec3(5.0,5.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False)
+
+    # kinect: virtual air steward
+    _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-54.8, 5.419, 3.0) * avango.gua.make_rot_mat(90.0,0,-1,0)
+    self.init_kinect("virtual_steward1", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
+
+    _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-54.8, 5.419, 7.0) * avango.gua.make_rot_mat(90.0,0,-1,0)
+    self.init_kinect("virtual_steward2", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
 
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)
-    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_floor", "data/objects/demo_models/vr_hyperspace/bwb/floor/floor.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_walkway", "data/objects/demo_models/vr_hyperspace/bwb/floor/walkway.obj", _mat, None, True, False, self.scene_root, "main_scene")
 
     self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -214,19 +235,39 @@ class SceneVRHyperspace2(SceneObject):
 
 
     # seat emergeny exit map texture
-    self.tex_quad = avango.gua.nodes.TexturedQuadNode(
+    self.tex_quad1 = avango.gua.nodes.TexturedQuadNode(
           Name = "emergency_exit_map"
-        , Texture = "data/textures/tiles_diffuse.jpg"
-        , Width = 0.42
-        , Height = 0.21
+        , Texture = "data/textures/bwb/backrest-1.png"
+        , Width = 0.38
+        , Height = 0.19
     )
-    self.tex_quad.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
-    self.scene_root.Children.value.append(self.tex_quad)
+    self.tex_quad1.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
+    self.scene_root.Children.value.append(self.tex_quad1)
+
+    self.tex_quad2 = avango.gua.nodes.TexturedQuadNode(
+          Name = "emergency_exit_map"
+        , Texture = "data/textures/bwb/backrest-1.png"
+        , Width = 0.38
+        , Height = 0.19
+    )
+    self.tex_quad2.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
+    self.scene_root.Children.value.append(self.tex_quad2)
+
+    self.tex_quad3 = avango.gua.nodes.TexturedQuadNode(
+          Name = "emergency_exit_map"
+        , Texture = "data/textures/bwb/backrest-1.png"
+        , Width = 0.38
+        , Height = 0.19
+    )
+    self.tex_quad3.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
+    self.scene_root.Children.value.append(self.tex_quad3)
 
 
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)
-    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_floor", "data/objects/demo_models/vr_hyperspace/bwb/floor/floor.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_walkway", "data/objects/demo_models/vr_hyperspace/bwb/floor/walkway.obj", _mat, None, True, False, self.scene_root, "main_scene")
 
     self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -234,8 +275,8 @@ class SceneVRHyperspace2(SceneObject):
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0)
     self.init_geometry("bwb_inner_left_seats_base_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3sitze-einzeln.obj", _mat, None, False, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/sitze-mehr-platz.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale-mehr-platz.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0) * avango.gua.make_scale_mat(1.0,1.0,-1.0)
     self.init_geometry("bwb_inner_right_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -311,19 +352,21 @@ class SceneVRHyperspace3(SceneObject):
 
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)
-    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, "data/materials/bwb/Glass2.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_floor", "data/objects/demo_models/vr_hyperspace/bwb/floor/floor.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_walkway", "data/objects/demo_models/vr_hyperspace/bwb/floor/walkway.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/TransparentWindow.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, "data/materials/bwb/TransparentRoof.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0)
     self.init_geometry("bwb_inner_left_seats_base_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3sitze-einzeln.obj", _mat, None, False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, "data/materials/bwb/TransparentSeatRow.gmd", False, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/sitze-mehr-platz.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale-mehr-platz.obj", _mat, "data/materials/bwb/TransparentSeats.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0) * avango.gua.make_scale_mat(1.0,1.0,-1.0)
     self.init_geometry("bwb_inner_right_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_right_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_right_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/TransparentSeats.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_rot_mat(90.0, 1, 0, 0) * avango.gua.make_scale_mat(7.0)
     _parent_node = SCENEGRAPH["/net/platform_0/scale/screen_0"]
@@ -484,84 +527,21 @@ class SceneVRHyperspace4(SceneObject):
 
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)
-    self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/Glass2.gmd", False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_floor", "data/objects/demo_models/vr_hyperspace/bwb/floor/floor.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_walkway", "data/objects/demo_models/vr_hyperspace/bwb/floor/walkway.obj", _mat, None, True, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0)
     self.init_geometry("bwb_inner_left_seats_base_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3sitze-einzeln.obj", _mat, None, False, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, "data/materials/bwb/Glass2.gmd", False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/sitze-mehr-platz.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale-mehr-platz.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0) * avango.gua.make_scale_mat(1.0,1.0,-1.0)
     self.init_geometry("bwb_inner_right_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_right_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-
-    _mat = avango.gua.make_rot_mat(90.0, 1, 0, 0) * avango.gua.make_scale_mat(5.0)
-    _parent_node = SCENEGRAPH["/net/platform_0/scale/screen_0"]
-    self.init_geometry("clouds", "data/objects/plane.obj", _mat, "data/materials/bwb/Fog.gmd", False, False, _parent_node, "pre_scene1")
-
-
-    _mat = avango.gua.make_identity_mat()
-    self.init_group("terrain_group", _mat, False, False, self.scene_root, "pre_scene2")
-
-    _parent_object = self.get_object("terrain_group")
-
-    _tile_scale = 2.0
-    _tile_height = -150.0
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile1", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile2", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile3", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile4", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile5", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile6", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile7", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile8", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 2) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile9", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 2) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile10", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * 2) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile11", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 2) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile12", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile13", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile14", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile15", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-
-    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
-    self.init_geometry("terrain_tile16", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
 
     # lights
@@ -621,20 +601,33 @@ class SceneVRHyperspace5(SceneObject):
 
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)
-    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_floor", "data/objects/demo_models/vr_hyperspace/bwb/floor/floor.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_walkway", "data/objects/demo_models/vr_hyperspace/bwb/floor/walkway.obj", _mat, None, True, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0)
     self.init_geometry("bwb_inner_left_seats_base_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3sitze-einzeln.obj", _mat, None, False, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/sitze-mehr-platz.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale-mehr-platz.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
-    _mat = avango.gua.make_identity_mat()
-    self.init_geometry("office", "data/objects/demo_models/vr_hyperspace/bwb/office3.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    #_mat = avango.gua.make_identity_mat()
+    #self.init_geometry("office", "data/objects/demo_models/vr_hyperspace/bwb/office3.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
-    _mat = avango.gua.make_trans_mat(-60.8, 5.5, 9.5)# * avango.gua.make_scale_mat(0.95)
-    self.init_kinect("office_call", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
+    _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-63.80, 5.47, 0.94)
+    self.init_kinect("call", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
+
+
+    # call textures
+    self.tex_quad = avango.gua.nodes.TexturedQuadNode(
+          Name = "call_textures"
+        , Texture = "data/textures/bwb/call-1.png"
+        , Width = 0.85
+        , Height = 1.7
+    )
+    self.tex_quad.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-63.8, 6.6, 1.3) * avango.gua.make_rot_mat(180, 0, 1, 0)
+    self.scene_root.Children.value.append(self.tex_quad)
 
     # lights
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-59.0, 7.74, 5.5)
@@ -715,14 +708,16 @@ class SceneVRHyperspace6(SceneObject):
 
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)
-    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_floor", "data/objects/demo_models/vr_hyperspace/bwb/floor/floor.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_walkway", "data/objects/demo_models/vr_hyperspace/bwb/floor/walkway.obj", _mat, None, True, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0)
     self.init_geometry("bwb_inner_left_seats_base_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3sitze-einzeln.obj", _mat, None, False, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/sitze-mehr-platz.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale-mehr-platz.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1)
     self.init_geometry("office", "data/objects/demo_models/vr_hyperspace/bwb/office3.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -731,7 +726,70 @@ class SceneVRHyperspace6(SceneObject):
     self.init_geometry("office_barchart", "data/objects/demo_models/vr_hyperspace/props/chart.obj", _mat, None, False, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-60.8, 5.5, 9.5)# * avango.gua.make_scale_mat(0.95)
-    self.init_kinect("office_call", "/opt/kinect-resources/kinect_surfaceLCD.ks", _mat, self.scene_root, "main_scene")
+    self.init_kinect("office_call", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene")
+
+    _mat = avango.gua.make_rot_mat(90.0, 1, 0, 0) * avango.gua.make_scale_mat(7.0)
+    _parent_node = SCENEGRAPH["/net/platform_0/scale/screen_0"]
+    self.init_geometry("clouds", "data/objects/plane.obj", _mat, "data/materials/bwb/Fog.gmd", False, False, _parent_node, "pre_scene1")
+
+    _mat = avango.gua.make_identity_mat()
+    self.init_group("terrain_group", _mat, False, False, self.scene_root, "pre_scene2")
+
+    _parent_object = self.get_object("terrain_group")
+
+    _tile_scale = 2.0
+    _tile_height = -150.0
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile1", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile2", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile3", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 0) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile4", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile5", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile6", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile7", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 1) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile8", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * 2) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile9", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * 2) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile10", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * 2) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile11", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * 2) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile12", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * 0, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile13", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -1, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile14", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -2, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile15", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
+    _mat = avango.gua.make_trans_mat(204.7 * _tile_scale * -3, _tile_height, 204.7 * _tile_scale * -1) * avango.gua.make_scale_mat(_tile_scale)
+    self.init_geometry("terrain_tile16", "data/objects/demo_models/vr_hyperspace/terrain/lod0.obj", _mat, None, False, False, _parent_object, "pre_scene2") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+
 
 
     # lights
@@ -814,15 +872,17 @@ class SceneVRHyperspace7(SceneObject):
     #'''
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)
-    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner.obj", _mat, None, True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner", "data/objects/demo_models/vr_hyperspace/bwb/inner_barless.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_floor", "data/objects/demo_models/vr_hyperspace/bwb/floor/floor.obj", _mat, None, True, False, self.scene_root, "main_scene")
+    self.init_geometry("bwb_walkway", "data/objects/demo_models/vr_hyperspace/bwb/floor/walkway.obj", _mat, None, True, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_windows", "data/objects/demo_models/vr_hyperspace/bwb/inner_windows.obj", _mat, "data/materials/bwb/White.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     self.init_geometry("bwb_inner_roof", "data/objects/demo_models/vr_hyperspace/bwb/roof.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0)
     self.init_geometry("bwb_inner_left_seats_base_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3sitze-einzeln.obj", _mat, None, False, False, self.scene_root, "main_scene")
     self.init_geometry("bwb_inner_left_seats_backrest_extra", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/3-aussenschalen.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene")
-    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/sitze-mehr-platz.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
+    self.init_geometry("bwb_inner_left_seats_backrest", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/aussenschale-mehr-platz.obj", _mat, "data/materials/bwb/Glass2WithoutTransparency.gmd", False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
 
     _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.15, 0.0) * avango.gua.make_scale_mat(1.0,1.0,-1.0)
     self.init_geometry("bwb_inner_right_seats_base", "data/objects/demo_models/vr_hyperspace/komplett_links_1er_2er_3er/Komplett-sitze-singled_plus_16.obj", _mat, None, False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE

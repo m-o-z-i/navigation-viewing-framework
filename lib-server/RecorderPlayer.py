@@ -173,7 +173,7 @@ class RecorderPlayer(avango.script.Script):
 
     if self.sf_trigger_key.value == True and \
        self.in_keyframe_recording:
-      
+
       print "Capture keyframe"
       _time_step = time.time() - self.recorder_start_time
       self.record_parameters(_time_step)
@@ -181,7 +181,7 @@ class RecorderPlayer(avango.script.Script):
   ## Called whenever sf_play_mode_key changes.
   @field_has_changed(sf_play_mode_key)
   def sf_play_mode_key_changed(self):
-    
+
     self.stop_player()
     self.stop_recorder()
 
@@ -204,7 +204,7 @@ class RecorderPlayer(avango.script.Script):
 
     self.stop_player()
     self.stop_recorder()
-    
+
     if self.sf_record_mode_key.value == True:
 
       if self.record_mode == "ALL_FRAMES":
@@ -268,7 +268,7 @@ class RecorderPlayer(avango.script.Script):
       if self.NAVIGATION != None:
         self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
 
-      print_message("Switch to recording " + str(self.recording_index))
+      #print_message("Switch to recording " + str(self.recording_index))
 
   ## Switches to the next recording to be played.
   def prior_recording(self):
@@ -289,11 +289,11 @@ class RecorderPlayer(avango.script.Script):
 
       # set node to new starting position without starting the playing progress
       self.interpolate_between_frames(self.recording_list, 0)
-      
+
       if self.NAVIGATION != None:
         self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
 
-      print_message("Switch to recording " + str(self.recording_index))
+      #print_message("Switch to recording " + str(self.recording_index))
 
   ## Loads all the paths for the handled scenegraph node from the path_recordings directory.
   def load_recorded_paths(self):
@@ -333,7 +333,7 @@ class RecorderPlayer(avango.script.Script):
       if _lines[0].replace("\n", "") != self.SCENEGRAPH_NODE.Path.value:
         #print_warning("Return at " + _lines[0].replace("\n", ""))
         return
-      
+
       # remove scenegraph path from list to parse
       _lines.pop(0)
 
@@ -431,7 +431,7 @@ class RecorderPlayer(avango.script.Script):
   ## Starts the player.
   def start_player(self):
 
-    print_message("Start playing")
+    #print_message("Start playing")
 
     if self.play_mode == "EQUAL_SPEED":
       _velocity = 0.5 # in m/s
@@ -442,14 +442,14 @@ class RecorderPlayer(avango.script.Script):
 
       _current_time = 0.0
       self.mod_recording_list[0][0] = 0.0
-      
+
       for _i in range(1, len(self.mod_recording_list)):
         _pos_last = self.mod_recording_list[_i-1][1]
         _pos_curr = self.mod_recording_list[_i][1]
         _distance = Tools.euclidean_distance(_pos_last, _pos_curr)
         self.mod_recording_list[_i][0] = _current_time + (_distance * 1/_velocity)
         _current_time += (_distance * 1/_velocity)
-    
+
 
     self.play_reset_flag = False
 
@@ -460,7 +460,7 @@ class RecorderPlayer(avango.script.Script):
   ## Returns a deep copy without references of a given list.
   # @param IN_LIST The list to be copied.
   def unshared_copy(self, IN_LIST):
-    
+
     if isinstance(IN_LIST, list):
         return list( map(self.unshared_copy, IN_LIST) )
     return IN_LIST
@@ -469,7 +469,7 @@ class RecorderPlayer(avango.script.Script):
   def stop_player(self):
 
     if self.player_trigger.Active.value == True:
-      print_message("Stop playing")
+      #print_message("Stop playing")
 
       self.playing_time += time.time() - self.player_start_time
 
@@ -479,7 +479,7 @@ class RecorderPlayer(avango.script.Script):
   def reset_player(self):
 
     if len(self.recording_list) > 0:
-      print_message("Reset player")
+      #print_message("Reset player")
 
       self.play_index = 0
       self.playing_time = 0
@@ -614,18 +614,18 @@ class AnimationManager(avango.script.Script):
 
   ## Custom constructor.
   # @param SCENEGRAPH_NODE_LIST List of scenegraph nodes to be handled for animations.
-  # @param NAVIGATION_LIST Navigation instances associated to the scenegraph nodes. If no instance is associated, 
+  # @param NAVIGATION_LIST Navigation instances associated to the scenegraph nodes. If no instance is associated,
   #                        None is given in the list.
   def my_constructor(self, SCENEGRAPH_NODE_LIST, NAVIGATION_LIST):
- 
+
     ## @var keyboard_sensor
     # Daemon sensor representing the inputs from the keyboard.
     self.keyboard_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.keyboard_sensor.Station.value = "device-keyboard0"
-        
+
     # init field connections
     self.sf_play.connect_from(self.keyboard_sensor.Button21) # F3
-    
+
     self.sf_next.connect_from(self.keyboard_sensor.Button22) # F4
     self.sf_prior.connect_from(self.keyboard_sensor.Button23) # F5
 
@@ -658,7 +658,7 @@ class AnimationManager(avango.script.Script):
   def sf_play_changed(self):
 
     if self.sf_play.value == True: # button pressed
-      
+
       self.play_key()
 
   ## Called whenever sf_next changes.
@@ -686,3 +686,10 @@ class AnimationManager(avango.script.Script):
 
     for _path_recorder_player in self.path_recorder_players:
       _path_recorder_player.play_key()
+
+
+  def play_recording_by_node_name(self, NODE_NAME):
+
+    for _path_recorder_player in self.path_recorder_players:
+      if _path_recorder_player.SCENEGRAPH_NODE.Path.value == NODE_NAME:
+        _path_recorder_player.play_key()

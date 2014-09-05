@@ -27,7 +27,7 @@ def init_lcd_wall_tracking():
   # create instance of DTrack
   _dtrack = avango.daemon.DTrack()
   _dtrack.port = "5000" # ART port at LCD wall
-  
+
   _dtrack.stations[18] = avango.daemon.Station('tracking-oculus-stripe')   # oculus rift tracking
   _dtrack.stations[17] = avango.daemon.Station('tracking-oculus-front')    # oculus rift tracking
   _dtrack.stations[16] = avango.daemon.Station('tracking-oculus-stag')     # oculus rift tracking
@@ -46,14 +46,14 @@ def init_dlp_wall_tracking():
   # create instance of DTrack
   _dtrack = avango.daemon.DTrack()
   _dtrack.port = "5002" # ART port at LED wall
-  
+
   # glasses
   _dtrack.stations[1] = avango.daemon.Station('tracking-dlp-glasses-1')
   #_dtrack.stations[9] = avango.daemon.Station('tracking-dlp-glasses-1')   # camera shutter
   _dtrack.stations[2] = avango.daemon.Station('tracking-dlp-glasses-2')
   _dtrack.stations[3] = avango.daemon.Station('tracking-dlp-glasses-3')
   _dtrack.stations[4] = avango.daemon.Station('tracking-dlp-glasses-4')
-  _dtrack.stations[5] = avango.daemon.Station('tracking-dlp-glasses-5')        
+  _dtrack.stations[5] = avango.daemon.Station('tracking-dlp-glasses-5')
   _dtrack.stations[6] = avango.daemon.Station('tracking-dlp-glasses-6')
 
   # devices
@@ -107,14 +107,14 @@ def init_spacemouse():
     _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"3Dconnexion SpaceTraveler USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
 
   _string = _string.split()
-  if len(_string) > 0:  
+  if len(_string) > 0:
 
-    _string = _string[0]
-  
+    _string1 = _string[0]
+
     # create a station to propagate the input events
     _spacemouse = avango.daemon.HIDInput()
     _spacemouse.station = avango.daemon.Station('device-spacemouse')
-    _spacemouse.device = _string
+    _spacemouse.device = _string1
 
     # map incoming spacemouse events to station values
     _spacemouse.values[0] = "EV_ABS::ABS_X"   # trans X
@@ -129,7 +129,31 @@ def init_spacemouse():
     _spacemouse.buttons[1] = "EV_KEY::BTN_1"  # right button
 
     device_list.append(_spacemouse)
-    print "SpaceMouse started at:", _string
+    print "SpaceMouse started at:", _string1
+
+  if len(_string) > 1:
+
+    _string2 = _string[1]
+
+    # create a station to propagate the input events
+    _spacemouse2 = avango.daemon.HIDInput()
+    _spacemouse2.station = avango.daemon.Station('device-spacemouse-2')
+    _spacemouse2.device = _string2
+
+    # map incoming spacemouse events to station values
+    _spacemouse2.values[0] = "EV_ABS::ABS_X"   # trans X
+    _spacemouse2.values[1] = "EV_ABS::ABS_Z"   # trans Y
+    _spacemouse2.values[2] = "EV_ABS::ABS_Y"   # trans Z
+    _spacemouse2.values[3] = "EV_ABS::ABS_RX"  # rotate X
+    _spacemouse2.values[4] = "EV_ABS::ABS_RZ"  # rotate Y
+    _spacemouse2.values[5] = "EV_ABS::ABS_RY"  # rotate Z
+
+    # buttons
+    _spacemouse2.buttons[0] = "EV_KEY::BTN_0"  # left button
+    _spacemouse2.buttons[1] = "EV_KEY::BTN_1"  # right button
+
+    device_list.append(_spacemouse2)
+    print "SpaceMouse2 started at:", _string2
 
   else:
     print "SpaceMouse NOT found !"
@@ -138,52 +162,52 @@ def init_spacemouse():
 def init_old_spheron():
 
   _string = os.popen("./list-ev -s | grep \"BUWEIMAR RAPID DEVEL DEVICE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+
   _string = _string.split()
   if len(_string) > 0:
-  
+
     _string = _string[0]
 
     # create a station to propagate the input events
     _spheron = avango.daemon.HIDInput()
     _spheron.station = avango.daemon.Station("device-old-spheron")
     _spheron.device = _string
-    
+
     # map incoming spheron events to station values
-    _spheron.values[0] = "EV_ABS::ABS_X"   # trans X    
+    _spheron.values[0] = "EV_ABS::ABS_X"   # trans X
     _spheron.values[1] = "EV_ABS::ABS_Y"   # trans Y
     _spheron.values[2] = "EV_ABS::ABS_Z"   # trans Z
     _spheron.values[3] = "EV_ABS::ABS_RX"  # rotate X
     _spheron.values[4] = "EV_ABS::ABS_RY"  # rotate Y
     _spheron.values[5] = "EV_ABS::ABS_RZ"  # rotate Z
-    
+
     device_list.append(_spheron)
-    
+
     print 'Old Spheron started at:', _string
-    
+
   else:
     print "Old Spheron NOT found !"
-    
+
   _string = os.popen("./list-ev -s | grep \"PIXART USB OPTICAL MOUSE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+
   _string = _string.split()
   if len(_string) > 0:
-  
+
     _string = _string[0]
-    
+
     # create a station to propagate the input events
     _spheron_buttons = avango.daemon.HIDInput()
-    _spheron_buttons.station = avango.daemon.Station("device-old-spheron-buttons") 
+    _spheron_buttons.station = avango.daemon.Station("device-old-spheron-buttons")
     _spheron_buttons.device = _string
-    
+
     # map buttons
     _spheron_buttons.buttons[0] = "EV_KEY::BTN_LEFT"   # left button
-    _spheron_buttons.buttons[1] = "EV_KEY::BTN_MIDDLE" # middle button 
+    _spheron_buttons.buttons[1] = "EV_KEY::BTN_MIDDLE" # middle button
     _spheron_buttons.buttons[2] = "EV_KEY::BTN_RIGHT"  # right button
-    
+
     device_list.append(_spheron_buttons)
     print 'Old Spheron Buttons started at:', _string
-    
+
   else:
     print "Old Spheron ButTons NOT found !"
 
@@ -191,11 +215,11 @@ def init_old_spheron():
 def init_new_spheron():
 
   _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"BUW Spheron\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+
   _string = _string.split()
 
   if len(_string) > 0:
-    
+
     _string1 = _string[0]
 
     # create a station to propagate the input events
@@ -203,29 +227,29 @@ def init_new_spheron():
     _spheron1.station = avango.daemon.Station("device-new-spheron-right")
     _spheron1.device = _string1
     _spheron1.timeout = '30'
-    
+
     # map incoming events to station values
     _spheron1.values[0] = "EV_ABS::ABS_X"            # joystick trans x
     _spheron1.values[1] = "EV_ABS::ABS_Y"            # joystick trans y
     _spheron1.values[2] = "EV_ABS::ABS_Z"            # joystick trans z
     _spheron1.values[6] = "EV_ABS::ABS_THROTTLE"     # joystick rot y
-    
-    _spheron1.values[3] = "EV_REL::REL_RX" 
+
+    _spheron1.values[3] = "EV_REL::REL_RX"
     _spheron1.values[4] = "EV_REL::REL_RY"
     _spheron1.values[5] = "EV_REL::REL_RZ"
-    
+
     # buttons
     _spheron1.buttons[0] = "EV_KEY::BTN_B"           # left button
     _spheron1.buttons[1] = "EV_KEY::BTN_C"           # middle button
     _spheron1.buttons[2] = "EV_KEY::BTN_A"           # right button
-    
+
     device_list.append(_spheron1)
 
     print "New Spheron (right) found at:", _string1
 
     #'''
     if len(_string) > 1:
-      
+
       _string2 = _string[1]
 
       # create a station to propagate the input events
@@ -233,13 +257,13 @@ def init_new_spheron():
       _spheron2.station = avango.daemon.Station("device-new-spheron-left")
       _spheron2.device = _string2
       _spheron2.timeout = '30'
-      
+
       # map incoming events to station values
       _spheron2.values[0] = "EV_ABS::ABS_X"            # joystick trans x
       _spheron2.values[1] = "EV_ABS::ABS_Y"            # joystick trans z
       _spheron2.values[2] = "EV_ABS::ABS_Z"            # joystick trans y
-      _spheron2.values[3] = "EV_ABS::ABS_THROTTLE"     # joystick rot y      
-          
+      _spheron2.values[3] = "EV_ABS::ABS_THROTTLE"     # joystick rot y
+
       device_list.append(_spheron2)
 
       print "New Spheron (left) found at:", _string2
@@ -253,11 +277,11 @@ def init_new_spheron():
 def init_new_globefish():
 
   _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"BUW Spheron\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+
   _string = _string.split()
 
   if len(_string) > 0:
-    
+
     _string1 = _string[0]
 
     # create a station to propagate the input events
@@ -265,37 +289,37 @@ def init_new_globefish():
     _globefish.station = avango.daemon.Station("device-new-globefish")
     _globefish.device = _string1
     _globefish.timeout = '30'
-    
+
     # map incoming events to station values
     _globefish.values[0] = "EV_ABS::ABS_THROTTLE" # X
-    _globefish.values[1] = "EV_ABS::ABS_Z" # Y    
+    _globefish.values[1] = "EV_ABS::ABS_Z" # Y
     _globefish.values[2] = "EV_ABS::ABS_X" # Z
-    
+
     _globefish.values[3] = "EV_REL::REL_RY" # PITCH
-    _globefish.values[4] = "EV_REL::REL_RX" # HEAD 
+    _globefish.values[4] = "EV_REL::REL_RX" # HEAD
     _globefish.values[5] = "EV_REL::REL_RZ" # ROLL
-    
+
     # buttons
     # ...
-        
+
     device_list.append(_globefish)
 
     print "New Globefish found at:", _string1
 
   else:
     print "New Globefish NOT found !"
-  
+
 
 
 ## Initalizes a mouse for navigation.
 def init_mouse():
 
   _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"Logitech USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
-  
+
   _string = _string.split()
 
   if len(_string) > 0:
-    
+
     _string1 = _string[0]
 
     # create a station to propagate the input events
@@ -358,7 +382,7 @@ def init_keyboard():
   keyboard_name = keyboard_name.split()
 
   for i, name in enumerate(keyboard_name):
-    
+
     # create a station to propagate the input events
     keyboard = avango.daemon.HIDInput()
     keyboard.station = avango.daemon.Station('device-keyboard' + str(i))
@@ -409,8 +433,8 @@ def init_keyboard():
 def xbox_controller(PLAYER_NUMBER):
 
   _query = "./list-ev -s | grep \"Xbox 360 Wireless Receiver\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4"
-  
-  # Grab one of the four controllers according to PLAYER_NUMBER  
+
+  # Grab one of the four controllers according to PLAYER_NUMBER
   for i in range(1, PLAYER_NUMBER):
     _query = _query + " | sed -n \'1!p\'"
 
@@ -419,12 +443,12 @@ def xbox_controller(PLAYER_NUMBER):
 
   if len(_string) > 0:
     _string = _string[0]
-    
+
     # create a station to propagate the input events
     _xbox = avango.daemon.HIDInput()
     _xbox.station = avango.daemon.Station('device-xbox-' + str(PLAYER_NUMBER))
     _xbox.device = _string
-    
+
     _xbox.values[0] = "EV_ABS::ABS_X"         # left joystick
     _xbox.values[1] = "EV_ABS::ABS_Y"         # left joystick
     _xbox.values[2] = "EV_ABS::ABS_RX"        # right joystick
@@ -445,9 +469,9 @@ def xbox_controller(PLAYER_NUMBER):
     _xbox.buttons[7] = "EV_KEY::BTN_TR"
 
     device_list.append(_xbox)
-    
+
     print "XBox Controller " + str(PLAYER_NUMBER) + " started at:", _string
-    
+
   else:
     print "XBox Controller NOT found !"
 
@@ -455,11 +479,11 @@ def xbox_controller(PLAYER_NUMBER):
 
 def init_august_pointer(ID, DEVICE_STATION_STRING):
 
-	_string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"MOUSE USB MOUSE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()	
+	_string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"MOUSE USB MOUSE\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
 	_string = _string.split()
 
 	if len(_string) > ID:
-		
+
 		_string = _string[ID]
 
 		_pointer = avango.daemon.HIDInput()
@@ -475,9 +499,9 @@ def init_august_pointer(ID, DEVICE_STATION_STRING):
 
 		device_list.append(_pointer)
 		print 'August Pointer found at:', _string
-		
+
 		os.system("xinput --set-prop keyboard:'MOUSE USB MOUSE' 'Device Enabled' 0") # disable X-forwarding of events
-		
+
 	else:
 		print "August Pointer NOT found !"
 
@@ -488,10 +512,10 @@ def init_portal_camera(VERSION_NUMBER):
 
   _string = _string.split()
 
-  if len(_string) > 0:  
+  if len(_string) > 0:
 
     _string = _string[0]
-  
+
     # create a station to propagate the input events
     _portal_camera = avango.daemon.HIDInput()
     _splitted_number = VERSION_NUMBER.split(".")

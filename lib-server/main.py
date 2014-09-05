@@ -27,6 +27,32 @@ import subprocess
 # @param CONFIG_FILE The filname of the configuration file to parse.
 # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
 
+def toggle_office(graph):
+
+  if graph["/net/SceneVRHyperspace6/terrain_group"].GroupNames.value[0] == "pre_scene2":
+
+    graph["/net/SceneVRHyperspace6/terrain_group"].GroupNames.value = ["do_not_display_group"]
+    graph["/net/SceneVRHyperspace6/office"].GroupNames.value = ["main_scene"]
+    graph["/net/SceneVRHyperspace6/office_barchart"].GroupNames.value = ["main_scene"]
+    graph["/net/SceneVRHyperspace6/office_call"].GroupNames.value = ["main_scene"]
+
+  else:
+
+    graph["/net/SceneVRHyperspace6/terrain_group"].GroupNames.value = ["pre_scene2"]
+    graph["/net/SceneVRHyperspace6/office"].GroupNames.value = ["do_not_display_group"]
+    graph["/net/SceneVRHyperspace6/office_barchart"].GroupNames.value = ["do_not_display_group"]
+    graph["/net/SceneVRHyperspace6/office_call"].GroupNames.value = ["do_not_display_group"]
+
+
+def hide_call_tex(graph):
+
+  hyperspace_config.texture_idx += 1
+  if hyperspace_config.texture_idx >= len(hyperspace_config.textures[hyperspace_config.active_scenes[0]]):
+    hyperspace_config.texture_idx = 0
+
+  graph["/net/SceneVRHyperspace5/call_textures"].GroupNames.value = ["do_not_display_group"]
+
+
 
 ## Main method for the server application
 def start():
@@ -115,7 +141,7 @@ def start():
   table_interaction_space.add_maximized_portal(_table_portal)
   '''
 
-  if [i for i in [1, 3, 4] if i in hyperspace_config.active_scenes]:
+  if [i for i in [1, 3, 6] if i in hyperspace_config.active_scenes]:
     # initialize animation manager
     animation_manager = AnimationManager()
 
@@ -136,10 +162,15 @@ def start():
 
     _nodes = []
     for scene_num in hyperspace_config.active_scenes:
-      for node_name in hyperspace_config.animation_nodes[scene_num]:
-        _nodes += [ graph[node_name] ]
+      _scene_nodes = hyperspace_config.animation_nodes[scene_num]
+      if _nodes:
+        for node_name in _scene_nodes:
+          _nodes += [ graph[node_name] ]
 
     animation_manager.my_constructor(_nodes, [None] * len(_nodes))
+    animation_manager.play_recording_by_node_name("/net/SceneVRHyperspace3/terrain_group")
+    #animation_manager.play_recording_by_node_name("/net/SceneVRHyperspace4/terrain_group")
+    animation_manager.play_recording_by_node_name("/net/SceneVRHyperspace6/terrain_group")
 
     #if hyperspace_config.active_scenes == [3]:
     #  animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]], [None])

@@ -149,7 +149,13 @@ class SceneManager(avango.script.Script):
         hyperspace_config.texture_idx += 1
         if hyperspace_config.texture_idx >= len(hyperspace_config.textures[hyperspace_config.active_scenes[0]]):
           hyperspace_config.texture_idx = 0
-        self.scenes[0].tex_quad.Texture.value = hyperspace_config.textures[hyperspace_config.active_scenes[0]][hyperspace_config.texture_idx]
+        if hyperspace_config.active_scenes == [2]:
+          self.scenes[0].tex_quad1.Texture.value = hyperspace_config.textures[hyperspace_config.active_scenes[0]][hyperspace_config.texture_idx]
+          self.scenes[0].tex_quad2.Texture.value = hyperspace_config.textures[hyperspace_config.active_scenes[0]][hyperspace_config.texture_idx]
+          self.scenes[0].tex_quad3.Texture.value = hyperspace_config.textures[hyperspace_config.active_scenes[0]][hyperspace_config.texture_idx]
+        else:
+          self.scenes[0].tex_quad.Texture.value = hyperspace_config.textures[hyperspace_config.active_scenes[0]][hyperspace_config.texture_idx]
+          self.scenes[0].tex_quad.GroupNames.value = ["main_scene"]
     self.key_w_before = self.sf_key_w.value
 
   '''
@@ -216,13 +222,23 @@ class SceneManager(avango.script.Script):
 
     if self.sf_key9.value == True: # key pressed
       self.activate_scene(8)
+  '''
 
   ## Called whenever sf_key0 changes.
   @field_has_changed(sf_key0)
   def sf_key0_changed(self):
 
-    if self.sf_key0.value == True: # key pressed
-      self.activate_scene(9)
+    #if self.sf_key0.value == True: # key pressed
+    #  self.activate_scene(9)
+    '''
+    if self.active_scene:
+      _node = self.active_scene.SCENEGRAPH["/net/SceneVRHyperspace4/terrain_group"]
+      if _node:
+        _node.Children.value = []
+        _mat = avango.gua.make_identity_mat()
+        self.active_scene.SCENEGRAPH["/net/SceneVRHyperspace4/venice"].GroupNames.value = ["pre_scene2"]
+    '''
+    pass
 
   ## Called whenever sf_key_home changes.
   @field_has_changed(sf_key_home)
@@ -230,7 +246,6 @@ class SceneManager(avango.script.Script):
 
     if self.sf_key_home.value == True: # key pressed
       self.print_active_scene()
-  '''
 
   # functions
   ## Sets one of the loaded scene to the active (displayed) one.

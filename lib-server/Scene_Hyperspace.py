@@ -121,12 +121,15 @@ class SceneVRHyperspace1(SceneObject):
     self.scene_root.Children.value.append(self.tex_quad)
 
     # navigation light
-    _mat = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(0.0, 0.0, -0.001)
+    _mat = avango.gua.make_trans_mat(-70.95, 7.48, 0.55)
     self.init_group("nav_light_group", _mat, False, False, self.scene_root, "main_scene")
 
-    _mat = avango.gua.make_identity_mat()
     _parent_object = self.get_object("nav_light_group")
-    self.init_geometry("light", "data/objects/nav/01.obj", _mat, "data/materials/White.gmd", False, False, _parent_object, "main_scene")
+
+    _mat = avango.gua.make_trans_mat(64.53, -6.705, -0.48)
+    self.init_geometry("light_geometry", "data/objects/nav/01.obj", _mat, None, False, False, _parent_object, "main_scene")
+    _mat = avango.gua.make_rot_mat(-90, 1, 0, 0)
+    self.init_light(TYPE = 2, NAME = "light", COLOR = avango.gua.Color(1.0, 1.0, 3.0), MATRIX = _mat, PARENT_NODE = _parent_object, LIGHT_DIMENSIONS = avango.gua.Vec3(3.0,3.0,7.0),  MANIPULATION_PICK_FLAG = True, ENABLE_LIGHT_GEOMETRY = False)
 
     # geometry
     _mat = avango.gua.make_scale_mat(1.1)

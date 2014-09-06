@@ -236,16 +236,16 @@ class SceneVRHyperspace2(SceneObject):
 
     # seat emergeny exit map texture
     self.tex_quad1 = avango.gua.nodes.TexturedQuadNode(
-          Name = "emergency_exit_map"
+          Name = "emergency_exit_map1"
         , Texture = "data/textures/bwb/backrest-1.png"
         , Width = 0.38
         , Height = 0.19
     )
-    self.tex_quad1.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
+    self.tex_quad1.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.34) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
     self.scene_root.Children.value.append(self.tex_quad1)
 
     self.tex_quad2 = avango.gua.nodes.TexturedQuadNode(
-          Name = "emergency_exit_map"
+          Name = "emergency_exit_map2"
         , Texture = "data/textures/bwb/backrest-1.png"
         , Width = 0.38
         , Height = 0.19
@@ -254,12 +254,12 @@ class SceneVRHyperspace2(SceneObject):
     self.scene_root.Children.value.append(self.tex_quad2)
 
     self.tex_quad3 = avango.gua.nodes.TexturedQuadNode(
-          Name = "emergency_exit_map"
+          Name = "emergency_exit_map3"
         , Texture = "data/textures/bwb/backrest-1.png"
         , Width = 0.38
         , Height = 0.19
     )
-    self.tex_quad3.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 6.74) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
+    self.tex_quad3.Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-50.668, 6.456, 7.04) * avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_rot_mat(12, 1, 0, 0)
     self.scene_root.Children.value.append(self.tex_quad3)
 
 
@@ -372,6 +372,8 @@ class SceneVRHyperspace3(SceneObject):
     _parent_node = SCENEGRAPH["/net/platform_0/scale/screen_0"]
     self.init_geometry("clouds", "data/objects/plane.obj", _mat, "data/materials/bwb/Fog.gmd", False, False, _parent_node, "pre_scene1")
 
+    _mat = avango.gua.make_trans_mat(-60.668, 6.456, 5.24) * avango.gua.make_scale_mat(0.01) * avango.gua.make_trans_mat(-2600.0, 0.0, -1450.0)
+    self.init_geometry("venice", "data/objects/demo_models/vr_hyperspace/terrain/venice.obj", _mat, None, False, False, self.scene_root, "pre_scene2")
 
     _mat = avango.gua.make_identity_mat()
     self.init_group("terrain_group", _mat, False, False, self.scene_root, "pre_scene2")

@@ -182,7 +182,7 @@ def start():
   viewer.run()
 
 
-def toggle_transparency(graph, material_name, start_val, end_val):
+def toggle_transparency(graph, material_name, start_val = 0.0, end_val = 0.5):
   hyperspace_config.toggle_transparency[material_name]["toggle"] = True
   hyperspace_config.toggle_transparency[material_name]["start_time"] = time.time()
   hyperspace_config.toggle_transparency[material_name]["start_val"] = start_val
@@ -194,6 +194,12 @@ def toggle_transparency(graph, material_name, start_val, end_val):
 
     for _child in graph["/net/SceneVRHyperspace3/bwb_floor"].Children.value:
       _child.Material.value = "data/materials/bwb/TransparentFloor.gmd"
+
+
+def toggle_all_transparencies_quickly(graph, val = 0.5):
+
+  for _mat in hyperspace_config.transparent_materials:
+    toggle_transparency(graph, _mat, val, val)
 
 
 if __name__ == '__main__':

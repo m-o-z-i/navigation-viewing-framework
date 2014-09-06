@@ -44,6 +44,19 @@ def toggle_office(graph):
     graph["/net/SceneVRHyperspace6/office_call"].GroupNames.value = ["do_not_display_group"]
 
 
+def toggle_venice(graph):
+
+  if graph["/net/SceneVRHyperspace3/venice"].GroupNames.value[0] == "pre_scene2":
+
+    graph["/net/SceneVRHyperspace3/venice"].GroupNames.value = ["do_not_display_group"]
+    graph["/net/SceneVRHyperspace3/terrain_group"].GroupNames.value = ["pre_scene2"]
+
+  else:
+
+    graph["/net/SceneVRHyperspace3/venice"].GroupNames.value = ["pre_scene2"]
+    graph["/net/SceneVRHyperspace3/terrain_group"].GroupNames.value = ["do_not_display_group"]
+
+
 def hide_call_tex(graph):
 
   hyperspace_config.texture_idx += 1

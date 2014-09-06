@@ -197,12 +197,12 @@ class View(avango.script.Script):
 
     self.pipeline.Window.value = self.window
     self.pipeline.Camera.value = self.camera
-    self.pipeline.EnableFPSDisplay.value = True
+    self.pipeline.EnableFPSDisplay.value = False
     self.pipeline.EnablePreviewDisplay.value = False
     self.pipeline.EnableBackfaceCulling.value = False
     self.pipeline.EnableFrustumCulling.value = True
     self.pipeline.EnableFXAA.value = True
-    self.pipeline.AmbientColor.value = avango.gua.Color(0.25, 0.25, 0.25)
+    self.pipeline.AmbientColor.value = avango.gua.Color(0.3, 0.3, 0.3)
 
     if hyperspace_config.prepipes:
 

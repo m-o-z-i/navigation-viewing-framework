@@ -27,21 +27,39 @@ import subprocess
 # @param CONFIG_FILE The filname of the configuration file to parse.
 # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
 
+
+class TimedObjectRotation(avango.script.Script):
+
+  ## @var TimeIn
+  # Field containing the current time in milliseconds.
+  TimeIn = avango.SFFloat()
+
+  MatrixIn = avango.gua.SFMatrix4()
+  MatrixOut = avango.gua.SFMatrix4()
+
+  ## Called whenever TimeIn changes.
+  @field_has_changed(TimeIn)
+  def update(self):
+    self.MatrixOut.value = self.MatrixIn.value * avango.gua.make_rot_mat(self.TimeIn.value * 8.0, 0.0, 1.0, 0.0)
+
+
+
+
 def toggle_office(graph):
 
   if graph["/net/SceneVRHyperspace6/terrain_group"].GroupNames.value[0] == "pre_scene2":
 
     graph["/net/SceneVRHyperspace6/terrain_group"].GroupNames.value = ["do_not_display_group"]
     graph["/net/SceneVRHyperspace6/office"].GroupNames.value = ["main_scene"]
-    graph["/net/SceneVRHyperspace6/office_barchart"].GroupNames.value = ["main_scene"]
-    graph["/net/SceneVRHyperspace6/office_call"].GroupNames.value = ["main_scene"]
+    graph["/net/SceneVRHyperspace6/office_molecule"].GroupNames.value = ["main_scene"]
+    #graph["/net/SceneVRHyperspace6/office_call"].GroupNames.value = ["main_scene"]
 
   else:
 
     graph["/net/SceneVRHyperspace6/terrain_group"].GroupNames.value = ["pre_scene2"]
     graph["/net/SceneVRHyperspace6/office"].GroupNames.value = ["do_not_display_group"]
-    graph["/net/SceneVRHyperspace6/office_barchart"].GroupNames.value = ["do_not_display_group"]
-    graph["/net/SceneVRHyperspace6/office_call"].GroupNames.value = ["do_not_display_group"]
+    graph["/net/SceneVRHyperspace6/office_molecule"].GroupNames.value = ["do_not_display_group"]
+    #graph["/net/SceneVRHyperspace6/office_call"].GroupNames.value = ["do_not_display_group"]
 
 
 def toggle_venice(graph):
@@ -65,6 +83,49 @@ def hide_call_tex(graph):
 
   graph["/net/SceneVRHyperspace5/call_textures"].GroupNames.value = ["do_not_display_group"]
 
+
+def rotate_molecule(graph):
+
+  timer = avango.nodes.TimeSensor()
+
+  molecule_updater = TimedObjectRotation()
+  molecule_updater.TimeIn.connect_from(timer.Time)
+  molecule_updater.MatrixIn.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-60.80, 6.5, 8.8)
+  graph["/net/SceneVRHyperspace6/office_molecule"].Transform.connect_from(molecule_updater.MatrixOut)
+
+
+def scale_molecule(graph, scale = 1.0):
+
+  graph["/net/SceneVRHyperspace6/office_molecule"].Transform.disconnect()
+  graph["/net/SceneVRHyperspace6/office_molecule"].Transform.value = avango.gua.make_scale_mat(1.1) * avango.gua.make_trans_mat(-60.80, 6.5, 8.8) * avango.gua.make_scale_mat(scale)
+
+
+def toggle_ad_pillar(graph):
+
+  if graph["/net/SceneVRHyperspace4/ad_pillar"].GroupNames.value[0] == "do_not_display_group":
+
+    graph["/net/SceneVRHyperspace4/ad_pillar"].GroupNames.value = ["main_scene"]
+
+  else:
+
+    graph["/net/SceneVRHyperspace4/ad_pillar"].GroupNames.value = ["do_not_display_group"]
+
+
+def toggle_call_pillar(graph):
+
+  if graph["/net/SceneVRHyperspace5/call_pillar"].GroupNames.value[0] == "do_not_display_group":
+
+    graph["/net/SceneVRHyperspace5/call_pillar"].GroupNames.value = ["main_scene"]
+
+  else:
+
+    graph["/net/SceneVRHyperspace5/call_pillar"].GroupNames.value = ["do_not_display_group"]
+
+
+def print_camera_pos(graph):
+  print "translation:    " + str(graph["/net/platform_0"].Transform.value.get_translate())
+  print "rotation angle: " + str(graph["/net/platform_0"].Transform.value.get_rotate().get_angle())
+  print "rotation axis:  " + str(graph["/net/platform_0"].Transform.value.get_rotate().get_axis())
 
 
 ## Main method for the server application
@@ -154,7 +215,7 @@ def start():
   table_interaction_space.add_maximized_portal(_table_portal)
   '''
 
-  if [i for i in [1, 3, 6] if i in hyperspace_config.active_scenes]:
+  if [i for i in [1, 3, 5, 6, 7] if i in hyperspace_config.active_scenes]:
     # initialize animation manager
     animation_manager = AnimationManager()
 
@@ -173,17 +234,24 @@ def start():
                                    , [None])
     '''
 
-    _nodes = []
+    _nodes = [ graph["/net/platform_0"] ]
     for scene_num in hyperspace_config.active_scenes:
       _scene_nodes = hyperspace_config.animation_nodes[scene_num]
-      if _nodes:
+      if _scene_nodes:
         for node_name in _scene_nodes:
           _nodes += [ graph[node_name] ]
 
-    animation_manager.my_constructor(_nodes, [None] * len(_nodes))
+    # scenes where the platform node is to be animated
+    #_nav_node = []
+    #if [i for i in [5] if i in hyperspace_config.active_scenes]:
+    #  _nav_node = [ application_manager.navigation_list[0]]
+    #  _nodes += [ graph["/net/platform_0/scene{0}".format(hyperspace_config.active_scenes[0])] ]
+
+    animation_manager.my_constructor(_nodes, [ application_manager.navigation_list[0]] + [None] * (len(_nodes) - 1))
     animation_manager.play_recording_by_node_name("/net/SceneVRHyperspace3/terrain_group")
     #animation_manager.play_recording_by_node_name("/net/SceneVRHyperspace4/terrain_group")
     animation_manager.play_recording_by_node_name("/net/SceneVRHyperspace6/terrain_group")
+    animation_manager.play_recording_by_node_name("/net/SceneVRHyperspace2b/terrain_group")
 
     #if hyperspace_config.active_scenes == [3]:
     #  animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]], [None])

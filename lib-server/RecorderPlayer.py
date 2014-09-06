@@ -265,8 +265,8 @@ class RecorderPlayer(avango.script.Script):
       # set node to new starting position without starting the playing progress
       self.interpolate_between_frames(self.recording_list, 0)
 
-      if self.NAVIGATION != None:
-        self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
+      #if self.NAVIGATION != None:
+      #  self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
 
       #print_message("Switch to recording " + str(self.recording_index))
 
@@ -290,8 +290,8 @@ class RecorderPlayer(avango.script.Script):
       # set node to new starting position without starting the playing progress
       self.interpolate_between_frames(self.recording_list, 0)
 
-      if self.NAVIGATION != None:
-        self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
+      #if self.NAVIGATION != None:
+      #  self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
 
       #print_message("Switch to recording " + str(self.recording_index))
 
@@ -538,8 +538,8 @@ class RecorderPlayer(avango.script.Script):
 
               self.interpolate_between_frames(_recording_to_play, _factor) # interpolate position and orientation and scale
 
-              if self.NAVIGATION != None and TIME_STEP < 0.1:
-                self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
+              #if self.NAVIGATION != None and TIME_STEP < 0.1:
+              #  self.NAVIGATION.trace.clear(self.NAVIGATION.get_current_world_pos())
 
               break
 
@@ -692,4 +692,5 @@ class AnimationManager(avango.script.Script):
 
     for _path_recorder_player in self.path_recorder_players:
       if _path_recorder_player.SCENEGRAPH_NODE.Path.value == NODE_NAME:
+        print_message("Playing animation for node {0}".format(NODE_NAME))
         _path_recorder_player.play_key()

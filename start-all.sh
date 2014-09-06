@@ -12,8 +12,8 @@ DIR="$( cd "$( dirname "$0" )" && pwd )"
 LOCAL_GUACAMOLE="$DIR/../../../guacamole"
 LOCAL_AVANGO="$DIR/../../../avango"
 
-GUACAMOLE=/opt/guacamole/feature_test
-AVANGO=/opt/avango/feature_test
+GUACAMOLE=/opt/guacamole/master
+AVANGO=/opt/avango/master
 
 # third party libs
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/boost/latest/lib:/opt/openscenegraph/3.0.1/lib64/:/opt/zmq/current/lib

@@ -32,7 +32,7 @@ class LargePowerwall(Display):
                     , shutter_timings = [ [(0,8175), (100,8275)],
                                           [(8200,10700), (8300,10800)],
                                           [(11400,12900), (11500,13000)],
-                                          #[(14000,15800), (14100,15900)]
+                                          [(14000,15800), (14100,15900)]
                                         ]
                     #, shutter_values = [  [(22,44), (88,11)],
                     #                      [(22,44), (88,11)],
@@ -44,7 +44,7 @@ class LargePowerwall(Display):
                     , shutter_values = [  [(22,44), (88,11)],
                                           [(22,44), (88,11)],
                                           [(22,44), (88,11)],
-                                          #[(22,44), (88,11)]
+                                          [(22,44), (88,11)]
                                        ]
                     , max_viewing_distance = 5.0
                     , stereo = True
@@ -298,13 +298,13 @@ class OculusRift(Display):
 
 displays = [
   LargePowerwall(),
-  #SmallPowerwall(),
+  SmallPowerwall(),
   #OculusRift(hostname = "atalante", name = "oculus_rift_atalante") ,
   #TouchTable3DStandalone() ,
   #TouchTable3DSecondary(render_mask = "!main_scene") ,
   # Display(hostname = "orestes", stereo = False),
   # Display(hostname = "artemis", stereo = False)
-  Display(hostname = "atalante", stereo = False)
+  #Display(hostname = "apollo", stereo = False)
 ]
 
 ## @var INTELLIGENT_SHUTTER_SWITCHING

@@ -48,8 +48,8 @@ def init_dlp_wall_tracking():
   _dtrack.port = "5002" # ART port at LED wall
 
   # glasses
-  _dtrack.stations[1] = avango.daemon.Station('tracking-dlp-glasses-1')
-  #_dtrack.stations[9] = avango.daemon.Station('tracking-dlp-glasses-1')   # camera shutter
+  #_dtrack.stations[1] = avango.daemon.Station('tracking-dlp-glasses-1')
+  _dtrack.stations[9] = avango.daemon.Station('tracking-dlp-glasses-1')   # camera shutter
   _dtrack.stations[2] = avango.daemon.Station('tracking-dlp-glasses-2')
   _dtrack.stations[3] = avango.daemon.Station('tracking-dlp-glasses-3')
   _dtrack.stations[4] = avango.daemon.Station('tracking-dlp-glasses-4')

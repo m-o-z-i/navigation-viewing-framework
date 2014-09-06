@@ -517,9 +517,10 @@ class PortalPreView(avango.script.Script):
     _view_vec = avango.gua.Vec3(_view_vec.x, _view_vec.y, _view_vec.z)
     _portal_vec = avango.gua.make_rot_mat(self.portal_matrix_node.Transform.value.get_rotate()) * avango.gua.Vec3(0, 0, -1)
     _portal_vec = avango.gua.Vec3(_portal_vec.x, _portal_vec.y, _portal_vec.z)
-    _angle = math.acos(_view_vec.dot(_portal_vec))
+    _angle = math.acos(min(max(_view_vec.dot(_portal_vec), -1.0), 1.0))
 
-    if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 120.0:
+    '''
+    if _view_in_portal_space.get_translate().z < 0 or math.degrees(_angle) > 180.0:
 
       if self.pipeline.Enabled.value == True:
         self.pipeline.Enabled.value = False
@@ -532,6 +533,7 @@ class PortalPreView(avango.script.Script):
         self.pipeline.Enabled.value = True
         self.textured_quad.GroupNames.value.remove("do_not_display_group && main_scene")
         self.back_geometry.GroupNames.value.append("do_not_display_group && main_scene")
+    '''
 
     # check for scale and update render mask
     #if self.PORTAL_NODE.Children.value[1].Transform.value.get_scale().x > 50:

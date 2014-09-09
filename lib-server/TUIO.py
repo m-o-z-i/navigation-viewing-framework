@@ -2,6 +2,7 @@
 
 from Device import MultiDofDevice
 from SceneManager import SceneManager 
+from Intersection import *
 
 import avango
 import avango.gua
@@ -16,7 +17,8 @@ class MultiTouchDevice(avango.script.Script):
     """
     Base class for multi touch devices.
     """
-
+    _rayOrientation = avango.gua.SFMatrix4()
+    mf_pointer_pick_result = avango.gua.MFPickResult()
 
     def __init__(self):
         self.super(MultiTouchDevice).__init__()
@@ -31,11 +33,16 @@ class MultiTouchDevice(avango.script.Script):
         self._lastPos = None
 
         self._sceneName = None
+        self._objectName = None
+
+        self.ray_length = 1000
+        self.ray_thickness = 0.0075
+        self.intersection_sphere_size = 0.025
 
         self.always_evaluate(True)
 
 
-    def my_constructor(self, graph, display):
+    def my_constructor(self, graph, display, NET_TRANS_NODE, SCENE_MANAGER):
         """
         Initialize multi-touch device.
 
@@ -46,10 +53,42 @@ class MultiTouchDevice(avango.script.Script):
         self._display    = display
         self._origMat    = graph.Root.value.Transform.value
 
+        self._intersection = Intersection() # ray intersection for target identification
+        self._intersection.my_constructor(self._sceneGraph, self._rayOrientation, self.ray_length, "") # parameters: SCENEGRAPH, SF_PICK_MATRIX, PICK_LENGTH, PICKMASK
+
+        _parent_node = self._sceneGraph["/net/platform_0/scale"]
+
+        # init scenegraph node
+        ## @var ray_transform
+        # Transformation node of the pointer's ray.
+        self.ray_transform = avango.gua.nodes.TransformNode(Name = "ray_transform")
+        _parent_node.Children.value.append(self.ray_transform)
+
+        _loader = avango.gua.nodes.TriMeshLoader()
+        
+        ## @var ray_geometry
+        # Geometry node representing the ray graphically.
+        self.ray_geometry = _loader.create_geometry_from_file("ray_geometry", "data/objects/cylinder.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS)
+        self.ray_transform.Children.value.append(self.ray_geometry)
+
+        self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
+                                            avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                            avango.gua.make_scale_mat(0.005,self.ray_length,0.005)
+        
+        ## @var intersection_point_geometry
+        # Geometry node representing the intersection point of the ray with an object in the scene.
+        self.intersection_point_geometry = _loader.create_geometry_from_file("intersection_point_geometry", "data/objects/sphere.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS)
+        NET_TRANS_NODE.Children.value.append(self.intersection_point_geometry)
+        self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] # set geometry invisible
+
+        self.ray_transform.Transform.connect_from(self._rayOrientation)
+        self.mf_pointer_pick_result.connect_from(self._intersection.mf_pick_result)
+
 
     def evaluate(self):
         self.applyTransformations()
         self._sceneName = SceneManager.active_scene_name
+
 
     def getDisplay(self):
         return self._display
@@ -66,7 +105,49 @@ class MultiTouchDevice(avango.script.Script):
         mappedPosY = point[2] * 1 - 0.5
 
         self._fingerCenterPos = avango.gua.Vec3(mappedPosX * touchDevice.getDisplay().size[0], 0.0, mappedPosY * touchDevice.getDisplay().size[1])
+       
+        self.intersectSceneWithFingerPos()
 
+    def intersectSceneWithFingerPos(self):
+        self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.x , 5 , self._fingerCenterPos.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
+        
+        if len(self._intersection.mf_pick_result.value) > 0: # intersection found  
+            _pick_result = self.mf_pointer_pick_result.value[0]  
+            print "kartoffel ", _pick_result # get first intersection target
+
+            _point = _pick_result.Position.value # intersection point in object coordinate system
+
+            _node = _pick_result.Object.value
+            _point = _node.WorldTransform.value * _point # transform point into world coordinates
+            _point = avango.gua.Vec3(_point.x,_point.y,_point.z) # make Vec3 from Vec4
+
+            self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(_point) * \
+                                                               avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
+                                                          
+            self.intersection_point_geometry.GroupNames.value = [] # set geometry visible
+
+            # update ray length
+            _distance = (_point - self.ray_transform.WorldTransform.value.get_translate()).length()
+
+            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,_distance * -0.5) * \
+                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                                avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
+
+
+        else: # no intersection found
+            self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] # set geometry invisible
+          
+            # set to default ray length
+            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
+                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                                avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
+    
+
+
+
+
+    def setIntersectionwithObject(self, objectName):
+        self._objectName = objectName
 
 
     def addLocalTranslation(self, transMat):
@@ -161,8 +242,8 @@ class TUIODevice(MultiTouchDevice):
         self._activePoints = {}
 
 
-    def my_constructor(self, graph, display):
-        self.super(TUIODevice).my_constructor(graph, display)
+    def my_constructor(self, graph, display, NET_TRANS_NODE, SCENE_MANAGER):
+        self.super(TUIODevice).my_constructor(graph, display, NET_TRANS_NODE, SCENE_MANAGER)
         
         # append 20 touch cursors
         for i in range(0, 20):

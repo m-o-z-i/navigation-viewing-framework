@@ -112,18 +112,21 @@ class MultiTouchDevice(avango.script.Script):
             translateDistance = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * translateDistance
             translateDistance = avango.gua.Vec3(translateDistance.x, translateDistance.y, translateDistance.z)
 
+            #first translate and rotate to origin, second calculate new position, third translate and rotate back
             TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
-                                avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
-                                avango.gua.make_trans_mat(translateDistance * 1.0) * \
-                                self._rotMat * \
-                                self._scaleMat * \
-                                avango.gua.make_trans_mat(translateDistance * -1.0) * \
-                                avango.gua.make_scale_mat(TransformMatrix.get_scale())
+                              avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                              avango.gua.make_trans_mat(translateDistance * 1.0) * \
+                              avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
+                              self._rotMat * \
+                              self._scaleMat * \
+                              avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                              avango.gua.make_trans_mat(translateDistance * -1.0) * \
+                              avango.gua.make_scale_mat(TransformMatrix.get_scale())
 
             TransformMatrix = self._transMat * TransformMatrix
 
-
             self._sceneGraph[sceneNode].Transform.value = TransformMatrix
+
             #print TransformMatrix
             #print "trans: ", TransformMatrix.get_translate(), "  rot: " , TransformMatrix.get_rotate_scale_corrected() , "  scale: " , TransformMatrix.get_scale()
 
@@ -174,7 +177,7 @@ class TUIODevice(MultiTouchDevice):
         self.registerGesture(DragGesture())
         self.registerGesture(PinchGesture())
         self.registerGesture(RotationGesture())
-        #self.registerGesture(RollGesture())
+        self.registerGesture(RollGesture())
 
 
 
@@ -416,7 +419,6 @@ class RotationGesture(MultiTouchGesture):
 
 # todo class viewgesture(MultiTouchGesture):
 #  3 finger um den mittelpunit objekt drehen..
-"""
 class RollGesture(MultiTouchGesture):
     def __init__(self):
         super(RollGesture, self).__init__()
@@ -468,13 +470,13 @@ class RollGesture(MultiTouchGesture):
             return False
 
         directionVec = self._positions[0] - self._positions[-1]
-        rotationalAxis = avango.gua.Vec3(directionVec.y, 0, directionVec.x)
+        rotationalAxis = avango.gua.Vec3(-directionVec.y, 0, directionVec.x)
 
         angle = directionVec.length() * 360
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, rotationalAxis))
 
         return True
-"""
+
 class TUIOCursor(avango.script.Script):
     PosX = avango.SFFloat()
     PosY = avango.SFFloat()

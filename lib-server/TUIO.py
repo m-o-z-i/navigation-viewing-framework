@@ -71,9 +71,9 @@ class MultiTouchDevice(avango.script.Script):
         self.ray_geometry = _loader.create_geometry_from_file("ray_geometry", "data/objects/cylinder.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS)
         self.ray_transform.Children.value.append(self.ray_geometry)
 
-        self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
-                                            avango.gua.make_rot_mat(-90.0,1,0,0) * \
-                                            avango.gua.make_scale_mat(0.005,self.ray_length,0.005)
+        self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0,0,0) * \
+                                            avango.gua.make_rot_mat(0,0,0,0) * \
+                                            avango.gua.make_scale_mat(0,0,0)
         
         ## @var intersection_point_geometry
         # Geometry node representing the intersection point of the ray with an object in the scene.

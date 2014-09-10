@@ -12,6 +12,7 @@ from avango.script import field_has_changed
 import subprocess
 import math
 import avango.utils
+import time
 
 class MultiTouchDevice(avango.script.Script):
     """
@@ -91,7 +92,6 @@ class MultiTouchDevice(avango.script.Script):
         self.applyTransformations()
         self._sceneName = SceneManager.active_scene_name
 
-
     def getDisplay(self):
         return self._display
     
@@ -110,6 +110,7 @@ class MultiTouchDevice(avango.script.Script):
        
         #todo: do this only once at the beginning of the gesture.
         self.intersectSceneWithFingerPos()
+
 
     def intersectSceneWithFingerPos(self):
         self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.x , 5 , self._fingerCenterPos.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
@@ -189,6 +190,7 @@ class MultiTouchDevice(avango.script.Script):
         Requires the scene graph to have a transform node as root node.
         """
 
+
         if (None != self._sceneName):
 
             sceneNode = "/net/" + self._sceneName
@@ -252,7 +254,6 @@ class TUIODevice(MultiTouchDevice):
 
         self._activePoints = {}
 
-
     def my_constructor(self, graph, display, NET_TRANS_NODE, SCENE_MANAGER):
         self.super(TUIODevice).my_constructor(graph, display, NET_TRANS_NODE, SCENE_MANAGER)
         
@@ -270,6 +271,7 @@ class TUIODevice(MultiTouchDevice):
         self.registerGesture(PinchGesture())
         self.registerGesture(RotationGesture())
         self.registerGesture(RollGesture())
+        self.registerGesture(DoubleTapGesture())
 
 
 
@@ -316,6 +318,7 @@ class MultiTouchGesture(object): #object
         self.resetMovingAverage()
 
 
+
     def processGesture(self, activePoints, touchDevice):
         """
         Process gesture. This method needs to be implemented in subclasses.
@@ -347,6 +350,7 @@ class MultiTouchGesture(object): #object
     def resetMovingAverage(self):
         self._totalMA   = 0
         self._maSamples = 0
+
 
 class DragGesture(MultiTouchGesture):
     def __init__(self):
@@ -509,8 +513,6 @@ class RotationGesture(MultiTouchGesture):
 
         return True
 
-# todo class viewgesture(MultiTouchGesture):
-#  3 finger um den mittelpunit objekt drehen..
 class RollGesture(MultiTouchGesture):
     def __init__(self):
         super(RollGesture, self).__init__()
@@ -524,6 +526,7 @@ class RollGesture(MultiTouchGesture):
         if len(activePoints) != 3:
             self._distances = []
             return False
+
         vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
         vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
         vec3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[1].PosY.value, 0)
@@ -574,6 +577,36 @@ class RollGesture(MultiTouchGesture):
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, rotationalAxis))
 
         return True
+
+
+class DoubleTapGesture(MultiTouchGesture):
+    def __init__(self):
+        super(DoubleTapGesture, self).__init__()
+
+        self._lastmilliseconds = 0 
+        self._active = False
+
+    def processGesture(self, activePoints, touchDevice):
+        if len(activePoints) != 2:
+            return False
+
+        timeDiff =  int(round(time.time() * 1000)) - self._lastmilliseconds
+        
+        #doubletap intervall
+        if 200 > timeDiff and 100 < timeDiff and not self._active:
+            self._active = True
+            vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
+            vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+
+            centerPos = (vec1 + ((vec2-vec1) / 2))
+            print "doubleTap"
+        
+        else: 
+            self._active = False            
+
+        self._lastmilliseconds = int(round(time.time() * 1000))
+
+
 
 class TUIOCursor(avango.script.Script):
     PosX = avango.SFFloat()

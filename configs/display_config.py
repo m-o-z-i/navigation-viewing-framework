@@ -384,7 +384,7 @@ class PerseusTouchTable(Display):
                         , resolution = (1920 * 2, 1080 * 2)
                         , displaystrings = [":0.0"]
                         , size = (1.25, .71)
-                        , transformation = avango.gua.make_trans_mat(0.0,1.2,0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+                        , transformation = avango.gua.make_trans_mat(0.0,0,0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
                         )
 
     def get_touch_protocols(self):
@@ -419,8 +419,8 @@ displays = [
   #TouchTable3D() ,
   #Display(hostname = "daedalos", stereo = False) ,
 
-  #PerseusTouchTable(), 
-  NohraTouchTable(),
+  PerseusTouchTable(), 
+  #NohraTouchTable(),
 
   #Display(hostname = "apollo"
   #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)

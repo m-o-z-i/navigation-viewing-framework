@@ -112,9 +112,6 @@ class MultiTouchDevice(avango.script.Script):
         mappedPosY = point[2] * 1 - 0.5
 
         self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * touchDevice.getDisplay().size[0], 0.0, mappedPosY * touchDevice.getDisplay().size[1])
-       
-        #todo: do this only once at the beginning of the gesture.
-        self.intersectSceneWithFingerPos()
 
 
     def intersectSceneWithFingerPos(self):
@@ -195,11 +192,7 @@ class MultiTouchDevice(avango.script.Script):
 
         if (None != self._sceneName and not self._lastFrameCounter == self._frameCounter):
             
-            print "bla"
-
-            #for new gestures calculate intersection
-            if (self._frameCounter - self._lastFrameCounter) > 1:
-                self.intersectSceneWithFingerPos()
+            self.intersectSceneWithFingerPos()
 
             #safe last framecounter
             self._lastFrameCounter = self._frameCounter

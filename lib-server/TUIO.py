@@ -20,6 +20,8 @@ class MultiTouchDevice(avango.script.Script):
     """
     _rayOrientation = avango.gua.SFMatrix4()
     mf_pointer_pick_result = avango.gua.MFPickResult()
+    _fingerCenterPos = avango.gua.SFVec3()
+
 
     def __init__(self):
         self.super(MultiTouchDevice).__init__()
@@ -30,7 +32,7 @@ class MultiTouchDevice(avango.script.Script):
         self._rotMat     = avango.gua.make_identity_mat()
         self._scaleMat   = avango.gua.make_identity_mat()
         
-        self._fingerCenterPos = avango.gua.Vec3(0,0,0)
+        #self._fingerCenterPos.value = avango.gua.Vec3(0,0,0)
         self._lastPos = None
 
         self._sceneName = None
@@ -41,6 +43,9 @@ class MultiTouchDevice(avango.script.Script):
         self.ray_length = 1000
         self.ray_thickness = 0.0075
         self.intersection_sphere_size = 0.025
+
+        self._frameCounter = 0
+        self._lastFrameCounter = 0
 
         self.always_evaluate(True)
 
@@ -89,8 +94,8 @@ class MultiTouchDevice(avango.script.Script):
 
 
     def evaluate(self):
-        self.applyTransformations()
         self._sceneName = SceneManager.active_scene_name
+        self._frameCounter += 1
 
     def getDisplay(self):
         return self._display
@@ -106,14 +111,14 @@ class MultiTouchDevice(avango.script.Script):
         mappedPosX = point[0] * 1 - 0.5
         mappedPosY = point[2] * 1 - 0.5
 
-        self._fingerCenterPos = avango.gua.Vec3(mappedPosX * touchDevice.getDisplay().size[0], 0.0, mappedPosY * touchDevice.getDisplay().size[1])
+        self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * touchDevice.getDisplay().size[0], 0.0, mappedPosY * touchDevice.getDisplay().size[1])
        
         #todo: do this only once at the beginning of the gesture.
         self.intersectSceneWithFingerPos()
 
 
     def intersectSceneWithFingerPos(self):
-        self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.x , 5 , self._fingerCenterPos.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
+        self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 5 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
         
         # intersection found
         if len(self._intersection.mf_pick_result.value) > 0:  
@@ -152,12 +157,8 @@ class MultiTouchDevice(avango.script.Script):
                                                 avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
     
 
-
-
-
     def setIntersectionwithObject(self, objectName):
         self._objectName = objectName
-
 
     def addLocalTranslation(self, transMat):
         """
@@ -184,19 +185,29 @@ class MultiTouchDevice(avango.script.Script):
         self._scaleMat *= scaleMat
 
     #todo: do this not every frame. only when a gesture starts
+    @field_has_changed(_fingerCenterPos)
     def applyTransformations(self):
         """
         Apply calculated world matrix to scene graph.
         Requires the scene graph to have a transform node as root node.
         """
+        
 
+        if (None != self._sceneName and not self._lastFrameCounter == self._frameCounter):
+            
+            print "bla"
 
-        if (None != self._sceneName):
+            #for new gestures calculate intersection
+            if (self._frameCounter - self._lastFrameCounter) > 1:
+                self.intersectSceneWithFingerPos()
+
+            #safe last framecounter
+            self._lastFrameCounter = self._frameCounter
 
             sceneNode = "/net/" + self._sceneName
 
             scenePos = self._sceneGraph[sceneNode].Transform.value.get_translate()
-            translateDistance = self._fingerCenterPos - scenePos
+            translateDistance = self._fingerCenterPos.value - scenePos
 
             TransformMatrix = self._sceneGraph[sceneNode].Transform.value
 
@@ -228,8 +239,6 @@ class MultiTouchDevice(avango.script.Script):
             self._transMat   = avango.gua.make_identity_mat()
             self._rotMat     = avango.gua.make_identity_mat()
             self._scaleMat   = avango.gua.make_identity_mat()
-            self._fingerCenterPos = avango.gua.Vec3(0,0,0)
-
 
 class TUIODevice(MultiTouchDevice):
     """

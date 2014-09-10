@@ -37,8 +37,10 @@ class MultiTouchDevice(avango.script.Script):
 
         self._sceneName = None
         self._objectName = None
+        self._objectMode = False
 
         self._intersectionPos = avango.gua.Vec3(0,0,0)
+        self._intersectionObject = None
 
         self.ray_length = 1000
         self.ray_thickness = 0.0075
@@ -123,6 +125,7 @@ class MultiTouchDevice(avango.script.Script):
 
             # intersection point in object coordinate system
             self._intersectionPos = _pick_result.Position.value 
+            self._intersectionObject = _pick_result
 
             _node = _pick_result.Object.value
 
@@ -154,8 +157,13 @@ class MultiTouchDevice(avango.script.Script):
                                                 avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
     
 
-    def setIntersectionwithObject(self, objectName):
-        self._objectName = objectName
+    def setIntersectionwithObject(self, active):
+        if active:
+            self._objectMode = True
+            self._objectName = self._intersectionObject
+        else:
+            self._objectMode = False
+            self._objectName = None
 
     def addLocalTranslation(self, transMat):
         """
@@ -197,7 +205,10 @@ class MultiTouchDevice(avango.script.Script):
             #safe last framecounter
             self._lastFrameCounter = self._frameCounter
 
-            sceneNode = "/net/" + self._sceneName
+            if not self._objectMode:
+                sceneNode = "/net/" + self._sceneName
+            else:
+                sceneNode = "/net/" + self._sceneName + "/"# + self._objectName.Object.value.Name.value
 
             scenePos = self._sceneGraph[sceneNode].Transform.value.get_translate()
             translateDistance = self._fingerCenterPos.value - scenePos
@@ -586,7 +597,9 @@ class DoubleTapGesture(MultiTouchGesture):
         super(DoubleTapGesture, self).__init__()
 
         self._lastmilliseconds = 0 
-        self._active = False
+        self._objectMode = False
+        self._lastFrame = 0
+        self._firstTap = False
 
     def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 2:
@@ -595,19 +608,30 @@ class DoubleTapGesture(MultiTouchGesture):
         timeDiff =  int(round(time.time() * 1000)) - self._lastmilliseconds
         
         #doubletap intervall
-        if 200 > timeDiff and 100 < timeDiff and not self._active:
+        if 200 > timeDiff and 100 < timeDiff and not self._active:         
             self._active = True
+
             vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
             vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
 
             centerPos = (vec1 + ((vec2-vec1) / 2))
-            print "doubleTap"
-        
-        else: 
-            self._active = False            
+            self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
+            touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
+
+            if not self._objectMode:
+                self._objectMode = True 
+                print "object mode true"
+                touchDevice.setIntersectionwithObject(self._objectMode)
+            
+            else:
+                print "object mode false"
+                self._objectMode = False 
+                touchDevice.setIntersectionwithObject(self._objectMode)
+
+        else:
+            self._active = False
 
         self._lastmilliseconds = int(round(time.time() * 1000))
-
 
 
 class TUIOCursor(avango.script.Script):

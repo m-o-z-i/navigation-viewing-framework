@@ -35,6 +35,8 @@ class MultiTouchDevice(avango.script.Script):
         self._sceneName = None
         self._objectName = None
 
+        self._intersectionPos = avango.gua.Vec3(0,0,0)
+
         self.ray_length = 1000
         self.ray_thickness = 0.0075
         self.intersection_sphere_size = 0.025
@@ -113,21 +115,20 @@ class MultiTouchDevice(avango.script.Script):
         
         if len(self._intersection.mf_pick_result.value) > 0: # intersection found  
             _pick_result = self.mf_pointer_pick_result.value[0]  
-            print "kartoffel ", _pick_result # get first intersection target
 
-            _point = _pick_result.Position.value # intersection point in object coordinate system
+            self._intersectionPos = _pick_result.Position.value # intersection point in object coordinate system
 
             _node = _pick_result.Object.value
-            _point = _node.WorldTransform.value * _point # transform point into world coordinates
-            _point = avango.gua.Vec3(_point.x,_point.y,_point.z) # make Vec3 from Vec4
+            self._intersectionPos = _node.WorldTransform.value * self._intersectionPos # transform point into world coordinates
+            self._intersectionPos = avango.gua.Vec3(self._intersectionPos.x,self._intersectionPos.y,self._intersectionPos.z) # make Vec3 from Vec4
 
-            self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(_point) * \
+            self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPos) * \
                                                                avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
                                                           
             self.intersection_point_geometry.GroupNames.value = [] # set geometry visible
 
             # update ray length
-            _distance = (_point - self.ray_transform.WorldTransform.value.get_translate()).length()
+            _distance = (self._intersectionPos - self.ray_transform.WorldTransform.value.get_translate()).length()
 
             self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,_distance * -0.5) * \
                                                 avango.gua.make_rot_mat(-90.0,1,0,0) * \
@@ -197,10 +198,12 @@ class MultiTouchDevice(avango.script.Script):
             TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
                               avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
                               avango.gua.make_trans_mat(translateDistance * 1.0) * \
+                              avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPos.y * -1.0 , 0)) * \
                               avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
                               self._rotMat * \
                               self._scaleMat * \
                               avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                              avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPos.y * 1.0 , 0)) * \
                               avango.gua.make_trans_mat(translateDistance * -1.0) * \
                               avango.gua.make_scale_mat(TransformMatrix.get_scale())
 

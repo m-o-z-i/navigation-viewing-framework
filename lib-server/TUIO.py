@@ -108,24 +108,31 @@ class MultiTouchDevice(avango.script.Script):
 
         self._fingerCenterPos = avango.gua.Vec3(mappedPosX * touchDevice.getDisplay().size[0], 0.0, mappedPosY * touchDevice.getDisplay().size[1])
        
+        #todo: do this only once at the beginning of the gesture.
         self.intersectSceneWithFingerPos()
 
     def intersectSceneWithFingerPos(self):
         self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.x , 5 , self._fingerCenterPos.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
         
-        if len(self._intersection.mf_pick_result.value) > 0: # intersection found  
+        # intersection found
+        if len(self._intersection.mf_pick_result.value) > 0:  
             _pick_result = self.mf_pointer_pick_result.value[0]  
 
-            self._intersectionPos = _pick_result.Position.value # intersection point in object coordinate system
+            # intersection point in object coordinate system
+            self._intersectionPos = _pick_result.Position.value 
 
             _node = _pick_result.Object.value
-            self._intersectionPos = _node.WorldTransform.value * self._intersectionPos # transform point into world coordinates
-            self._intersectionPos = avango.gua.Vec3(self._intersectionPos.x,self._intersectionPos.y,self._intersectionPos.z) # make Vec3 from Vec4
+
+            # transform point into world coordinates
+            self._intersectionPos = _node.WorldTransform.value * self._intersectionPos 
+            # make Vec3 from Vec4
+            self._intersectionPos = avango.gua.Vec3(self._intersectionPos.x,self._intersectionPos.y,self._intersectionPos.z) 
 
             self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPos) * \
                                                                avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
-                                                          
-            self.intersection_point_geometry.GroupNames.value = [] # set geometry visible
+            
+            # set geometry visible                                           
+            self.intersection_point_geometry.GroupNames.value = [] 
 
             # update ray length
             _distance = (self._intersectionPos - self.ray_transform.WorldTransform.value.get_translate()).length()
@@ -134,9 +141,9 @@ class MultiTouchDevice(avango.script.Script):
                                                 avango.gua.make_rot_mat(-90.0,1,0,0) * \
                                                 avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
 
-
-        else: # no intersection found
-            self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] # set geometry invisible
+        else:
+            # set geometry invisible
+            self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
           
             # set to default ray length
             self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
@@ -175,6 +182,7 @@ class MultiTouchDevice(avango.script.Script):
         """
         self._scaleMat *= scaleMat
 
+    #todo: do this not every frame. only when a gesture starts
     def applyTransformations(self):
         """
         Apply calculated world matrix to scene graph.

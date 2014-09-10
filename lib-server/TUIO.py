@@ -564,6 +564,12 @@ class RollGesture(MultiTouchGesture):
         directionVec = self._positions[0] - self._positions[-1]
         rotationalAxis = avango.gua.Vec3(-directionVec.y, 0, directionVec.x)
 
+
+        centerPos = (vec1 + vec2 + vec3) / 3
+        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
+        touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
+
+
         angle = directionVec.length() * 360
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, rotationalAxis))
 

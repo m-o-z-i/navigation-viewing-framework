@@ -244,8 +244,13 @@ class SceneManager(avango.script.Script):
 
     # init scenes   
     #self.scene_monkey     = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_medieval    = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden    = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)   
+    #self.scene_medieval    = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_chess1       = SceneChessBoard1(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_chess2       = SceneChessBoard2(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_chess3       = SceneChessBoard3(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_chess4       = SceneChessBoard4(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_city       = SceneCity(self, SCENEGRAPH, NET_TRANS_NODE)
 
     #pitoti krams:    
     #self.scene_spacemonkey  = SpacemonkeyPitoti(self, SCENEGRAPH, NET_TRANS_NODE)
@@ -281,7 +286,8 @@ class SceneManager(avango.script.Script):
 
     if self.sf_key3.value == True: # key pressed
       self.activate_scene(2)
-  """
+  
+  
   ## Called whenever sf_key4 changes.
   @field_has_changed(sf_key4)
   def sf_key4_changed(self):
@@ -330,7 +336,7 @@ class SceneManager(avango.script.Script):
 
     if self.sf_key0.value == True: # key pressed
       self.activate_scene(9)
-  """
+  
   
   ## Called whenever sf_key_home changes.
   @field_has_changed(sf_key_home)

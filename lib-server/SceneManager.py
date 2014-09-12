@@ -243,20 +243,21 @@ class SceneManager(avango.script.Script):
     _pipeline_value_node.Children.value.append(self.pipeline_info_node)
 
     # init scenes   
-    #self.scene_monkey     = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_vianden    = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)   
-    #self.scene_medieval    = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_chess1       = SceneChessBoard1(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_chess2       = SceneChessBoard2(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_chess3       = SceneChessBoard3(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_chess4       = SceneChessBoard4(self, SCENEGRAPH, NET_TRANS_NODE)
-    self.scene_city       = SceneCity(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_monkey             = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_vianden            = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)   
+    self.scene_medieval            = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    self.scene_medieval_objects    = SceneMedievalTownObjects(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_chess1             = SceneChessBoard1(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_chess2             = SceneChessBoard2(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_chess3             = SceneChessBoard3(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_chess4             = SceneChessBoard4(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_city               = SceneCity(self, SCENEGRAPH, NET_TRANS_NODE)
 
     #pitoti krams:    
-    #self.scene_spacemonkey  = SpacemonkeyPitoti(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_seradinaRock = SeradinaRock(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_streets      = Streets(self, SCENEGRAPH, NET_TRANS_NODE)
-    #self.scene_valley       = SeradinaValley(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_spacemonkey        = SpacemonkeyPitoti(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_seradinaRock       = SeradinaRock(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_streets            = Streets(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_valley             = SeradinaValley(self, SCENEGRAPH, NET_TRANS_NODE)
 
 
 

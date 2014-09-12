@@ -245,7 +245,7 @@ class SceneManager(avango.script.Script):
     # init scenes   
     #self.scene_monkey             = SceneMonkey(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_vianden            = SceneVianden(self, SCENEGRAPH, NET_TRANS_NODE)   
-    self.scene_medieval            = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
+    #self.scene_medieval            = SceneMedievalTown(self, SCENEGRAPH, NET_TRANS_NODE)
     self.scene_medieval_objects    = SceneMedievalTownObjects(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_chess1             = SceneChessBoard1(self, SCENEGRAPH, NET_TRANS_NODE)
     #self.scene_chess2             = SceneChessBoard2(self, SCENEGRAPH, NET_TRANS_NODE)

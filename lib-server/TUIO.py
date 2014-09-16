@@ -113,15 +113,15 @@ class MultiTouchDevice(avango.script.Script):
     def getSceneGraph(self):
         return self._sceneGraph
 
-    def setFingerCenterPosition(self, FingerCenterPos, touchDevice):
+    def setFingerCenterPosition(self, FingerCenterPos):
 
         point = FingerCenterPos
 
         # map points from interval [0, 1] to [-0.5, 0.5]
         mappedPosX = point[0] * 1 - 0.5
-        mappedPosY = point[2] * 1 - 0.5
+        mappedPosY = point[1] * 1 - 0.5
 
-        self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * touchDevice.getDisplay().size[0], 0.0, mappedPosY * touchDevice.getDisplay().size[1])
+        self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * self.getDisplay().size[0], 0.0, mappedPosY * self.getDisplay().size[1])
 
 
     
@@ -354,7 +354,27 @@ class TUIODevice(MultiTouchDevice):
         for gesture in self.gestures:
             gesture.processGesture(self._activePoints.values(), self)
 
-        self._registerAllGestures = True
+        activePoints = self._activePoints.values()
+
+
+        doSomething = True
+        if len(activePoints) == 2:
+            point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
+            point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+            centerPos = (point1 + ((point2-point1) / 2))
+
+        elif len(activePoints) == 3:
+            point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
+            point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+            point3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[1].PosY.value, 0)
+            centerPos = (point1 + point2 + point3) / 3
+
+        else:
+            doSomething = False
+
+        if (doSomething):
+            self.setFingerCenterPosition(centerPos)
+            self._registerAllGestures = True
 
 
 
@@ -456,13 +476,6 @@ class DragGesture(MultiTouchGesture):
         newPosX = relDistSizeMapped[0]
         newPosY = relDistSizeMapped[1]
 
-
-        centerPos = (point1 + ((point2-point1) / 2))
-        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
-        touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
-
-
-
         touchDevice.addLocalTranslation(avango.gua.make_trans_mat(newPosX, 0, newPosY))
 
         self._lastPos = (point[0], point[1])
@@ -506,11 +519,6 @@ class PinchGesture(MultiTouchGesture):
         #mDofDevice.mf_dof.value[6] += relDistance * 16.3
         #mDofDevice.mf_dof.value[0] -= self.centerDirection.x * relDistance * 15 * self.display.size[0]
         #mDofDevice.mf_dof.value[2] -= self.centerDirection.y * relDistance * 15 * self.display.size[1]
-
-        centerPos = (vec1 + ((vec2-vec1) / 2))
-        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
-        touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
-
 
         touchDevice.addLocalScaling(avango.gua.make_scale_mat(1 - relDistance))
 
@@ -575,11 +583,6 @@ class RotationGesture(MultiTouchGesture):
         # calculate moving average to prevent oscillation
         #print(angle)
         
-        centerPos = (vec1 + ((vec2-vec1) / 2))
-        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
-        touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
-
-
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, avango.gua.Vec3(0, 1, 0)))
         self._lastAngle = angle
         self._fingerCenterPos = avango.gua.Vec3(0,0,0)
@@ -639,11 +642,6 @@ class RollGesture(MultiTouchGesture):
         directionVec = self._positions[0] - self._positions[-1]
         rotationalAxis = avango.gua.Vec3(-directionVec.y, 0, directionVec.x)
 
-
-        centerPos = (vec1 + vec2 + vec3) / 3
-        self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
-        touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
-
         angle = directionVec.length() * 360
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, rotationalAxis))
 
@@ -672,13 +670,6 @@ class DoubleTapGesture(MultiTouchGesture):
 
         #doubletap intervall
         if 250 > timeDiff and 70 < timeDiff and not self._active and self._firstTap:
-            #calculate 
-            vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
-            vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
-
-            centerPos = (vec1 + ((vec2-vec1) / 2))
-            self._fingerCenterPos = avango.gua.Vec3(centerPos.x, 0, centerPos.y)
-            touchDevice.setFingerCenterPosition(self._fingerCenterPos, touchDevice)
 
             if not self._objectMode:
                 self._objectMode = touchDevice.setObjectMode(True)

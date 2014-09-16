@@ -19,7 +19,6 @@ class MultiTouchDevice(avango.script.Script):
     Base class for multi touch devices.
     """
     _rayOrientation = avango.gua.SFMatrix4()
-    mf_ray_pick_result = avango.gua.MFPickResult()
     _fingerCenterPos = avango.gua.SFVec3()
 
 
@@ -47,11 +46,10 @@ class MultiTouchDevice(avango.script.Script):
         self.intersection_sphere_size = 0.025
         self.highlighted_object = None
         self.hierarchy_selection_level = -1
+        self._last_pick_result = None
 
         self._frameCounter = 0
         self._lastFrameCounter = 0
-
-        self._registerAllGestures = False
 
         self.always_evaluate(True)
 
@@ -69,6 +67,8 @@ class MultiTouchDevice(avango.script.Script):
 
         self._intersection = Intersection() # ray intersection for target identification
         self._intersection.my_constructor(self._sceneGraph, self._rayOrientation, self.ray_length, "") # parameters: SCENEGRAPH, SF_PICK_MATRIX, PICK_LENGTH, PICKMASK
+        self._intersectionFound = False
+
 
         _parent_node = self._sceneGraph["/net/platform_0/scale"]
 
@@ -99,7 +99,6 @@ class MultiTouchDevice(avango.script.Script):
 
 
         self.ray_transform.Transform.connect_from(self._rayOrientation)
-        self.mf_ray_pick_result.connect_from(self._intersection.mf_pick_result)
 
 
     def evaluate(self):
@@ -107,11 +106,14 @@ class MultiTouchDevice(avango.script.Script):
         self.applyTransformations()
         self._frameCounter += 1
 
+
     def getDisplay(self):
         return self._display
     
+
     def getSceneGraph(self):
         return self._sceneGraph
+
 
     def setFingerCenterPosition(self, FingerCenterPos):
 
@@ -121,21 +123,17 @@ class MultiTouchDevice(avango.script.Script):
         mappedPosX = point[0] * 1 - 0.5
         mappedPosY = point[1] * 1 - 0.5
 
-        self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * self.getDisplay().size[0], 0.0, mappedPosY * self.getDisplay().size[1])
+        self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * self.getDisplay().size[0], 0.0, mappedPosY * self.getDisplay().size[1])    
 
-
-    
 
     def setObjectMode(self, active):
-        if active:
-            if self._intersectionObject != None:
-                self._objectMode = True
-                self._objectName = self._intersectionObject.Parent.value.Name.value
-                return True
-        else:
-            self._objectMode = False
-            self._objectName = None
-        
+        if active and len(self._intersection.mf_pick_result.value) > 0:
+            self._objectMode = True
+            self._objectName = self._intersectionObject.Parent.value.Name.value
+            return True
+            
+        self._objectMode = False
+        self._objectName = None
         return False
 
 
@@ -147,6 +145,7 @@ class MultiTouchDevice(avango.script.Script):
         """
         self._transMat *= transMat
 
+
     def addLocalRotation(self, rotMat):
         """
         Add local rotation.
@@ -154,6 +153,7 @@ class MultiTouchDevice(avango.script.Script):
         @param rotMat: the (relative) rotation matrix
         """
         self._rotMat *= rotMat
+
 
     def addLocalScaling(self, scaleMat):
         """
@@ -163,16 +163,96 @@ class MultiTouchDevice(avango.script.Script):
         """
         self._scaleMat *= scaleMat
 
-    #todo: do this not every frame. only when a gesture starts
-    #doesn't work with fingercenterpos because method could be called more than once
+
+    def intersectSceneWithFingerPos(self):
+        self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 1 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
+        
+        # intersection found
+        if len(self._intersection.mf_pick_result.value) > 0:
+            self._intersectionFound = True
+
+            #first intersected object
+            _pick_result = self._intersection.mf_pick_result.value[0]
+
+            self._intersectionPoint = _pick_result.Position.value 
+            self._intersectionObject = _pick_result.Object.value
+            
+            #update intersectionObject until you insert object Mode
+            if not self._objectMode:
+                self._lastIntersectionObject = self._intersectionObject
+
+            # VISUALISATION:
+            # transform point into world coordinates
+            self._intersectionPoint = self._intersectionObject.WorldTransform.value * self._intersectionPoint 
+            # make Vec3 from Vec4
+            self._intersectionPoint = avango.gua.Vec3(self._intersectionPoint.x,self._intersectionPoint.y,self._intersectionPoint.z) 
+            
+            # update intersection sphere
+            self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPoint) * \
+                                                               avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
+            # set sphere visible                                           
+            self.intersection_point_geometry.GroupNames.value = [] 
+
+            # update ray
+            _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
+            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,_distance * -0.5) * \
+                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                                avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
+
+        else:
+            # set geometry invisible
+            self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
+          
+            # set to default ray length
+            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
+                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                                avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
+            self._intersectionFound = False
+
+
+    def update_object_highlight(self):
+        #highlight active object:
+        if self._objectMode:
+            _node = self._lastIntersectionObject
+
+            if _node.has_field("InteractiveObject") == True:
+                _object = _node.InteractiveObject.value
+              
+                if self.hierarchy_selection_level >= 0:          
+                    _object = _object.get_higher_hierarchical_object(self.hierarchy_selection_level)
+              
+                if _object == None:
+                # evtl. disable highlight of prior object
+                    if self.highlighted_object != None:
+                        self.highlighted_object.enable_highlight(False)
+
+                else:
+                    if _object != self.highlighted_object: # new object hit
+                    
+                        # evtl. disable highlight of prior object
+                        if self.highlighted_object != None:
+                            self.highlighted_object.enable_highlight(False)
+
+                        self.highlighted_object = _object
+                        
+                        # enable highlight of new object
+                        self.highlighted_object.enable_highlight(True)
+
+        #don't highlight something
+        else:
+            # evtl. disable highlight of prior object
+            if self.highlighted_object != None:
+                self.highlighted_object.enable_highlight(False)
+                self.highlighted_object = None
+
+
     def applyTransformations(self):
         """
         Apply calculated world matrix to scene graph.
         Requires the scene graph to have a transform node as root node.
         """
 
-        if (None != self._sceneName and self._registerAllGestures):
-            self.intersectSceneWithFingerPos()
+        if (None != self._sceneName):
 
             #navigation Mode
             if not self._objectMode:
@@ -214,86 +294,6 @@ class MultiTouchDevice(avango.script.Script):
             self._transMat   = avango.gua.make_identity_mat()
             self._rotMat     = avango.gua.make_identity_mat()
             self._scaleMat   = avango.gua.make_identity_mat()
-            self._registerAllGestures = False
-
-
-    def intersectSceneWithFingerPos(self):
-        self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 5 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
-        
-        # intersection found
-        if len(self._intersection.mf_pick_result.value) > 0 and not self._objectMode:  
-            _pick_result = self.mf_ray_pick_result.value[0]  
-
-            # intersection point in object coordinate system
-            self._intersectionPoint = _pick_result.Position.value 
-            self._intersectionObject = _pick_result.Object.value
-
-            # transform point into world coordinates
-            self._intersectionPoint = self._intersectionObject.WorldTransform.value * self._intersectionPoint 
-            # make Vec3 from Vec4
-            self._intersectionPoint = avango.gua.Vec3(self._intersectionPoint.x,self._intersectionPoint.y,self._intersectionPoint.z) 
-
-            
-            # update intersection sphere
-            self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPoint) * \
-                                                               avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
-            # set sphere visible                                           
-            self.intersection_point_geometry.GroupNames.value = [] 
-
-            # update ray
-            _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
-            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,_distance * -0.5) * \
-                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
-                                                avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
-
-        else:
-            # set geometry invisible
-            self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
-          
-            # set to default ray length
-            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
-                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
-                                                avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
-
-        self.update_object_highlight()
-
-
-
-    def update_object_highlight(self):
-    
-        if len(self._intersection.mf_pick_result.value) > 0 or self._objectMode:  
-            _pick_result = self.mf_ray_pick_result.value[0]
-
-            _node = _pick_result.Object.value
-
-            if _node.has_field("InteractiveObject") == True:
-                _object = _node.InteractiveObject.value
-              
-                if self.hierarchy_selection_level >= 0:          
-                    _object = _object.get_higher_hierarchical_object(self.hierarchy_selection_level)
-              
-                if _object == None:
-                # evtl. disable highlight of prior object
-                    if self.highlighted_object != None:
-                        self.highlighted_object.enable_highlight(False)
-
-                else:
-                    if _object != self.highlighted_object: # new object hit
-                    
-                        # evtl. disable highlight of prior object
-                        if self.highlighted_object != None:
-                            self.highlighted_object.enable_highlight(False)
-
-                        self.highlighted_object = _object
-                        
-                        # enable highlight of new object
-                        self.highlighted_object.enable_highlight(True)
-
-        else:
-            # evtl. disable highlight of prior object
-            if self.highlighted_object != None:
-                self.highlighted_object.enable_highlight(False)
-                self.highlighted_object = None
 
 
 class TUIODevice(MultiTouchDevice):
@@ -318,6 +318,7 @@ class TUIODevice(MultiTouchDevice):
         #subprocess.Popen(["sudo", "/usr/sbin/citmuto03drv"], stderr = _devnull, stdout = _devnull)
 
         self._activePoints = {}
+        self._frameCounter = 0
 
     def my_constructor(self, graph, display, NET_TRANS_NODE, SCENE_MANAGER):
         self.super(TUIODevice).my_constructor(graph, display, NET_TRANS_NODE, SCENE_MANAGER)
@@ -337,8 +338,10 @@ class TUIODevice(MultiTouchDevice):
         self.registerGesture(RotationGesture())
         self.registerGesture(RollGesture())
         self.registerGesture(DoubleTapGesture())
+        self.always_evaluate(True)
 
-
+    def evaluate(self):
+        self._frameCounter += 1
 
     @field_has_changed(PosChanged)
     def processChange(self):
@@ -356,8 +359,8 @@ class TUIODevice(MultiTouchDevice):
 
         activePoints = self._activePoints.values()
 
-
         doSomething = True
+
         if len(activePoints) == 2:
             point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
             point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
@@ -374,8 +377,9 @@ class TUIODevice(MultiTouchDevice):
 
         if (doSomething):
             self.setFingerCenterPosition(centerPos)
-            self._registerAllGestures = True
-
+            self.intersectSceneWithFingerPos()
+            self.update_object_highlight()
+            self.applyTransformations()
 
 
     def registerGesture(self, gesture):
@@ -405,8 +409,6 @@ class MultiTouchGesture(object): #object
     def __init__(self):
         #self.super(MultiTouchGesture).__init__()
         self.resetMovingAverage()
-
-
 
     def processGesture(self, activePoints, touchDevice):
         """
@@ -656,37 +658,39 @@ class DoubleTapGesture(MultiTouchGesture):
         self._objectMode = False
         self._lastFrame = 0
         self._firstTap = False
+        self._lastCounter = 0
 
     def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 2:
             return False
         
-        detectedActivity = (int(round(time.time() * 1000)) - self._lastmilliseconds < 250)
+        lastDetectedActivity = int(round(time.time() * 1000)) - self._lastmilliseconds
 
-        if not detectedActivity:
+        if 200 < lastDetectedActivity:
             self._firstTap = True
 
-        timeDiff = int(round(time.time() * 1000)) - self._lastmilliseconds
+        counterDiff = touchDevice._frameCounter - self._lastCounter
 
         #doubletap intervall
-        if 250 > timeDiff and 70 < timeDiff and not self._active and self._firstTap:
-
+        if 200 > lastDetectedActivity and 70 < lastDetectedActivity and self._firstTap and 7 < counterDiff :
             if not self._objectMode:
                 self._objectMode = touchDevice.setObjectMode(True)
-                print "object mode = " , self._objectMode
+                #print "object mode = " , self._objectMode , " old: True"
             
             else:
                 self._objectMode = touchDevice.setObjectMode(False)
-                print "object mode = " , self._objectMode
+                #print "object mode = " , self._objectMode , " old: False"
 
             self._firstTap = False
 
         else:
-            if detectedActivity:
+            if 200 > lastDetectedActivity:
                 self._firstTap = False
-            self._active = False
 
+        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; object mode = " , self._objectMode , " ; CounterDiff: " , counterDiff
         self._lastmilliseconds = int(round(time.time() * 1000))
+        self._lastCounter = touchDevice._frameCounter
+
 
 
 class TUIOCursor(avango.script.Script):

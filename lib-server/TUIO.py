@@ -21,7 +21,6 @@ class MultiTouchDevice(avango.script.Script):
     _rayOrientation = avango.gua.SFMatrix4()
     _fingerCenterPos = avango.gua.SFVec3()
 
-
     def __init__(self):
         self.super(MultiTouchDevice).__init__()
         self._sceneGraph = None
@@ -48,9 +47,6 @@ class MultiTouchDevice(avango.script.Script):
         self.hierarchy_selection_level = -1
         self._last_pick_result = None
 
-        self._frameCounter = 0
-        self._lastFrameCounter = 0
-
         self.always_evaluate(True)
 
 
@@ -69,6 +65,7 @@ class MultiTouchDevice(avango.script.Script):
         self._intersection.my_constructor(self._sceneGraph, self._rayOrientation, self.ray_length, "") # parameters: SCENEGRAPH, SF_PICK_MATRIX, PICK_LENGTH, PICKMASK
         self._intersectionFound = False
 
+        self._sceneName = SceneManager.active_scene_name
 
         _parent_node = self._sceneGraph["/net/platform_0/scale"]
 
@@ -95,16 +92,7 @@ class MultiTouchDevice(avango.script.Script):
         NET_TRANS_NODE.Children.value.append(self.intersection_point_geometry)
         self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] # set geometry invisible
 
-
-
-
         self.ray_transform.Transform.connect_from(self._rayOrientation)
-
-
-    def evaluate(self):
-        self._sceneName = SceneManager.active_scene_name
-        self.applyTransformations()
-        self._frameCounter += 1
 
 
     def getDisplay(self):
@@ -253,7 +241,6 @@ class MultiTouchDevice(avango.script.Script):
         """
 
         if (None != self._sceneName):
-
             #navigation Mode
             if not self._objectMode:
                 sceneNode = "/net/" + self._sceneName

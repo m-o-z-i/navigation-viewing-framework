@@ -366,7 +366,7 @@ class TUIODevice(MultiTouchDevice):
         elif len(activePoints) == 3:
             point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
             point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
-            point3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[1].PosY.value, 0)
+            point3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[2].PosY.value, 0)
             centerPos = (point1 + point2 + point3) / 3
 
         else:

@@ -65,8 +65,6 @@ class MultiTouchDevice(avango.script.Script):
         self._intersection.my_constructor(self._sceneGraph, self._rayOrientation, self.ray_length, "") # parameters: SCENEGRAPH, SF_PICK_MATRIX, PICK_LENGTH, PICKMASK
         self._intersectionFound = False
 
-        self._sceneName = SceneManager.active_scene_name
-
         _parent_node = self._sceneGraph["/net/platform_0/scale"]
 
         # init scenegraph node
@@ -239,6 +237,8 @@ class MultiTouchDevice(avango.script.Script):
         Apply calculated world matrix to scene graph.
         Requires the scene graph to have a transform node as root node.
         """
+
+        self._sceneName = SceneManager.active_scene_name
 
         if (None != self._sceneName):
             #navigation Mode

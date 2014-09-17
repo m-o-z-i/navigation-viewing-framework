@@ -649,7 +649,7 @@ class DoubleTapGesture(MultiTouchGesture):
 
         self._lastmilliseconds = 0 
         self._objectMode = False
-        self._lastFrame = 0
+        self._frameCounter = 0
         self._firstTap = False
         self._lastCounter = 0
 
@@ -657,15 +657,18 @@ class DoubleTapGesture(MultiTouchGesture):
         if len(activePoints) != 2:
             return False
         
+        self._frameCounter += 1
+
         lastDetectedActivity = int(round(time.time() * 1000)) - self._lastmilliseconds
 
-        if 200 < lastDetectedActivity:
+        if 100 < lastDetectedActivity:
             self._firstTap = True
+            self._frameCounter = 0
 
         #counterDiff = touchDevice._frameCounter - self._lastCounter
 
         #doubletap intervall
-        if 200 > lastDetectedActivity and 70 < lastDetectedActivity and self._firstTap: # and 7 < counterDiff :
+        if 100 > lastDetectedActivity and 50 < lastDetectedActivity and self._firstTap: # and 7 < counterDiff :
             if not self._objectMode:
                 self._objectMode = touchDevice.setObjectMode(True)
                 #print "object mode = " , self._objectMode , " old: True"
@@ -675,12 +678,14 @@ class DoubleTapGesture(MultiTouchGesture):
                 #print "object mode = " , self._objectMode , " old: False"
 
             self._firstTap = False
+            self._frameCounter = 0
 
         else:
-            if 200 > lastDetectedActivity:
+            if 100 > lastDetectedActivity and 7 < self._frameCounter:
                 self._firstTap = False
 
-        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; object mode = " , self._objectMode , " ; CounterDiff: " , counterDiff
+        
+        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; object mode = " , self._objectMode
         self._lastmilliseconds = int(round(time.time() * 1000))
         #self._lastCounter = touchDevice._frameCounter
 

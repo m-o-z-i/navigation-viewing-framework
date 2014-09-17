@@ -329,8 +329,9 @@ class TUIODevice(MultiTouchDevice):
 
     def evaluate(self):
         self._frameCounter += 1
+        self.processChange()
 
-    @field_has_changed(PosChanged)
+    #@field_has_changed(PosChanged)
     def processChange(self):
         if -1.0 == self.PosChanged.value:
             return 
@@ -559,7 +560,12 @@ class RotationGesture(MultiTouchGesture):
 
         #center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
         #rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
-        angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, -crossProduct.z)
+        
+        #prevent math errors
+        if 1 >= dotProduct and -1 <= dotProduct:
+            angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, -crossProduct.z)
+        else:
+            angle = 45
         #angle = self.movingAverage(angle, self._smoothingFactor)
 
         #if 1 < abs(angle) - abs(self._lastAngle):
@@ -656,10 +662,10 @@ class DoubleTapGesture(MultiTouchGesture):
         if 200 < lastDetectedActivity:
             self._firstTap = True
 
-        counterDiff = touchDevice._frameCounter - self._lastCounter
+        #counterDiff = touchDevice._frameCounter - self._lastCounter
 
         #doubletap intervall
-        if 200 > lastDetectedActivity and 70 < lastDetectedActivity and self._firstTap and 7 < counterDiff :
+        if 200 > lastDetectedActivity and 70 < lastDetectedActivity and self._firstTap: # and 7 < counterDiff :
             if not self._objectMode:
                 self._objectMode = touchDevice.setObjectMode(True)
                 #print "object mode = " , self._objectMode , " old: True"
@@ -674,9 +680,9 @@ class DoubleTapGesture(MultiTouchGesture):
             if 200 > lastDetectedActivity:
                 self._firstTap = False
 
-        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; object mode = " , self._objectMode , " ; CounterDiff: " , counterDiff
+        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; object mode = " , self._objectMode , " ; CounterDiff: " , counterDiff
         self._lastmilliseconds = int(round(time.time() * 1000))
-        self._lastCounter = touchDevice._frameCounter
+        #self._lastCounter = touchDevice._frameCounter
 
 
 

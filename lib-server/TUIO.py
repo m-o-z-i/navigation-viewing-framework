@@ -327,11 +327,12 @@ class TUIODevice(MultiTouchDevice):
         self.registerGesture(DoubleTapGesture())
         self.always_evaluate(True)
 
+
     def evaluate(self):
         self._frameCounter += 1
         self.processChange()
 
-    #@field_has_changed(PosChanged)
+    @field_has_changed(PosChanged)
     def processChange(self):
         if -1.0 == self.PosChanged.value:
             return 
@@ -523,7 +524,7 @@ class RotationGesture(MultiTouchGesture):
         self._lastAngle = 0
 
         # smoothing factor for rotation angles
-        self._smoothingFactor = 30
+        self._smoothingFactor = 8
 
         self._fingerCenterPos = avango.gua.Vec3(0,0,0)
 
@@ -549,7 +550,7 @@ class RotationGesture(MultiTouchGesture):
         dist1.normalize()
         dist2 = self._distances[-1]
         dist2.normalize()
-        dotProduct   = dist1.dot(dist2)
+        dotProduct   = abs(dist1.dot(dist2))
         crossProduct = self._distances[0].cross(self._distances[-1])
 
         # make sure have no overflows due to rounding issues
@@ -561,12 +562,8 @@ class RotationGesture(MultiTouchGesture):
         #center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
         #rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
         
-        #prevent math errors
-        if 1 >= dotProduct and -1 <= dotProduct:
-            angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, -crossProduct.z)
-        else:
-            angle = 45
-        #angle = self.movingAverage(angle, self._smoothingFactor)
+        angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, -crossProduct.z)
+        angle = self.movingAverage(angle, self._smoothingFactor)
 
         #if 1 < abs(angle) - abs(self._lastAngle):
         #    self._lastAngle = angle
@@ -656,19 +653,17 @@ class DoubleTapGesture(MultiTouchGesture):
     def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 2:
             return False
-        
+
         self._frameCounter += 1
 
         lastDetectedActivity = int(round(time.time() * 1000)) - self._lastmilliseconds
 
-        if 100 < lastDetectedActivity:
+        if 150 < lastDetectedActivity:
             self._firstTap = True
             self._frameCounter = 0
 
-        #counterDiff = touchDevice._frameCounter - self._lastCounter
-
         #doubletap intervall
-        if 100 > lastDetectedActivity and 50 < lastDetectedActivity and self._firstTap: # and 7 < counterDiff :
+        if 150 > lastDetectedActivity and 50 < lastDetectedActivity and self._firstTap:
             if not self._objectMode:
                 self._objectMode = touchDevice.setObjectMode(True)
                 #print "object mode = " , self._objectMode , " old: True"
@@ -681,14 +676,12 @@ class DoubleTapGesture(MultiTouchGesture):
             self._frameCounter = 0
 
         else:
-            if 100 > lastDetectedActivity and 7 < self._frameCounter:
+            if 150 > lastDetectedActivity and 7 < self._frameCounter:
                 self._firstTap = False
 
         
-        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; object mode = " , self._objectMode
+        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; object mode = " , self._objectMode
         self._lastmilliseconds = int(round(time.time() * 1000))
-        #self._lastCounter = touchDevice._frameCounter
-
 
 
 class TUIOCursor(avango.script.Script):

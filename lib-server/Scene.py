@@ -92,7 +92,7 @@ class SceneMedievalTownObjects(SceneObject):
     self.init_geometry("tower", "data/objects/demo_models/medieval_harbour_objects/tower.obj", _mat, None, True, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
     
     _mat = avango.gua.make_trans_mat(0, -0.05, 0) * avango.gua.make_scale_mat(1500.0, 1.0, 1500.0)
-    self.init_geometry("water", "data/objects/plane.obj", _mat, 'data/materials/Water.gmd', True, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG,
+    self.init_geometry("water", "data/objects/plane.obj", _mat, 'data/materials/Water.gmd', False, False, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG,
   
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)

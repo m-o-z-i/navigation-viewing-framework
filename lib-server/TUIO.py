@@ -30,6 +30,9 @@ class MultiTouchDevice(avango.script.Script):
         self._rotMat     = avango.gua.make_identity_mat()
         self._scaleMat   = avango.gua.make_identity_mat()
         
+        self._localMatrix = avango.gua.make_identity_mat()
+        self._globalMatrix = avango.gua.make_identity_mat()
+
         #self._fingerCenterPos.value = avango.gua.Vec3(0,0,0)
         self._lastPos = None
 
@@ -46,6 +49,7 @@ class MultiTouchDevice(avango.script.Script):
         self.highlighted_object = None
         self.hierarchy_selection_level = -1
         self._last_pick_result = None
+
 
         self.always_evaluate(True)
 
@@ -241,38 +245,64 @@ class MultiTouchDevice(avango.script.Script):
         self._sceneName = SceneManager.active_scene_name
 
         if (None != self._sceneName):
-            #navigation Mode
-            if not self._objectMode:
-                sceneNode = "/net/" + self._sceneName
+            
+            sceneNode = "/net/" + self._sceneName
+            self._globalMatrix = self._sceneGraph[sceneNode].Transform.value
+            
             #object Mode
-            else:
-                sceneNode = "/net/" + self._sceneName + "/" + self._objectName
+            if self._objectMode:
+                objectNode = "/net/" + self._sceneName + "/" + self._objectName
+                scenePos = self._sceneGraph[objectNode].Transform.value.get_translate()
+                TransformMatrix = self._sceneGraph[objectNode].Transform.value
+            else: 
+                scenePos = self._sceneGraph[sceneNode].Transform.value.get_translate()
+                TransformMatrix = self._sceneGraph[sceneNode].Transform.value
 
-            scenePos = self._sceneGraph[sceneNode].Transform.value.get_translate()
+
+            #print "scenePos: ", scenePos ,  "  ; fingerpos: " , self._fingerCenterPos.value
+            
             translateDistance = self._fingerCenterPos.value - scenePos
-
-            TransformMatrix = self._sceneGraph[sceneNode].Transform.value
 
             #transform world-space to object-space
             translateDistance = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * translateDistance
             translateDistance = avango.gua.Vec3(translateDistance.x, translateDistance.y, translateDistance.z)
 
             #first translate and rotate to origin, second calculate new position, third translate and rotate back
-            TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
-                              avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
-                              avango.gua.make_trans_mat(translateDistance * 1.0) * \
-                              avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * -1.0 , 0)) * \
-                              avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
-                              self._rotMat * \
-                              self._scaleMat * \
-                              avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
-                              avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * 1.0 , 0)) * \
-                              avango.gua.make_trans_mat(translateDistance * -1.0) * \
-                              avango.gua.make_scale_mat(TransformMatrix.get_scale())
+            
+            if self._objectMode:
+                TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
+                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                                  avango.gua.make_trans_mat(translateDistance * 1.0) * \
+                                  avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
+                                  avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self._globalMatrix.get_rotate_scale_corrected())) * \
+                                  self._rotMat * \
+                                  self._scaleMat * \
+                                  self._transMat * \
+                                  avango.gua.make_rot_mat(self._globalMatrix.get_rotate_scale_corrected()) * \
+                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                                  avango.gua.make_trans_mat(translateDistance * -1.0) * \
+                                  avango.gua.make_scale_mat(TransformMatrix.get_scale())
 
-            TransformMatrix = self._transMat * TransformMatrix
+            else:
+                TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
+                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                                  avango.gua.make_trans_mat(translateDistance * 1.0) * \
+                                  avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * -1.0 , 0)) * \
+                                  avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
+                                  self._rotMat * \
+                                  self._scaleMat * \
+                                  self._transMat * \
+                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                                  avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * 1.0 , 0)) * \
+                                  avango.gua.make_trans_mat(translateDistance * -1.0) * \
+                                  avango.gua.make_scale_mat(TransformMatrix.get_scale())
 
-            self._sceneGraph[sceneNode].Transform.value = TransformMatrix
+            #object Mode
+            if self._objectMode:
+                self._sceneGraph[objectNode].Transform.value = TransformMatrix
+            else:
+                self._sceneGraph[sceneNode].Transform.value = TransformMatrix
+
 
             #print TransformMatrix
             #print "trans: ", TransformMatrix.get_translate(), "  rot: " , TransformMatrix.get_rotate_scale_corrected() , "  scale: " , TransformMatrix.get_scale()
@@ -281,6 +311,7 @@ class MultiTouchDevice(avango.script.Script):
             self._transMat   = avango.gua.make_identity_mat()
             self._rotMat     = avango.gua.make_identity_mat()
             self._scaleMat   = avango.gua.make_identity_mat()
+            self._globalMatrix = avango.gua.make_identity_mat()
 
 
 class TUIODevice(MultiTouchDevice):

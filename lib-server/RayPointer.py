@@ -224,7 +224,7 @@ class RayPointer(Tool):
     # Offset to be applied during the dragging process.
     self.dragging_offset = None
     
-    ## @var pointer_device_sensor
+    ## @var device_sensor
     # Device sensor capturing the pointer's button input values.
     self.device_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.device_sensor.Station.value = POINTER_DEVICE_STATION

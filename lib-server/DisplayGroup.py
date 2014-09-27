@@ -33,7 +33,7 @@ class DisplayGroup:
     # List of (Steering-)Navigation instances assigned to the display group.
     self.navigations = NAVIGATION_LIST
 
-    ## @var visibility_tab
+    ## @var visibility_tag
     # Tag used by the Tools' visibility matrices to define if they are visible for this display group.
     self.visibility_tag = VISIBILITY_TAG
 

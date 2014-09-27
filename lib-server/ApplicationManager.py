@@ -39,7 +39,7 @@ class ApplicationManager(avango.script.Script):
   # List of all Workspace instances active in the setup.
   all_workspaces = []
 
-
+  ## Default constructor.
   def __init__(self):
     self.super(ApplicationManager).__init__()
 

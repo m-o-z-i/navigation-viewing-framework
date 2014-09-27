@@ -42,7 +42,7 @@ def init_dlp_wall_tracking():
   print "ART Tracking started at DLP WALL"
 
 
-# functions
+## Initializes PST Tracking.
 def init_pst_tracking():
 
 	# create instance of DTrack

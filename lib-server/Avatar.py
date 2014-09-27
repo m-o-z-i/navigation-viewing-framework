@@ -22,7 +22,7 @@ class Avatar:
 
   ## Default constructor.
   def __init__(self):
-    pass#self.super(Avatar).__init__()
+    pass
 
   ## Custom constructor.
   # @param USER_REPRESENTATION The UserRepresentation instance to create the avatar for.
@@ -56,12 +56,10 @@ class Avatar:
     # Geometry nodes representing all the screens at the DisplayGroup the UserRepresentation belongs to.
     self.screen_visualizations = []
 
-    ##
-    #
+    ## @var frame_trigger
+    # Triggers framewise evaluation of frame_callback method.
     self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
-
-    # set evaluation policy
-    #self.always_evaluate(True)
+    
 
   ## Adds a screen visualization for a display instance to the view transformation node.
   # @param DISPLAY_INSTANCE The Display instance to retrieve the screen visualization from.

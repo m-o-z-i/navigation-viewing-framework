@@ -380,7 +380,7 @@ class TouchTable3D(PhysicalDisplay):
     else:
       return None
 
-
+## Display configuration for the Samsung Stereo TV in the VR lab. 
 class SamsungStereoTV(PhysicalDisplay):
 
   ## Default constructor.
@@ -397,7 +397,7 @@ class SamsungStereoTV(PhysicalDisplay):
                     , render_mask = render_mask
                     )
 
-
+## Display configuration for the Mitsubishi Stereo TV in the VR lab. 
 class MitsubishiStereoTV(PhysicalDisplay):
 
   ## Default constructor.
@@ -413,42 +413,3 @@ class MitsubishiStereoTV(PhysicalDisplay):
                     , stereomode = "CHECKERBOARD"
                     , render_mask = render_mask
                     )
-
-class OculusRift(PhysicalDisplay):
-
-  ## Custom constructor.
-  # @param hostname The hostname to which this display is connected to.
-  # @param name A name to be associated to that display. Will be used in XML configuration file.
-  # @param resolution The display's resolution to be used.
-  # @param displaystrings A list of strings on which the windows for each user will pop up.
-  # @param size Physical size of the display medium in meters.
-  # @param stereo Boolean indicating if the stereo mode is to be used.
-  # @param stereomode A string indicating the stereo mode that is used by this display.
-  # @param render_mask A string supplying additional render mask constraints.
-  def __init__( self
-              , hostname = "atalante"
-              , name = "oculus_rift_atalante"
-              , resolution = (1280,  800)
-              , displaystrings = [":0.0"]
-              , size = (0.16, 0.1)
-              , stereo = True
-              , stereomode = "HMD"
-              , render_mask = ""
-              ):
-    PhysicalDisplay.__init__( self
-                    , hostname = hostname
-                    , name = name
-                    , resolution = resolution
-                    , displaystrings = displaystrings
-                    , size = size
-                    , stereo = stereo
-                    , stereomode = stereomode
-                    , render_mask = render_mask
-                    )
-
-  ## Creates the screen node of this display to be appended to the Platform transformation node.
-  # @param name The name of the screen scenegraph node.
-  def create_screen_node(self, name = "screen_node"):
-
-    # For a HMD, the screens must be appended to the slot node, not to the platform.
-    return None

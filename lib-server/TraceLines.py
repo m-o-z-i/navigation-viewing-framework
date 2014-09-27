@@ -39,7 +39,9 @@ class Trace:
     # A list of scene graph nodes where each respresents a line segment.
     self.lines  = []
 
-    self.line_thickness = 0.1 # in meter
+    ## @var line_thickness
+    # Thickness of the trace lines in meters.
+    self.line_thickness = 0.1
 
     ## @var transform_node
     # A transform node that is the parent of all line segments. It groups the line segments in the scene graph as the given identifier is added to its name and therefore allows multiple instances of this class.

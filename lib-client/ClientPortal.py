@@ -157,11 +157,11 @@ class PortalPreView(avango.script.Script):
   # Field containing the GroupNames of the associated portal node. Used for transferring portal mode settings.
   mf_portal_modes = avango.MFString()
 
-  # Default constructor.
+  ## Default constructor.
   def __init__(self):
     self.super(PortalPreView).__init__()
 
-  # Custom constructor.
+  ## Custom constructor.
   # @param SERVER_PORTAL_NODE The portal scenegraph node on server side to be associated with this instance.
   # @param VIEW The View instance to be associated with this instance.
   def my_constructor(self, SERVER_PORTAL_NODE, VIEW):
@@ -170,7 +170,7 @@ class PortalPreView(avango.script.Script):
     # The portal scenegraph node on server side to be associated with this instance.
     self.SERVER_PORTAL_NODE = SERVER_PORTAL_NODE
 
-    # @var VIEW
+    ## @var VIEW
     # The View instance to be associated with this instance.
     self.VIEW = VIEW
 

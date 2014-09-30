@@ -450,7 +450,7 @@ def xbox_controller(PLAYER_NUMBER):
     print "XBox Controller NOT found !"
 
 
-
+## Initializes the August pointing device.
 def init_august_pointer(ID, DEVICE_STATION_STRING):
 
   _string = os.popen("python find_device.py 1 MOUSE USB MOUSE").read()

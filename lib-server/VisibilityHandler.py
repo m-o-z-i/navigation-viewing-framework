@@ -16,6 +16,8 @@ class VisibilityHandler1D(avango.script.Script):
   # @param VISIBILITY_LIST A list containing visibility rules according to the DisplayGroups' visibility tags. 
   def list_constructor(self, VISIBILITY_LIST):
 
+    ## @var visibility_list
+    # A list containing visibility rules according to the DisplayGroups' visibility tags. 
     self.visibility_list = VISIBILITY_LIST
 
   ## Triggers the correct GroupNames for the different DisplayGroups.
@@ -31,6 +33,8 @@ class VisibilityHandler2D(avango.script.Script):
   # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
   def table_constructor(self, VISIBILITY_TABLE):
 
+    ## @var visibility_table
+    # A matrix containing visibility rules according to the DisplayGroups' visibility tags.
     self.visibility_table = VISIBILITY_TABLE
 
   ## Triggers the correct GroupNames of all instances at a display group.

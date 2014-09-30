@@ -135,6 +135,8 @@ class Tool(VisibilityHandler2D):
     self.tool_representations = []
 
     # init sensors
+    ## @var tracking_reader
+    # TrackingTargetReader to capture the tool's tracking information.
     self.tracking_reader = TrackingTargetReader()
     self.tracking_reader.my_constructor(TRACKING_STATION)
     self.tracking_reader.set_transmitter_offset(self.WORKSPACE_INSTANCE.transmitter_offset)

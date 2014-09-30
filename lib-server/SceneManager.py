@@ -204,7 +204,12 @@ class SceneManager(avango.script.Script):
   def __init__(self):
     self.super(SceneManager).__init__()
 
+    ## @var SCENEGRAPH
+    # Scenegraph instance to be handled by this SceneManager.
     self.SCENEGRAPH = scenegraphs[0]
+
+    ## @var NET_TRANS_NODE
+    # Reference to the net node in the scenegraph.
     self.NET_TRANS_NODE = self.SCENEGRAPH["/net"]
 
     # parameters

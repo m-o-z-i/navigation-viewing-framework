@@ -62,10 +62,6 @@ class MultiDofDevice(avango.script.Script):
     # Factor to modify the device's rotation input.
     self.rotation_factor = 1.0
 
-    ## @var avatar_platform_instance
-    # Platform instance used for device avatar matrix update.
-    self.avatar_platform_instance = None
-
     # init trigger callback
     ## @var frame_trigger
     # Triggers framewise evaluation of frame_callback method
@@ -151,6 +147,8 @@ class MultiDofDevice(avango.script.Script):
   ## Callback: evaluated every frame
   def frame_callback(self):
   
+    ## @var dofs
+    # Temporary list of degrees of freedom to process input bindings.
     self.dofs = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
   
     for _input_binding in self.input_bindings:
@@ -166,12 +164,6 @@ class MultiDofDevice(avango.script.Script):
         raise TypeError("Input binding '{}' is neither string nor lambda expression".format(_input_binding))
     
     self.mf_dof.value = self.dofs
-
-    # update device avatar matrix with respect to platform if necessary
-    if self.avatar_platform_instance != None:
-      self.avatar_transform.Transform.value = self.avatar_platform_instance.sf_abs_mat.value * \
-                                              avango.gua.make_scale_mat(self.avatar_platform_instance.sf_scale.value) * \
-                                              self.tracking_reader.sf_avatar_body_mat.value
 
 
   ## Sets a specific degree of freedom to a value which is filtered before.
@@ -248,29 +240,6 @@ class SpacemouseDevice(MultiDofDevice):
     self.add_input_binding("self.set_dof(6, self.device_sensor.Button0.value*1.0)")
     self.add_input_binding("self.set_dof(6, self.device_sensor.Button1.value*-1.0)")
 
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_INSTANCE Instance of Platform for which the device avatar is to be created.
-  def create_device_avatar(self, PLATFORM_INSTANCE):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    PLATFORM_INSTANCE.platform_transform_node.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/table/table.obj',
-                                                           'data/materials/Stones.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_INSTANCE.platform_id)]
-
-    self.avatar_platform_instance = PLATFORM_INSTANCE
-
 
 ## Internal representation and reader for a globefish device.
 class GlobefishDevice(MultiDofDevice):
@@ -302,30 +271,6 @@ class GlobefishDevice(MultiDofDevice):
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value*-1.0, 0.0, -512.0, 512.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value*-1.0, 0.0, -512.0, 512.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, 0.0, -512.0, 512.0, 0, 0)")
-
-
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_INSTANCE Instance of Platform for which the device avatar is to be created.
-  def create_device_avatar(self, PLATFORM_INSTANCE):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    PLATFORM_INSTANCE.platform_transform_node.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/table/table.obj',
-                                                           'data/materials/Stones.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_INSTANCE.platform_id)]
-
-    self.avatar_platform_instance = PLATFORM_INSTANCE
 
 
 ## Internal representation and reader for a keyboard and mouse setup.
@@ -371,29 +316,6 @@ class KeyboardMouseDevice(MultiDofDevice):
     self.add_input_binding("self.set_and_filter_dof(4, self.mouse_sensor.Value0.value*-1.0, 0.0, -100.0, 100.0, 0, 0)") # mouse right
     self.add_input_binding("self.set_dof(6, self.mouse_sensor.Button0.value*-1.0)")              # left button
     self.add_input_binding("self.set_dof(6, self.mouse_sensor.Button2.value*1.0)")               # right button
-
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_INSTANCE Instance of Platform for which the device avatar is to be created.
-  def create_device_avatar(self, PLATFORM_INSTANCE):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    PLATFORM_INSTANCE.platform_transform_node.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/table/table.obj',
-                                                           'data/materials/Stones.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_INSTANCE.platform_id)]
-
-    self.avatar_platform_instance = PLATFORM_INSTANCE
 
 
 ## Internal representation and reader for a XBox controller
@@ -492,30 +414,6 @@ class OldSpheronDevice(MultiDofDevice):
       self.set_and_filter_dof(ID, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD)
 
 
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_INSTANCE Instance of Platform for which the device avatar is to be created.
-  def create_device_avatar(self, PLATFORM_INSTANCE):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    PLATFORM_INSTANCE.platform_transform_node.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/spheron.obj',
-                                                           'data/materials/ShadelessWhite.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_scale_mat(0.16, 0.16, 0.16)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_INSTANCE.platform_id)]
-
-    self.avatar_platform_instance = PLATFORM_INSTANCE
-
-
 ## Internal representation and reader for the new spheron
 class NewSpheronDevice(MultiDofDevice):
 
@@ -557,27 +455,3 @@ class NewSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_dof_trigger(self.device_sensor_right.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
-    
-
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_INSTANCE Instance of Platform for which the device avatar is to be created.
-  def create_device_avatar(self, PLATFORM_INSTANCE):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    PLATFORM_INSTANCE.platform_transform_node.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/spheron.obj',
-                                                           'data/materials/ShadelessWhite.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_scale_mat(0.16, 0.16, 0.16)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_INSTANCE.platform_id)]
-
-    self.avatar_platform_instance = PLATFORM_INSTANCE

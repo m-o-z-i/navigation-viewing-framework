@@ -61,6 +61,7 @@ class Navigation(VisibilityHandler1D):
   # Number of SteeringNavigation instances already created. Used for trace material assignment.
   number_of_instances = 0
 
+  ## Base constructor.
   def __init__(self):
     self.super(Navigation).__init__()
 

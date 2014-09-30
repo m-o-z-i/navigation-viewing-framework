@@ -150,18 +150,14 @@ class MultiDofDevice(avango.script.Script):
     ## @var dofs
     # Temporary list of degrees of freedom to process input bindings.
     self.dofs = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-  
+
+    # evaluate input bindings
     for _input_binding in self.input_bindings:
-      if type(_input_binding) is types.StringType:
-        try:
-          eval(_input_binding)
-        except Exception as e:
-          pass
-          #print_error("Error parsing string input binding {} [Message: {}]".format(_input_binding, e), False)
-      elif type(_input_binding) is types.LambdaType:
-        _input_binding()
-      else:
-        raise TypeError("Input binding '{}' is neither string nor lambda expression".format(_input_binding))
+
+      try:
+        eval(_input_binding)
+      except Exception as e:
+        print_error("Error parsing input binding " + _input_binding + "(" + e + ")", False)
     
     self.mf_dof.value = self.dofs
 
@@ -455,3 +451,9 @@ class NewSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_dof_trigger(self.device_sensor_right.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
+
+  #  print(self.device_sensor_left.Station.value)
+  #  self.always_evaluate(True)
+
+  #def evaluate(self):
+  #  print(self.device_sensor_left.Value0.value, self.device_sensor_left.Value1.value, self.device_sensor_left.Value2.value)

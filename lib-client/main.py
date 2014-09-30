@@ -32,7 +32,7 @@ def start():
 
   # get the workspace config file #
   workspace_config_file = str(sys.argv[2])
-  exec 'from ' + workspace_config_file.replace("/", ".").replace(".py", "") + ' import displays'
+  exec('from ' + workspace_config_file.replace("/", ".").replace(".py", "") + ' import displays', globals())
 
   # get the workspace id
   workspace_id = int(sys.argv[3])
@@ -50,8 +50,8 @@ def start():
   hostname = open('/etc/hostname', 'r').readline()
   hostname = hostname.strip(" \n")
 
-  print "This client is running on", hostname, "and listens to server", server_ip
-  print "It is responsible for workspace", workspace_id, ", display group", display_group_id, "and screen", screen_id
+  print("This client is running on", hostname, "and listens to server", server_ip)
+  print("It is responsible for workspace", workspace_id, ", display group", display_group_id, "and screen", screen_id)
 
   # preload materials and shading models
   avango.gua.load_shading_models_from("data/materials")

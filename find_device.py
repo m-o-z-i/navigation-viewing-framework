@@ -24,7 +24,7 @@ def start():
   _name = _name[2:]
 
   # search for event number
-  print get_event_string(_string_num, _name)
+  print(get_event_string(_string_num, _name))
 
 ## Gets the event string of a given input device.
 # @param STRING_NUM Integer saying which device occurence should be returned.

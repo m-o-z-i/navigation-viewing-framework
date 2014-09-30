@@ -255,7 +255,7 @@ class SceneManager(avango.script.Script):
     _scene_id = 0
 
     for _scene_name in scenes:
-      exec "self.scene_" + str(_scene_id) + " = " + str(_scene_name) + "(self, self.SCENEGRAPH, self.NET_TRANS_NODE)"
+      exec("self.scene_" + str(_scene_id) + " = " + str(_scene_name) + "(self, self.SCENEGRAPH, self.NET_TRANS_NODE)")
       _scene_id += 1
 
     self.activate_scene(0) # activate first scene
@@ -376,7 +376,7 @@ class SceneManager(avango.script.Script):
               _nav.start_scale = self.active_scene.starting_scale
               _nav.reset()
   
-      print "Switching to Scene: " + self.active_scene.name
+      print("Switching to Scene: " + self.active_scene.name)
   
   ## Prints all the nodes of the active scene on the console.
   def print_active_scene(self):
@@ -386,8 +386,8 @@ class SceneManager(avango.script.Script):
       for _display_group in _workspace.display_groups:
         for _navigation in _display_group.navigations:
 
-          print "Workspace:", _workspace.id, "Display Group:", _display_group.id, "Navigation:", _display_group.navigations.index(_navigation)
-          print _navigation.sf_nav_mat.value
+          print("Workspace:", _workspace.id, "Display Group:", _display_group.id, "Navigation:", _display_group.navigations.index(_navigation))
+          print(_navigation.sf_nav_mat.value)
 
     # print navigation nodes
     #for _i, _navigation in enumerate(self.navigation_list):

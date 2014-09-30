@@ -50,8 +50,8 @@ class ApplicationManager(avango.script.Script):
 
     _workspace_config_file_name = WORKSPACE_CONFIG.replace(".py", "")
     _workspace_config_file_name = _workspace_config_file_name.replace("/", ".")
-    exec 'from ' + _workspace_config_file_name + ' import workspaces'
-    exec 'from ' + _workspace_config_file_name + ' import portal_display_groups'
+    exec('from ' + _workspace_config_file_name + ' import workspaces', globals())
+    exec('from ' + _workspace_config_file_name + ' import portal_display_groups', globals())
     
     # parameters
     ## @var background_texture
@@ -81,7 +81,7 @@ class ApplicationManager(avango.script.Script):
           for _display in _display_group.displays:
 
             if _display.hostname != _own_hostname:
-              _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python -9"])
+              _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python -9"], universal_newlines=True)
 
 
     # viewing setup and start of client processes #
@@ -89,7 +89,7 @@ class ApplicationManager(avango.script.Script):
     if START_CLIENTS:
 
       # get own ip adress
-      _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
+      _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
       _server_ip = _server_ip.strip(" \n")
       _server_ip = _server_ip.rsplit(" ")
       _server_ip = str(_server_ip[-1])
@@ -205,7 +205,7 @@ class ApplicationManager(avango.script.Script):
                 _ssh_run = subprocess.Popen(["ssh", _display.hostname, _directory_name + \
                 "/start-client.sh " + _server_ip + " " + str(WORKSPACE_CONFIG) + " " + str(_w_id) + " " + \
                 str(_dg_id) + " " + str(_s_id) + " " + _display.name]
-                , stderr=subprocess.PIPE)
+                , stderr=subprocess.PIPE, universal_newlines=True)
                 time.sleep(1)
 
 

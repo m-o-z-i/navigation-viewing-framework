@@ -10,7 +10,6 @@ import avango.gua
 # import framework libraries
 from SceneManager import *
 from ApplicationManager import *
-from RecorderPlayer import *
 from Portal import *
 from PortalCamera import *
 from Device import *

@@ -407,7 +407,7 @@ class RayPointer(Tool):
 
     self.hierarchy_selection_level = HIERARCHY_LEVEL
     
-    print "hierarchy selection level", self.hierarchy_selection_level
+    print("hierarchy selection level", self.hierarchy_selection_level)
     
     if self.hierarchy_selection_level >= 0:
       _material = SceneManager.hierarchy_materials[HIERARCHY_LEVEL]

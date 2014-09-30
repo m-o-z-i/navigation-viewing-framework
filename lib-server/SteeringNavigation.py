@@ -158,7 +158,7 @@ class SteeringNavigation(Navigation):
 
     # connect request button
     if self.is_requestable:
-      exec "self.sf_request_trigger.connect_from(self.device.device_sensor.Button" + str(REQUEST_BUTTON_NUM) + ")"
+      exec("self.sf_request_trigger.connect_from(self.device.device_sensor.Button" + str(REQUEST_BUTTON_NUM) + ")")
 
     ## @var reacts_on_portal_transit
     # Boolean saying if this navigation is allowed to be reset by portal transitions.

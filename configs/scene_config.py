@@ -11,7 +11,7 @@ import avango.gua
 import subprocess
 
 # get server ip 
-server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
+server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
 server_ip = server_ip.strip(" \n")  
 server_ip = server_ip.rsplit(" ")
 server_ip = str(server_ip[-1])

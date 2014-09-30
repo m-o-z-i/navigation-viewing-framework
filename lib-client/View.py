@@ -201,11 +201,11 @@ class View(avango.script.Script):
         _pre_views_to_remove.append(_pre_view)
         
     for _pre_view in _pre_views_to_remove:
-      print "Remove a pre view"
+      print("Remove a pre view")
       _pre_view.deactivate()
       self.portal_pre_views.remove(_pre_view)
       del _pre_view
-      print "New list of pre views", self.portal_pre_views
+      print("New list of pre views", self.portal_pre_views)
 
   ## Called whenever sf_pipeline_string changes.
   @field_has_changed(sf_pipeline_string)

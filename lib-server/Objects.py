@@ -226,7 +226,7 @@ class SceneObject:
                 NAME = "light",
                 MATRIX = avango.gua.make_identity_mat(),
                 PARENT_NODE = None,
-                RENDER_GROUP = "",
+                RENDER_GROUP = "main_scene",
                 MANIPULATION_PICK_FLAG = False,
                 COLOR = avango.gua.Vec3(0.75,0.75,0.75),
                 ENABLE_SHADOW = False,

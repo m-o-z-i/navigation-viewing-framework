@@ -568,6 +568,10 @@ class PortalCamera(Tool):
       _active_tool_representation = self.get_active_tool_representation()
       self.capture_tool_representation = _active_tool_representation
 
+      # break when no lastly seen display is available
+      if self.assigned_user.last_seen_display_group == None:
+        break
+
       # create shot and assign it
       _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
 

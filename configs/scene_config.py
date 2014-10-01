@@ -27,6 +27,7 @@ graph.Root.value.Children.value.append(nettrans)
 scenegraphs = [graph]
 
 # create scene list, strings must match a class name in Scene.py
+#scenes = ["SceneVianden"]
 scenes = ["SceneMedievalTown"]
 #scenes = ["SceneValcamonicaOptimized"]
 

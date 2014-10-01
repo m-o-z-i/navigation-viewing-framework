@@ -64,7 +64,7 @@ xbox_navigation.my_constructor(       STARTING_MATRIX = avango.gua.make_trans_ma
 ## Create Display instances. ##
 large_powerwall = LargePowerwall()
 touch_table_3D = TouchTable3D()
-touch_table_3D.set_transformation( avango.gua.make_trans_mat(-1.98, 0.96, 2.35) * \
+touch_table_3D.set_transformation( avango.gua.make_trans_mat(-1.9825, 0.96, 2.2475) * \
                                    avango.gua.make_rot_mat(90, 0, 1, 0) * \
                                    avango.gua.make_rot_mat(-90, 1, 0, 0) )
 
@@ -85,17 +85,17 @@ avatar_visibility_table = {
 
 vr_lab_rear.create_user( VIP = False
                        , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-4'
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-1'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
                        , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-5'
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-2'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
                        , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-6'
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-3'
                        , EYE_DISTANCE = 0.065)
 
 ## Create tools ##

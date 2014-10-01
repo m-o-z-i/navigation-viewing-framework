@@ -111,7 +111,7 @@ vr_lab_rear.create_display_group( DISPLAY_LIST = [large_powerwall]
 vr_lab_rear.create_display_group( DISPLAY_LIST = [touch_table_3D]
                                 , NAVIGATION_LIST = [spacemouse_navigation]
                                 , VISIBILITY_TAG = "table"
-                                , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0.79, -0.96, 1.96) * \
+                                , OFFSET_TO_WORKSPACE = avango.gua.make_trans_mat(0.6975, -0.96, 1.9825) * \
                                                         avango.gua.make_rot_mat(-90, 0, 1, 0) )
 
 ## Create display groups ##

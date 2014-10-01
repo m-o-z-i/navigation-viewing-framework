@@ -258,7 +258,7 @@ class SceneObject:
       _light_node = avango.gua.nodes.SpotLightNode()
       _light_node.EnableShadows.value = ENABLE_SHADOW
       _light_node.ShadowMapSize.value = SHADOW_MAP_SIZE
-      _light_node.ShadowOffset.value = 0.001
+      _light_node.ShadowOffset.value = 0.005
       _light_node.Softness.value = SOFTNESS # exponent
       _light_node.Falloff.value = FALLOFF # exponent
 

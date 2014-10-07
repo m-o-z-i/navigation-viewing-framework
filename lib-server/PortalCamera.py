@@ -478,6 +478,7 @@ class PortalCamera(Tool):
     # update user assignment
     self.check_for_user_assignment()
 
+    # handle portal updates in capture mode
     if self.in_capture_mode:
 
       # get active tool mechanism by decision algorithm
@@ -487,15 +488,17 @@ class PortalCamera(Tool):
 
         self.capture_tool_representation = _active_tool_representation
 
-        # compute shot parameters and assign them
-        _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
+      # compute shot parameters and assign them
+      _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]
 
-        # compute matrix
-        _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
-                                avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
+      # compute matrix
+      _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
+                              avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
 
-        for _tool_repr in self.tool_representations:
-          _tool_repr.portal_nav.set_navigation_values(_shot_platform_matrix, _active_navigation.sf_scale.value)
+      print(_shot_platform_matrix.get_translate())
+
+      for _tool_repr in self.tool_representations:
+        _tool_repr.portal_nav.set_navigation_values(_shot_platform_matrix, _active_navigation.sf_scale.value)
 
     
 
@@ -570,7 +573,7 @@ class PortalCamera(Tool):
 
       # break when no lastly seen display is available
       if self.assigned_user.last_seen_display_group == None:
-        break
+        return
 
       # create shot and assign it
       _active_navigation = _active_tool_representation.DISPLAY_GROUP.navigations[_active_tool_representation.USER_REPRESENTATION.connected_navigation_id]

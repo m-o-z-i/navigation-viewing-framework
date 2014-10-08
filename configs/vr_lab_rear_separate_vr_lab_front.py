@@ -167,7 +167,7 @@ vr_lab_front.create_user( VIP = False
 # format: A : { B : bool}
 # interpretation: does display with tag A see representation of tool in displays with tag B?
 tool_visibility_table = {
-                          "dlp_wall"  : {"table" : True, "portal" : False}
+                          "dlp_wall"  : {"table" : False, "portal" : False}
                         , "table" : {"dlp_wall" : True, "portal" : False}  
                         , "lcd_wall" : {"dlp_wall" : True, "table" : False, "portal" : False}
                         , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True}

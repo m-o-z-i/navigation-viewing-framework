@@ -64,7 +64,7 @@ xbox_navigation.my_constructor(       STARTING_MATRIX = avango.gua.make_trans_ma
 ## Create Display instances. ##
 large_powerwall = LargePowerwall()
 touch_table_3D = TouchTable3D()
-touch_table_3D.set_transformation( avango.gua.make_trans_mat(-1.9825, 0.96, 2.2475) * \
+touch_table_3D.set_transformation( avango.gua.make_trans_mat(-2.02, 0.96, 2.30) * \
                                    avango.gua.make_rot_mat(90, 0, 1, 0) * \
                                    avango.gua.make_rot_mat(-90, 1, 0, 0) )
 

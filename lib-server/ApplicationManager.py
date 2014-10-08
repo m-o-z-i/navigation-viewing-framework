@@ -48,6 +48,14 @@ class ApplicationManager(avango.script.Script):
   # Boolean field representing the key for action 2.
   sf_key2 = avango.SFBool()
 
+  ## @var sf_key3
+  # Boolean field representing the key for action 3.
+  sf_key3 = avango.SFBool()
+
+  ## @var sf_key4
+  # Boolean field representing the key for action 4.
+  sf_key4 = avango.SFBool()
+
   ## Default constructor.
   def __init__(self):
     self.super(ApplicationManager).__init__()
@@ -294,8 +302,10 @@ class ApplicationManager(avango.script.Script):
     self.keyboard_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
     self.keyboard_sensor.Station.value = "device-keyboard0"
 
-    self.sf_key1.connect_from(self.keyboard_sensor.Button1) # key A
-    self.sf_key2.connect_from(self.keyboard_sensor.Button2) # key S
+    self.sf_key1.connect_from(self.keyboard_sensor.Button19) # key F1
+    self.sf_key2.connect_from(self.keyboard_sensor.Button20) # key F2
+    self.sf_key3.connect_from(self.keyboard_sensor.Button21) # key F3
+    self.sf_key4.connect_from(self.keyboard_sensor.Button22) # key F4
 
     ## Server Control Monitor Setup ##
 
@@ -405,6 +415,40 @@ class ApplicationManager(avango.script.Script):
        _tool.change_visiblity_table(tool_visibility_table)
       
       print_message("Visibility tables in workspace 0 changed: table tool representations visible on walls.")
+
+  ## Called whenever sf_key3 changes.
+  @field_has_changed(sf_key3)
+  def sf_key3_changed(self):
+
+    if self.sf_key3.value == True:
+      avatar_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "lcd_wall" : True, "portal" : False}
+                          , "table" : {"dlp_wall" : True, "lcd_wall" : True, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : True,  "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True} 
+                                }
+
+      for _user in ApplicationManager.all_workspaces[0].users:
+       _user.change_visiblity_table(avatar_visibility_table)
+      
+      print_message("Visibility tables in workspace 0 changed: table user representations invisible on walls.")
+
+  ## Called whenever sf_key4 changes.
+  @field_has_changed(sf_key4)
+  def sf_key4_changed(self):
+
+    if self.sf_key4.value == True:
+      avatar_visibility_table = {
+                            "dlp_wall"  : {"table" : True, "lcd_wall" : True, "portal" : False}
+                          , "table" : {"dlp_wall" : True, "lcd_wall" : True, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : True,  "table" : True, "portal" : False}
+                          , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True} 
+                                }
+
+      for _user in ApplicationManager.all_workspaces[0].users:
+       _user.change_visiblity_table(avatar_visibility_table)
+      
+      print_message("Visibility tables in workspace 0 changed: table user representations visible on walls.")
 
   ## Evaluated every frame.
   def evaluate(self):

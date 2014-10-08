@@ -128,15 +128,8 @@ avatar_visibility_table = {
                           , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True} 
                           }
 
-no_visibility_table = {
-  "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
-, "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}
-, "lcd_wall" : {"dlp_wall" : False,  "table" : False, "portal" : False}
-, "portal" : {"dlp_wall" : False, "table" : False, "lcd_wall" : False} 
-}
-
 vr_lab_rear.create_user( VIP = False
-                       , AVATAR_VISIBILITY_TABLE = no_visibility_table
+                       , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
                        , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-1'
                        , EYE_DISTANCE = 0.065)
 
@@ -182,7 +175,7 @@ vr_lab_rear.create_portal_cam(  CAMERA_TRACKING_STATION = 'tracking-portal-camer
                              ,  VISIBILITY_TABLE = tool_visibility_table)
 
 ## Create portal navigations. ##
-'''
+#'''
 tower_portal_1_nav = StaticNavigation()
 tower_portal_1_nav.my_constructor(STATIC_ABS_MAT = avango.gua.make_trans_mat(-12.0, 17.3, -7.0)
                                 , STATIC_SCALE = 1.0)
@@ -237,5 +230,5 @@ tower_portal_2_dg = DisplayGroup(ID = None
                                )
 
 portal_display_groups = [tower_portal_1_dg, tower_portal_2_dg]
-'''
-portal_display_groups = []
+#'''
+#portal_display_groups = []

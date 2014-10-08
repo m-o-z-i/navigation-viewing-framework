@@ -439,6 +439,15 @@ class User(VisibilityHandler2D):
 
       self.toggle_user_activity(True)
 
+  ## Changes the visibility table during runtime.
+  # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
+  def change_visiblity_table(self, VISIBILITY_TABLE):
+
+    self.visibility_table = VISIBILITY_TABLE
+
+    for _display_group in self.WORKSPACE_INSTANCE.display_groups:
+      self.handle_correct_visibility_groups_for(_display_group)
+
   ## Creates a UserRepresentation instance for a given display group.
   # @param DISPLAY_GROUP Reference to the DisplayGroup instance to create the user representation for.
   # @param VIEW_TRANSFORM_NODE Transform node to be filled by one navigation of the display group.

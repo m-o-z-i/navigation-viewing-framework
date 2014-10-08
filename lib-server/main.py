@@ -58,6 +58,7 @@ def start():
     , CONFIG_FILE = sys.argv[1]
     , START_CLIENTS = start_clients)
 
+
   # create distribution node and sync children from pseudo nettrans
   nettrans = avango.gua.nodes.NetTransform(
       Name = "net"
@@ -78,44 +79,44 @@ def start():
   scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
   # initialize portal manager
-  portal_manager = PortalManager()
-  portal_manager.my_constructor(graph, application_manager.navigation_list)
+  #portal_manager = PortalManager()
+  #portal_manager.my_constructor(graph, application_manager.navigation_list)
 
-  portal_camera = PortalCamera()
-  portal_camera.my_constructor(0, portal_manager, application_manager.navigation_list[0], "device-portal-camera-32", "tracking-portal-camera-32")
+  #portal_camera = PortalCamera()
+  #portal_camera.my_constructor(0, portal_manager, application_manager.navigation_list[0], "device-portal-camera-32", "tracking-portal-camera-32")
 
-  portal_camera_2 = PortalCamera()
-  portal_camera_2.my_constructor(1, portal_manager, application_manager.navigation_list[0], "device-portal-camera-31", "tracking-portal-camera-31")
+  #portal_camera_2 = PortalCamera()
+  #portal_camera_2.my_constructor(1, portal_manager, application_manager.navigation_list[0], "device-portal-camera-31", "tracking-portal-camera-31")
 
-  table_device = SpacemouseDevice()
-  table_device.my_constructor("device-spacemouse", avango.gua.make_identity_mat())
-  table_device.translation_factor = 0.01
+  #table_device = SpacemouseDevice()
+  #table_device.my_constructor("device-spacemouse", avango.gua.make_identity_mat())
+  #table_device.translation_factor = 0.01
 
-  table_interaction_space = PortalInteractionSpace()
-  table_interaction_space.my_constructor(portal_manager
-                                       , table_device
-                                       , application_manager.navigation_list[0].platform
-                                       , avango.gua.Vec3(-2.441, 0.956, 1.635)
-                                       , avango.gua.Vec3(-1.450, 1.021, 2.936)
-                                       , 90.0)
-  portal_camera.add_interaction_space(table_interaction_space)
-  portal_camera_2.add_interaction_space(table_interaction_space)
+  #table_interaction_space = PortalInteractionSpace()
+  #table_interaction_space.my_constructor(portal_manager
+  #                                     , table_device
+  #                                     , application_manager.navigation_list[0].platform
+  #                                     , avango.gua.Vec3(-2.441, 0.956, 1.635)
+  #                                     , avango.gua.Vec3(-1.450, 1.021, 2.936)
+  #                                     , 90.0)
+  #portal_camera.add_interaction_space(table_interaction_space)
+  #portal_camera_2.add_interaction_space(table_interaction_space)
 
-  _table_shot = Shot()
-  _table_shot.my_constructor(avango.gua.make_rot_mat(-90, 1, 0, 0),
-                             80.0,
-                             "3D",
-                             "PERSPECTIVE",
-                             "True")
+  #_table_shot = Shot()
+  #_table_shot.my_constructor(avango.gua.make_rot_mat(-90, 1, 0, 0),
+  #                           80.0,
+  #                           "3D",
+  #                           "PERSPECTIVE",
+  #                           "True")
 
-  table_interaction_space.add_maximized_shot(_table_shot, avango.gua.make_identity_mat(), 1.0, 1.0)
+  #table_interaction_space.add_maximized_shot(_table_shot, avango.gua.make_identity_mat(), 1.0, 1.0)
 
   # initialize animation manager
   #animation_manager = AnimationManager()
   #animation_manager.my_constructor([ graph["/net/platform_0"]]
   #                               , [ application_manager.navigation_list[0]])
 
-  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
+  manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
   distribute_all_nodes(nettrans, nettrans)

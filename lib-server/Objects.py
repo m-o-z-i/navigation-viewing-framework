@@ -268,11 +268,11 @@ class SceneObject:
 
       _loader = avango.gua.nodes.TriMeshLoader()
   
-      _light_geometry = _loader.create_geometry_from_file(_light_node.Name.value + "_geometry", _filename, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
+      _light_geometry = _loader.create_geometry_from_file(_light_node.Name.value + "_geometry", _filename, "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS )
       _light_geometry.Transform.value = avango.gua.make_scale_mat(0.1)
       #_light_geometry.Transform.value = avango.gua.make_scale_mat(5.0)
       _light_geometry.ShadowMode.value = avango.gua.ShadowMode.OFF
-      _light_geometry.GroupNames.value.append("man_pick_group") # prepare light geometry for picking
+      #_light_geometry.GroupNames.value.append("man_pick_group") # prepare light geometry for picking
       
       if ENABLE_LIGHT_GEOMETRY == False:
         _light_geometry.GroupNames.value.append("do_not_display_group")
@@ -406,6 +406,7 @@ class SceneObject:
     for _object in self.objects:
       _object.reset()
 
+###########################################################################################################################################
 
 ## Class to represent an object in a scene, associated to a scenegraph node.
 class InteractiveObject(avango.script.Script):

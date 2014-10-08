@@ -288,6 +288,7 @@ def init_new_globefish():
 
 
 ## Initalizes a mouse for navigation.
+'''
 def init_mouse():
 
   _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"Logitech USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
@@ -347,7 +348,65 @@ def init_mouse():
 
   else:
     print "Mouse NOT found !"
-'''
+"""
+
+def init_mouse_2():
+
+  mouse_name = os.popen("ls /dev/input/by-id | grep \"Logitech USB\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+
+  mouse_name = mouse_name.split()
+  if len(mouse_name) > 0:
+
+    mouse_name = mouse_name[0]
+
+    # create a station to propagate the input events
+    mouse = avango.daemon.HIDInput()
+    mouse.station = avango.daemon.Station('device-mouse2')
+    mouse.device = "/dev/input/by-id/" + mouse_name
+
+    mouse.values[0] = "EV_REL::REL_X"
+    mouse.values[1] = "EV_REL::REL_Y"
+
+    mouse.buttons[0] = "EV_KEY::BTN_LEFT"
+    mouse.buttons[1] = "EV_KEY::BTN_MIDDLE"
+    mouse.buttons[2] = "EV_KEY::BTN_RIGHT"
+
+    device_list.append(mouse)
+
+    print "Mouse started at:", mouse_name
+
+  else:
+    print "Mouse NOT found !"
+"""
+def init_mouse_2():
+
+  _string = os.popen("/opt/avango/vr_application_lib/tools/list-ev -s | grep \"Logitech USB Optical Mouse\" | sed -e \'s/\"//g\'  | cut -d\" \" -f4").read()
+  
+  _string = _string.split()
+
+  if len(_string) > 0:
+    
+    _string1 = _string[0]
+
+    # create a station to propagate the input events
+    mouse = avango.daemon.HIDInput()
+    mouse.station = avango.daemon.Station('device-mouse2')
+    mouse.device = _string1
+    mouse.timeout = '30'
+
+    mouse.values[0] = "EV_REL::REL_X"
+    mouse.values[1] = "EV_REL::REL_Y"
+
+    mouse.buttons[0] = "EV_KEY::BTN_LEFT"
+    mouse.buttons[1] = "EV_KEY::BTN_MIDDLE"
+    mouse.buttons[2] = "EV_KEY::BTN_RIGHT"
+
+    device_list.append(mouse)
+
+    print "Mouse started at:", _string1
+
+  else:
+    print "Mouse NOT found !"
 
 
 ## Initializes a keyboard for navigation.
@@ -553,7 +612,8 @@ init_august_pointer(0, "device-pointer1")
 
 # init desktop devices
 init_keyboard()
-#init_mouse()
+init_mouse()
+init_mouse_2()
 init_spacemouse()
 
 # init portal camera

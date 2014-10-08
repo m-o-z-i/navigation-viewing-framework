@@ -8,7 +8,10 @@ import avango
 
 # import framework libraries
 from Objects import *
-
+import Manipulation
+from Manipulation.Object import *
+from Manipulation.Manipulators import *
+from Manipulation.Manipulation import *
 # import python libraries
 # ...
 
@@ -180,9 +183,10 @@ class SceneMonkey(SceneObject):
 
     _mat = avango.gua.make_identity_mat()
     self.init_group("group", _mat, False, True, self.scene_root, "main_scene")
-
+    self.net_trans_node = NET_TRANS_NODE
     _parent_object = self.get_object("group")
-
+    
+    """
     _mat = avango.gua.make_trans_mat(0.0,1.2,0.0) * avango.gua.make_scale_mat(0.1)
     self.init_geometry("monkey1", "data/objects/monkey.obj", _mat, "data/materials/SimplePhongWhite.gmd", False, True, _parent_object, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE, RENDER_GROUP
 
@@ -194,7 +198,81 @@ class SceneMonkey(SceneObject):
 
     _mat = avango.gua.make_trans_mat(0.0, 1.0, 0.0) * avango.gua.make_scale_mat(2.0)
     self.init_geometry("plane", "data/objects/plane.obj", _mat, 'data/materials/ComplexPhongTiles.gmd', False, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
-  
+    """
+
+    _loader = avango.gua.nodes.TriMeshLoader()
+
+    #group1
+    _node = avango.gua.nodes.TransformNode(Name = "group1_transform")
+
+    _mat = avango.gua.make_identity_mat()
+    group1 = Object()
+    group1.my_constructor(self, _node, _mat, None, self.scene_root, ["MatrixManipulator"], [])
+
+    #group2
+    _node = avango.gua.nodes.TransformNode(Name = "group2_transform")
+
+    _mat = avango.gua.make_identity_mat()
+    group2 = Object()
+    group2.my_constructor(self, _node, _mat, None, group1, ["MatrixManipulator"], [])
+
+
+    #affe1 (ist eigentlich ein wuerfel)
+    monkey1_geometry = _loader.create_geometry_from_file("monkey1", "data/objects/cube.obj", "data/materials/SimplePhongWhite.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
+    monkey1_geometry.GroupNames.value.append("man_pick_group")
+    _node = avango.gua.nodes.TransformNode(Name = "monkey1_transform")
+    _node.Children.value.append(monkey1_geometry)
+
+    _mat = avango.gua.make_trans_mat(0.0,1.2,0.0) * avango.gua.make_scale_mat(0.3)
+    monkey1 = Object()
+    monkey1.my_constructor(self, _node, _mat, "data/materials/SimplePhongWhite.gmd", group1, ["MatrixManipulator"], [])
+
+
+    #affe2
+    monkey2_geometry = _loader.create_geometry_from_file("monkey2", "data/objects/monkey.obj", "data/materials/AvatarBlue.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
+    monkey2_geometry.GroupNames.value.append("man_pick_group")
+    _node = avango.gua.nodes.TransformNode(Name = "monkey2_transform")
+    _node.Children.value.append(monkey2_geometry)
+
+    _mat = avango.gua.make_trans_mat(-0.25,1.2,0.0) * avango.gua.make_scale_mat(0.1)
+    monkey2 = Object()
+    monkey2.my_constructor(self, _node, _mat, "data/materials/AvatarBlue.gmd", group2, ["MatrixManipulator"], [])
+
+    
+
+
+    #affe3
+    monkey3_geometry = _loader.create_geometry_from_file("monkey3", "data/objects/monkey.obj", "data/materials/AvatarMagenta.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
+    monkey3_geometry.GroupNames.value.append("man_pick_group")
+    _node = avango.gua.nodes.TransformNode(Name = "monkey3_transform")
+    _node.Children.value.append(monkey3_geometry)
+
+    _mat = avango.gua.make_trans_mat(0.25,1.2,0.0) * avango.gua.make_scale_mat(0.1)
+    monkey3 = Object()
+    monkey3.my_constructor(self, _node, _mat, "data/materials/AvatarMagenta.gmd", group2, ["MatrixManipulator"], [])
+
+
+    #affe4
+    monkey4_geometry = _loader.create_geometry_from_file("monkey4", "data/objects/monkey.obj", "data/materials/AvatarYellow.gmd", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.MAKE_PICKABLE)
+    monkey4_geometry.GroupNames.value.append("man_pick_group")
+    _node = avango.gua.nodes.TransformNode(Name = "monkey4_transform")
+    _node.Children.value.append(monkey4_geometry)
+
+    _mat = avango.gua.make_trans_mat(0,1.4,0.0) * avango.gua.make_scale_mat(0.1)
+    monkey4 = Object()
+    monkey4.my_constructor(self, _node, _mat, "data/materials/AvatarYellow.gmd", self.scene_root, ["MatrixManipulator"], [])
+
+
+    #platform
+    platform_geometry = _loader.create_geometry_from_file("platform", "data/objects/plane.obj", "data/materials/ComplexPhongTiles.gmd", avango.gua.LoaderFlags.DEFAULTS )
+    _node = avango.gua.nodes.TransformNode(Name = "platform_transform")
+    _node.Children.value.append(platform_geometry)
+
+    _mat = avango.gua.make_trans_mat(0.0, 1.0, 0.0) * avango.gua.make_scale_mat(2.0)
+    platform = Object()
+    platform.my_constructor(self, _node, _mat, "data/materials/ComplexPhongTiles.gmd", self.scene_root, [], [])
+
+    
     
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)

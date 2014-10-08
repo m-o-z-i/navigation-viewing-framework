@@ -81,6 +81,7 @@ def start():
     if _display.name == display_name:
       handled_display_instance = _display
 
+
   # create a viewer
   viewer = avango.gua.nodes.Viewer()
 

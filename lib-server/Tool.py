@@ -207,6 +207,17 @@ class Tool(VisibilityHandler2D):
       for _display_group in self.WORKSPACE_INSTANCE.display_groups:
         self.handle_correct_visibility_groups_for(_display_group)
 
+
+  ## Changes the visibility table during runtime.
+  # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
+  def change_visiblity_table(self, VISIBILITY_TABLE):
+
+    self.visibility_table = VISIBILITY_TABLE
+
+    for _display_group in self.WORKSPACE_INSTANCE.display_groups:
+      self.handle_correct_visibility_groups_for(_display_group)
+
+
   ## Handles the correct GroupNames of all ToolRepresentations at a display group.
   # @param DISPLAY_GROUP The DisplayGroup to be handled.
   def handle_correct_visibility_groups_for(self, DISPLAY_GROUP):
@@ -220,15 +231,13 @@ class Tool(VisibilityHandler2D):
     _tool_repr_of_assigned_user = None
 
     # display group instance belonging to DISPLAY_GROUP
-    _handled_display_group_instance = None
+    _handled_display_group_instance = DISPLAY_GROUP
 
     ## fill the variables ##
     for _tool_repr in self.tool_representations:
 
       # get all tool representations in display group
       if _tool_repr.DISPLAY_GROUP == DISPLAY_GROUP:
-
-        _handled_display_group_instance = _tool_repr.DISPLAY_GROUP
         _tool_reprs_at_display_group.append(_tool_repr)
 
         # find tool representation of assigned user

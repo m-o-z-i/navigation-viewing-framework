@@ -7,6 +7,7 @@
 import avango
 import avango.gua
 import avango.daemon
+from avango.script import field_has_changed
 from   examples_common.GuaVE import GuaVE
 
 # import framework libraries
@@ -38,6 +39,14 @@ class ApplicationManager(avango.script.Script):
   ## @var all_workspaces
   # List of all Workspace instances active in the setup.
   all_workspaces = []
+
+  ## @var sf_key1
+  # Boolean field representing the key for action 1.
+  sf_key1 = avango.SFBool()
+
+  ## @var sf_key2
+  # Boolean field representing the key for action 2.
+  sf_key2 = avango.SFBool()
 
   ## Default constructor.
   def __init__(self):
@@ -280,8 +289,15 @@ class ApplicationManager(avango.script.Script):
     for _user_representation in ApplicationManager.all_user_representations:
       _user_representation.connect_navigation_of_display_group(0)
 
+    ## Keyboard Sensor Setup ##
 
-    ## Server Control Monitor Setup #
+    self.keyboard_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
+    self.keyboard_sensor.Station.value = "device-keyboard0"
+
+    self.sf_key1.connect_from(self.keyboard_sensor.Button1) # key A
+    self.sf_key2.connect_from(self.keyboard_sensor.Button2) # key S
+
+    ## Server Control Monitor Setup ##
 
     ## @var server_transform
     # Transform node representing the position and orientation of the server control monitor.
@@ -355,6 +371,40 @@ class ApplicationManager(avango.script.Script):
     self.viewer.SceneGraphs.value = [self.SCENEGRAPH]
 
     self.always_evaluate(True)
+
+  ## Called whenever sf_key1 changes.
+  @field_has_changed(sf_key1)
+  def sf_key1_changed(self):
+
+    if self.sf_key1.value == True:
+      tool_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "portal" : False}
+                          , "table" : {"dlp_wall" : True, "portal" : False}  
+                          , "lcd_wall" : {"dlp_wall" : True, "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True}
+                              }
+
+      for _tool in ApplicationManager.all_workspaces[0].tools:
+       _tool.change_visiblity_table(tool_visibility_table)
+      
+      print_message("Visibility tables in workspace 0 changed: table tool representations invisible on walls.")
+
+  ## Called whenever sf_key2 changes.
+  @field_has_changed(sf_key2)
+  def sf_key2_changed(self):
+
+    if self.sf_key2.value == True:
+      tool_visibility_table = {
+                            "dlp_wall"  : {"table" : True, "portal" : False}
+                          , "table" : {"dlp_wall" : True, "portal" : False}  
+                          , "lcd_wall" : {"dlp_wall" : True, "table" : True, "portal" : False}
+                          , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True}
+                              }
+
+      for _tool in ApplicationManager.all_workspaces[0].tools:
+       _tool.change_visiblity_table(tool_visibility_table)
+      
+      print_message("Visibility tables in workspace 0 changed: table tool representations visible on walls.")
 
   ## Evaluated every frame.
   def evaluate(self):

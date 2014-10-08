@@ -495,8 +495,6 @@ class PortalCamera(Tool):
       _shot_platform_matrix = _active_tool_representation.sf_portal_matrix.value * \
                               avango.gua.make_inverse_mat(avango.gua.make_scale_mat(_active_navigation.sf_scale.value))
 
-      print(_shot_platform_matrix.get_translate())
-
       for _tool_repr in self.tool_representations:
         _tool_repr.portal_nav.set_navigation_values(_shot_platform_matrix, _active_navigation.sf_scale.value)
 

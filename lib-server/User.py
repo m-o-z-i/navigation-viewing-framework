@@ -476,6 +476,8 @@ class User(VisibilityHandler2D):
     if DISPLAY_GROUP_ID < len(self.user_representations):
       
       # switch navigation to desired one for DISPLAY_GROUP_ID
+      _old_nav_id = self.user_representations[DISPLAY_GROUP_ID].connected_navigation_id
+
       self.user_representations[DISPLAY_GROUP_ID].connect_navigation_of_display_group(NAVIGATION_ID)
       _display_group_instance = self.user_representations[DISPLAY_GROUP_ID].DISPLAY_GROUP
 
@@ -486,6 +488,13 @@ class User(VisibilityHandler2D):
       # trigger correct tool visibilities at display group
       for _tool in self.WORKSPACE_INSTANCE.tools:
         _tool.handle_correct_visibility_groups_for(_display_group_instance)
+
+      # trigger correct video visibilites at both navigations
+      if self.WORKSPACE_INSTANCE.video_3D != None:
+        _old_nav = self.WORKSPACE_INSTANCE.display_groups[DISPLAY_GROUP_ID].navigations[_old_nav_id]
+        _new_nav = self.WORKSPACE_INSTANCE.display_groups[DISPLAY_GROUP_ID].navigations[NAVIGATION_ID]
+        self.WORKSPACE_INSTANCE.video_3D.handle_correct_visibility_groups_for(_old_nav, ApplicationManager.all_user_representations)
+        self.WORKSPACE_INSTANCE.video_3D.handle_correct_visibility_groups_for(_new_nav, ApplicationManager.all_user_representations)
 
     else:
       print_error("Error. Display Group ID does not exist.", False)

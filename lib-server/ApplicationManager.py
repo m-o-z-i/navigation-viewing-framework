@@ -11,8 +11,9 @@ from avango.script import field_has_changed
 from   examples_common.GuaVE import GuaVE
 
 # import framework libraries
-from   ConsoleIO        import *
+from   ConsoleIO import *
 from   scene_config import scenegraphs
+from   Video3D import *
 
 # import python libraries
 import os
@@ -155,11 +156,24 @@ class ApplicationManager(avango.script.Script):
 
       _w_id = _workspace.id
 
-      # create proxy geometries
       for _display_group in _workspace.display_groups:
+
+        # create proxy geometries
         for _display in _display_group.displays:
-            _proxy_geom = _display.create_transformed_proxy_geometry(_workspace, _display_group, _display_group.displays.index(_display))
-            scenegraphs[0].Root.value.Children.value.append(_proxy_geom)
+          _proxy_geom = _display.create_transformed_proxy_geometry(_workspace, _display_group, _display_group.displays.index(_display))
+          scenegraphs[0].Root.value.Children.value.append(_proxy_geom)
+
+        # create 3D video representation in every navigation
+        if _workspace.video_3D != None:
+
+          _navigation_count = 0
+
+          for _navigation in _display_group.navigations:
+
+            _workspace.video_3D.create_video_3D_representation_for( "video_w" + str(_workspace.id) + "_dg" + str(_display_group.id) + "_nav" + str(_navigation_count)
+                                                                  , _navigation)
+            _navigation_count += 1
+
 
       # build up user and tool representations
       for _user in _workspace.users:
@@ -225,6 +239,10 @@ class ApplicationManager(avango.script.Script):
                 , stderr=subprocess.PIPE, universal_newlines=True)
                 time.sleep(1)
 
+                #print("ssh", _display.hostname, _directory_name + \
+                #"/start-client.sh " + _server_ip + " " + str(WORKSPACE_CONFIG) + " " + str(_w_id) + " " + \
+                #str(_dg_id) + " " + str(_s_id) + " " + _display.name)
+
 
 
 
@@ -280,6 +298,7 @@ class ApplicationManager(avango.script.Script):
 
     # physical and virtual workspaces
     for _workspace in self.workspaces:
+
       for _display_group in _workspace.display_groups:
 
         # trigger correct group names of navigation trace
@@ -296,6 +315,16 @@ class ApplicationManager(avango.script.Script):
     # connect proper navigations
     for _user_representation in ApplicationManager.all_user_representations:
       _user_representation.connect_navigation_of_display_group(0)
+
+    # video 3D group names (after users were assigned to navigations)
+    for _workspace in self.workspaces:
+
+      if _workspace.video_3D != None:
+
+        for _display_group in _workspace.display_groups:
+          for _nav in _display_group.navigations:
+
+            _workspace.video_3D.handle_correct_visibility_groups_for(_nav, ApplicationManager.all_user_representations)
 
     ## Keyboard Sensor Setup ##
 

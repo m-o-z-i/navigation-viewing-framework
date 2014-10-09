@@ -13,6 +13,7 @@ from DisplayGroup import *
 from PortalCamera import *
 from RayPointer import *
 from User import *
+from Video3D import *
 import Utilities
 
 ## Representation of the physical space holding several users, tools and display groups.
@@ -55,6 +56,11 @@ class Workspace:
     ## @var size
     # Physical size of this workspace in meters.
     self.size = (3.8, 3.6)
+
+    ## @var video_3D
+    # Instance of Video3D capturing this workspace if it was associated.
+    self.video_3D = None
+
 
 
   ## Computes a list of users whose tracking targets are not farer away than DISTANCE from a user, taking the line to ground.
@@ -134,8 +140,10 @@ class Workspace:
     self.tools.append(_ray_pointer)
 
 
-  ##
-  #
+  ## Creates a PortalCamera instance and adds it to the tools of this workspace.
+  # @param CAMERA_TRACKING_STATION The tracking target name of this PortalCamera.
+  # @param CAMERA_DEVICE_STATION The device station name of this PortalCamera.
+  # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags.
   def create_portal_cam( self
                        , CAMERA_TRACKING_STATION
                        , CAMERA_DEVICE_STATION
@@ -148,3 +156,18 @@ class Workspace:
                               , CAMERA_DEVICE_STATION
                               , VISIBILITY_TABLE)
     self.tools.append(_portal_cam)
+
+  ## Creates a Video3D object and associates it to this workspace.
+  # @param FILENAME The path of the video file to be associated.
+  # @param OFFSET The offset matrix to be applied to the Video3D node.
+  # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags.
+  def associate_video_3D( self
+                        , FILENAME
+                        , OFFSET
+                        , VISIBILITY_TABLE ):
+
+    self.video_3D = Video3D()
+    self.video_3D.my_constructor(self
+                               , FILENAME
+                               , OFFSET
+                               , VISIBILITY_TABLE)

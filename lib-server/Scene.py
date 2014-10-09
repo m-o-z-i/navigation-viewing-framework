@@ -51,8 +51,8 @@ class SceneMedievalTown(SceneObject):
   
     #_mat = avango.gua.make_trans_mat(0.0, 0.0, 20.0)
     #self.init_kinect("kinect1", "/opt/kinect-resources/shot_steppo_animation_distributed_daedalos.ks", _mat, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, PARENT_NODE    
-    #self.init_kinect("kinect1", "/opt/kinect-resources/kinect_surfaceLCD.ks", _mat, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, PARENT_NODE
-      
+    #self.init_kinect("kinect1", "/opt/kinect-resources/kinect_surface_K_23_24_25.ks", _mat, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, PARENT_NODE
+     
     # lights
     _mat = avango.gua.make_rot_mat(72.0, -1.0, 0, 0) * avango.gua.make_rot_mat(-30.0, 0, 1, 0)
     self.init_light(TYPE = 0, NAME = "sun_light", COLOR = avango.gua.Color(0.5,0.5,0.5), MATRIX = _mat, PARENT_NODE = self.scene_root, ENABLE_SHADOW = False, RENDER_GROUP = "main_scene") # parameters TYPE (0 = sun light), NAME, COLOR, MATRIX, PARENT_NODE

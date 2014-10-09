@@ -45,8 +45,8 @@ class Trace:
 
     ## @var transform_node
     # A transform node that is the parent of all line segments. It groups the line segments in the scene graph as the given identifier is added to its name and therefore allows multiple instances of this class.
-    #self.transform_node = avango.gua.nodes.TransformNode(Name = 'nav_trace_' + str(IDENTIFIER))
-    self.transform_node = avango.gua.nodes.TransformNode(Name = 'nav_trace_' + str(0))
+    self.transform_node = avango.gua.nodes.TransformNode(Name = 'nav_trace_' + str(IDENTIFIER))
+    #self.transform_node = avango.gua.nodes.TransformNode(Name = 'nav_trace_' + str(0))
     scenegraphs[0]["/net"].distribute_object(self.transform_node)
     scenegraphs[0]["/net"].Children.value.append(self.transform_node)
 

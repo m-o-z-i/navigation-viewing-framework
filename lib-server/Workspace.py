@@ -170,4 +170,5 @@ class Workspace:
     self.video_3D.my_constructor(self
                                , FILENAME
                                , OFFSET
-                               , VISIBILITY_TABLE)
+                               , VISIBILITY_TABLE
+                               , ApplicationManager.all_user_representations)

@@ -19,6 +19,17 @@ from StaticNavigation import StaticNavigation
 vr_lab_rear = Workspace('VR-Lab-Rear', avango.gua.make_trans_mat(0.0, 0.043, 0.0))
 vr_lab_front = Workspace('VR-Lab-Front', avango.gua.make_trans_mat(0.0, 0.043, 0.0))
 
+video_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
+                          , "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : False,  "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : False, "table" : False, "lcd_wall" : False} 
+                          }
+
+vr_lab_front.associate_video_3D("/opt/kinect-resources/kinect_surface_K_23_24_25.ks"
+                             , avango.gua.make_trans_mat(0.0, 0.043, 1.6)
+                             , video_visibility_table)
+
 workspaces = [vr_lab_rear, vr_lab_front]
 
 ## Create Navigation instances ##

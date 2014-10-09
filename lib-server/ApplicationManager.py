@@ -324,7 +324,7 @@ class ApplicationManager(avango.script.Script):
         for _display_group in _workspace.display_groups:
           for _nav in _display_group.navigations:
 
-            _workspace.video_3D.handle_correct_visibility_groups_for(_nav, ApplicationManager.all_user_representations)
+            _workspace.video_3D.handle_correct_visibility_groups_for(_nav)
 
     ## Keyboard Sensor Setup ##
 
@@ -451,33 +451,57 @@ class ApplicationManager(avango.script.Script):
 
     if self.sf_key3.value == True:
       avatar_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
+                          , "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : False,  "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : False, "table" : False, "lcd_wall" : False} 
+                                }
+
+      video_visibility_table = {
                             "dlp_wall"  : {"table" : False, "lcd_wall" : True, "portal" : False}
                           , "table" : {"dlp_wall" : True, "lcd_wall" : True, "portal" : False}
                           , "lcd_wall" : {"dlp_wall" : True,  "table" : False, "portal" : False}
                           , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True} 
-                                }
+                          }
 
-      for _user in ApplicationManager.all_workspaces[0].users:
-       _user.change_visiblity_table(avatar_visibility_table)
+      for _workspace in ApplicationManager.all_workspaces:
+        if _workspace.video_3D != None:
+
+          for _user in _workspace.users:
+            _user.change_visiblity_table(avatar_visibility_table)
+          
+          _workspace.video_3D.change_visiblity_table(video_visibility_table)
       
-      print_message("Visibility tables in workspace 0 changed: table user representations invisible on walls.")
+      print_message("Video avatars enabled.")
 
   ## Called whenever sf_key4 changes.
   @field_has_changed(sf_key4)
   def sf_key4_changed(self):
 
     if self.sf_key4.value == True:
-      avatar_visibility_table = {
-                            "dlp_wall"  : {"table" : True, "lcd_wall" : True, "portal" : False}
-                          , "table" : {"dlp_wall" : True, "lcd_wall" : True, "portal" : False}
-                          , "lcd_wall" : {"dlp_wall" : True,  "table" : True, "portal" : False}
-                          , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True} 
+      video_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
+                          , "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : False,  "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : False, "table" : False, "lcd_wall" : False} 
                                 }
 
-      for _user in ApplicationManager.all_workspaces[0].users:
-       _user.change_visiblity_table(avatar_visibility_table)
+      avatar_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "lcd_wall" : True, "portal" : False}
+                          , "table" : {"dlp_wall" : True, "lcd_wall" : True, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : True,  "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True} 
+                          }
+
+      for _workspace in ApplicationManager.all_workspaces:
+        if _workspace.video_3D != None:
+
+          for _user in _workspace.users:
+            _user.change_visiblity_table(avatar_visibility_table)
+          
+          _workspace.video_3D.change_visiblity_table(video_visibility_table)
       
-      print_message("Visibility tables in workspace 0 changed: table user representations visible on walls.")
+      print_message("Joseph avatars enabled.")
 
   ## Evaluated every frame.
   def evaluate(self):

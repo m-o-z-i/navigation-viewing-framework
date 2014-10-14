@@ -13,30 +13,33 @@ from ConsoleIO import *
 from VisibilityHandler import *
 from scene_config import scenegraphs
 
-##
+## Geometric representation of a Video3D object in a Navigation.
 class Video3DRepresentation:
 
-  ##
-  #
+  ## Custom constructor.
+  # @param VIDEO_3D_INSTANCE An instance of Video3D to which this Video3DRepresentation is associated.
+  # @param NAME Name to be used for the instantiated video node.
+  # @param PARENT_NODE Scenegraph node to which the video node should be attached.
+  # @param NAVIGATION_INSTANCE Instance to a subclass of Navigation to which this Video3DRepresentation is associated.
   def __init__( self
               , VIDEO_3D_INSTANCE
               , NAME
               , PARENT_NODE
               , NAVIGATION_INSTANCE ):
 
-    ##
-    #
+    ## @var VIDEO_3D_INSTANCE
+    # An instance of Video3D to which this Video3DRepresentation is associated.
     self.VIDEO_3D_INSTANCE = VIDEO_3D_INSTANCE
 
-    ##
-    #
+    ## @var NAVIGATION_INSTANCE
+    # Instance to a subclass of Navigation to which this Video3DRepresentation is associated.
     self.NAVIGATION_INSTANCE = NAVIGATION_INSTANCE
 
-
+    # create video loader
     _loader = avango.gua.nodes.Video3DLoader()
     
-    ##
-    #
+    ## @var video_node
+    # Scenegraph node containing the video geometry information of this representation.
     self.video_node = _loader.load(NAME, self.VIDEO_3D_INSTANCE.filename)
     self.video_node.Transform.value = self.VIDEO_3D_INSTANCE.offset
     self.video_node.ShadowMode.value = avango.gua.ShadowMode.OFF
@@ -48,19 +51,19 @@ class Video3DRepresentation:
     # Triggers framewise evaluation of frame_callback method
     self.frame_trigger = avango.script.nodes.Update(Callback = self.frame_callback, Active = True)
 
-  ##
-  #
+  ## Sets a list of strings at the GroupNames field of the video node.
+  # @param LIST_OF_STRINGS The list of group names to be set.
   def set_group_names(self, LIST_OF_STRINGS):
 
     self.video_node.GroupNames.value = LIST_OF_STRINGS
 
-  ##
-  #
+  ## Appends a string to the GroupNames field of the video node.
+  # @param STRING The string to be appended.
   def append_to_group_names(self, STRING):
 
     self.video_node.GroupNames.value.append(STRING)
 
-  ##
+  ## Callback: evaluated every frame
   def frame_callback(self):
 
     self.video_node.Transform.value = self.NAVIGATION_INSTANCE.sf_nav_mat.value * \
@@ -70,36 +73,42 @@ class Video3DRepresentation:
 ###############################################################################################
 
 
-## 
+## Logical representation of a 3D video stream of a Workspace.
 class Video3D(VisibilityHandler2D):
 
-  ##
+  ## Default constructor.
   def __init__(self):
     self.super(Video3D).__init__()
 
-  ##
+  ## Custom constructor.
+  # @param WORKSPACE_INSTANCE The instance of Workspace to which this Tool belongs to.
+  # @param FILENAME The path of the file containing the video stream.
+  # @param OFFSET The offset to be stored at the representations' video nodes.
+  # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags.
+  # @param ALL_USER_REPRESENTATIONS Reference to ApplicationManager.all_user_representations as this is strangely not
+  #                                 importable in this file.
   def my_constructor(self, WORKSPACE_INSTANCE, FILENAME, OFFSET, VISIBILITY_TABLE, ALL_USER_REPRESENTATIONS):
 
     self.table_constructor(VISIBILITY_TABLE)
 
-    ##
-    #
+    ## @var WORKSPACE_INSTANCE
+    # The instance of Workspace to which this Tool belongs to.
     self.WORKSPACE_INSTANCE = WORKSPACE_INSTANCE
 
-    ##
-    #
+    ## @var filename
+    # The path of the file containing the video stream.
     self.filename = FILENAME
 
-    ##
-    #
+    ## @var offset
+    # The offset to be stored at the representations' video nodes.
     self.offset = OFFSET
 
-    ##
-    #
+    ## @var video_3D_representations
+    # List of Video3DRepresentation instances belonging to this Video3D.
     self.video_3D_representations = []
 
     ## @var ALL_USER_REPRESENTATIONS
-    # Reference to ApplicationManager.all_user_representations as the import of it strangely fails in this class.
+    # Reference to ApplicationManager.all_user_representations as this is strangely not importable in this file.
     self.ALL_USER_REPRESENTATIONS = ALL_USER_REPRESENTATIONS
 
   ## Changes the visibility table during runtime.
@@ -112,9 +121,9 @@ class Video3D(VisibilityHandler2D):
       for _navigation in _display_group.navigations:
         self.handle_correct_visibility_groups_for(_navigation)
 
-
-  ##
-  #
+  ## Creates a Video3DRepresentation for this Video3D at a NAVIGATION_INSTANCE.
+  # @param NAME Name to be used for the instantiated video node.
+  # @param NAVIGATION_INSTANCE Instance to a subclass of Navigation to which the new Video3DRepresentation is associated.
   def create_video_3D_representation_for(self, NAME, NAVIGATION_INSTANCE):
 
     _video_3D_repr = Video3DRepresentation( self
@@ -124,7 +133,8 @@ class Video3D(VisibilityHandler2D):
 
     self.video_3D_representations.append(_video_3D_repr)
 
-  ##
+  ## Handles the correct GroupNames of the Video3DRepresentation at a specific Navigation.
+  # @param NAVIGATION_INSTANCE The Navigation instance to get the Video3DRepresentation from.
   def handle_correct_visibility_groups_for(self, NAVIGATION_INSTANCE):
 
     # get the corresponding video representation
@@ -185,7 +195,3 @@ class Video3D(VisibilityHandler2D):
 
       for _string in _video_visible_for:
         _video_representation_at_navigation.set_group_names(_video_visible_for)
-    
-
-
-  

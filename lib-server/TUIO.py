@@ -257,9 +257,6 @@ class MultiTouchDevice(avango.script.Script):
             else: 
                 scenePos = self._sceneGraph[sceneNode].Transform.value.get_translate()
                 TransformMatrix = self._sceneGraph[sceneNode].Transform.value
-
-
-            #print "scenePos: ", scenePos ,  "  ; fingerpos: " , self._fingerCenterPos.value
             
             translateDistance = self._fingerCenterPos.value - scenePos
 
@@ -268,7 +265,11 @@ class MultiTouchDevice(avango.script.Script):
             translateDistance = avango.gua.Vec3(translateDistance.x, translateDistance.y, translateDistance.z)
 
             #first translate and rotate to origin, second calculate new position, third translate and rotate back
-            
+            #todo: unterstand matrices
+            #      warum wird das object nicht erst nach unten verschoben und dann wieder nach oben?
+            #      warum verschiebt sich manchmal das scenen koordinatensystem?
+            #      
+
             if self._objectMode:
                 TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
                                   avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
@@ -285,7 +286,7 @@ class MultiTouchDevice(avango.script.Script):
 
             else:
                 TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
-                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) *\
                                   avango.gua.make_trans_mat(translateDistance * 1.0) * \
                                   avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * -1.0 , 0)) * \
                                   avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
@@ -297,15 +298,13 @@ class MultiTouchDevice(avango.script.Script):
                                   avango.gua.make_trans_mat(translateDistance * -1.0) * \
                                   avango.gua.make_scale_mat(TransformMatrix.get_scale())
 
+
             #object Mode
             if self._objectMode:
                 self._sceneGraph[objectNode].Transform.value = TransformMatrix
             else:
                 self._sceneGraph[sceneNode].Transform.value = TransformMatrix
 
-
-            #print TransformMatrix
-            #print "trans: ", TransformMatrix.get_translate(), "  rot: " , TransformMatrix.get_rotate_scale_corrected() , "  scale: " , TransformMatrix.get_scale()
 
             #reset all data
             self._transMat   = avango.gua.make_identity_mat()
@@ -366,7 +365,7 @@ class TUIODevice(MultiTouchDevice):
     @field_has_changed(PosChanged)
     def processChange(self):
         if -1.0 == self.PosChanged.value:
-            return 
+            return
 
         for touchPoint in self.Cursors.value:
             if touchPoint.IsTouched.value:
@@ -374,10 +373,12 @@ class TUIODevice(MultiTouchDevice):
             elif touchPoint.CursorID.value in self._activePoints:
                 del self._activePoints[touchPoint.CursorID.value]
 
+        activePoints = self._activePoints.values()
+
+        #TODO: why does not work in if(doSomething) ?
         for gesture in self.gestures:
             gesture.processGesture(self._activePoints.values(), self)
-
-        activePoints = self._activePoints.values()
+        
 
         doSomething = True
 
@@ -395,7 +396,8 @@ class TUIODevice(MultiTouchDevice):
         else:
             doSomething = False
 
-        if (doSomething):
+
+        if (doSomething):          
             self.setFingerCenterPosition(centerPos)
             self.intersectSceneWithFingerPos()
             self.update_object_highlight()
@@ -683,6 +685,7 @@ class DoubleTapGesture(MultiTouchGesture):
 
     def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 2:
+            print "nooooooooooooo activePoints: " , len(activePoints)
             return False
 
         self._frameCounter += 1
@@ -709,9 +712,10 @@ class DoubleTapGesture(MultiTouchGesture):
         else:
             if 150 > lastDetectedActivity and 7 < self._frameCounter:
                 self._firstTap = False
+                self._frameCounter = 0
 
+        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
         
-        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; object mode = " , self._objectMode
         self._lastmilliseconds = int(round(time.time() * 1000))
 
 
@@ -756,8 +760,6 @@ class TUIOCursor(avango.script.Script):
         Call whenever some touch input data has changed. This method will update self.IsTouched accordingly.
         """
         self.IsTouched.value = (self.PosX.value != -1.0 and self.PosY.value != -1.0)
-
-
 
     @field_has_changed(CursorID)
     def set_station(self):

@@ -35,7 +35,7 @@ def start():
   server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
   server_ip = server_ip.strip(" \n")  
   server_ip = server_ip.rsplit(" ")
-  server_ip = str(server_ip[0])
+  server_ip = str(server_ip[-1])
   print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", server_ip
   #server_ip = "127.0.0.1"
 

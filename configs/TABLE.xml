@@ -21,9 +21,9 @@
     <avatartype>None</avatartype>
 
     <transmitteroffset>
-      <x>0.70</x>
-      <y>-0.91</y>
-      <z>1.6</z>
+      <x>0.7</x>
+      <y>-0.96</y>
+      <z>1.98</z>
       <rx>0.0</rx>
       <ry>-90.0</ry>
       <rz>0.0</rz>
@@ -75,6 +75,8 @@
 
     <startplatform>0</startplatform>
 
+    <eyedist>0.065<eyedist>
+
     <warnings>False</warnings>
 
   </user>
@@ -92,6 +94,8 @@
 
     <startplatform>0</startplatform>
 
+    <eyedist>0.065<eyedist>
+
     <warnings>False</warnings>
 
   </user>
@@ -108,6 +112,8 @@
     <headtrackingstation>tracking-dlp-glasses-3</headtrackingstation>
 
     <startplatform>0</startplatform>
+
+    <eyedist>0.065<eyedist>
 
     <warnings>False</warnings>
 

@@ -404,6 +404,17 @@ class NohraTouchTable(Display):
     def get_touch_protocols(self):
         return [ "TUIO" ]
 
+class ArtemisFakeTouchTable(Display):
+    def __init__(self):
+        Display.__init__(self
+                        , hostname = "artemis"
+                        , name = "artemis_fake_touch_table"
+                        , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+                        )
+
+    def get_touch_protocols(self):
+        return [ "TUIO" ]
+
 
 ##################################################
 # STORE ALL DISPLAYS TO BE USED IN THIS LIST
@@ -416,13 +427,18 @@ displays = [
   #SmallPowerwall() ,
   #SmallPowerwall2() ,  
   #OculusRift() ,
-  #TouchTable3D() ,
+  TouchTable3D() ,
   #Display(hostname = "daedalos", stereo = False) ,
 
-  PerseusTouchTable(), 
+  #PerseusTouchTable(),
+  #ArtemisFakeTouchTable(),
   #NohraTouchTable(),
 
   #Display(hostname = "apollo"
+  #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
+  #)
+  #,
+  #Display(hostname = "artemis"
   #    , transformation = avango.gua.make_trans_mat(0.0, 1.2, 0.0) * avango.gua.make_rot_mat(-90.0, 1.0, .0, .0)
   #)
   #,

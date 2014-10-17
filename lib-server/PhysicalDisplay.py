@@ -182,8 +182,8 @@ class LargePowerwall(PhysicalDisplay):
                     , hostname = "kerberos"
                     , name = "large_powerwall"
                     , resolution = (1920, 1200)
-                    #, displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
-                    , displaystrings = [":0.0", ":0.1", ":0.2"]
+                    , displaystrings = [":0.0", ":0.1", ":0.2", ":0.3"]
+                    #, displaystrings = [":0.0", ":0.1", ":0.2"]
                     , size = (4.16, 2.61)
                     , transformation = avango.gua.make_trans_mat(0, 1.57, 0)
                     #, shutter_timings = [ [(0,2400), (100,2500)],
@@ -220,14 +220,14 @@ class LargePowerwall(PhysicalDisplay):
   # and the warp matrices assigned to the new view.
   def register_view(self):
     view_num = self.num_views
-    if view_num < 4:
+    if view_num < len(self.displaystrings):
       warpmatrices = [
-          "/opt/dlp-warpmatrices/dlp_6_warp_P1.warp"
-        , "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
-        , "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
-        , "/opt/dlp-warpmatrices/dlp_6_warp_P1.warp"
-        , "/opt/dlp-warpmatrices/dlp_6_warp_P2.warp"
-        , "/opt/dlp-warpmatrices/dlp_6_warp_P3.warp"
+          "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P5.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P6.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P5.warp"
+        , "/opt/dlp-warpmatrices/dlp_6_warp_P6.warp"
         #  "/opt/dlp-warpmatrices/dlp_6_warp_P4.warp"
         #, "/opt/dlp-warpmatrices/dlp_6_warp_P5.warp"
         #, "/opt/dlp-warpmatrices/dlp_6_warp_P6.warp"        

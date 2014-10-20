@@ -431,7 +431,7 @@ displays = [
   #Display(hostname = "daedalos", stereo = False) ,
 
   #PerseusTouchTable(),
-  #ArtemisFakeTouchTable(),
+  ArtemisFakeTouchTable(),
   #NohraTouchTable(),
 
   #Display(hostname = "apollo"

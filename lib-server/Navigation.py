@@ -10,7 +10,6 @@ import avango.script
 
 # import framework libraries
 from Device           import *
-from TUIO             import TUIODevice
 from GroundFollowing  import GroundFollowing
 from InputMapping     import InputMapping
 from Platform         import Platform

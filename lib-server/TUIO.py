@@ -182,53 +182,53 @@ class MultiTouchDevice(avango.script.Script):
 
     def intersectSceneWithFingerPos(self):
         """
-        Intersect Scene with ray from head to center of finger position. works only for first user.
+        Intersect Scene with ray from head to finger position. works only for first user.
 
         @param transMat: the (relative) translation matrix
         """
-        
-
-        #fingerworldposition = self._fingerCenterPos.
 
         self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 1 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
         
-        # intersection found
+        """intersection found"""
         if len(self._intersection.mf_pick_result.value) > 0:
             self._intersectionFound = True
 
-            #first intersected object
+            """first intersected object"""
             _pick_result = self._intersection.mf_pick_result.value[0]
 
             self._intersectionPoint = _pick_result.Position.value 
             self._intersectionObject = _pick_result.Object.value
             
-            #update intersectionObject until you insert object Mode
+            """update intersectionObject until you insert object Mode"""
             if not self._objectMode:
                 self._lastIntersectionObject = self._intersectionObject
-
+            
+            """
             # VISUALISATION:
             # transform point into world coordinates
+            """
             self._intersectionPoint = self._intersectionObject.WorldTransform.value * self._intersectionPoint 
-            # make Vec3 from Vec4
+            
+            """make Vec3 from Vec4"""
             self._intersectionPoint = avango.gua.Vec3(self._intersectionPoint.x,self._intersectionPoint.y,self._intersectionPoint.z) 
             
-            # update intersection sphere
+            """update intersection sphere"""
             self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPoint) * \
                                                                avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
-            # set sphere visible                                           
+            """set sphere visible"""                                           
             self.intersection_point_geometry.GroupNames.value = [] 
 
-            # update ray
+            """update ray"""
             _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
             self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,_distance * -0.5) * \
                                                 avango.gua.make_rot_mat(-90.0,1,0,0) * \
                                                 avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
 
         else:
-            # set geometry invisible
+            """set geometry invisible"""
             self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
           
-            # set to default ray length
+            """set to default ray length"""
             self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
                                                 avango.gua.make_rot_mat(-90.0,1,0,0) * \
                                                 avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
@@ -236,7 +236,7 @@ class MultiTouchDevice(avango.script.Script):
 
 
     def update_object_highlight(self):
-        #highlight active object:
+        """highlight active object:"""
         if self._objectMode:
             _node = self._lastIntersectionObject
 
@@ -247,25 +247,24 @@ class MultiTouchDevice(avango.script.Script):
                     _object = _object.get_higher_hierarchical_object(self.hierarchy_selection_level)
               
                 if _object == None:
-                # evtl. disable highlight of prior object
+                    """ evtl. disable highlight of prior object"""
                     if self.highlighted_object != None:
                         self.highlighted_object.enable_highlight(False)
 
                 else:
                     if _object != self.highlighted_object: # new object hit
                     
-                        # evtl. disable highlight of prior object
+                        """evtl. disable highlight of prior object"""
                         if self.highlighted_object != None:
                             self.highlighted_object.enable_highlight(False)
 
                         self.highlighted_object = _object
                         
-                        # enable highlight of new object
+                        """enable highlight of new object"""
                         self.highlighted_object.enable_highlight(True)
 
-        #don't highlight something
         else:
-            # evtl. disable highlight of prior object
+            """evtl. disable highlight of prior object"""
             if self.highlighted_object != None:
                 self.highlighted_object.enable_highlight(False)
                 self.highlighted_object = None
@@ -277,34 +276,39 @@ class MultiTouchDevice(avango.script.Script):
         Requires the scene graph to have a transform node as root node.
         """
 
+        """ Reguires the scnene Name of actually scene to change dynamically """
         self._sceneName = SceneManager.active_scene_name
 
+        """ to avoid errors until the scenen Name is set """
         if (None != self._sceneName):
             
             sceneNode = "/net/" + self._sceneName
             self._globalMatrix = self._sceneGraph[sceneNode].Transform.value
             
-            #object Mode
+            """ object Mode """
             if self._objectMode:
                 objectNode = "/net/" + self._sceneName + "/" + self._objectName
                 scenePos = self._sceneGraph[objectNode].Transform.value.get_translate()
                 TransformMatrix = self._sceneGraph[objectNode].Transform.value
+            
             else: 
                 scenePos = self._sceneGraph[sceneNode].Transform.value.get_translate()
                 TransformMatrix = self._sceneGraph[sceneNode].Transform.value
             
+            """ distance between finger position and scene position (object position) """
             translateDistance = self._fingerCenterPos.value - scenePos
 
-            #transform world-space to object-space
+            """transform world-space to object-space"""
             translateDistance = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * translateDistance
             translateDistance = avango.gua.Vec3(translateDistance.x, translateDistance.y, translateDistance.z)
 
-            #first translate and rotate to origin, second calculate new position, third translate and rotate back
-            #todo: unterstand matrices
-            #      warum wird das object nicht erst nach unten verschoben und dann wieder nach oben?
-            #      warum verschiebt sich manchmal das scenen koordinatensystem?
-            #      
+            #todo: 
+            #   warum verschiebt sich manchmal das scenen koordinatensystem?
+            #   alles in einer transformmatrix berechnung 
 
+            """ TransfotmMatrix: first translate and rotate to origin, second calculate new position, third translate and rotate back """
+
+            """ object mode """
             if self._objectMode:
                 TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
                                   avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
@@ -334,14 +338,15 @@ class MultiTouchDevice(avango.script.Script):
                                   avango.gua.make_scale_mat(TransformMatrix.get_scale())
 
 
-            #object Mode
+            """ object mode """
             if self._objectMode:
                 self._sceneGraph[objectNode].Transform.value = TransformMatrix
+            
             else:
                 self._sceneGraph[sceneNode].Transform.value = TransformMatrix
 
 
-            #reset all data
+            """ reset all data """ 
             self._transMat   = avango.gua.make_identity_mat()
             self._rotMat     = avango.gua.make_identity_mat()
             self._scaleMat   = avango.gua.make_identity_mat()
@@ -362,20 +367,18 @@ class TUIODevice(MultiTouchDevice):
         """
         self.super(TUIODevice).__init__()
 
-        # multi-touch gestures to be registered
+        """multi-touch gestures to be registered"""
         self.gestures = []
 
-        # start driver
-        #_devnull = open('/dev/null', 'w')
-        #subprocess.Popen(["sudo", "/usr/sbin/citmuto03drv"], stderr = _devnull, stdout = _devnull)
-
+        """ all TUIO points found on the table """
         self._activePoints = {}
+
         self._frameCounter = 0
 
     def my_constructor(self, graph, display, NET_TRANS_NODE, SCENE_MANAGER, APPLICATION_MANAGER):
         self.super(TUIODevice).my_constructor(graph, display, NET_TRANS_NODE, SCENE_MANAGER, APPLICATION_MANAGER)
         
-        # append 20 touch cursors
+        """append 20 touch cursors"""
         for i in range(0, 20):
             cursor = TUIOCursor(CursorID = i) 
             self.Cursors.value.append(cursor)
@@ -383,8 +386,9 @@ class TUIODevice(MultiTouchDevice):
             self.PosChanged.connect_from(cursor.PosX)
             self.PosChanged.connect_from(cursor.PosY)
 
-        # register gestures
-        # TODO: do this somewhere else
+
+        """ register gestures """
+        #TODO: do this somewhere else
         self.registerGesture(DragGesture())
         self.registerGesture(PinchGesture())
         self.registerGesture(RotationGesture())
@@ -396,14 +400,14 @@ class TUIODevice(MultiTouchDevice):
     def evaluate(self):
         self._frameCounter += 1
         self.processChange()
-        self._headPosition1 = self._applicationManager.user_list[0].headtracking_reader.sf_abs_vec.value
-        print self._headPosition1
+
 
     @field_has_changed(PosChanged)
     def processChange(self):
         if -1.0 == self.PosChanged.value:
             return
 
+        """ update active point list """
         for touchPoint in self.Cursors.value:
             if touchPoint.IsTouched.value:
                 self._activePoints[touchPoint.CursorID.value] = touchPoint
@@ -416,7 +420,7 @@ class TUIODevice(MultiTouchDevice):
         for gesture in self.gestures:
             gesture.processGesture(self._activePoints.values(), self)
         
-
+        """ valid input is registered """
         doSomething = True
 
         if len(activePoints) == 2:
@@ -431,8 +435,8 @@ class TUIODevice(MultiTouchDevice):
             centerPos = (point1 + point2 + point3) / 3
 
         else:
+            """ only one ore more than 3 input points are not valid until now """
             doSomething = False
-
 
         if (doSomething):          
             self.setFingerCenterPosition(centerPos)
@@ -460,13 +464,12 @@ class TUIODevice(MultiTouchDevice):
             self.gestures.remove(gesture)
 
 
-class MultiTouchGesture(object): #object
+class MultiTouchGesture(object):
     """
     Base class for multi touch gestures.
     """
 
     def __init__(self):
-        #self.super(MultiTouchGesture).__init__()
         self.resetMovingAverage()
 
     def processGesture(self, activePoints, touchDevice):
@@ -503,9 +506,12 @@ class MultiTouchGesture(object): #object
 
 
 class DragGesture(MultiTouchGesture):
+    """ 
+    DragGesture to move scene or objects 
+    """
     def __init__(self):
         super(DragGesture, self).__init__()
-        # last position for relative panning
+        """ last position for relative panning """
         self._lastPos = None
 
     def processGesture(self, activePoints, touchDevice):
@@ -522,17 +528,15 @@ class DragGesture(MultiTouchGesture):
             self._lastPos = point
             return False
 
-        # map points from interval [0, 1] to [-1, 1]
+        """ map points from interval [0, 1] to [-1, 1] """
         mappedPosX = point[0] * 2 - 1
         mappedPosY = point[1] * 2 - 1
         mappedLastPosX = self._lastPos[0] * 2 - 1
         mappedLastPosY = self._lastPos[1] * 2 - 1
 
+        """ movement vector between old and new point """
         relDist               = (point[0] - self._lastPos[0], point[1] - self._lastPos[1])
         relDistSizeMapped     = (relDist[0] * touchDevice.getDisplay().size[0], relDist[1] * touchDevice.getDisplay().size[1])
-
-        # multiply the distance by .5 * scaling factor
-        # TODO: don't hardcode values --> CHECK :)
 
         newPosX = relDistSizeMapped[0]
         newPosY = relDistSizeMapped[1]
@@ -545,6 +549,9 @@ class DragGesture(MultiTouchGesture):
         return True
 
 class PinchGesture(MultiTouchGesture):
+    """ 
+    PinchGesture to scale scene or objects 
+    """
     def __init__(self):
         super(PinchGesture, self).__init__()
         self.distances = []
@@ -560,7 +567,7 @@ class PinchGesture(MultiTouchGesture):
         vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
         distance = vec2 - vec1
 
-        # save old distance
+        """ save old distance """
         if 3 == len(self.distances):
             self.distances.append(distance)
             self.distances.pop(0)
@@ -568,18 +575,8 @@ class PinchGesture(MultiTouchGesture):
             self.distances.append(distance)
             return False
 
+        """ distance covered after 3 frames """
         relDistance = (self.distances[0].length() - self.distances[-1].length())
-
-        # return if no significant movement occurred
-        #if abs(relDistance) < .0005:
-        #    return False
-
-        #center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
-        #rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
-
-        #mDofDevice.mf_dof.value[6] += relDistance * 16.3
-        #mDofDevice.mf_dof.value[0] -= self.centerDirection.x * relDistance * 15 * self.display.size[0]
-        #mDofDevice.mf_dof.value[2] -= self.centerDirection.y * relDistance * 15 * self.display.size[1]
 
         touchDevice.addLocalScaling(avango.gua.make_scale_mat(1 - relDistance))
 
@@ -587,16 +584,16 @@ class PinchGesture(MultiTouchGesture):
 
 
 class RotationGesture(MultiTouchGesture):
-    
+    """
+    RotationGesture to ratate scene or objects
+    """
     def __init__(self):
         super(RotationGesture, self).__init__()
         self._distances = []
         self._lastAngle = 0
 
-        # smoothing factor for rotation angles
+        """ smoothing factor for rotation angles """
         self._smoothingFactor = 8
-
-        self._fingerCenterPos = avango.gua.Vec3(0,0,0)
 
     def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 2:
@@ -608,7 +605,7 @@ class RotationGesture(MultiTouchGesture):
         distance = vec2 - vec1
         distance = avango.gua.Vec3(distance.x * touchDevice.getDisplay().size[0], distance.y * touchDevice.getDisplay().size[1], 0)
 
-        # save old distance
+        """ save old distance """
         if 2 == len(self._distances):
             self._distances.append(distance)
             self._distances.pop(0)
@@ -623,27 +620,13 @@ class RotationGesture(MultiTouchGesture):
         dotProduct   = abs(dist1.dot(dist2))
         crossProduct = self._distances[0].cross(self._distances[-1])
 
-        # make sure have no overflows due to rounding issues
+        """ make sure have no overflows due to rounding issues """
         if 1.0 < dotProduct:
             dotProduct = 1.0
-
-        #print(crossProduct.z, self._distances[0], self._distances[-1])
-
-        #center = avango.gua.make_trans_mat(-.5, -.5, 0) * (vec1 + (vec2 - vec1) / 2)
-        #rotMat = avango.gua.make_trans_mat(center[0], 0, center[1]) * mDofDevice.no_tracking_mat
         
+        """ covered angle after 2 frames """
         angle = math.copysign(math.acos(dotProduct) * 180 / math.pi, -crossProduct.z)
         angle = self.movingAverage(angle, self._smoothingFactor)
-
-        #if 1 < abs(angle) - abs(self._lastAngle):
-        #    self._lastAngle = angle
-        #    return False
-
-        #if .04 > abs(self._lastAngle - angle) and 0 == math.copysign(1, self._lastAngle) + math.copysign(1, angle):
-        #    angle *= -1
-
-        # calculate moving average to prevent oscillation
-        #print(angle)
         
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, avango.gua.Vec3(0, 1, 0)))
         self._lastAngle = angle
@@ -651,12 +634,21 @@ class RotationGesture(MultiTouchGesture):
 
         return True
 
+
 class RollGesture(MultiTouchGesture):
+    """ 
+    RollGesture to roll scene or objects
+    """
     def __init__(self):
         super(RollGesture, self).__init__()
 
+        """ distance between first and second point """
         self._distances12 = []
+        
+        """ distance between second and third point """
         self._distances23 = []
+
+        """ save old positions """
         self._positions = []
 
 
@@ -671,7 +663,7 @@ class RollGesture(MultiTouchGesture):
         distance12 = vec2 - vec1
         distance23 = vec3 - vec1
 
-        #check if all distances are nearly the same
+        """ save old distance12 """
         if 2 == len(self._distances12):
             self._distances12.append(distance12)
             self._distances12.pop(0)
@@ -679,7 +671,7 @@ class RollGesture(MultiTouchGesture):
             self._distances12.append(distance12)
             return False
 
-        # save old distance2
+        """ save old distance23 """
         if 2 == len(self._distances23):
             self._distances23.append(distance23)
             self._distances23.pop(0)
@@ -687,7 +679,7 @@ class RollGesture(MultiTouchGesture):
             self._distances23.append(distance23)
             return False
 
-        # save positions from vec2
+        """ save positions from vec2 """
         if 2 == len(self._positions):
             self._positions.append(vec2)
             self._positions.pop(0)
@@ -695,13 +687,18 @@ class RollGesture(MultiTouchGesture):
             self._positions.append(vec2)
             return False
 
+
         distanceDiff12 = self._distances12[0] - self._distances12[-1]
         distanceDiff23 = self._distances23[0] - self._distances23[-1]
 
+        """ check if all distances stay nearly in the same distance """
         if (math.fabs(distanceDiff12.length()) > 0.01 or math.fabs(distanceDiff23.length()) > 0.01):
             return False
 
+        """ direction vector of all 3 fingers """
         directionVec = self._positions[0] - self._positions[-1]
+
+        """ orthogonal rotation axis """
         rotationalAxis = avango.gua.Vec3(-directionVec.y, 0, directionVec.x)
 
         angle = directionVec.length() * 360
@@ -711,37 +708,44 @@ class RollGesture(MultiTouchGesture):
 
 
 class DoubleTapGesture(MultiTouchGesture):
+    """
+    DoubleTapGesture to toggle between object and navigation mode
+    """
     def __init__(self):
         super(DoubleTapGesture, self).__init__()
 
         self._lastmilliseconds = 0 
         self._objectMode = False
+        
+        """ is necessary as a threshold for the first tap  """
         self._frameCounter = 0
+
+        """ first tap is declared as a first first """
         self._firstTap = False
         self._lastCounter = 0
 
     def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 2:
-            print "nooooooooooooo activePoints: " , len(activePoints)
             return False
 
         self._frameCounter += 1
 
+        """ last call of method """ 
         lastDetectedActivity = int(round(time.time() * 1000)) - self._lastmilliseconds
 
         if 150 < lastDetectedActivity:
             self._firstTap = True
             self._frameCounter = 0
 
-        #doubletap intervall
+        """ 
+        doubletap intervall: between 50ms and 150ms
+        """
         if 150 > lastDetectedActivity and 50 < lastDetectedActivity and self._firstTap:
             if not self._objectMode:
                 self._objectMode = touchDevice.setObjectMode(True)
-                #print "object mode = " , self._objectMode , " old: True"
             
             else:
                 self._objectMode = touchDevice.setObjectMode(False)
-                #print "object mode = " , self._objectMode , " old: False"
 
             self._firstTap = False
             self._frameCounter = 0
@@ -751,7 +755,7 @@ class DoubleTapGesture(MultiTouchGesture):
                 self._firstTap = False
                 self._frameCounter = 0
 
-        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
+        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
         
         self._lastmilliseconds = int(round(time.time() * 1000))
 
@@ -813,7 +817,4 @@ class TUIOCursor(avango.script.Script):
     def updatePosY(self):
         self.updateTouched()
 
-    #@field_has_changed(State)
-    #def updateState(self):
-    #    self.updateTouched()
 

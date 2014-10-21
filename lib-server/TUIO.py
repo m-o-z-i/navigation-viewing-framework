@@ -18,6 +18,9 @@ import time
 class MultiTouchDevice(avango.script.Script):
     """
     Base class for multi touch devices.
+
+    rayOrientation: orientation matrix (start position + direction) of ray 
+    fingerCenterPos: the center of finger position in interval from -display-size to +display-size
     """
     _rayOrientation = avango.gua.SFMatrix4()
     _fingerCenterPos = avango.gua.SFVec3()
@@ -51,7 +54,7 @@ class MultiTouchDevice(avango.script.Script):
         self._intersectionObject = None
 
         """ ray representation"""
-        self.ray_length = 1000
+        self.ray_length = 10
         self.ray_thickness = 0.0075
         self.intersection_sphere_size = 0.025
         self.highlighted_object = None
@@ -98,6 +101,7 @@ class MultiTouchDevice(avango.script.Script):
         """
         self.ray_geometry = _loader.create_geometry_from_file("ray_geometry", "data/objects/cylinder.obj", "data/materials/White.gmd", avango.gua.LoaderFlags.DEFAULTS)
         self.ray_transform.Children.value.append(self.ray_geometry)
+        self.ray_geometry.GroupNames.value = ["do_not_display_group"]
 
         self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0,0,0) * \
                                             avango.gua.make_rot_mat(0,0,0,0) * \
@@ -113,6 +117,10 @@ class MultiTouchDevice(avango.script.Script):
 
         self.ray_transform.Transform.connect_from(self._rayOrientation)
 
+        """ representation of fingercenterpos """
+        self.fingercenterpos_geometry = _loader.create_geometry_from_file("fingercenterpos", "data/objects/sphere.obj", "data/materials/Red.gmd", avango.gua.LoaderFlags.DEFAULTS)
+        NET_TRANS_NODE.Children.value.append(self.fingercenterpos_geometry)
+
 
     def getDisplay(self):
         return self._display
@@ -126,7 +134,7 @@ class MultiTouchDevice(avango.script.Script):
         """
         Calculate center of finger position.
 
-        @param FingerCenterPos: the center of finger position in interval from [0,1] to [1,0]
+        @param FingerCenterPos: the center of finger position in interval from [0,1]->[1,0]
         """
         point = fingerCenterPos
 
@@ -134,7 +142,13 @@ class MultiTouchDevice(avango.script.Script):
         mappedPosX = point[0] * 1 - 0.5
         mappedPosY = point[1] * 1 - 0.5
 
-        self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * self.getDisplay().size[0], 0.0, mappedPosY * self.getDisplay().size[1])    
+        """ map _fingerCenterPos to display intervall ([-1/2*display-size] -> [+1/2*display-size]) """
+        self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * self.getDisplay().size[0], 0.0, mappedPosY * self.getDisplay().size[1])   
+
+        """ update fingercenterpos representation """
+        self.fingercenterpos_geometry.Transform.value = avango.gua.make_trans_mat(self._fingerCenterPos.value) * \
+                                                        avango.gua.make_scale_mat( 0.025, 0.025 , 0.025 )
+
 
 
     def setObjectMode(self, active):
@@ -180,7 +194,6 @@ class MultiTouchDevice(avango.script.Script):
         """
         self._scaleMat *= scaleMat
 
-
     def intersectSceneWithFingerPos(self):
         """
         Intersect Scene with ray from head to finger position. works only for first user.
@@ -188,29 +201,19 @@ class MultiTouchDevice(avango.script.Script):
         @param transMat: the (relative) translation matrix
         """
 
+        """ head position of first user """
         self._headPosition1 = self._applicationManager.user_list[0].headtracking_reader.sf_abs_vec.value
-        #rotationMatrix = Tools.get_rotation_between_vectors( self._fingerCenterPos.value, self._headPosition1)
-        #directionVector = self._headPosition1 - self._fingerCenterPos.value
-
-        #self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 0.5 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0)
-        #self._rayOrientation.value = avango.gua.make_trans_mat(directionVector) * rotationMatrix
-
-
+        
         _vec1 = avango.gua.Vec3(0.0,0.0,-1.0)
-        _vec2 = self._fingerCenterPos.value - self._headPosition1
-        _vec2.normalize()
 
-        _rotationMatrix = Tools.get_rotation_between_vectors( _vec1, _vec2)
+        """ direction Vector between head and finger position """
+        _directionVector = self._fingerCenterPos.value - self._headPosition1
+        _directionVector.normalize()
+
+        _rotationMatrix = Tools.get_rotation_between_vectors( _vec1, _directionVector)
         
         self._rayOrientation.value = avango.gua.make_trans_mat(self._headPosition1) * _rotationMatrix
-        
-
-        print self._fingerCenterPos.value , "  " , self._headPosition1
-        #print "trans: " , self._rayOrientation.value.get_translate() 
-        #print "rotat: " , self._rayOrientation.value.get_rotate_scale_corrected() 
-        #print "scale: " , self._rayOrientation.value.get_scale()
-
-        
+                
         """intersection found"""
         if len(self._intersection.mf_pick_result.value) > 0:
             self._intersectionFound = True
@@ -237,8 +240,9 @@ class MultiTouchDevice(avango.script.Script):
             """update intersection sphere"""
             self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPoint) * \
                                                                avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
-            """set sphere visible"""                                           
+            """set sphere and ray visible"""                                           
             self.intersection_point_geometry.GroupNames.value = [] 
+            self.ray_geometry.GroupNames.value = []
 
             """update ray"""
             _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
@@ -249,7 +253,8 @@ class MultiTouchDevice(avango.script.Script):
         else:
             """set geometry invisible"""
             self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
-          
+            self.ray_geometry.GroupNames.value = ["do_not_display_group"]
+
             """set to default ray length"""
             self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
                                                 avango.gua.make_rot_mat(-90.0,1,0,0) * \
@@ -460,7 +465,7 @@ class TUIODevice(MultiTouchDevice):
             """ only one ore more than 3 input points are not valid until now """
             doSomething = False
 
-        if (doSomething):          
+        if (doSomething):
             self.setFingerCenterPosition(centerPos)
             self.intersectSceneWithFingerPos()
             self.update_object_highlight()

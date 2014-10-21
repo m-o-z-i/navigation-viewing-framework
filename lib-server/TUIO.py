@@ -201,18 +201,26 @@ class MultiTouchDevice(avango.script.Script):
         @param transMat: the (relative) translation matrix
         """
 
+        #TODO: decide between displays with tracking and not
+        #for no tracking use this: #self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 0.5 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0)
+
         """ head position of first user """
         self._headPosition1 = self._applicationManager.user_list[0].headtracking_reader.sf_abs_vec.value
         
-        _vec1 = avango.gua.Vec3(0.0,0.0,-1.0)
 
         """ direction Vector between head and finger position """
         _directionVector = self._fingerCenterPos.value - self._headPosition1
+        
+        """ ray shouldn't start in the head of the user (for the representation) """  
+        _startPosition = self._headPosition1 + _directionVector * 0.8
+        
+        """ calculate rotation matrix """
+        _vec1 = avango.gua.Vec3(0.0,0.0,-1.0)
         _directionVector.normalize()
-
         _rotationMatrix = Tools.get_rotation_between_vectors( _vec1, _directionVector)
         
-        self._rayOrientation.value = avango.gua.make_trans_mat(self._headPosition1) * _rotationMatrix
+        """ start position and rotation matrix """
+        self._rayOrientation.value = avango.gua.make_trans_mat(_startPosition) * _rotationMatrix
                 
         """intersection found"""
         if len(self._intersection.mf_pick_result.value) > 0:
@@ -246,7 +254,8 @@ class MultiTouchDevice(avango.script.Script):
 
             """update ray"""
             _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
-            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,_distance * -0.5) * \
+
+            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, _distance * -0.5) * \
                                                 avango.gua.make_rot_mat(-90.0,1,0,0) * \
                                                 avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
 

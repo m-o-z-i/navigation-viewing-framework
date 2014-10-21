@@ -147,7 +147,9 @@ class PhysicalDisplay(Display):
     return _node
 
   ## Creates a proxy geometry for this display to be checked for intesections in the global tracking space.
-  # @param 
+  # @param WORKSPACE_INSTANCE The Workspace instance to which this Display is belonging to.
+  # @param DISPLAY_GROUP_INSTANCE The DisplayGroup instance to which this Display is belonging to.
+  # @param DISPLAY_NUM Integer saying which index in the DisplayGroup this Display has, starting from 0.
   def create_transformed_proxy_geometry(self, WORKSPACE_INSTANCE, DISPLAY_GROUP_INSTANCE, DISPLAY_NUM):
   
     _loader = avango.gua.nodes.TriMeshLoader()

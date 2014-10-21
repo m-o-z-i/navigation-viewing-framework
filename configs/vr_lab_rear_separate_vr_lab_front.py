@@ -141,12 +141,12 @@ avatar_visibility_table = {
 
 vr_lab_rear.create_user( VIP = False
                        , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-1'
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-6'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False
                        , AVATAR_VISIBILITY_TABLE = avatar_visibility_table
-                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-2'
+                       , HEADTRACKING_TARGET_NAME = 'tracking-dlp-glasses-4'
                        , EYE_DISTANCE = 0.065)
 
 vr_lab_rear.create_user( VIP = False

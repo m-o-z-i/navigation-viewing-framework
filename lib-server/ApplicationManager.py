@@ -416,12 +416,35 @@ class ApplicationManager(avango.script.Script):
   def sf_key1_changed(self):
 
     if self.sf_key1.value == True:
+
+      video_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
+                          , "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : False,  "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : False, "table" : False, "lcd_wall" : False} 
+                                }
+
+      avatar_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "lcd_wall" : True, "portal" : False}
+                          , "table" : {"dlp_wall" : True, "lcd_wall" : True, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : True,  "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True} 
+                          }
+
       tool_visibility_table = {
                             "dlp_wall"  : {"table" : False, "portal" : False}
                           , "table" : {"dlp_wall" : True, "portal" : False}  
                           , "lcd_wall" : {"dlp_wall" : True, "table" : False, "portal" : False}
                           , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True}
                               }
+
+      for _workspace in ApplicationManager.all_workspaces:
+
+        for _user in _workspace.users:
+          _user.change_visiblity_table(avatar_visibility_table)
+        
+        if _workspace.video_3D != None:
+          _workspace.video_3D.change_visiblity_table(video_visibility_table)
 
       for _tool in ApplicationManager.all_workspaces[0].tools:
        _tool.change_visiblity_table(tool_visibility_table)
@@ -433,6 +456,21 @@ class ApplicationManager(avango.script.Script):
   def sf_key2_changed(self):
 
     if self.sf_key2.value == True:
+
+      video_visibility_table = {
+                            "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
+                          , "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : False,  "table" : False, "portal" : False}
+                          , "portal" : {"dlp_wall" : False, "table" : False, "lcd_wall" : False} 
+                                }
+
+      avatar_visibility_table = {
+                            "dlp_wall"  : {"table" : True, "lcd_wall" : True, "portal" : False}
+                          , "table" : {"dlp_wall" : True, "lcd_wall" : True, "portal" : False}
+                          , "lcd_wall" : {"dlp_wall" : True,  "table" : True, "portal" : False}
+                          , "portal" : {"dlp_wall" : True, "table" : True, "lcd_wall" : True} 
+                          }
+
       tool_visibility_table = {
                             "dlp_wall"  : {"table" : True, "portal" : False}
                           , "table" : {"dlp_wall" : True, "portal" : False}  
@@ -440,16 +478,25 @@ class ApplicationManager(avango.script.Script):
                           , "portal" : {"dlp_wall" : True, "table" : False, "lcd_wall" : True}
                               }
 
+      for _workspace in ApplicationManager.all_workspaces:
+
+        for _user in _workspace.users:
+          _user.change_visiblity_table(avatar_visibility_table)
+        
+        if _workspace.video_3D != None:
+          _workspace.video_3D.change_visiblity_table(video_visibility_table)
+
       for _tool in ApplicationManager.all_workspaces[0].tools:
        _tool.change_visiblity_table(tool_visibility_table)
       
-      print_message("Visibility tables in workspace 0 changed: table tool representations visible on walls.")
+      print_message("Visibility tables in workspace 0 changed: table tool and user representations visible on walls.")
 
   ## Called whenever sf_key3 changes.
   @field_has_changed(sf_key3)
   def sf_key3_changed(self):
 
     if self.sf_key3.value == True:
+
       avatar_visibility_table = {
                             "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
                           , "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}

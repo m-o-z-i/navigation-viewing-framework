@@ -3,6 +3,7 @@
 from Device import MultiDofDevice
 from SceneManager import SceneManager 
 from Intersection import *
+import Tools
 
 import avango
 import avango.gua
@@ -187,7 +188,28 @@ class MultiTouchDevice(avango.script.Script):
         @param transMat: the (relative) translation matrix
         """
 
-        self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 1 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0) * avango.gua.make_scale_mat(1,1,1)
+        self._headPosition1 = self._applicationManager.user_list[0].headtracking_reader.sf_abs_vec.value
+        #rotationMatrix = Tools.get_rotation_between_vectors( self._fingerCenterPos.value, self._headPosition1)
+        #directionVector = self._headPosition1 - self._fingerCenterPos.value
+
+        #self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 0.5 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0)
+        #self._rayOrientation.value = avango.gua.make_trans_mat(directionVector) * rotationMatrix
+
+
+        _vec1 = avango.gua.Vec3(0.0,0.0,-1.0)
+        _vec2 = self._fingerCenterPos.value - self._headPosition1
+        _vec2.normalize()
+
+        _rotationMatrix = Tools.get_rotation_between_vectors( _vec1, _vec2)
+        
+        self._rayOrientation.value = avango.gua.make_trans_mat(self._headPosition1) * _rotationMatrix
+        
+
+        print self._fingerCenterPos.value , "  " , self._headPosition1
+        #print "trans: " , self._rayOrientation.value.get_translate() 
+        #print "rotat: " , self._rayOrientation.value.get_rotate_scale_corrected() 
+        #print "scale: " , self._rayOrientation.value.get_scale()
+
         
         """intersection found"""
         if len(self._intersection.mf_pick_result.value) > 0:

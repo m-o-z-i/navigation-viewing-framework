@@ -84,7 +84,7 @@ def start():
       if "TUIO" in j.get_touch_protocols():
         if None == multi_touch_device:
           device = TUIODevice()
-          device.my_constructor(graph, j, nettrans, scene_manager)
+          device.my_constructor(graph, j, nettrans, scene_manager, application_manager)
           multi_touch_device = device
 
   # initialize animation manager

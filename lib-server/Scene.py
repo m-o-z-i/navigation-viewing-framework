@@ -36,11 +36,8 @@ class SceneMedievalTown(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "MedievalTown", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-
     # navigation parameters
-    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 22.0)
-    self.starting_scale = 1.0
-
+    # nice navigation starting mat is avango.gua.make_trans_mat(0.0, 0.0, 22.0)
 
     # geometry
     _mat = avango.gua.make_scale_mat(7.5)
@@ -74,8 +71,7 @@ class ScenePitoti(SceneObject):
     SceneObject.__init__(self, "ScenePitotiTest", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
     # navigation parameters
-    #self.starting_matrix = avango.gua.make_trans_mat(0.092, 4.922, 22.049)
-    #self.starting_scale = 1.0
+    # nice navigation starting mat is avango.gua.make_trans_mat(0.092, 4.922, 22.049)
 
     # geometry
     _mat = avango.gua.make_identity_mat()
@@ -92,9 +88,7 @@ class SceneVianden(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "SceneVianden", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-    # navigation parameters
-    self.starting_matrix = avango.gua.make_trans_mat(72.730, -5.571, -51.930)
-    self.starting_scale = 1.0    
+    # nice navigation starting mat is avango.gua.make_trans_mat(72.730, -5.571, -51.930)  
 
     # geometry
     _mat = avango.gua.make_rot_mat(90.0,-1,0,0)
@@ -140,7 +134,7 @@ class SceneMonkey(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "Monkey", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 1.0)
+    # nice navigation starting mat is avango.gua.make_trans_mat(0.0, 0.0, 1.0)
 
     _mat = avango.gua.make_identity_mat()
     self.init_group("group", _mat, False, True, self.scene_root, "main_scene")
@@ -178,7 +172,7 @@ class ScenePLOD(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "PLOD", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-    self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 1.0)
+    # nice navigation starting mat is avango.gua.make_trans_mat(0.0, 0.0, 1.0)
 
     _mat = avango.gua.make_trans_mat(0.0,1.2,0.0) * avango.gua.make_scale_mat(0.25)
     self.init_plod("pig", "/opt/3d_models/point_based/plod/pig.kdn", _mat, False, True, self.scene_root, "main_scene") # parameters: NAME, FILENAME, MATRIX, MATERIAL, GROUNDFOLLOWING_PICK_FLAG, MANIPULATION_PICK_FLAG, PARENT_NODE
@@ -211,9 +205,7 @@ class SceneValcamonicaOptimized(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "ValcamonicaOptimized", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-    #self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
-    #self.starting_scale = 1.0
-
+    # nice navigation starting mat is self.starting_matrix = avango.gua.make_trans_mat(0.0, 0.0, 0.0)
 
     _mat = avango.gua.make_trans_mat(-473.909*2, 377.739*2, -399.864*2) * \
             avango.gua.make_scale_mat(60.0, -60.0, -60.0)
@@ -318,7 +310,8 @@ class SceneWeimar(SceneObject):
   def __init__(self, SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE):
     SceneObject.__init__(self, "Weimar", SCENE_MANAGER, SCENEGRAPH, NET_TRANS_NODE) # call base class constructor
 
-    self.starting_matrix = avango.gua.make_trans_mat(42.0, 0.1, -5.8)
+    # nice navigation starting mat is avango.gua.make_trans_mat(42.0, 0.1, -5.8)
+    
     self.enable_ssao = True
     self.ssao_radius = 2.0
     self.ssao_intensity = 2.0

@@ -493,8 +493,8 @@ class User(VisibilityHandler2D):
       if self.WORKSPACE_INSTANCE.video_3D != None:
         _old_nav = self.WORKSPACE_INSTANCE.display_groups[DISPLAY_GROUP_ID].navigations[_old_nav_id]
         _new_nav = self.WORKSPACE_INSTANCE.display_groups[DISPLAY_GROUP_ID].navigations[NAVIGATION_ID]
-        self.WORKSPACE_INSTANCE.video_3D.handle_correct_visibility_groups_for(_old_nav, ApplicationManager.all_user_representations)
-        self.WORKSPACE_INSTANCE.video_3D.handle_correct_visibility_groups_for(_new_nav, ApplicationManager.all_user_representations)
+        self.WORKSPACE_INSTANCE.video_3D.handle_correct_visibility_groups_for(_old_nav)
+        self.WORKSPACE_INSTANCE.video_3D.handle_correct_visibility_groups_for(_new_nav)
 
     else:
       print_error("Error. Display Group ID does not exist.", False)

@@ -125,20 +125,6 @@ class SceneObject:
     # Mapping of pipeline value FarClip.
     self.far_clip = 1000.0
 
-
-    '''
-      Navigation values
-    '''
-    ## @var starting_matrix
-    # Starting matrix of the first Navigation instance created. None if configuration file values to be taken.
-    self.starting_matrix = None
-
-    ## @var starting_scale
-    # Starting scale factor of the first Navigation instance created. None if configuration file value to be taken.
-    self.starting_scale = None
-
-
-
   # functions
   ## Returns the SceneManager instance this scene object is belonging to.
   def get_scene_manager(self):

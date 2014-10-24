@@ -128,6 +128,10 @@ class MultiTouchDevice(avango.script.Script):
         self.handPos_geometry.GroupNames.value = ["do_not_display_group"]
 
 
+        """ define Input display size """
+        self._inputDisplaySize = avango.gua.Vec2(1.10,0.75)
+
+
     def getDisplay(self):
         return self._display
     
@@ -149,7 +153,7 @@ class MultiTouchDevice(avango.script.Script):
         mappedPosY = point[1] * 1 - 0.5
 
         """ map point to display intervall ([-1/2*display-size] -> [+1/2*display-size]) """
-        mappedPos = avango.gua.Vec3(mappedPosX * self.getDisplay().size[0], 0.0, mappedPosY * self.getDisplay().size[1])   
+        mappedPos = avango.gua.Vec3(mappedPosX * self._inputDisplaySize.x, 0.0, mappedPosY * self._inputDisplaySize.y)   
 
         return mappedPos        
 

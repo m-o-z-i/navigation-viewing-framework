@@ -120,6 +120,12 @@ class MultiTouchDevice(avango.script.Script):
         """ representation of fingercenterpos """
         self.fingercenterpos_geometry = _loader.create_geometry_from_file("fingercenterpos", "data/objects/sphere.obj", "data/materials/Red.gmd", avango.gua.LoaderFlags.DEFAULTS)
         NET_TRANS_NODE.Children.value.append(self.fingercenterpos_geometry)
+        self.fingercenterpos_geometry.GroupNames.value = ["do_not_display_group"]
+
+        """ hand representation """
+        self.handPos_geometry = _loader.create_geometry_from_file("handpos", "data/objects/cube.obj", "data/materials/Red.gmd", avango.gua.LoaderFlags.DEFAULTS)
+        NET_TRANS_NODE.Children.value.append(self.handPos_geometry)
+        self.handPos_geometry.GroupNames.value = ["do_not_display_group"]
 
 
     def getDisplay(self):
@@ -130,26 +136,36 @@ class MultiTouchDevice(avango.script.Script):
         return self._sceneGraph
 
 
-    def setFingerCenterPosition(self, fingerCenterPos):
+    def mapInputPosition(self, Pos):
         """
-        Calculate center of finger position.
+        Map input position to display size
+        """
 
-        @param FingerCenterPos: the center of finger position in interval from [0,1]->[1,0]
-        """
-        point = fingerCenterPos
+        point = Pos
 
         #TODO: correct finger center position
         """ map points from interval [0, 1] to [-0.5, 0.5] """
         mappedPosX = point[0] * 1 - 0.5
         mappedPosY = point[1] * 1 - 0.5
 
-        """ map _fingerCenterPos to display intervall ([-1/2*display-size] -> [+1/2*display-size]) """
-        self._fingerCenterPos.value = avango.gua.Vec3(mappedPosX * self.getDisplay().size[0], 0.0, mappedPosY * self.getDisplay().size[1])   
+        """ map point to display intervall ([-1/2*display-size] -> [+1/2*display-size]) """
+        mappedPos = avango.gua.Vec3(mappedPosX * self.getDisplay().size[0], 0.0, mappedPosY * self.getDisplay().size[1])   
+
+        return mappedPos        
+
+    def setFingerCenterPos(self, fingerPos):
+        self._fingerCenterPos.value = fingerPos
 
         """ update fingercenterpos representation """
+        self.fingercenterpos_geometry.GroupNames.value = []
         self.fingercenterpos_geometry.Transform.value = avango.gua.make_trans_mat(self._fingerCenterPos.value) * \
                                                         avango.gua.make_scale_mat( 0.025, 0.025 , 0.025 )
 
+    def visualisizeHandPosition(self, handPos):
+        """ update hand representation """
+        self.handPos_geometry.GroupNames.value = []
+        self.handPos_geometry.Transform.value = avango.gua.make_trans_mat(handPos) * \
+                                                avango.gua.make_scale_mat( 0.1, 0.005 , 0.1 )
 
 
     def setObjectMode(self, active):
@@ -431,7 +447,7 @@ class TUIODevice(MultiTouchDevice):
         self.registerGesture(RotationGesture())
         self.registerGesture(RollGesture())
         self.registerGesture(DoubleTapGesture())
-        self.registerGesture(Arcball())
+        self.registerGesture(HandGesture())
         self.always_evaluate(True)
 
 
@@ -461,6 +477,10 @@ class TUIODevice(MultiTouchDevice):
         """ valid input is registered """
         doSomething = True
 
+        """ reset all visualisations """
+        self.fingercenterpos_geometry.GroupNames.value = ["do_not_display_group"]
+        self.handPos_geometry.GroupNames.value = ["do_not_display_group"]
+
         if len(activePoints) == 2:
             point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
             point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
@@ -472,12 +492,21 @@ class TUIODevice(MultiTouchDevice):
             point3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[2].PosY.value, 0)
             centerPos = (point1 + point2 + point3) / 3
 
+        elif len(activePoints) == 5:
+            point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
+            point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+            point3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[2].PosY.value, 0)
+            point4 = avango.gua.Vec3(activePoints[3].PosX.value, activePoints[3].PosY.value, 0)
+            point5 = avango.gua.Vec3(activePoints[4].PosX.value, activePoints[4].PosY.value, 0)
+            centerPos = (point1 + point2 + point3 + point4 + point5) / 5
+            self.visualisizeHandPosition(self.mapInputPosition(centerPos))
+
         else:
             """ only one ore more than 3 input points are not valid until now """
             doSomething = False
 
         if (doSomething):
-            self.setFingerCenterPosition(centerPos)
+            self.setFingerCenterPos(self.mapInputPosition(centerPos))
             self.intersectSceneWithFingerPos()
             self.update_object_highlight()
             self.applyTransformations()
@@ -779,23 +808,23 @@ class DoubleTapGesture(MultiTouchGesture):
                 self._firstTap = False
                 self._frameCounter = 0
 
-        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
+        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
         
         self._lastmilliseconds = int(round(time.time() * 1000))
 
 
-class Arcball(MultiTouchGesture):
+class HandGesture(MultiTouchGesture):
     """
     DoubleTapGesture to toggle between object and navigation mode
     """
     def __init__(self):
-        super(Arcball, self).__init__()
+        super(HandGesture, self).__init__()
 
     def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 5:
             return False
 
-        print "start arcball"
+        print "do something with your hand (ARCBALL?)"
 
 
 class TUIOCursor(avango.script.Script):

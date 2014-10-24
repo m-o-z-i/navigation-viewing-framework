@@ -481,20 +481,23 @@ class User(VisibilityHandler2D):
       self.user_representations[DISPLAY_GROUP_ID].connect_navigation_of_display_group(NAVIGATION_ID)
       _display_group_instance = self.user_representations[DISPLAY_GROUP_ID].DISPLAY_GROUP
 
-      # trigger correct avatar and screen visibilities
-      for _user in WORKSPACE_USERS:
-        _user.handle_correct_visibility_groups_for(_display_group_instance)
-
       # trigger correct tool visibilities at display group
       for _tool in self.WORKSPACE_INSTANCE.tools:
         _tool.handle_correct_visibility_groups_for(_display_group_instance)
 
+      # trigger correct avatar and screen visibilities
+      #for _user in WORKSPACE_USERS:
+      #  _user.handle_correct_visibility_groups_for(_display_group_instance)
+
       # trigger correct video visibilites at both navigations
-      if self.WORKSPACE_INSTANCE.video_3D != None:
+      if self.WORKSPACE_INSTANCE.video_3D != None and ApplicationManager.current_avatar_mode == "VIDEO":
         _old_nav = self.WORKSPACE_INSTANCE.display_groups[DISPLAY_GROUP_ID].navigations[_old_nav_id]
         _new_nav = self.WORKSPACE_INSTANCE.display_groups[DISPLAY_GROUP_ID].navigations[NAVIGATION_ID]
         self.WORKSPACE_INSTANCE.video_3D.handle_correct_visibility_groups_for(_old_nav)
         self.WORKSPACE_INSTANCE.video_3D.handle_correct_visibility_groups_for(_new_nav)
+      else:
+        for _user in WORKSPACE_USERS:
+          _user.handle_correct_visibility_groups_for(_display_group_instance)
 
     else:
       print_error("Error. Display Group ID does not exist.", False)
@@ -538,30 +541,33 @@ class User(VisibilityHandler2D):
       ## determine which group names have to be added to the user representations ##
       _user_visible_for = []
 
-      # append all names of user representations which are not on same navigation
-      for _user_repr in _all_user_reprs_at_display_group:
+      # when video avatars are enabled, do not make josephs visible
+      if ApplicationManager.current_avatar_mode == "JOSEPH":
+        
+        # append all names of user representations which are not on same navigation
+        for _user_repr in _all_user_reprs_at_display_group:
 
-        if _user_repr.connected_navigation_id != _user_repr_at_display_group.connected_navigation_id:
-          _user_visible_for.append(_user_repr.view_transform_node.Name.value)
+          if _user_repr.connected_navigation_id != _user_repr_at_display_group.connected_navigation_id:
+            _user_visible_for.append(_user_repr.view_transform_node.Name.value)
 
-      # check for all user representations outside the handled display group
-      for _user_repr in ApplicationManager.all_user_representations:
-        if _user_repr.DISPLAY_GROUP != _handled_display_group_instance:
+        # check for all user representations outside the handled display group
+        for _user_repr in ApplicationManager.all_user_representations:
+          if _user_repr.DISPLAY_GROUP != _handled_display_group_instance:
 
-          # consider visibility table
-          _handled_display_group_tag = _handled_display_group_instance.visibility_tag
-          _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
-          
-          try:
-            _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
-          except:
-            _visible = False
-          
-          if _visible:
-            if _user_repr.view_transform_node.Name.value == "scene_matrix":
-              _user_visible_for.append(_user_repr.view_transform_node.Parent.value.Name.value + "_" + _user_repr.head.Name.value)
-            else:
-              _user_visible_for.append(_user_repr.view_transform_node.Name.value)
+            # consider visibility table
+            _handled_display_group_tag = _handled_display_group_instance.visibility_tag
+            _user_repr_display_group_tag = _user_repr.DISPLAY_GROUP.visibility_tag
+            
+            try:
+              _visible = self.visibility_table[_user_repr_display_group_tag][_handled_display_group_tag]
+            except:
+              _visible = False
+            
+            if _visible:
+              if _user_repr.view_transform_node.Name.value == "scene_matrix":
+                _user_visible_for.append(_user_repr.view_transform_node.Parent.value.Name.value + "_" + _user_repr.head.Name.value)
+              else:
+                _user_visible_for.append(_user_repr.view_transform_node.Name.value)
 
       # apply the obtained group names to the user representation
       if len(_user_visible_for) == 0:

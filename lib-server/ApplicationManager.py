@@ -57,6 +57,10 @@ class ApplicationManager(avango.script.Script):
   # Boolean field representing the key for action 4.
   sf_key4 = avango.SFBool()
 
+  ## @var current_avatar_mode
+  # String saying which type of avatars are currently used. Can be "JOSEPH" or "VIDEO"
+  current_avatar_mode = "JOSEPH"
+
   ## Default constructor.
   def __init__(self):
     self.super(ApplicationManager).__init__()
@@ -497,6 +501,8 @@ class ApplicationManager(avango.script.Script):
 
     if self.sf_key3.value == True:
 
+      ApplicationManager.current_avatar_mode = "VIDEO"
+
       avatar_visibility_table = {
                             "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
                           , "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}
@@ -526,6 +532,9 @@ class ApplicationManager(avango.script.Script):
   def sf_key4_changed(self):
 
     if self.sf_key4.value == True:
+
+      ApplicationManager.current_avatar_mode = "JOSEPH"
+
       video_visibility_table = {
                             "dlp_wall"  : {"table" : False, "lcd_wall" : False, "portal" : False}
                           , "table" : {"dlp_wall" : False, "lcd_wall" : False, "portal" : False}

@@ -8,7 +8,6 @@ import avango
 import avango.gua
 
 # import framework libraries
-from ApplicationManager import *
 from ConsoleIO import *
 from VisibilityHandler import *
 from scene_config import scenegraphs
@@ -80,14 +79,15 @@ class Video3D(VisibilityHandler2D):
   def __init__(self):
     self.super(Video3D).__init__()
 
+    # import ApplicationManager as it strangely does not work at the top of this file
+    exec('from ApplicationManager import *', globals())
+
   ## Custom constructor.
   # @param WORKSPACE_INSTANCE The instance of Workspace to which this Tool belongs to.
   # @param FILENAME The path of the file containing the video stream.
   # @param OFFSET The offset to be stored at the representations' video nodes.
   # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags.
-  # @param ALL_USER_REPRESENTATIONS Reference to ApplicationManager.all_user_representations as this is strangely not
-  #                                 importable in this file.
-  def my_constructor(self, WORKSPACE_INSTANCE, FILENAME, OFFSET, VISIBILITY_TABLE, ALL_USER_REPRESENTATIONS):
+  def my_constructor(self, WORKSPACE_INSTANCE, FILENAME, OFFSET, VISIBILITY_TABLE):
 
     self.table_constructor(VISIBILITY_TABLE)
 
@@ -107,9 +107,6 @@ class Video3D(VisibilityHandler2D):
     # List of Video3DRepresentation instances belonging to this Video3D.
     self.video_3D_representations = []
 
-    ## @var ALL_USER_REPRESENTATIONS
-    # Reference to ApplicationManager.all_user_representations as this is strangely not importable in this file.
-    self.ALL_USER_REPRESENTATIONS = ALL_USER_REPRESENTATIONS
 
   ## Changes the visibility table during runtime.
   # @param VISIBILITY_TABLE A matrix containing visibility rules according to the DisplayGroups' visibility tags. 
@@ -156,11 +153,11 @@ class Video3D(VisibilityHandler2D):
     ## determine which group names have to be added to the video representation ##
     _video_visible_for = []
 
-    # if the navigation is not used, hide the video representation
-    if len(NAVIGATION_INSTANCE.active_user_representations) > 0:
+    # if the navigation is not used, hide the video representation, also when avatar mode is not set to video
+    if len(NAVIGATION_INSTANCE.active_user_representations) > 0 and ApplicationManager.current_avatar_mode == "VIDEO":
 
       # loop over all user representations to find the ones for which the video is visible
-      for _user_repr in self.ALL_USER_REPRESENTATIONS:
+      for _user_repr in ApplicationManager.all_user_representations:
 
         # video is only visible for users not on the corresponding navigation to avoid physical overlap
         if _user_repr.DISPLAY_GROUP.navigations[_user_repr.connected_navigation_id] != NAVIGATION_INSTANCE:

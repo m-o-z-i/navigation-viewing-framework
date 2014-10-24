@@ -138,7 +138,8 @@ class MultiTouchDevice(avango.script.Script):
         """
         point = fingerCenterPos
 
-        """map points from interval [0, 1] to [-0.5, 0.5]"""
+        #TODO: correct finger center position
+        """ map points from interval [0, 1] to [-0.5, 0.5] """
         mappedPosX = point[0] * 1 - 0.5
         mappedPosY = point[1] * 1 - 0.5
 
@@ -382,11 +383,11 @@ class MultiTouchDevice(avango.script.Script):
                 self._sceneGraph[sceneNode].Transform.value = TransformMatrix
 
 
-            """ reset all data """ 
-            self._transMat   = avango.gua.make_identity_mat()
-            self._rotMat     = avango.gua.make_identity_mat()
-            self._scaleMat   = avango.gua.make_identity_mat()
-            self._globalMatrix = avango.gua.make_identity_mat()
+        """ reset all data """ 
+        self._transMat   = avango.gua.make_identity_mat()
+        self._rotMat     = avango.gua.make_identity_mat()
+        self._scaleMat   = avango.gua.make_identity_mat()
+        self._globalMatrix = avango.gua.make_identity_mat()
 
 
 class TUIODevice(MultiTouchDevice):
@@ -430,6 +431,7 @@ class TUIODevice(MultiTouchDevice):
         self.registerGesture(RotationGesture())
         self.registerGesture(RollGesture())
         self.registerGesture(DoubleTapGesture())
+        self.registerGesture(Arcball())
         self.always_evaluate(True)
 
 
@@ -690,30 +692,12 @@ class RollGesture(MultiTouchGesture):
 
     def processGesture(self, activePoints, touchDevice):
         if len(activePoints) != 3:
-            self._distances = []
+            self._positions = []
             return False
+
         vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
         vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
         vec3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[1].PosY.value, 0)
-
-        distance12 = vec2 - vec1
-        distance23 = vec3 - vec1
-
-        """ save old distance12 """
-        if 2 == len(self._distances12):
-            self._distances12.append(distance12)
-            self._distances12.pop(0)
-        else:
-            self._distances12.append(distance12)
-            return False
-
-        """ save old distance23 """
-        if 2 == len(self._distances23):
-            self._distances23.append(distance23)
-            self._distances23.pop(0)
-        else:
-            self._distances23.append(distance23)
-            return False
 
         """ save positions from vec2 """
         if 2 == len(self._positions):
@@ -722,13 +706,12 @@ class RollGesture(MultiTouchGesture):
         else:
             self._positions.append(vec2)
             return False
+        
+        distance12 = vec2 - vec1
+        distance23 = vec3 - vec1
 
-
-        distanceDiff12 = self._distances12[0] - self._distances12[-1]
-        distanceDiff23 = self._distances23[0] - self._distances23[-1]
-
-        """ check if all distances stay nearly in the same distance """
-        if (math.fabs(distanceDiff12.length()) > 0.01 or math.fabs(distanceDiff23.length()) > 0.01):
+        """ return when the distance between points is too big (can't be the fingers of one hand)"""
+        if 0.1 < distance12.length() or 0.1 < distance23.length():
             return False
 
         """ direction vector of all 3 fingers """
@@ -736,8 +719,13 @@ class RollGesture(MultiTouchGesture):
 
         """ orthogonal rotation axis """
         rotationalAxis = avango.gua.Vec3(-directionVec.y, 0, directionVec.x)
-
         angle = directionVec.length() * 360
+        
+        """ to avoid noisy discontinuous points """
+        if 10 < angle:
+            #print angle , "; 1: " , self._positions[0] , "; 2: " , self._positions[-1] , " ; dirVec: " , directionVec , "; dirVec lenght: " , directionVec.length()
+            return False
+
         touchDevice.addLocalRotation(avango.gua.make_rot_mat(angle, rotationalAxis))
 
         return True
@@ -787,13 +775,27 @@ class DoubleTapGesture(MultiTouchGesture):
             self._frameCounter = 0
 
         else:
-            if 150 > lastDetectedActivity and 7 < self._frameCounter:
+            if 150 > lastDetectedActivity and 10 < self._frameCounter:
                 self._firstTap = False
                 self._frameCounter = 0
 
-        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
+        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
         
         self._lastmilliseconds = int(round(time.time() * 1000))
+
+
+class Arcball(MultiTouchGesture):
+    """
+    DoubleTapGesture to toggle between object and navigation mode
+    """
+    def __init__(self):
+        super(Arcball, self).__init__()
+
+    def processGesture(self, activePoints, touchDevice):
+        if len(activePoints) != 5:
+            return False
+
+        print "start arcball"
 
 
 class TUIOCursor(avango.script.Script):

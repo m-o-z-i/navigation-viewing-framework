@@ -828,7 +828,7 @@ class HandGesture(MultiTouchGesture):
         if len(activePoints) != 5:
             return False
 
-        print "do something with your hand (ARCBALL?)"
+        #print "do something with your hand (ARCBALL?)"
 
 
 class TUIOCursor(avango.script.Script):
@@ -878,7 +878,7 @@ class TUIOCursor(avango.script.Script):
         """
         Set station ID.
         """
-        self.device_sensor.Station.value = "gua-finger{}".format(self.CursorID.value)
+        self.device_sensor.Station.value = "gua-finger{}#cursor".format(self.CursorID.value)
 
     @field_has_changed(PosX)
     def updatePosX(self):

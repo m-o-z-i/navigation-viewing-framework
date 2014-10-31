@@ -28,7 +28,7 @@ export PYTHONPATH="$LOCAL_AVANGO/lib/python2.7":"$LOCAL_AVANGO/examples":$AVANGO
 export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./lib-server
 
 # run program
-cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4
+cd "$DIR" && python ./lib-client/main.py $1 $2 $3 $4 > /dev/null
 
 # kill daemon
 kill %1

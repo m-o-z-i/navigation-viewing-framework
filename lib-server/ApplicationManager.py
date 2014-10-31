@@ -90,7 +90,7 @@ class ApplicationManager():
 
       for _display in displays:
         if _display.hostname != _own_hostname:
-          _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python"])
+          _ssh_kill = subprocess.Popen(["ssh", _display.hostname, "killall python 2> /dev/null"])
 
     ## @var slot_manager
     # A SlotManager instance in order to handle the shutter timings of users.

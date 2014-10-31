@@ -8,12 +8,13 @@ import avango
 import avango.gua
 #import avango.utils
 
+from MultiTouch.TUIO import TUIODevice
+
 # import framework libraries
 from SceneManager import *
 from ApplicationManager import *
 from RecorderPlayer import *
 from Manipulation import *
-from TUIO import *
 
 # import python libraries
 import sys

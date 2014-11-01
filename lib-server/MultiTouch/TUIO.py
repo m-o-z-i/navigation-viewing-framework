@@ -36,7 +36,7 @@ class TUIODevice(MultiTouchDevice):
     def my_constructor(self, graph, display, NET_TRANS_NODE, SCENE_MANAGER, APPLICATION_MANAGER):
         self.super(TUIODevice).my_constructor(graph, display, NET_TRANS_NODE, SCENE_MANAGER, APPLICATION_MANAGER)
         
-        # add 20 touch cursors
+        # add touch cursors
         for i in range(0, 20):
             cursor = TUIOCursor(CursorID = i) 
             self.Cursors.value.append(cursor)
@@ -44,19 +44,19 @@ class TUIODevice(MultiTouchDevice):
             self.PosChanged.connect_from(cursor.PosX)
             self.PosChanged.connect_from(cursor.PosY)
 
-        # add 4 hands
+        # add hands (just one for now since we don't support separate views for users yet)
         for i in range(0, 4):
             hand = TUIOHand(HandID  = i)
             self.Hands.value.append(hand)
-            self._activePoints[i] = {}
 
         # register gestures
         # TODO: do this somewhere else
+        self.registerGesture(DoubleTapGesture())
         self.registerGesture(DragGesture())
         self.registerGesture(PinchGesture())
         self.registerGesture(RotationGesture())
         self.registerGesture(PitchRollGesture())
-        self.registerGesture(DoubleTapGesture())
+
         self.always_evaluate(True)
 
 
@@ -67,47 +67,46 @@ class TUIODevice(MultiTouchDevice):
 
     @field_has_changed(PosChanged)
     def processChange(self):
-        #print(self.PosChanged.value)
         if -1.0 == self.PosChanged.value:
             return
 
         # update active point list
+        hands        = {}
+        activePoints = []
         for touchPoint in self.Cursors.value:
-            if touchPoint.IsTouched.value:
-                self._activePoints[touchPoint.CursorID.value] = touchPoint
-            elif touchPoint.CursorID.value in self._activePoints:
-                del self._activePoints[touchPoint.CursorID.value]
+            for hand in self.Hands.value:
+                if touchPoint.IsTouched.value and touchPoint.SessionID.value in hand.FingerSIDs.value:
+                    activePoints.append((hand.HandID.value, touchPoint))
+                    hands[hand.HandID.value] = hand
+                    break
 
-        activePoints = self._activePoints.values()
-
-        # TODO: why does not work in if (doSomething) ?
         for gesture in self.gestures:
-            gesture.processGesture(activePoints, self)
+            gesture.processGesture(activePoints, hands, self)
         
         # valid input is registered
         doSomething = True
 
-        # reset all visualisations
+        # reset all visualizations
         self.fingercenterpos_geometry.GroupNames.value = ["do_not_display_group"]
         self.handPos_geometry.GroupNames.value = ["do_not_display_group"]
 
         if len(activePoints) == 2:
-            point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
-            point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+            point1 = avango.gua.Vec3(activePoints[0][1].PosX.value, activePoints[0][1].PosY.value, 0)
+            point2 = avango.gua.Vec3(activePoints[1][1].PosX.value, activePoints[1][1].PosY.value, 0)
             centerPos = (point1 + ((point2-point1) / 2))
 
         elif len(activePoints) == 3:
-            point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
-            point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
-            point3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[2].PosY.value, 0)
+            point1 = avango.gua.Vec3(activePoints[0][1].PosX.value, activePoints[0][1].PosY.value, 0)
+            point2 = avango.gua.Vec3(activePoints[1][1].PosX.value, activePoints[1][1].PosY.value, 0)
+            point3 = avango.gua.Vec3(activePoints[2][1].PosX.value, activePoints[2][1].PosY.value, 0)
             centerPos = (point1 + point2 + point3) / 3
 
         elif len(activePoints) == 5:
-            point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
-            point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
-            point3 = avango.gua.Vec3(activePoints[2].PosX.value, activePoints[2].PosY.value, 0)
-            point4 = avango.gua.Vec3(activePoints[3].PosX.value, activePoints[3].PosY.value, 0)
-            point5 = avango.gua.Vec3(activePoints[4].PosX.value, activePoints[4].PosY.value, 0)
+            point1 = avango.gua.Vec3(activePoints[0][1].PosX.value, activePoints[0][1].PosY.value, 0)
+            point2 = avango.gua.Vec3(activePoints[1][1].PosX.value, activePoints[1][1].PosY.value, 0)
+            point3 = avango.gua.Vec3(activePoints[2][1].PosX.value, activePoints[2][1].PosY.value, 0)
+            point4 = avango.gua.Vec3(activePoints[3][1].PosX.value, activePoints[3][1].PosY.value, 0)
+            point5 = avango.gua.Vec3(activePoints[4][1].PosX.value, activePoints[4][1].PosY.value, 0)
             centerPos = (point1 + point2 + point3 + point4 + point5) / 5
             self.visualisizeHandPosition(self.mapInputPosition(centerPos))
 
@@ -115,7 +114,7 @@ class TUIODevice(MultiTouchDevice):
             # only one ore more than 3 input points are not valid until now
             doSomething = False
 
-        if (doSomething):
+        if doSomething:
             self.setFingerCenterPos(self.mapInputPosition(centerPos))
             self.intersectSceneWithFingerPos()
             self.update_object_highlight()
@@ -209,6 +208,10 @@ class TUIOHand(avango.script.Script):
     FingerSIDs = avango.MFFloat()
     SessionID  = avango.SFFloat()
     HandID     = avango.SFInt()
+
+    CLASS_UNKNOWN = 0
+    CLASS_LEFT    = 1
+    CLASS_RIGHT   = 2
 
     def __init__(self):
         self.super(TUIOHand).__init__()

@@ -1,5 +1,11 @@
 #!/usr/bin/python
 
+
+import avango
+import avango.gua
+import time
+import math
+
 class MultiTouchGesture(object):
     """
     Base class for multi touch gestures.
@@ -8,12 +14,13 @@ class MultiTouchGesture(object):
     def __init__(self):
         self.resetMovingAverage()
 
-    def processGesture(self, activePoints, touchDevice):
+    def processGesture(self, activePoints, hands, touchDevice):
         """
         Process gesture. This method needs to be implemented in subclasses.
 
         @abstract
-        @param activePoints: a list of currently active points
+        @param activePoints: a list of currently active points as tuples of hand ID and touch point
+        @param hands: the active hands as dict with hand IDs as keys
         @param mDofDevice: reference to multi-DoF device
         @return True if gesture was executed, otherwise False
         """
@@ -40,6 +47,33 @@ class MultiTouchGesture(object):
         self._totalMA   = 0
         self._maSamples = 0
 
+    def getTouchPointsPerHand(self, touchPoints, hands):
+        """
+        Return a dict with touchPoints grouped by hand.
+
+        @param touchPoints: the touch points to group as a list of (handID, touchPoint) tuples
+        @param hands: the hands to group by as dict with hand IDs as keys
+        """
+        pointsPerHand = dict((handID, []) for handID in hands)
+        for p in touchPoints:
+            pointsPerHand[p[0]].append(p[1])
+        return pointsPerHand
+
+    def guardSingleHandGesture(self, touchPoints, hands, numberOfTouchPoints):
+        """
+        Return a valid hand ID if there is a single hand with specified number of touch points.
+
+        @param touchPoints: the currently active touch points as a list of (handID, touchPoint) tuples
+        @param hands: then active hands as dict with hand IDs as keys
+        @param numberOfTouchPoints: the number of touch points to accep
+        @return: the ID of the first hand matching the number criteria or -1 if none could be found
+        """
+        pointsPerHand = self.getTouchPointsPerHand(touchPoints, hands)
+        for h, p in pointsPerHand.iteritems():
+            if len(p) == numberOfTouchPoints:
+                return h
+        return -1
+
 
 class DoubleTapGesture(MultiTouchGesture):
     """
@@ -58,7 +92,7 @@ class DoubleTapGesture(MultiTouchGesture):
         self._firstTap = False
         self._lastCounter = 0
 
-    def processGesture(self, activePoints, touchDevice):
+    def processGesture(self, activePoints, hands, touchDevice):
         if len(activePoints) != 2:
             return False
 
@@ -103,10 +137,15 @@ class DragGesture(MultiTouchGesture):
         """ last position for relative panning """
         self._lastPos = None
 
-    def processGesture(self, activePoints, touchDevice):
-        if 2 != len(activePoints):
+    def processGesture(self, activePoints, hands, touchDevice):
+        handID = self.guardSingleHandGesture(activePoints, hands, 2)
+
+        if -1 == handID:
             self._lastPos = None
-            return False
+            return
+
+        pointsPerHand = self.getTouchPointsPerHand(activePoints, hands)
+        activePoints  = pointsPerHand[handID]
 
         point1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
         point2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
@@ -146,15 +185,15 @@ class PinchGesture(MultiTouchGesture):
         super(PinchGesture, self).__init__()
         self.distances = []
 
-    def processGesture(self, activePoints, touchDevice):
-        if len(activePoints) != 2:
+    def processGesture(self, activePoints, hands, touchDevice):
+        if 2 != len(activePoints):
             self.distances = []
             self.scaleCenter = None
             self.centerDirection = None
             return False
 
-        vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
-        vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+        vec1 = avango.gua.Vec3(activePoints[0][1].PosX.value, activePoints[0][1].PosY.value, 0)
+        vec2 = avango.gua.Vec3(activePoints[1][1].PosX.value, activePoints[1][1].PosY.value, 0)
         distance = vec2 - vec1
 
         """ save old distance """
@@ -190,10 +229,15 @@ class PitchRollGesture(MultiTouchGesture):
         self._positions = []
 
 
-    def processGesture(self, activePoints, touchDevice):
-        if len(activePoints) != 3:
+    def processGesture(self, activePoints, hands, touchDevice):
+        handID = self.guardSingleHandGesture(activePoints, hands, 3)
+
+        if -1 == handID:
             self._positions = []
             return False
+
+        pointsPerHand = self.getTouchPointsPerHand(activePoints, hands)
+        activePoints  = pointsPerHand[handID]
 
         vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
         vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
@@ -230,7 +274,6 @@ class PitchRollGesture(MultiTouchGesture):
 
         return True
 
-
 class RotationGesture(MultiTouchGesture):
     """
     RotationGesture to ratate scene or objects
@@ -243,13 +286,15 @@ class RotationGesture(MultiTouchGesture):
         """ smoothing factor for rotation angles """
         self._smoothingFactor = 8
 
-    def processGesture(self, activePoints, touchDevice):
-        if len(activePoints) != 2:
+    def processGesture(self, activePoints, hands, touchDevice):
+        handID = self.guardSingleHandGesture(activePoints, hands, 2)
+
+        if -1 == handID:
             self._distances = []
             return False
 
-        vec1 = avango.gua.Vec3(activePoints[0].PosX.value, activePoints[0].PosY.value, 0)
-        vec2 = avango.gua.Vec3(activePoints[1].PosX.value, activePoints[1].PosY.value, 0)
+        vec1 = avango.gua.Vec3(activePoints[0][1].PosX.value, activePoints[0][1].PosY.value, 0)
+        vec2 = avango.gua.Vec3(activePoints[1][1].PosX.value, activePoints[1][1].PosY.value, 0)
         distance = vec2 - vec1
         distance = avango.gua.Vec3(distance.x * touchDevice.getDisplay().size[0], distance.y * touchDevice.getDisplay().size[1], 0)
 

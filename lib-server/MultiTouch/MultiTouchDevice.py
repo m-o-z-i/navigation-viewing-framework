@@ -128,7 +128,8 @@ class MultiTouchDevice(avango.script.Script):
 
 
         """ define Input display size """
-        self._inputDisplaySize = avango.gua.Vec2(1.10,0.75)
+        #111,5cm x 75,8
+        self._inputDisplaySize = avango.gua.Vec2(1.115,0.758)
 
 
     def getDisplay(self):

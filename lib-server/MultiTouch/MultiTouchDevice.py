@@ -51,6 +51,7 @@ class MultiTouchDevice(avango.script.Script):
         self._intersectionFound = False
         self._intersectionPoint = avango.gua.Vec3(0,0,0)
         self._intersectionObject = None
+        self._lastIntersectionCounter = 0
 
         """ ray representation"""
         self.ray_length = 10
@@ -225,71 +226,79 @@ class MultiTouchDevice(avango.script.Script):
         #TODO: decide between displays with tracking and not
         #for no tracking use this: #self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 0.5 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0)
 
-        """ head position of first user """
-        self._headPosition1 = self._applicationManager.user_list[0].headtracking_reader.sf_abs_vec.value
-        
+        #do this only once per gesture
+        if (1 < (self._frameCounter - self._lastIntersectionCounter)):
+            """ head position of first user """
+            self._headPosition1 = self._applicationManager.user_list[0].headtracking_reader.sf_abs_vec.value
 
-        """ direction Vector between head and finger position """
-        _directionVector = self._fingerCenterPos.value - self._headPosition1
-        
-        """ ray shouldn't start in the head of the user (for the representation) """  
-        _startPosition = self._headPosition1 + _directionVector * 0.8
-        
-        """ calculate rotation matrix """
-        _vec1 = avango.gua.Vec3(0.0,0.0,-1.0)
-        _directionVector.normalize()
-        _rotationMatrix = Tools.get_rotation_between_vectors( _vec1, _directionVector)
-        
-        """ start position and rotation matrix """
-        self._rayOrientation.value = avango.gua.make_trans_mat(_startPosition) * _rotationMatrix
+            """ direction Vector between head and finger position """
+            _directionVector = self._fingerCenterPos.value - self._headPosition1
+            
+            """ ray shouldn't start in the head of the user (for the representation) """  
+            _startPosition = self._headPosition1 + _directionVector * 0.8
+            
+            """ calculate rotation matrix """
+            _vec1 = avango.gua.Vec3(0.0,0.0,-1.0)
+            _directionVector.normalize()
+            _rotationMatrix = Tools.get_rotation_between_vectors( _vec1, _directionVector)
+            
+            """ start position and rotation matrix """
+            self._rayOrientation.value = avango.gua.make_trans_mat(_startPosition) * _rotationMatrix
+                    
+            """intersection found"""
+            if len(self._intersection.mf_pick_result.value) > 0:
+                self._intersectionFound = True
+
+                """first intersected object"""
+                _pick_result = self._intersection.mf_pick_result.value[0]
+
+                self._intersectionPoint = _pick_result.Position.value 
+                self._intersectionObject = _pick_result.Object.value
                 
-        """intersection found"""
-        if len(self._intersection.mf_pick_result.value) > 0:
-            self._intersectionFound = True
+                """update intersectionObject until you insert object Mode"""
+                if not self._objectMode:
+                    self._lastIntersectionObject = self._intersectionObject
+                
+                """ transform point into world coordinates """
+                self._intersectionPoint = self._intersectionObject.WorldTransform.value * self._intersectionPoint 
+                
+                """make Vec3 from Vec4"""
+                self._intersectionPoint = avango.gua.Vec3(self._intersectionPoint.x,self._intersectionPoint.y,self._intersectionPoint.z) 
+                
+                if (self._objectMode and not self._objectName == self._intersectionObject.Parent.value.Name.value):
+                    #print "same object"
+                    self._intersectionPoint = avango.gua.Vec3(0,0,0)
 
-            """first intersected object"""
-            _pick_result = self._intersection.mf_pick_result.value[0]
+                """ VISUALISATION """
+                """update intersection sphere"""
+                self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPoint) * \
+                                                                   avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
+                """set sphere and ray visible"""                                           
+                #self.intersection_point_geometry.GroupNames.value = [] 
+                #self.ray_geometry.GroupNames.value = []
 
-            self._intersectionPoint = _pick_result.Position.value 
-            self._intersectionObject = _pick_result.Object.value
-            
-            """update intersectionObject until you insert object Mode"""
-            if not self._objectMode:
-                self._lastIntersectionObject = self._intersectionObject
-            
-            """
-            # VISUALISATION:
-            # transform point into world coordinates
-            """
-            self._intersectionPoint = self._intersectionObject.WorldTransform.value * self._intersectionPoint 
-            
-            """make Vec3 from Vec4"""
-            self._intersectionPoint = avango.gua.Vec3(self._intersectionPoint.x,self._intersectionPoint.y,self._intersectionPoint.z) 
-            
-            """update intersection sphere"""
-            self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPoint) * \
-                                                               avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
-            """set sphere and ray visible"""                                           
-            self.intersection_point_geometry.GroupNames.value = [] 
-            self.ray_geometry.GroupNames.value = []
+                """update ray"""
+                _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
 
-            """update ray"""
-            _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
+                self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, _distance * -0.5) * \
+                                                    avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                                    avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
 
-            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, _distance * -0.5) * \
-                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
-                                                avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
+            else:
+                """set geometry invisible"""
+                self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
+                self.ray_geometry.GroupNames.value = ["do_not_display_group"]
 
-        else:
-            """set geometry invisible"""
-            self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
-            self.ray_geometry.GroupNames.value = ["do_not_display_group"]
+                """set to default ray length"""
+                self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
+                                                    avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                                    avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
+                self._intersectionFound = False
+                self._intersectionPoint = avango.gua.Vec3(0,0,0)
+        
+        self._lastIntersectionCounter = self._frameCounter
 
-            """set to default ray length"""
-            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
-                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
-                                                avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
-            self._intersectionFound = False
+
 
 
     def update_object_highlight(self):
@@ -338,7 +347,6 @@ class MultiTouchDevice(avango.script.Script):
 
         """ to avoid errors until the scenen Name is set """
         if (None != self._sceneName):
-            
             sceneNode = "/net/" + self._sceneName
             self._globalMatrix = self._sceneGraph[sceneNode].Transform.value
             
@@ -369,15 +377,13 @@ class MultiTouchDevice(avango.script.Script):
             if self._objectMode:
                 TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
                                   avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
-                                  avango.gua.make_trans_mat(translateDistance * 1.0) * \
-                                  avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
                                   avango.gua.make_inverse_mat(avango.gua.make_rot_mat(self._globalMatrix.get_rotate_scale_corrected())) * \
+                                  avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
                                   self._rotMat * \
                                   self._scaleMat * \
                                   self._transMat * \
-                                  avango.gua.make_rot_mat(self._globalMatrix.get_rotate_scale_corrected()) * \
                                   avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
-                                  avango.gua.make_trans_mat(translateDistance * -1.0) * \
+                                  avango.gua.make_rot_mat(self._globalMatrix.get_rotate_scale_corrected()) * \
                                   avango.gua.make_scale_mat(TransformMatrix.get_scale())
 
             else:
@@ -393,7 +399,20 @@ class MultiTouchDevice(avango.script.Script):
                                   avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * 1.0 , 0)) * \
                                   avango.gua.make_trans_mat(translateDistance * -1.0) * \
                                   avango.gua.make_scale_mat(TransformMatrix.get_scale())
-
+            """
+            TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
+                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) *\
+                                  avango.gua.make_trans_mat(translateDistance * 1.0) * \
+                                  avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * -1.0 , 0)) * \
+                                  avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
+                                  self._rotMat * \
+                                  self._scaleMat * \
+                                  self._transMat * \
+                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
+                                  avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * 1.0 , 0)) * \
+                                  avango.gua.make_trans_mat(translateDistance * -1.0) * \
+                                  avango.gua.make_scale_mat(TransformMatrix.get_scale())
+            """
 
             """ object mode """
             if self._objectMode:

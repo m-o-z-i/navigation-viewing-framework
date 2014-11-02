@@ -126,7 +126,7 @@ class DoubleTapGesture(MultiTouchGesture):
                 self._firstTap = False
                 self._frameCounter = 0
 
-        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
+        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
         
         self._lastmilliseconds = int(round(time.time() * 1000))
 

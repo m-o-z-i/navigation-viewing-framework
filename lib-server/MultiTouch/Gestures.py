@@ -92,6 +92,9 @@ class DoubleTapGesture(MultiTouchGesture):
         self._firstTap = False
         self._lastCounter = 0
 
+        """ doubletap intervall: between 100ms and 200ms """
+        self._intervall = [100, 250]
+
     def processGesture(self, activePoints, hands, touchDevice):
         if len(activePoints) != 2:
             return False
@@ -106,9 +109,9 @@ class DoubleTapGesture(MultiTouchGesture):
             self._frameCounter = 0
 
         """ 
-        doubletap intervall: between 50ms and 150ms
+        doubletap intervall: between 100ms and 200ms
         """
-        if 150 > lastDetectedActivity and 50 < lastDetectedActivity and self._firstTap:
+        if self._intervall[1] > lastDetectedActivity and self._intervall[0] < lastDetectedActivity and self._firstTap:
             if not self._objectMode:
                 self._objectMode = touchDevice.setObjectMode(True)
             
@@ -119,11 +122,11 @@ class DoubleTapGesture(MultiTouchGesture):
             self._frameCounter = 0
 
         else:
-            if 150 > lastDetectedActivity and 10 < self._frameCounter:
+            if self._intervall[1] > lastDetectedActivity and 10 < self._frameCounter:
                 self._firstTap = False
                 self._frameCounter = 0
 
-        #print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
+        print "firstTap: " , self._firstTap , " ; detectedActivity: " ,  lastDetectedActivity , " ; frameCounter = " , self._frameCounter
         
         self._lastmilliseconds = int(round(time.time() * 1000))
 

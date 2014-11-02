@@ -65,7 +65,7 @@ class TUIODevice(MultiTouchDevice):
         self.processChange()
 
 
-    @field_has_changed(PosChanged)
+    #@field_has_changed(PosChanged)
     def processChange(self):
         if -1.0 == self.PosChanged.value:
             return

@@ -166,7 +166,7 @@ class ApplicationManager():
     self.pipeline.EnableFrustumCulling.value = True
     self.pipeline.EnableSsao.value = False
     self.pipeline.EnableFPSDisplay.value = True
-    self.pipeline.Enabled.value = True
+    self.pipeline.Enabled.value = False
     
     # add pipeline and scenegraph to viewer
     self.viewer.Pipelines.value = [self.pipeline]

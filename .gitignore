@@ -4,4 +4,8 @@
 *.nfs*
 recordings
 data/objects
+<<<<<<< HEAD
+=======
+configs
+>>>>>>> 8c7388ca30eee059c49d54a0d9a686e7116e45cc
 *.swp

@@ -114,7 +114,10 @@ class ApplicationManager(avango.script.Script):
       _server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
       _server_ip = _server_ip.strip(" \n")
       _server_ip = _server_ip.rsplit(" ")
-      _server_ip = str(_server_ip[-1])
+      for i in _server_ip:
+        if i.startswith("141"):
+          _server_ip = i
+          break
 
       # get own hostname
       _hostname = open('/etc/hostname', 'r').readline()

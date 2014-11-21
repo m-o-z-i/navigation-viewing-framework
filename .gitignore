@@ -9,3 +9,15 @@ data/objects
 configs
 >>>>>>> 8c7388ca30eee059c49d54a0d9a686e7116e45cc
 *.swp
+*.vim
+*~
+*.directory
+Thumbs.db
+desktop.ini
+.DS_Store
+data/objects/medieval_harbour
+data/objects/suzannes_revenge
+data/objects/apfel
+data/objects/bananas
+data/objects/marketbooth
+path_recordings

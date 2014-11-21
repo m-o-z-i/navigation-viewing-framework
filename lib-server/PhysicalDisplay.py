@@ -172,6 +172,10 @@ class PhysicalDisplay(Display):
     
     return _node
 
+  def get_touch_protocols(self):
+    return [ "NONE" ]
+
+
 
 # specialized display setups #
 
@@ -356,7 +360,7 @@ class TouchTable3D(PhysicalDisplay):
                                            [(20, 80, 40, 10), (2, 8, 4, 1)],
                                            [(20, 80, 40, 10), (2, 8, 4, 1)]
                                         ]
-                    , size = (1.17, 0.84)
+                    , size = (1.15, 0.84)
                     , transformation = avango.gua.make_rot_mat(90, -1, 0, 0)
                     , max_viewing_distance = 1.0
                     , stereo = True
@@ -381,6 +385,9 @@ class TouchTable3D(PhysicalDisplay):
       return (self.displaystrings[view_num], warpmatrices)
     else:
       return None
+
+  def get_touch_protocols(self):
+    return [ "TUIO" ]
 
 ## Display configuration for the Samsung Stereo TV in the VR lab. 
 class SamsungStereoTV(PhysicalDisplay):

@@ -339,6 +339,8 @@ class SceneManager(avango.script.Script):
     if self.sf_key_home.value == True: # key pressed
       self.print_active_scene()
 
+  def getActiveSceneName(self):
+    return self.active_scene.name
 
   # functions
   ## Sets one of the loaded scene to the active (displayed) one.
@@ -361,7 +363,10 @@ class SceneManager(avango.script.Script):
       for _workspace in ApplicationManager.all_workspaces:
         for _display_group in _workspace.display_groups:
           for _nav in _display_group.navigations:
+            _nav.start_scale = self.active_scene.starting_scale
+            _nav.start_matrix = self.active_scene.starting_matrix
             _nav.reset()
+
   
       print("Switching to Scene: " + self.active_scene.name)
   

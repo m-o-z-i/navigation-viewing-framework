@@ -227,58 +227,63 @@ class MultiTouchDevice(avango.script.Script):
 
         #do this only once per gesture
         
-        """intersection found"""
-        if len(self._intersection.mf_pick_result.value) > 0:
-            self._intersectionFound = True
-            
+        #do this only once per gesture
+        if (1 < (self._frameCounter - self._lastIntersectionCounter)):                 
             """ ray orientation from fingerPos down """
-            self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 1 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0)        
+            self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 1 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0)
+            
+            """intersection found"""
+            if len(self._intersection.mf_pick_result.value) > 0:
+                self._intersectionFound = True
 
-            """first intersected object"""
-            _pick_result = self._intersection.mf_pick_result.value[0]
+                """first intersected object"""
+                _pick_result = self._intersection.mf_pick_result.value[0]
 
-            self._intersectionPoint = _pick_result.Position.value 
-            self._intersectionObject = _pick_result.Object.value
-            
-            """update intersectionObject until you insert object Mode"""
-            if not self._objectMode:
-                self._lastIntersectionObject = self._intersectionObject
-            
-            """ transform point into world coordinates """
-            self._intersectionPoint = self._intersectionObject.WorldTransform.value * self._intersectionPoint 
-            
-            """make Vec3 from Vec4"""
-            self._intersectionPoint = avango.gua.Vec3(self._intersectionPoint.x,self._intersectionPoint.y,self._intersectionPoint.z) 
-            
-            if (self._objectMode and not self._objectName == self._intersectionObject.Parent.value.Name.value):
+                self._intersectionPoint = _pick_result.Position.value 
+                self._intersectionObject = _pick_result.Object.value
+                
+                """update intersectionObject until you insert object Mode"""
+                if not self._objectMode:
+                    self._lastIntersectionObject = self._intersectionObject
+                
+                """ transform point into world coordinates """
+                self._intersectionPoint = self._intersectionObject.WorldTransform.value * self._intersectionPoint 
+                
+                """make Vec3 from Vec4"""
+                self._intersectionPoint = avango.gua.Vec3(self._intersectionPoint.x,self._intersectionPoint.y,self._intersectionPoint.z) 
+                
+                if (self._objectMode and not self._objectName == self._intersectionObject.Parent.value.Name.value):
+                    #print "same object"
+                    self._intersectionPoint = avango.gua.Vec3(0,0,0)
+
+                """ VISUALISATION """
+                """update intersection sphere"""
+                self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPoint) * \
+                                                                   avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
+                """set sphere and ray visible"""                                           
+                #self.intersection_point_geometry.GroupNames.value = [] 
+                #self.ray_geometry.GroupNames.value = []
+
+                """update ray"""
+                _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
+
+                self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, _distance * -0.5) * \
+                                                    avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                                    avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
+
+            else:
+                """set geometry invisible"""
+                self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
+                self.ray_geometry.GroupNames.value = ["do_not_display_group"]
+
+                """set to default ray length"""
+                self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
+                                                    avango.gua.make_rot_mat(-90.0,1,0,0) * \
+                                                    avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
+                self._intersectionFound = False
                 self._intersectionPoint = avango.gua.Vec3(0,0,0)
-
-            """ VISUALISATION """
-            """update intersection sphere"""
-            self.intersection_point_geometry.Transform.value = avango.gua.make_trans_mat(self._intersectionPoint) * \
-                                                               avango.gua.make_scale_mat(self.intersection_sphere_size, self.intersection_sphere_size, self.intersection_sphere_size)
-            """set sphere and ray visible"""                                           
-            self.intersection_point_geometry.GroupNames.value = [] 
-            self.ray_geometry.GroupNames.value = []
-
-            """update ray"""
-            _distance = (self._intersectionPoint - self.ray_transform.WorldTransform.value.get_translate()).length()
-
-            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0, 0.0, _distance * -0.5) * \
-                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
-                                                avango.gua.make_scale_mat(self.ray_thickness, _distance, self.ray_thickness)
-
-        else:
-            """set geometry invisible"""
-            self.intersection_point_geometry.GroupNames.value = ["do_not_display_group"] 
-            self.ray_geometry.GroupNames.value = ["do_not_display_group"]
-
-            """set to default ray length"""
-            self.ray_geometry.Transform.value = avango.gua.make_trans_mat(0.0,0.0,self.ray_length * -0.5) * \
-                                                avango.gua.make_rot_mat(-90.0,1,0,0) * \
-                                                avango.gua.make_scale_mat(self.ray_thickness, self.ray_length, self.ray_thickness)
-            self._intersectionFound = False
-            self._intersectionPoint = avango.gua.Vec3(0,0,0)
+        
+        self._lastIntersectionCounter = self._frameCounter
         
 
 

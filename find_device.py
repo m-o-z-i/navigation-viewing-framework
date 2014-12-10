@@ -1,8 +1,14 @@
+#!/usr/bin/python
 
+## @file
+# Contains methods to find the event string of an input device.
+
+# import python libraries
 import os
 import subprocess
 import sys
 
+## Main method for the device search.
 def start():
 
   # this device number should be returned
@@ -18,8 +24,11 @@ def start():
   _name = _name[2:]
 
   # search for event number
-  print get_event_string(_string_num, _name)
+  print(get_event_string(_string_num, _name))
 
+## Gets the event string of a given input device.
+# @param STRING_NUM Integer saying which device occurence should be returned.
+# @param DEVICE_NAME Name of the input device to find the event string for.
 def get_event_string(STRING_NUM, DEVICE_NAME):
 
   # file containing all devices with additional information

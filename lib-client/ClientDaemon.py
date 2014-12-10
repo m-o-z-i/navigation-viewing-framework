@@ -22,7 +22,7 @@ def init_lcd_wall_tracking():
 
 
   device_list.append(_dtrack)
-  print "ART Tracking started at LCD WALL"
+  print("ART Tracking started at LCD WALL")
 
 ## Initializes AR Track on DLP wall.
 def init_dlp_wall_tracking():
@@ -39,10 +39,10 @@ def init_dlp_wall_tracking():
   _dtrack.stations[6] = avango.daemon.Station('tracking-dlp-glasses-6')    
 
   device_list.append(_dtrack)
-  print "ART Tracking started at DLP WALL"
+  print("ART Tracking started at DLP WALL")
 
 
-# functions
+## Initializes PST Tracking.
 def init_pst_tracking():
 
 	# create instance of DTrack
@@ -53,7 +53,7 @@ def init_pst_tracking():
 
 	device_list.append(pst)
 
-	print "PST Tracking started!"
+	print("PST Tracking started!")
 
 ## @var device_list
 # List of devices to be handled by daemon.

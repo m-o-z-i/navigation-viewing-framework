@@ -5,10 +5,10 @@ import avango.gua
 import avango.script
 from avango.script import field_has_changed
 import subprocess
-import avango.utils
+#import avango.utils
 
-from MultiTouchDevice import MultiTouchDevice
-from Gestures import *
+from MultiTouch.MultiTouchDevice import MultiTouchDevice
+from MultiTouch.Gestures import *
 
 class TUIODevice(MultiTouchDevice):
     """
@@ -51,7 +51,7 @@ class TUIODevice(MultiTouchDevice):
 
         # register gestures
         # TODO: do this somewhere else
-        self.registerGesture(DoubleTapGesture())
+        #self.registerGesture(DoubleTapGesture())
         self.registerGesture(DragGesture())
         self.registerGesture(PinchGesture())
         self.registerGesture(RotationGesture())
@@ -73,6 +73,7 @@ class TUIODevice(MultiTouchDevice):
         # update active point list
         hands        = {}
         activePoints = []
+
         for touchPoint in self.Cursors.value:
             for hand in self.Hands.value:
                 if touchPoint.IsTouched.value and touchPoint.SessionID.value in hand.FingerSIDs.value:

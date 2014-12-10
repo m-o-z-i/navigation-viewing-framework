@@ -35,7 +35,8 @@ class Intersection(avango.script.Script):
   # @param SF_PICK_MAT Starting matrix of the ray.
   # @param PICK_LENGTH Length of the ray in meters.
   # @param PICK_MASK Picking mask of the intersection process.
-  def my_constructor(self, SCENEGRAPH, SF_PICK_MAT, PICK_LENGTH, PICK_MASK = ""):
+  # @param PICK_ONLY_FIRST_OBJECT Boolean saying if only the first hit is to be taken.
+  def my_constructor(self, SCENEGRAPH, SF_PICK_MAT, PICK_LENGTH, PICK_MASK = "", PICK_ONLY_FIRST_OBJECT = True):
     
     ## @var SCENEGRAPH
     # Reference to the scenegraph.
@@ -56,10 +57,15 @@ class Intersection(avango.script.Script):
   
     ## @var picking_options
     # Picking options for the intersection process.
-    self.picking_options = avango.gua.PickingOptions.PICK_ONLY_FIRST_OBJECT \
-                         | avango.gua.PickingOptions.GET_POSITIONS \
-                         | avango.gua.PickingOptions.GET_WORLD_POSITIONS \
-                         | avango.gua.PickingOptions.GET_WORLD_NORMALS
+    if PICK_ONLY_FIRST_OBJECT:
+      self.picking_options = avango.gua.PickingOptions.PICK_ONLY_FIRST_OBJECT \
+                           | avango.gua.PickingOptions.GET_POSITIONS \
+                           | avango.gua.PickingOptions.GET_WORLD_POSITIONS \
+                           | avango.gua.PickingOptions.GET_WORLD_NORMALS
+    else:
+      self.picking_options = avango.gua.PickingOptions.GET_POSITIONS \
+                           | avango.gua.PickingOptions.GET_WORLD_POSITIONS \
+                           | avango.gua.PickingOptions.GET_WORLD_NORMALS
     
     ## @var picking_mask
     # Picking mask of the intersection process.

@@ -12,7 +12,7 @@ from avango.script import field_has_changed
 
 # import framework libraries
 from GroundFollowing import *
-import Tools
+import Utilities
 
 # import of other libraries
 import time
@@ -194,7 +194,7 @@ class InputMapping(avango.script.Script):
           _platform_rot_mat = avango.gua.make_rot_mat(self.lf_quat_angle, _platform_quat.get_axis())
 
         # global rotation of the device in the world
-        _device_forward_yaw = Tools.get_yaw(self.sf_station_mat.value)
+        _device_forward_yaw = Utilities.get_yaw(self.sf_station_mat.value)
         _device_rot_mat = avango.gua.make_rot_mat(math.degrees(_device_forward_yaw), 0, 1, 0)
 
         # combined platform and device rotation
@@ -222,8 +222,8 @@ class InputMapping(avango.script.Script):
         _global_rot_center = self.sf_abs_mat.value * _rot_center
         _global_rot_center = avango.gua.Vec3(_global_rot_center.x, _global_rot_center.y, _global_rot_center.z)
 
-        for _navigation in self.NAVIGATION.coupled_navigations:
-          _navigation.inputmapping.modify_abs_uncorrected_mat(_transformed_trans_vec, _transformed_rot_vec, _global_rot_center)
+        #for _navigation in self.NAVIGATION.coupled_navigations:
+        #  _navigation.inputmapping.modify_abs_uncorrected_mat(_transformed_trans_vec, _transformed_rot_vec, _global_rot_center)
 
       else:
         # the device values are all equal to zero
@@ -289,7 +289,12 @@ class InputMapping(avango.script.Script):
 
   ## Applies a new scaling to this input mapping.
   # @param SCALE The new scaling factor to be applied.
-  def set_scale(self, SCALE):
+  # @param CONSIDER_SNAPPING Boolean saying if the scaling should snap at powers of ten.
+  def set_scale(self, SCALE, CONSIDER_SNAPPING = True):
+
+    if CONSIDER_SNAPPING == False:
+      self.sf_scale.value = SCALE
+      return
   
     if self.scale_stop_time == None:
   
@@ -319,7 +324,6 @@ class InputMapping(avango.script.Script):
         #print "snap 1:10"
         _new_scale = 0.1
         self.scale_stop_time = time.time()
-
 
       elif (_old_scale < 0.01 and _new_scale > 0.01) or (_new_scale < 0.01 and _old_scale > 0.01):
         #print "snap 1:100"

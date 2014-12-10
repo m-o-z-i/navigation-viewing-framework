@@ -2,7 +2,7 @@
 
 from SceneManager import SceneManager 
 from Intersection import *
-import Tools
+import Utilities
 
 import avango
 import avango.gua
@@ -11,7 +11,6 @@ import avango.script
 from avango.script import field_has_changed
 import subprocess
 import math
-import avango.utils
 import time
 
 class MultiTouchDevice(avango.script.Script):
@@ -73,6 +72,7 @@ class MultiTouchDevice(avango.script.Script):
 
         self._sceneGraph = graph
         self._display    = display
+        self._sceneManager = SCENE_MANAGER
 
         """ original matrix of the scene """
         self._origMat    = graph.Root.value.Transform.value
@@ -83,8 +83,8 @@ class MultiTouchDevice(avango.script.Script):
         self._intersection.my_constructor(self._sceneGraph, self._rayOrientation, self.ray_length, "") # parameters: SCENEGRAPH, SF_PICK_MATRIX, PICK_LENGTH, PICKMASK
 
         """ parent node of ray node """
-        _parent_node = self._sceneGraph["/net/platform_0/scale"]
-        
+        _parent_node = self._sceneGraph["/net"]
+
         """
         # init scenegraph node
         ## @var ray_transform
@@ -148,7 +148,6 @@ class MultiTouchDevice(avango.script.Script):
 
         point = Pos
 
-        #TODO: correct finger center position
         """ map points from interval [0, 1] to [-0.5, 0.5] """
         mappedPosX = point[0] * 1 - 0.5
         mappedPosY = point[1] * 1 - 0.5
@@ -227,24 +226,12 @@ class MultiTouchDevice(avango.script.Script):
         #for no tracking use this: #self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 0.5 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0)
 
         #do this only once per gesture
-        if (1 < (self._frameCounter - self._lastIntersectionCounter)):
-            """ head position of first user """
-            self._headPosition1 = self._applicationManager.user_list[0].headtracking_reader.sf_abs_vec.value
-
-            """ direction Vector between head and finger position """
-            _directionVector = self._fingerCenterPos.value - self._headPosition1
+        
+        #do this only once per gesture
+        if (1 < (self._frameCounter - self._lastIntersectionCounter)):                 
+            """ ray orientation from fingerPos down """
+            self._rayOrientation.value = avango.gua.make_trans_mat(self._fingerCenterPos.value.x , 1 , self._fingerCenterPos.value.z) * avango.gua.make_rot_mat(-90,1,0,0)
             
-            """ ray shouldn't start in the head of the user (for the representation) """  
-            _startPosition = self._headPosition1 + _directionVector * 0.8
-            
-            """ calculate rotation matrix """
-            _vec1 = avango.gua.Vec3(0.0,0.0,-1.0)
-            _directionVector.normalize()
-            _rotationMatrix = Tools.get_rotation_between_vectors( _vec1, _directionVector)
-            
-            """ start position and rotation matrix """
-            self._rayOrientation.value = avango.gua.make_trans_mat(_startPosition) * _rotationMatrix
-                    
             """intersection found"""
             if len(self._intersection.mf_pick_result.value) > 0:
                 self._intersectionFound = True
@@ -297,6 +284,8 @@ class MultiTouchDevice(avango.script.Script):
                 self._intersectionPoint = avango.gua.Vec3(0,0,0)
         
         self._lastIntersectionCounter = self._frameCounter
+        
+
 
 
 
@@ -343,16 +332,16 @@ class MultiTouchDevice(avango.script.Script):
         """
 
         """ Reguires the scnene Name of actually scene to change dynamically """
-        self._sceneName = SceneManager.active_scene_name
+        sceneName = self._sceneManager.getActiveSceneName()
 
         """ to avoid errors until the scenen Name is set """
-        if (None != self._sceneName):
-            sceneNode = "/net/" + self._sceneName
+        if (None != sceneName):
+            sceneNode = "/net/" + sceneName
             self._globalMatrix = self._sceneGraph[sceneNode].Transform.value
             
             """ object Mode """
             if self._objectMode:
-                objectNode = "/net/" + self._sceneName + "/" + self._objectName
+                objectNode = "/net/" + sceneName + "/" + self._objectName
                 scenePos = self._sceneGraph[objectNode].Transform.value.get_translate()
                 TransformMatrix = self._sceneGraph[objectNode].Transform.value
             
@@ -367,11 +356,14 @@ class MultiTouchDevice(avango.script.Script):
             translateDistance = avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * translateDistance
             translateDistance = avango.gua.Vec3(translateDistance.x, translateDistance.y, translateDistance.z)
 
-            #todo: 
-            #   warum verschiebt sich manchmal das scenen koordinatensystem?
-            #   alles in einer transformmatrix berechnung 
+            #print (self._transMat)
 
-            """ TransfotmMatrix: first translate and rotate to origin, second calculate new position, third translate and rotate back """
+            """ 
+            TransfotmMatrix: 
+                1. translate and rotate to origin, 
+                2. calculate new position, 
+                3. translate and rotate back 
+            """
 
             """ object mode """
             if self._objectMode:
@@ -399,20 +391,7 @@ class MultiTouchDevice(avango.script.Script):
                                   avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * 1.0 , 0)) * \
                                   avango.gua.make_trans_mat(translateDistance * -1.0) * \
                                   avango.gua.make_scale_mat(TransformMatrix.get_scale())
-            """
-            TransformMatrix = avango.gua.make_trans_mat(TransformMatrix.get_translate()) * \
-                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) *\
-                                  avango.gua.make_trans_mat(translateDistance * 1.0) * \
-                                  avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * -1.0 , 0)) * \
-                                  avango.gua.make_inverse_mat(avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected())) * \
-                                  self._rotMat * \
-                                  self._scaleMat * \
-                                  self._transMat * \
-                                  avango.gua.make_rot_mat(TransformMatrix.get_rotate_scale_corrected()) * \
-                                  avango.gua.make_trans_mat(avango.gua.Vec3(0, self._intersectionPoint.y * 1.0 , 0)) * \
-                                  avango.gua.make_trans_mat(translateDistance * -1.0) * \
-                                  avango.gua.make_scale_mat(TransformMatrix.get_scale())
-            """
+
 
             """ object mode """
             if self._objectMode:

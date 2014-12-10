@@ -11,6 +11,7 @@ from   avango.script import field_has_changed
 
 # import framework libraries
 from Intersection import *
+from scene_config import scenegraphs
 
 # import python libraries
 import math
@@ -61,10 +62,9 @@ class GroundFollowing(avango.script.Script):
     self.super(GroundFollowing).__init__()
 
   ## Custom constructor.
-  # @param SCENEGRAPH Reference to the scenegraph of the currently displayed scene.
   # @param SF_STATION_MAT The field containing the current position of the device belonging to the platform.
   # @param RAY_START_HEIGHT A height from which the ground following ray will originate.
-  def my_constructor(self, SCENEGRAPH, SF_STATION_MAT, RAY_START_HEIGHT):
+  def my_constructor(self, SF_STATION_MAT, RAY_START_HEIGHT):
     
     # attributes
     ## @var activated
@@ -82,7 +82,7 @@ class GroundFollowing(avango.script.Script):
 
     ## @var height_modification_factor
     # Scaling factor used for the modification of up and down vectors.
-    self.height_modification_factor = 0.1
+    self.height_modification_factor = 0.15
 
     # fall velocity in meter per frame
     ## @var fall_velocity
@@ -100,7 +100,7 @@ class GroundFollowing(avango.script.Script):
 
     ## @var SCENEGRAPH
     # Reference to the scenegraph to intersect the ground following ray with.
-    self.SCENEGRAPH = SCENEGRAPH
+    self.SCENEGRAPH = scenegraphs[0]
 
     ## @var ray_start_height
     # Starting height of the ground following ray.
@@ -118,7 +118,7 @@ class GroundFollowing(avango.script.Script):
     ## @var ground_intersection
     # Intersection class to determine the intersections of the ground following ray with the objects in the scenegraph.
     self.ground_intersection = Intersection()
-    self.ground_intersection.my_constructor(SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length, "gf_pick_group")
+    self.ground_intersection.my_constructor(self.SCENEGRAPH, self.sf_gf_start_mat, self.ground_pick_length, "gf_pick_group")
     self.mf_ground_pick_result.connect_from(self.ground_intersection.mf_pick_result)
 
 

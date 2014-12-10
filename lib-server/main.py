@@ -6,111 +6,71 @@
 # import avango-guacamole libraries
 import avango
 import avango.gua
-#import avango.utils
-
-from MultiTouch.TUIO import TUIODevice
 
 # import framework libraries
 from SceneManager import *
 from ApplicationManager import *
-from RecorderPlayer import *
-from Manipulation import *
+from Portal import *
+from PortalCamera import *
+from Device import *
+
+from scene_config import scenegraphs
+
+# import multitouch
+from MultiTouch.TUIO import TUIODevice
 
 # import python libraries
 import sys
 import subprocess
 
 # Command line parameters:
-# main.py CONFIG_FILE
-# @param CONFIG_FILE The filname of the configuration file to parse.
+# main.py START_CLIENTS
 # @param START_CLIENTS Boolean saying if the client processes are to be started automatically.
 
 ## Main method for the server application
 def start():
 
-  # create scenegraph
-  graph = avango.gua.nodes.SceneGraph(Name = "scenegraph")
-  #graph.Root.value.GroupNames.value = ["all"]
+  # disable logger warningss
+  logger = avango.gua.nodes.Logger(EnableWarning = False)
 
-  # get server ip 
-  server_ip = subprocess.Popen(["hostname", "-I"], stdout=subprocess.PIPE).communicate()[0]
-  server_ip = server_ip.strip(" \n")  
-  server_ip = server_ip.rsplit(" ")
-  server_ip = str(server_ip[-1])
-  #server_ip = "127.0.0.1"
-
-  # initialize pseudo nettrans node as client processes are started in Platform class
-  pseudo_nettrans = avango.gua.nodes.TransformNode(Name = "net")
-  graph.Root.value.Children.value = [pseudo_nettrans]
-
-  print sys.argv[2]
+  workspace_config = sys.argv[1]
 
   if sys.argv[2] == "True":
     start_clients = True 
   else:
     start_clients = False
 
+  # preload materials and shading models
+  avango.gua.load_shading_models_from("data/materials")
+  avango.gua.load_materials_from("data/materials")
+
   # initialize application manager
-  application_manager = ApplicationManager(
-      NET_TRANS_NODE = pseudo_nettrans
-    , SCENEGRAPH = graph
-    , CONFIG_FILE = sys.argv[1]
-    , START_CLIENTS = start_clients)
-
-  # create distribution node and sync children from pseudo nettrans
-  nettrans = avango.gua.nodes.NetTransform(
-      Name = "net"
-    , Groupname = "AVSERVER|{0}|5665".format(server_ip)
-    #, Groupname = "AVSERVER|{0}|7432".format(server_ip)
-  )
-  #nettrans.GroupNames.value = ["all"]
-
-  nettrans.Children.value = pseudo_nettrans.Children.value
-  graph.Root.value.Children.value.remove(pseudo_nettrans)
-  graph.Root.value.Children.value.append(nettrans)
-
-  # update nettrans node on all platforms
-  for _nav in application_manager.navigation_list:
-    _nav.platform.update_nettrans_node(nettrans)
+  application_manager = ApplicationManager()
+  application_manager.my_constructor(WORKSPACE_CONFIG = workspace_config, START_CLIENTS = start_clients)
 
   # initialize scene
   scene_manager = SceneManager()
-  scene_manager.my_constructor(nettrans, graph, application_manager.navigation_list)
 
   # initialize touch devices
   multi_touch_device = None
-  for i in application_manager.navigation_list:
-    for j in i.platform.displays:
-      if "TUIO" in j.get_touch_protocols():
-        if None == multi_touch_device:
-          device = TUIODevice()
-          device.my_constructor(graph, j, nettrans, scene_manager, application_manager)
-          multi_touch_device = device
+
+  for _workspace in application_manager.workspaces:
+    for _display_group in _workspace.display_groups:
+      for _display in _display_group.displays:
+        if "TUIO" in _display.get_touch_protocols():
+          if None == multi_touch_device:
+            device = TUIODevice()
+            device.my_constructor(scenegraphs[0], _display, scenegraphs[0]["/net"], scene_manager, application_manager)
+            multi_touch_device = device
+
 
   # initialize animation manager
   #animation_manager = AnimationManager()
   #animation_manager.my_constructor([ graph["/net/platform_0"]]
   #                               , [ application_manager.navigation_list[0]])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"], graph["/net/SceneVRHyperspace1/ceiling_light5"], graph["/net/SceneVRHyperspace1/ceiling_light6"]]
-  #                               , [None, None, None, None, None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"]]
-  #                               , [None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"]]
-  #                               , [None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/ceiling_light1"], graph["/net/SceneVRHyperspace1/ceiling_light2"], graph["/net/SceneVRHyperspace1/ceiling_light3"], graph["/net/SceneVRHyperspace1/ceiling_light4"]]
-  #                               , [None, None, None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace1/steppo"]]
-  #                               , [None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"], graph["/net/SceneVRHyperspace4/terrain_group"]]
-  #                               , [None, None])
-  #animation_manager.my_constructor([graph["/net/SceneVRHyperspace3/terrain_group"]]
-  #                               , [None])
-
-  #manipulation_manager = ManipulationManager(nettrans, graph, scene_manager)
 
   ## distribute all nodes in the scenegraph
-  distribute_all_nodes(nettrans, nettrans)
-
+  distribute_all_nodes(scenegraphs[0]["/net"], scenegraphs[0]["/net"])
 
   # run application loop
   application_manager.run(locals(), globals())

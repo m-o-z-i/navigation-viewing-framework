@@ -94,6 +94,7 @@ class MultiDofDevice(avango.script.Script):
   # @param POS_THRESHOLD The positive threshold to be used.
   def filter_channel(self, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD):
 
+    #print VALUE
     VALUE = VALUE - OFFSET
     MIN = MIN - OFFSET
     MAX = MAX - OFFSET
@@ -146,20 +147,20 @@ class MultiDofDevice(avango.script.Script):
   ## Callback: evaluated every frame
   def frame_callback(self):
   
+    ## @var dofs
+    # Temporary list of degrees of freedom to process input bindings.
     self.dofs = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-  
+
+    # evaluate input bindings
     for _input_binding in self.input_bindings:
-      if type(_input_binding) is types.StringType:
-        try:
-          eval(_input_binding)
-        except Exception as e:
-          print_error("Error parsing string input binding {} [Message: {}]".format(_input_binding, e), False)
-      elif type(_input_binding) is types.LambdaType:
-        _input_binding()
-      else:
-        raise TypeError("Input binding '{}' is neither string nor lambda expression".format(_input_binding))
+
+      try:
+        eval(_input_binding)
+      except Exception as e:
+        print_error("Error parsing input binding " + _input_binding + "(" + e + ")", False)
     
     self.mf_dof.value = self.dofs
+
 
   ## Sets a specific degree of freedom to a value which is filtered before.
   # @param ID ID Number of the degree of freedom to be set.
@@ -220,7 +221,7 @@ class SpacemouseDevice(MultiDofDevice):
 
     ## @var translation_factor
     # Factor to modify the device's translation input.
-    self.translation_factor = 0.3
+    self.translation_factor = 0.02
 
     ## @var rotation_factor
     # Factor to modify the device's rotation input.
@@ -234,29 +235,6 @@ class SpacemouseDevice(MultiDofDevice):
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, 0.0, -0.86, 0.77, 12, 12)")
     self.add_input_binding("self.set_dof(6, self.device_sensor.Button0.value*1.0)")
     self.add_input_binding("self.set_dof(6, self.device_sensor.Button1.value*-1.0)")
-
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
-  # @param PLATFORM_ID The platform id used for setting the group name correctly.
-  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
-    PLATFORM_NODE.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/table/table.obj',
-                                                           'data/materials/Stones.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
 
 
 ## Internal representation and reader for a globefish device.
@@ -289,30 +267,6 @@ class GlobefishDevice(MultiDofDevice):
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value*-1.0, 0.0, -512.0, 512.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value*-1.0, 0.0, -512.0, 512.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, 0.0, -512.0, 512.0, 0, 0)")
-
-
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
-  # @param PLATFORM_ID The platform id used for setting the group name correctly.
-  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
-    PLATFORM_NODE.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/table/table.obj',
-                                                           'data/materials/Stones.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
 
 
 ## Internal representation and reader for a keyboard and mouse setup.
@@ -359,29 +313,6 @@ class KeyboardMouseDevice(MultiDofDevice):
     self.add_input_binding("self.set_dof(6, self.mouse_sensor.Button0.value*-1.0)")              # left button
     self.add_input_binding("self.set_dof(6, self.mouse_sensor.Button2.value*1.0)")               # right button
 
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
-  # @param PLATFORM_ID The platform id used for setting the group name correctly.
-  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
-
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_avatar_body_mat)
-    PLATFORM_NODE.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/table/table.obj',
-                                                           'data/materials/Stones.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_trans_mat(-0.8, 0.2, 0.8) * avango.gua.make_scale_mat(0.2, 0.5, 0.5)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
-
 
 ## Internal representation and reader for a XBox controller
 class XBoxDevice(MultiDofDevice):
@@ -420,9 +351,8 @@ class XBoxDevice(MultiDofDevice):
     self.add_input_binding("self.set_dof(6, self.device_sensor.Button7.value*1.0)")          # TR
 
   ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
-  # @param PLATFORM_ID The platform id used for setting the group name correctly.
-  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+  # @param PLATFORM_INSTANCE Instance of Platform for which the device avatar is to be created.
+  def create_device_avatar(self, PLATFORM_INSTANCE):
     pass
     
 ## Internal representation and reader for the old spheron
@@ -458,35 +388,26 @@ class OldSpheronDevice(MultiDofDevice):
     self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor.Value1.value*-1.0, -0.00787377543747, -0.0115, -0.003, 20, 20)")
     self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor.Value2.value, -0.00787377543747, -0.015, 0.0, 5, 5)")    
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor.Value3.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
-    #self.add_input_binding("if self.device_sensor.Value4.value != 0.0:\n\tself.set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")    
+    self.add_input_binding("self.conditional_set_and_filter_dof(4, self.device_sensor.Value4.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor.Value5.value, -0.00787377543747, -0.0095, -0.006, 0, 0)")
-    self.add_input_binding("self.set_reset_trigger(self.button_sensor.Button1.value)")       # middle button      
-    self.add_input_binding("self.set_dof(6, self.button_sensor.Button0.value*-1.0)")              # left button
-    self.add_input_binding("self.set_dof(6, self.button_sensor.Button2.value*1.0)")               # right button
+    self.add_input_binding("self.set_dof_trigger(self.button_sensor.Button1.value)")       # middle button      
+    self.add_input_binding("self.set_dof(6, self.button_sensor.Button0.value*-1.0)")         # left button
+    self.add_input_binding("self.set_dof(6, self.button_sensor.Button2.value*1.0)")          # right button
 
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
-  # @param PLATFORM_ID The platform id used for setting the group name correctly.
-  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+  ## Conditional execution of of set_and_filter_dof in order to prevent input errors for the old spheron.
+  # @param ID ID Number of the degree of freedom to be set.
+  # @param VALUE The value to be filtered.
+  # @param OFFSET The offset to be applied to VALUE, MIN and MAX.
+  # @param MIN The minimum value of the old interval.
+  # @param MAX The maximum value of the old interval.
+  # @param NEG_THRESHOLD The negative threshold to be used.
+  # @param POS_THRESHOLD The positive threshold to be used.
+  def conditional_set_and_filter_dof(self, ID, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD):
+    _condition = "self.device_sensor.Value" + str(ID) + ".value != 0.0"
+    _result = eval(_condition)
 
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_abs_mat)
-    PLATFORM_NODE.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/spheron.obj',
-                                                           'data/materials/ShadelessWhite.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_scale_mat(0.16, 0.16, 0.16)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
+    if _result:
+      self.set_and_filter_dof(ID, VALUE, OFFSET, MIN, MAX, NEG_THRESHOLD, POS_THRESHOLD)
 
 
 ## Internal representation and reader for the new spheron
@@ -518,56 +439,21 @@ class NewSpheronDevice(MultiDofDevice):
     # Factor to modify the device's rotation input.
     self.rotation_factor = 1.0
 
-    '''
-    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_right.Value0.value*-1.0, 0.0, -0.98, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_right.Value1.value, 0.0, -0.44, 0.24, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_right.Value2.value, 0.0, -1.0, 0.94, 0, 0)")    
-    self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor_right.Value3.value*-1.0, 0.0, -2048, 2048, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value4.value*-1.0, 0.0, -2048, 2048, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value6.value, 0.0, -0.6, 0.37, 10, 10)")
-    self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor_right.Value5.value, 0.0, -2048, 2048, 0, 0)")
-
     self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_left.Value0.value, 0.0, -1.0, 1.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_left.Value1.value, 0.0, -1.0, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_left.Value2.value * -1.0, 0.0, -1.0, 1.0, 0, 0)")
-    
-    self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
-    self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
-    self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
-    '''
-
-    self.add_input_binding("self.set_and_filter_dof(0, self.device_sensor_left.Value0.value, 0.0, -1.0, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(2, self.device_sensor_left.Value1.value, 0.0, -1.0, 1.0, 0, 0)")
-    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_left.Value2.value*-1.0, 0.0, -0.1, 0.22, 0, 0)")            
+    self.add_input_binding("self.set_and_filter_dof(1, self.device_sensor_left.Value2.value*-1.0, 0.0, -0.025, 0.34, 0, 0)")            
     self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_left.Value3.value*-1.0, 0.0, -1.0, 1.0, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(3, self.device_sensor_right.Value3.value*-1.0, 0.0, -150, 150, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(4, self.device_sensor_right.Value4.value*-1.0, 0.0, -150, 150, 0, 0)")
     self.add_input_binding("self.set_and_filter_dof(5, self.device_sensor_right.Value5.value*-1.0, 0.0, -150, 150, 0, 0)")    
     
-    self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button      
+    #self.add_input_binding("self.set_reset_trigger(self.device_sensor_right.Button1.value)")       # middle button
+    self.add_input_binding("self.set_dof_trigger(self.device_sensor_right.Button1.value)")       # middle button      
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button0.value*-1.0)")         # left button
     self.add_input_binding("self.set_dof(6, self.device_sensor_right.Button2.value*1.0)")          # right button
-    
 
-  ## Creates a representation of the device in the virutal world.
-  # @param PLATFORM_NODE The platform node to which the avatar should be appended to.
-  # @param PLATFORM_ID The platform id used for setting the group name correctly.
-  def create_device_avatar(self, PLATFORM_NODE, PLATFORM_ID):
+  #  print(self.device_sensor_left.Station.value)
+  #  self.always_evaluate(True)
 
-    _loader = avango.gua.nodes.TriMeshLoader()
-
-    ## @var avatar_transform
-    # Scenegraph transform node for the dekstop user's table.
-    self.avatar_transform = avango.gua.nodes.TransformNode(Name = 'avatar_transform')
-    self.avatar_transform.Transform.connect_from(self.tracking_reader.sf_abs_mat)
-    PLATFORM_NODE.Children.value.append(self.avatar_transform)
-
-    ## @var device_avatar
-    # Scenegraph node representing the geometry and transformation of the device avatar.
-    self.device_avatar = _loader.create_geometry_from_file('device_avatar',
-                                                           'data/objects/spheron.obj',
-                                                           'data/materials/ShadelessWhite.gmd',
-                                                           avango.gua.LoaderFlags.LOAD_MATERIALS)
-    self.device_avatar.Transform.value = avango.gua.make_rot_mat(90, 0, 1, 0) * avango.gua.make_scale_mat(0.16, 0.16, 0.16)
-    self.avatar_transform.Children.value.append(self.device_avatar)
-    self.device_avatar.GroupNames.value = ['avatar_group_' + str(PLATFORM_ID)]
+  #def evaluate(self):
+  #  print(self.device_sensor_left.Value0.value, self.device_sensor_left.Value1.value, self.device_sensor_left.Value2.value)

@@ -81,6 +81,9 @@ class TUIODevice(MultiTouchDevice):
                     hands[hand.HandID.value] = hand
                     break
 
+        #print ("NAV_FRAMEWORK: anzahl an händen:  " , len(hands))
+
+
         for gesture in self.gestures:
             gesture.processGesture(activePoints, hands, self)
         
@@ -175,7 +178,10 @@ class TUIOCursor(avango.script.Script):
         self.IsMoving.connect_from(self.device_sensor.Value6)
         self.State.connect_from(self.device_sensor.Value7)
         self.SessionID.connect_from(self.device_sensor.Value8)
-        
+    
+    def evaluate(self):
+        pass
+        #print ("Finger: ID ", self.SessionID.value, " PosX: " , self.PosX.value, "  PosY" , self.PosY.value)
 
     def updateTouched(self):
         """
@@ -189,6 +195,7 @@ class TUIOCursor(avango.script.Script):
         Set station name.
         """
         self.device_sensor.Station.value = "gua-finger{}#cursor".format(self.CursorID.value)
+        print ("HUBA HUB" , self.device_sensor.Station.value)
 
     @field_has_changed(PosX)
     def updatePosX(self):
@@ -198,21 +205,32 @@ class TUIOCursor(avango.script.Script):
     def updatePosY(self):
         self.updateTouched()
 
-
 class TUIOHand(avango.script.Script):
-    HandClass  = avango.SFFloat()
-    Finger1SID = avango.SFFloat()
-    Finger2SID = avango.SFFloat()
-    Finger3SID = avango.SFFloat()
-    Finger4SID = avango.SFFloat()
-    Finger5SID = avango.SFFloat()
-    FingerSIDs = avango.MFFloat()
-    SessionID  = avango.SFFloat()
-    HandID     = avango.SFInt()
+    HandID           = avango.SFInt()
+    SessionID        = avango.SFFloat()
+    
+    PosX             = avango.SFFloat()
+    PosY             = avango.SFFloat()
 
-    CLASS_UNKNOWN = 0
-    CLASS_LEFT    = 1
-    CLASS_RIGHT   = 2
+    Finger1SID       = avango.SFFloat()
+    Finger2SID       = avango.SFFloat()
+    Finger3SID       = avango.SFFloat()
+    Finger4SID       = avango.SFFloat()
+    Finger5SID       = avango.SFFloat()
+    FingerSIDs       = avango.MFFloat()
+
+    BoundingBox_MinX = avango.SFFloat()
+    BoundingBox_MinY = avango.SFFloat()
+    BoundingBox_MaxX = avango.SFFloat()
+    BoundingBox_MaxY = avango.SFFloat()
+    
+    HandClass        = avango.SFFloat()
+
+    ArmCenterX       = avango.SFFloat()
+    ArmCenterY       = avango.SFFloat()
+    ArmMinor         = avango.SFFloat()
+    ArmMajor         = avango.SFFloat()
+    ArmInclination   = avango.SFFloat()
 
     def __init__(self):
         self.super(TUIOHand).__init__()
@@ -226,13 +244,33 @@ class TUIOHand(avango.script.Script):
         self.Finger5SID.value = -1.0
 
         self.device_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
-        self.HandClass.connect_from(self.device_sensor.Value0)
-        self.Finger1SID.connect_from(self.device_sensor.Value1)
-        self.Finger2SID.connect_from(self.device_sensor.Value2)
-        self.Finger3SID.connect_from(self.device_sensor.Value3)
-        self.Finger4SID.connect_from(self.device_sensor.Value4)
-        self.Finger5SID.connect_from(self.device_sensor.Value5)
-        self.SessionID.connect_from(self.device_sensor.Value6)
+        self.SessionID.connect_from(self.device_sensor.Value0)
+        
+        self.PosX.connect_from(self.device_sensor.Value1)
+        self.PosY.connect_from(self.device_sensor.Value2)
+
+        self.Finger1SID.connect_from(self.device_sensor.Value3)
+        self.Finger2SID.connect_from(self.device_sensor.Value4)
+        self.Finger3SID.connect_from(self.device_sensor.Value5)
+        self.Finger4SID.connect_from(self.device_sensor.Value6)
+        self.Finger5SID.connect_from(self.device_sensor.Value7)
+
+        self.BoundingBox_MinX.connect_from(self.device_sensor.Value8)
+        self.BoundingBox_MinY.connect_from(self.device_sensor.Value9)
+        self.BoundingBox_MaxX.connect_from(self.device_sensor.Value10)
+        self.BoundingBox_MaxY.connect_from(self.device_sensor.Value11)
+
+        self.HandClass.connect_from(self.device_sensor.Value12)
+
+        self.ArmCenterX.connect_from(self.device_sensor.Value13)
+        self.ArmCenterY.connect_from(self.device_sensor.Value14)
+        self.ArmMajor.connect_from(self.device_sensor.Value15)
+        #self.ArmMinor.connect_from(self.device_sensor.Value16)
+        #self.ArmInclination.connect_from(self.device_sensor.Value17)
+
+    @field_has_changed(PosX)
+    def test(self):
+        print("NAV_FRAMEWORK: handpos changed " , self.PosX.value, "  ; arm major : " , self.ArmMajor.value)
 
     @field_has_changed(HandID)
     def set_station(self):
@@ -240,6 +278,7 @@ class TUIOHand(avango.script.Script):
         Set station name.
         """
         self.device_sensor.Station.value = "gua-finger{}#hand".format(self.HandID.value)
+
 
     @field_has_changed(Finger1SID)
     def updateFinger1InField(self):

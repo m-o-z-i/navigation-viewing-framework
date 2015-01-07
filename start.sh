@@ -15,7 +15,7 @@ DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 # assuming a local guacmole version is located properly
 LOCAL_GUACAMOLE="$DIR/../guacamole"
-LOCAL_AVANGO="$DIR/../avango"
+LOCAL_AVANGO="$DIR/../avango_fork"
 
 GUACAMOLE=/opt/guacamole/master
 AVANGO=/opt/avango/feature_python3
@@ -36,7 +36,7 @@ export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./
 # run daemon
 
 if [ "$2" != "daemon" ] ; then
-		python3 ./lib-server/Daemon.py > /dev/null &
+		python3 ./lib-server/Daemon.py &
 else
 		python3 ./lib-server/Daemon.py
 		exit
@@ -46,7 +46,7 @@ fi
 if [ "$2" != "server" ] ; then
     cd "$DIR" && python3 ./lib-server/main.py $1 True
 else 
-	  cd "$DIR" && python3 ./lib-server/main.py $1 False
+	cd "$DIR" && python3 ./lib-server/main.py $1 False
 fi
 
 # kill daemon

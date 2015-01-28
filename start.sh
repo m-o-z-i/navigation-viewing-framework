@@ -36,7 +36,7 @@ export LD_LIBRARY_PATH="$LOCAL_GUACAMOLE/lib":$GUACAMOLE/lib:$LD_LIBRARY_PATH:./
 # run daemon
 
 if [ "$2" != "daemon" ] ; then
-		python3 ./lib-server/Daemon.py &
+		python3 ./lib-server/Daemon.py  &
 else
 		python3 ./lib-server/Daemon.py
 		exit

@@ -209,8 +209,7 @@ class TUIOHand(avango.script.Script):
     HandID           = avango.SFInt()
     SessionID        = avango.SFFloat()
     
-    PosX             = avango.SFFloat()
-    PosY             = avango.SFFloat()
+    Pos              = avango.gua.SFVec2()
 
     Finger1SID       = avango.SFFloat()
     Finger2SID       = avango.SFFloat()
@@ -243,34 +242,38 @@ class TUIOHand(avango.script.Script):
         self.Finger4SID.value = -1.0
         self.Finger5SID.value = -1.0
 
-        self.device_sensor = avango.daemon.nodes.DeviceSensor(DeviceService = avango.daemon.DeviceService())
-        self.SessionID.connect_from(self.device_sensor.Value0)
+        self.device_sensor = avango.daemon.nodes.HandSensor(DeviceService = avango.daemon.DeviceService())
+        #self.SessionID.connect_from(self.device_sensor.Value0)
         
-        self.PosX.connect_from(self.device_sensor.Value1)
-        self.PosY.connect_from(self.device_sensor.Value2)
+        self.Pos.connect_from(self.device_sensor.mHandPos)
 
-        self.Finger1SID.connect_from(self.device_sensor.Value3)
-        self.Finger2SID.connect_from(self.device_sensor.Value4)
-        self.Finger3SID.connect_from(self.device_sensor.Value5)
-        self.Finger4SID.connect_from(self.device_sensor.Value6)
-        self.Finger5SID.connect_from(self.device_sensor.Value7)
+        #self.Finger1SID.connect_from(self.device_sensor.Value3)
+        #self.Finger2SID.connect_from(self.device_sensor.Value4)
+        #self.Finger3SID.connect_from(self.device_sensor.Value5)
+        #self.Finger4SID.connect_from(self.device_sensor.Value6)
+        #self.Finger5SID.connect_from(self.device_sensor.Value7)
 
-        self.BoundingBox_MinX.connect_from(self.device_sensor.Value8)
-        self.BoundingBox_MinY.connect_from(self.device_sensor.Value9)
-        self.BoundingBox_MaxX.connect_from(self.device_sensor.Value10)
-        self.BoundingBox_MaxY.connect_from(self.device_sensor.Value11)
+        #self.BoundingBox_MinX.connect_from(self.device_sensor.Value8)
+        #self.BoundingBox_MinY.connect_from(self.device_sensor.Value9)
+        #self.BoundingBox_MaxX.connect_from(self.device_sensor.Value10)
+        #self.BoundingBox_MaxY.connect_from(self.device_sensor.Value11)
 
-        self.HandClass.connect_from(self.device_sensor.Value12)
+        #self.HandClass.connect_from(self.device_sensor.Value12)
 
-        self.ArmCenterX.connect_from(self.device_sensor.Value13)
-        self.ArmCenterY.connect_from(self.device_sensor.Value14)
-        self.ArmMajor.connect_from(self.device_sensor.Value15)
+        #self.ArmCenterX.connect_from(self.device_sensor.Value13)
+        #self.ArmCenterY.connect_from(self.device_sensor.Value14)
+        #self.ArmMajor.connect_from(self.device_sensor.Value15)
         #self.ArmMinor.connect_from(self.device_sensor.Value16)
         #self.ArmInclination.connect_from(self.device_sensor.Value17)
+        self.always_evaluate(True);
 
-    @field_has_changed(PosX)
+    def evaluate(self):
+        print("NAV_FRAMEWORK: handpos changed " , self.Pos.value.x, "    " , self.Pos.value.y)
+        
+
+    @field_has_changed(Pos)
     def test(self):
-        print("NAV_FRAMEWORK: handpos changed " , self.PosX.value, "  ; arm major : " , self.ArmMajor.value)
+        pass
 
     @field_has_changed(HandID)
     def set_station(self):
